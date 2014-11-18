@@ -1,0 +1,1 @@
+java -d64 -server -Dreactor.profiles.active=6 -Xms1G -Xmx4G -XX:SurvivorRatio=6 -jar StarNub.jar

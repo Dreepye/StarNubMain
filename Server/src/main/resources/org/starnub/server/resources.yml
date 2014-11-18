@@ -1,0 +1,18 @@
+packet_count: 48
+
+blank_files: {
+blocked_ips: StarNub/Databases/blocked_ips.txt,
+illegalnicks: StarNub/illegal_nick_names.txt,
+whitelist: StarNub/whitelist.txt,
+chatfilter: StarNub/chat_filter.txt,
+ops: StarNub/ops.txt }
+
+non_blank_files: {
+starnub/fileextracts/groups.yml: StarNub/groups.yml,
+starnub/fileextracts/default_shortcut_command_map.yml: StarNub/shortcut_command_map.yml }
+
+
+
+#fileExtractor.fileUnpack("starnub/jars/starnubessentials-1.0.jar", "StarNub/Plugins/starnubessentials-1.0.jar", true);
+#fileExtractor.fileUnpack("starnub/jars/starnubcommandsplugin-1.0.jar", "StarNub/Plugins/starnubcommandsplugin-1.0.jar", true);
+#fileExtractor.fileUnpack("starnub/jars/starboundcommandsplugin-1.0.jar", "StarNub/Plugins/starboundcommandsplugin-1.0.jar", true);

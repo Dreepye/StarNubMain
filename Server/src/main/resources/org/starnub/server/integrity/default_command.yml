@@ -1,0 +1,5 @@
+commands: ['String', 'List']
+main_args: ['String', 'List']
+class: String
+can_use: 1
+description: String

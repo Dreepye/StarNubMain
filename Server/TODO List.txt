@@ -1,0 +1,129 @@
+Change Log:
+
+    Networking:
+        - Removed unneeded network callbacks, this should removed 1 Object of memory per packet. (That's a big deal)
+        - Modified the decoder by adding the Variant Length Quantity equation in the method, vice making it a object (Means its not stored in the memory heap)
+        - Changed all socket settings, increasing the buffer allocation and write amount, per right
+
+
+//EPOLL
+
+// If modified then cmposite else direct
+
+So here are my plans – this will be my last update of StarNub for a while 
+    •	First I will fix the PVP not working
+    •	Enjin account linking
+    •	Fix a bug where permissions are not reloaded when you add a character to an account
+
+After the above I am going to get to work to finishing StarNub and preparing it for 1.0, these are not in order.
+    •	Networking
+        -	I will be studying low level programming. My goal is to program the network from scratch over a library, which enables me to troubleshoot and have more control over the process and removing the library overhead. The Netty.IO library is great but not for Starbound. Unless I can configure it differently.
+        -	Server Query to keep the server up needs to be kept on its own
+        -	Server Query’s from external websites need to be handled better
+        - Connection clean up disconnects, epoll
+
+    •	 Python and Lua Support
+        -	This will be for commands only, making commands should become simpler
+
+    •	Command API changes to how they are stored and executed, I do not like the shortcut and non-shortcut. I will most likely detach the command from the plugin and store it internally rather than the current method. Perhaps look at .Java plugins instead of full blown jars, flexibility and easy fast creation is my goal. *Note file dump null  permission *
+
+    •	Fix the plugin loader to support the above
+
+    •	YAML Abstract Wrapper Class
+        -	List form YAML class to convert all text files to YAML (Easier editing, load and saving)
+        -	word filter white list,  nick whitelist, word filter, nick blacklist, whitelist, Ops, blocked ip’s to all be changed into YAML storage (500 line code reduction)
+
+
+    •	StarNub Launcher Jar
+
+    •	StarNub Update Available Notification
+
+    •	Player Location Tracking
+        -	StarNub to handle local chat as well
+
+    •	Configuration Reloading, Variable Updating
+
+    •	Wrapper internals
+        -	Full shutdown
+        -	Full restart (Needs Launcher/Updater Jar)
+        -	Resource clean up and reset
+        -	Resource Usage tracking
+        -	Player history tracking (Load purposes)
+        -	Thread Checking
+        -	DOS/DDOS protection suite (Have frame work in place)
+        -	Plugin file locking, removal after update or removal of plugin
+
+    •	API to complete (Ability to manipulate data)(Needed for commands)
+         -	Plugin resource extraction
+            	This way help plugin can load help files
+        -	Chat Rooms, leave, join, create
+        -	Awards
+            	Award loading from YAML/JSON
+        -	Groups (Everything)
+        -	Player settings
+        -	Permissions
+            	Timed
+        -	Server Stats (Player Joins, quits, restarts, ect)
+        -	Change Database classes to use LOMBOK Setters and separate the database update method.
+        -	Restrictions (Perhaps change slightly, but for sure StarNub Accounts need disabling (Added already partway)
+        -	AFK vs IDLE tracking (Needs Location Tracking)
+
+    •	Events Created
+
+    •	Code Clean Up
+
+    •	Java Document fill in if missing
+
+    •	Fix Limbok Library and Javadoc Generation
+
+Small Changes:
+    •	Create a couple new classes for Database Data (Detailed Data Entity (Date, Reason, Date Expires, Imposer, Imposer ID))
+    •	CMS Integration
+        o	Hasher to match Danks
+            	MessageDigest digest = MessageDigest.getInstance("SHA-256"); byte[] hash = digest.digest(text.getBytes("UTF-8"));
+        o	For the $salt, just have it create a random string, it doesnt matter what or how or why, that's not important,  just needs to follow this 3 steps
+            	1 -> $salt = uniqid(mt_rand(), true); //create a random string, whatever you want
+            	2 -> $hash = hash('sha256', $password); //hash the password string the person wrote down into sha256
+            	3 -> $passf = hash('sha256', $salt . $hash); mix together and hash again
+    •	Add shadow, clear and other support (GameColors.class)
+
+    •	Commands (Small changes)
+        o	/server time
+        o	/restart timer
+        o	 /permissions
+            	Create, delete, update, add, remove, info
+        o	/groups
+            	Create, delete, update, add, remove, promote, info
+        o	/tags
+            	Create, delete, update, add, remove, info
+        o	/awards
+            	Create, delete, update, add, remove, info
+        o	/help
+        o	/afk
+        o	/player info
+        o	/player limit
+            	Reserved, Non Reserved and Total
+        o	/cpu
+        o	/ram
+
+    •	Plugin Stuff
+        o	NoCheats
+            	Detect someone joining on a banned IP or UUID, (If new UUID or IP ban it as well)
+
+After 1.0 before 2.0
+    •	Projectile Anti Greif
+        o	Ship Access Protection, Planet Protections
+        o	Vote on for Pixels Plugin
+
+
+2.0 Features
+    •	Add restful API (For StarNub manipulation and CMS use)
+    •	Remote Players (Phone Apps, IRC Log –Ins and Misc external applications)
+        o	Remote Management is a Subset of this
+    •	Reserved Slot System to be level system. Starnub.reserved.#
+    •	File monitoring and access API
+        o	Could be used for back up plugins, on file changes update X file in wrapper
+        o	Codex for plugin info and commands
+
+3.0 Features
+    •	Standalone PHP and HSQL for Plugins to use as well as CMS complete standalone StarNub

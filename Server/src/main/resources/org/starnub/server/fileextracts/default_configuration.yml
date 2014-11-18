@@ -1,0 +1,47 @@
+{
+"starnub settings": {
+  "language": "english",
+  "starnub_port": 21025,
+  "starbound_port": 21024,
+  "whitelisted": false,
+  "log_size": 5120.0,
+  "log_character_names": false,
+  "log_levels": {
+      "events": 0,
+      "debug": 0,
+      "information": 3,
+      "chat": 3,
+      "command": 2,
+      "warning": 2,
+      "error": 3,
+      "fatal": 3,
+    }
+  },
+
+"server info": {
+    "server_name": "StarNub",
+    "server_url": "http://www.starnub.org"
+  },
+
+"resources": {
+    "player_limit": 64,
+    "player_limit_reserved": 8,
+#    "network_worker_thread_count": 10,
+    "event_thread_count": 2,
+    "event_que_size": 128,
+    "scheduled_task_thread_count": 2
+  },
+
+"database": {
+    "type": "sqlite",
+    "mysql_url": "192.168.254.250:3306/StarNubTest",
+    "mysql_user": "StarNubTest",
+    "mysql_pass": "ZXstarnub+-*/"
+  },
+
+"groups": {
+    "bracket_color": "#FFFF00",
+    "bracket_end": "]",
+    "bracket_start": "["
+  }
+}
