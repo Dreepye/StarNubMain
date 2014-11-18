@@ -23,7 +23,7 @@ Base Features:
    - StarNub Configuration:
 		- Step by step setup, or extract a file and edit
 		- Configuration self heals data types
-		- Most configuration items can be modified while the server is running
+		- Most configuration items can be modified while the starbounddata.packets.starbounddata.packets.server is running
    - Starbound Configuration:
 		- Auto generate configuration if it does not exist in directory
 		*- Auto write configuration variables when changed in StarNub configuration
@@ -35,43 +35,43 @@ Base Features:
 			- Player Sessions (Characters, start and end time, attached account)
 			- Characters (Cleaned name & UUID)
 			- Characters and the IPs seen for each one
-			- Accounts, account settings, chat rooms, achievements are just some
+			- Accounts, account settings, starbounddata.packets.chat rooms, achievements are just some
 			- Groups, group ladders and group permissions
    - Highly scalable:
 		- Network and Event system well scale to hardware
-   *- Built in DOS and DDOS detection attempts for sockets and connection spamming
+   *- Built in DOS and DDOS detection attempts for sockets and starbounddata.packets.connection spamming
 		- Auto clean up of left open sockets
 		*- Auto internal ip banning on DOS or DDOS
 		*- Connection rate limiter in case of ddos detected
    - Unique account system:
-		- Characters that join a server can create an account or attach a character to an account this enables them to keep personal settings, groups, permissions and centralize all the information about them from each character into one spot
+		- Characters that join a starbounddata.packets.starbounddata.packets.server can create an account or attach a character to an account this enables them to keep personal settings, groups, permissions and centralize all the information about them from each character into one spot
    - 3 Tier permissions system {base}.{sub}.{permission}. 
-		- You can use permissions to allow command usage, block breaking size, chat speed are just a few uses of permissions
+		- You can use permissions to allow command usage, block breaking size, starbounddata.packets.chat speed are just a few uses of permissions
 		- Accounts and Groups can have permissions. If a group inherited another group, the permissions are thus inherited as well and the player assumse each of the permissions
    - Chat:
 		- Spam Protections:
 			- Configurable: 
-				- Global chat rate limit (Prevents spamming, is configurable to the milliseconds)
+				- Global starbounddata.packets.chat rate limit (Prevents spamming, is configurable to the milliseconds)
 					*- Permission per user for fine grain rate limiting
 			- Auto lower caseing of mostly capitalized sentences
 			*- Block repeat messages or messages that are almost the same
 			*- Word filter
 			- Spam reply message
-		- Server name and chat - color options
-		- Global name and chat - color option
+		- Server name and starbounddata.packets.chat - color options
+		- Global name and starbounddata.packets.chat - color option
 		*- Player prefix and suffix selectable by the player based on groups and achievements they have
 		- Customizable tage start and end example..."[", "]".
 		- Chat Rooms: 
-			- Universe chat is a chat room that can be left
+			- Universe starbounddata.packets.chat is a starbounddata.packets.chat room that can be left
 			- Chat Rooms subscriptions are saved so when logging in you rejoin any rooms from before
-			- Chat rooms that are private can be password protected, and the chat room will appear in the list butthe inhabitants are secret
-			- Players can set a default chat room so when they use chat it talks to that room only, they would have to use /chat universe hey! in order to talk back to universe if they set the chat room to another default
+			- Chat rooms that are private can be password protected, and the starbounddata.packets.chat room will appear in the list butthe inhabitants are secret
+			- Players can set a default starbounddata.packets.chat room so when they use starbounddata.packets.chat it talks to that room only, they would have to use /starbounddata.packets.chat universe hey! in order to talk back to universe if they set the starbounddata.packets.chat room to another default
 		- Players can be muted
-		- Players can be ignored by other players both players will not see each others chat or be able to whisper each other
-		- Allow colored nick names or chat by players
+		- Players can be ignored by other players both players will not see each others starbounddata.packets.chat or be able to whisper each other
+		- Allow colored nick names or starbounddata.packets.chat by players
 		*- Tokens for information an colors instead of ^blue; or ^#0000CC; you could use {bl} for online {online}
-		- Illegal names and nick names are automatically changed when a player joins and sent to the server
-		- PVP messages are no longer global but local
+		- Illegal names and nick names are automatically changed when a player joins and sent to the starbounddata.packets.starbounddata.packets.server
+		- PVP messages are no longer starbounddata.packets.global but local
 		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character name colored or not, nick name, ip, uuid
 			- Example /w 2 hey = Starbound id, /w 2s hey statnubd up, /w underbalanced hey, /w 127.0.0.1 hey who is this?
 		
@@ -94,7 +94,7 @@ Base Features:
 			- Only one unique command can be mapped, so if both starnub and starbound both have 'ban' only one can be shortcut's
 		- Players can be command blocked
 					
-	- Whitelisted server option (uuid, ip or starnub id)
+	- Whitelisted starbounddata.packets.starbounddata.packets.server option (uuid, ip or starnub id)
 	
 	- Restrictions: 
 		- Offline banning by uuid, ip, character name, starnub id
@@ -113,13 +113,13 @@ Base Features:
 		
 	- Plugins
 		- Easy StarNub API for creating plugins
-		- Some plugins can be updated while server is running
+		- Some plugins can be updated while starbounddata.packets.starbounddata.packets.server is running
 		- If two versions of the same plugin are in the plugins director, only the newest well be loaded
 		- Plugins can use StarNubs configuration class to enable self updating, healing and cleaning configuration
 		- Built in event system that allows event creation and subscription
 	
-   - Future support	for multi lingual server tool messages and plugins support
-   - Future additional player, plugin and server stats
+   - Future support	for multi lingual starbounddata.packets.starbounddata.packets.server tool messages and plugins support
+   - Future additional player, plugin and starbounddata.packets.starbounddata.packets.server stats
    
 Optional Essentials Plugin Features:
 	- Server Monitor (Checks every 20 seconds)

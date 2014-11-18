@@ -12,7 +12,7 @@
     <artifactId>server</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>StarNub</name>
+    <name>server</name>
     <url>http://www.starnub.org</url>
     <description>Java Wrapper for Starbound.</description>
     <organization>
@@ -126,8 +126,8 @@
                                     <shadedPattern>org.yaml</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.codehome</pattern>
-                                    <shadedPattern>org.codehome</shadedPattern>
+                                    <pattern>org.starnub</pattern>
+                                    <shadedPattern>org.starnub.lib</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reflections</pattern>
@@ -157,10 +157,6 @@
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>org.apache.commons</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>org.projectlombok</pattern>
-                                    <shadedPattern>org.projectlombok</shadedPattern>
-                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -169,12 +165,7 @@
         </plugins>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.14.8</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
@@ -258,7 +249,6 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
         </dependency>
-
         <!--<DEVELOPER SETTING>-->
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -8,6 +8,15 @@ Change Log:
 
 //EPOLL
 
+
+        defaultNameColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.server starbounddata.packets.chat")).get("global_name_color"));
+        defaultChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.server starbounddata.packets.chat")).get("global_message_name_color"));
+        defaultServerNameColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.server starbounddata.packets.chat")).get("server_name_color"));
+        defaultServerChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.server starbounddata.packets.chat")).get("server_message_color"));
+        bracketColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("groups")).get("bracket_color"));
+
+
+
 // If modified then cmposite else direct
 
 So here are my plans – this will be my last update of StarNub for a while 
@@ -18,7 +27,7 @@ So here are my plans – this will be my last update of StarNub for a while
 After the above I am going to get to work to finishing StarNub and preparing it for 1.0, these are not in order.
     •	Networking
         -	I will be studying low level programming. My goal is to program the network from scratch over a library, which enables me to troubleshoot and have more control over the process and removing the library overhead. The Netty.IO library is great but not for Starbound. Unless I can configure it differently.
-        -	Server Query to keep the server up needs to be kept on its own
+        -	Server Query to keep the starbounddata.packets.starbounddata.packets.server up needs to be kept on its own
         -	Server Query’s from external websites need to be handled better
         - Connection clean up disconnects, epoll
 
@@ -39,7 +48,7 @@ After the above I am going to get to work to finishing StarNub and preparing it 
     •	StarNub Update Available Notification
 
     •	Player Location Tracking
-        -	StarNub to handle local chat as well
+        -	StarNub to handle local starbounddata.packets.chat as well
 
     •	Configuration Reloading, Variable Updating
 
@@ -88,7 +97,7 @@ Small Changes:
     •	Add shadow, clear and other support (GameColors.class)
 
     •	Commands (Small changes)
-        o	/server time
+        o	/starbounddata.packets.starbounddata.packets.server time
         o	/restart timer
         o	 /permissions
             	Create, delete, update, add, remove, info
