@@ -18,94 +18,99 @@
 
 package starbounddata.packets.chat;
 
-import starbounddata.chat.ChatSendChannel;
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
-import server.server.packets.StarboundBufferWriter;
+
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
+
+import static starbounddata.packets.StarboundBufferReader.readStringVLQ;
+import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
+import static starbounddata.packets.StarboundBufferWriter.writeByte;
+import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
- * Chat Sent starbounddata.packets.Packet Class.
- * <p>
- * NOTE: This packet can be edited freely. The starbounddata.packets.starbounddata.packets.server
- * will respond based on "/" or no "/"
- * <p>
- * DIRECTION: Client -> Server
- * <p>
- * Initial credit goes Mitch528 for helping originally. <br>
- * (https://github.com/Mitch528/SharpStar) <br>
- * <p>
- * Since the help the packet has been lay out has been heavily modified.
+ * Represents the ChatSentPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client
+ * <p/>
+ * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class ChatSendPacket extends Packet {
 
-    public enum ChatSendChannel {
-        UNIVERSE,
-        PLANET
-    }
-
-
     /**
      * <br>
-     * 0 - Entire Server (Universe)
+     * 0 - Universe
      * <br>
-     * 1 - World Chat (Object Sent: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
+     * 1 - Planet  (String: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
      * <br>
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private ChatSendChannel channel;
-
     /**
-     * message that is sent
+     * Message sent from the client
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String message;
 
-
     /**
-     * @param channel  String one of the following:
-     *                       <br>
-     *                       0 - Entire Server (Universe)
-     *                       <br>
-     *                       1 - World Chat (Object Sent: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
-     *                       <br>
+     * @param channel String one of the following:
+     *                <br>
+     *                0 - Entire Server (Universe)
+     *                <br>
+     *                1 - World Chat (Object Sent: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
+     *                <br>
      * @param message
      */
-    public ChatSendPacket(ChatSendChannel channel, String message) {
+    public ChatSendPacket(ChannelHandlerContext DESTINATION_CTX, ChatSendChannel channel, String message) {
+        super(Packets.CHATSENT.getPacketId(), null, DESTINATION_CTX);
         this.channel = channel;
         this.message = message;
     }
 
     /**
-     * @return byte representing the packetId
-     */
-    @Override
-    public byte getPacketId() {
-        return 11;
-    }
-
-    /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.message = StarboundBufferReader.readStringVLQ(in);
-        this.channel = ChatSendChannel.values()[StarboundBufferReader.readUnsignedByte(in)];
+        this.message = readStringVLQ(in);
+        this.channel = ChatSendChannel.values()[readUnsignedByte(in)];
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
-        StarboundBufferWriter.writeStringVLQ(out, this.message);
-        StarboundBufferWriter.writeByte(out, (byte) this.channel.ordinal());
+        writeStringVLQ(out, this.message);
+        writeByte(out, (byte) this.channel.ordinal());
+    }
+
+    public enum ChatSendChannel {
+        UNIVERSE,
+        PLANET
     }
 }

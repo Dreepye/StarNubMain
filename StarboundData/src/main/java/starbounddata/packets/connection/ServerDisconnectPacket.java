@@ -18,50 +18,66 @@
 
 package starbounddata.packets.connection;
 
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
 
-import static server.server.packets.StarboundBufferWriter.writeStringVLQ;
+import static starbounddata.packets.StarboundBufferReader.readStringVLQ;
+import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
+/**
+ * Represents the ServerDisconnectPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet can be edited freely. This packet will send the client a disconnect notification
+ * <p/>
+ * Packet Direction: Server -> Client
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 @NoArgsConstructor
 public class ServerDisconnectPacket extends Packet {
 
-    /**
-     * byte[] which is the payload of the packet
-     */
-    @Getter @Setter
-    private String payload;
+    @Getter
+    @Setter
+    private String reason;
 
-
-    public ServerDisconnectPacket(String payload) {
-        this.payload = payload;
+    public ServerDisconnectPacket(ChannelHandlerContext DESTINATION_CTX, String reason) {
+        super(Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
+        this.reason = reason;
     }
 
     /**
-     * @return byte representing the packet id for this class
-     */
-    @Override
-    public byte getPacketId() {
-        return 2;
-    }
-
-    /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.payload = StarboundBufferReader.readStringVLQ(in);
+        this.reason = readStringVLQ(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
-        writeStringVLQ(out, this.payload);
+        writeStringVLQ(out, this.reason);
     }
 }

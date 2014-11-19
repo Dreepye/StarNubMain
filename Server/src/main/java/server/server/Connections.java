@@ -67,7 +67,7 @@ import java.util.concurrent.TimeUnit;
  * Represents StarNub's Connections enum singleton.
  * <p>
  * The data in this represents a pending player starbounddata.packets.connection, connected player, whitelist and
- * restricted UUID's and IP's.
+ * restricted uuid's and IP's.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
@@ -168,7 +168,7 @@ public enum Connections {
      * Uses: This method will determine what type of identifier the calling means to use. This method will
      * then cast it to that object and return it as an object to be used else where in reflection methods. If
      * the String cannot be cast to a specific object then a string will be return which indicates what
-     * cast failed and or a critical failure overall. This method will only return a UUID, InetAddress, StarNubId or
+     * cast failed and or a critical failure overall. This method will only return a uuid, InetAddress, StarNubId or
      * a String which would represent a player name or something else.
      * <p>
      */
@@ -206,7 +206,7 @@ public enum Connections {
      */
     private void identifierCastError(String castedIdentifierString, String failureList, String brokenIdentifier){
         if (castedIdentifierString.equalsIgnoreCase("uuid")) {
-            StarNub.getLogger().cErrPrint("StarNub", "Could not add a UUID \"" + brokenIdentifier + "\" to StarNub's internal "+failureList+"." +
+            StarNub.getLogger().cErrPrint("StarNub", "Could not add a uuid \"" + brokenIdentifier + "\" to StarNub's internal "+failureList+"." +
                     " Please check your file. If the issue persist, please put a issue in at " +
                     "www.StarNub.org under StarNub.");
         } else if (castedIdentifierString.equalsIgnoreCase("ip")) {
@@ -214,7 +214,7 @@ public enum Connections {
                     " Please check your file. If the issue persist, please put a issue in at " +
                     "www.StarNub.org under StarNub.");
         } else if (castedIdentifierString.equalsIgnoreCase("starnubip")) {
-            StarNub.getLogger().cErrPrint("StarNub", "\"" + brokenIdentifier + "\" does not represent a StarNub ID cannot at its UUID or IPs to the StarNub's internal "+failureList+"." +
+            StarNub.getLogger().cErrPrint("StarNub", "\"" + brokenIdentifier + "\" does not represent a StarNub ID cannot at its uuid or IPs to the StarNub's internal "+failureList+"." +
                     " Please check your file. If the issue persist, please put a issue in at www.StarNub.org under StarNub.");
         }
     }
@@ -387,7 +387,7 @@ public enum Connections {
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method will check to see if an identifier is on the whitelist.
-     * The identifiers that can be checked are UUID, IP. For StarNub IDs it will
+     * The identifiers that can be checked are uuid, IP. For StarNub IDs it will
      * check to see if all the UUIDs or IPs are listed, and if not will return
      * false.
      * <p>
@@ -489,7 +489,7 @@ public enum Connections {
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This opsListLoad method will try and load "StarNub/ops.txt" and parse each line into
-     * an UUID.
+     * an uuid.
      * <p>
      */
     public void opsListLoad() {
@@ -548,7 +548,7 @@ public enum Connections {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method will check to see if an UUID is on the ops list.
+     * Uses: This method will check to see if an uuid is on the ops list.
      * <p>
      */
     public boolean onOpsList(UUID uuid) {
@@ -704,9 +704,9 @@ public enum Connections {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method is used for muting a UUID or InetAddress
+     * Uses: This method is used for muting a uuid or InetAddress
      * <p>
-     * @param identifier Object representing a UUID or IP
+     * @param identifier Object representing a uuid or IP
      * @param expirationDate DateTime the restriction will expire, NULL for never
      */
     public void playerRestrictMute(Object identifier, String imposerName, Account imposerAccount, String reason,  DateTime expirationDate){
@@ -719,9 +719,9 @@ public enum Connections {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method is used for command blocking a UUID or InetAddress
+     * Uses: This method is used for command blocking a uuid or InetAddress
      * <p>
-     * @param identifier Object representing a UUID or IP
+     * @param identifier Object representing a uuid or IP
      * @param imposerName String represneting who imposed the restriction
      * @param imposerAccount Account representing who imposed the restriction
      * @param expirationDate DateTime the restriction will expire, NULL for never
@@ -736,9 +736,9 @@ public enum Connections {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method is used for banning a UUID or InetAddress
+     * Uses: This method is used for banning a uuid or InetAddress
      * <p>
-     * @param identifier Object representing a UUID or IP
+     * @param identifier Object representing a uuid or IP
      * @param imposerName String represneting who imposed the restriction
      * @param imposerAccount Account representing who imposed the restriction
      * @param expirationDate DateTime the restriction will expire, NULL for never
@@ -753,9 +753,9 @@ public enum Connections {
      * <p>
      * Recommended: For internal use with StarNub.
      * <p>
-     * Uses: This method is used for adding a UUID or InetAddress to the restriction list
+     * Uses: This method is used for adding a uuid or InetAddress to the restriction list
      * <p>
-     * @param identifier Object representing a UUID or IP
+     * @param identifier Object representing a uuid or IP
      * @param imposerName String represneting who imposed the restriction
      * @param imposerAccount Account representing who imposed the restriction
      * @param expirationDate DateTime the restriction will expire, NULL for never
@@ -1364,7 +1364,7 @@ public enum Connections {
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method is used to pull a player record using any type of
-     * parameter. (UUID, IP, NAME, clientCTX, Starbound ID, StarNub ID)
+     * parameter. (uuid, IP, NAME, clientCTX, Starbound ID, StarNub ID)
      * <p>
      * @param playerIdentifier Object that represent a player and it can take many forms
      * @return Player which represents the player that was retrieved by the provided playerIdentifier
@@ -1434,10 +1434,10 @@ public enum Connections {
      * <p>
      * Recommended: For internal use with StarNub.
      * <p>
-     * Uses: This method is used to get a Player by a UUID from getOnlinePlayerByAnyIdentifier() method.
+     * Uses: This method is used to get a Player by a uuid from getOnlinePlayerByAnyIdentifier() method.
      * <p>
-     * @param uuid UUID which represents the playerIdentifier
-     * @return Player which represents the player that was retrieved by the provided UUID
+     * @param uuid uuid which represents the playerIdentifier
+     * @return Player which represents the player that was retrieved by the provided uuid
      */
     private Player playerByUUID(UUID uuid) {
         for (Player playerSession : connectedPlayers.values()){

@@ -19,38 +19,93 @@
 package starbounddata.packets.tile;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import starbounddata.packets.Packet;
-import starbounddata.packets.StarboundBufferReader;
+import starbounddata.packets.Packets;
+import starbounddata.tiles.TileDamage;
 import starbounddata.vectors.Vec2F;
-import starbounddata.vectors.Vec2I;
+import starbounddata.vectors.Vec2IArray;
 
-import java.util.List;
-
-import static starbounddata.packets.StarboundBufferWriter.*;
+import static starbounddata.packets.StarboundBufferReader.readFloat;
+import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
+import static starbounddata.packets.StarboundBufferWriter.writeByte;
+import static starbounddata.packets.StarboundBufferWriter.writeFloat;
 
 /**
- * Heart Beat starbounddata.packets.Packet class. The protocol version
- * changes with each major update.
- * <p>
- * NOTE: This packet eventually will have a Starbound configuration
- * option that will be adjustable as per the Server Owner. Currently
- * the starbounddata.packets.starbounddata.packets.server sends 1 packet per second to the client incremented (1,2,3,4...)
- * which is the Starbound internal cycle rate. The Client response every 3
- * Heart Beats with a increment of the receive heartbeats(3,6,9,19...)
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the DamageTileGroup and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client.
+ * <p/>
+ * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class DamageTileGroupPacket extends Packet {
+
+    @Getter
+    @Setter
+    TileDamage tileDamage;
+    @Getter
+    @Setter
+    private Vec2IArray tilePositions;
+    @Getter
+    @Setter
+    private TileLayer layer;
+    @Getter
+    @Setter
+    private Vec2F sourcePosition;
+
+    public DamageTileGroupPacket(ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
+        super(Packets.DAMAGETILEGROUP.getPacketId(), null, DESTINATION_CTX);
+        this.tilePositions = tilePositions;
+        this.layer = layer;
+        this.sourcePosition = sourcePosition;
+        this.tileDamage = tileDamage;
+    }
+
+    /**
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
+     */
+    @Override
+    public void read(ByteBuf in) {
+        this.tilePositions = new Vec2IArray(in);
+        this.layer = TileLayer.values()[readUnsignedByte(in)];
+        this.sourcePosition = new Vec2F(in);
+        this.tileDamage = new TileDamage(TileDamage.TileDamageType.values()[readUnsignedByte(in)], readFloat(in));
+        // Harvest Level
+    }
+
+    /**
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
+     */
+    @Override
+    public void write(ByteBuf out) {
+        this.tilePositions.writeVec2IArray(out);
+        writeByte(out, (byte) this.getLayer().ordinal());
+        this.sourcePosition.writeVec2F(out);
+        writeByte(out, (byte) tileDamage.getTileDamageType().ordinal());
+        writeFloat(out, tileDamage.getAmount());
+//        writeInt(out, tileDamage.getHarvestLevel());
+    }
 
     public enum TileLayer {
         FOREGROUND,
@@ -66,53 +121,5 @@ public class DamageTileGroupPacket extends Packet {
         FIRE,
         TILLING,
         CRUSHING,
-    }
-
-    /**
-     * The Server sends steps incremented by one, the client responds every 3, increments of 3.
-     */
-    @Getter @Setter
-    private List<Vec2I> tilePositions;
-    @Getter @Setter
-    private TileLayer layer;
-    @Getter @Setter
-    private Vec2F sourcePosition;
-    @Getter @Setter
-    TileDamage tileDamage;
-
-    @Override
-    public byte getPacketId() {
-        return 27;
-    }
-    public DamageTileGroupPacket(List<Vec2I> tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
-        this.tilePositions = tilePositions;
-        this.layer = layer;
-        this.sourcePosition = sourcePosition;
-        this.tileDamage = tileDamage;
-    }
-
-    /**
-     * @param in ByteBuf of the readable bytes of a received payload
-     */
-    @Override
-    public void read(ByteBuf in) {
-        this.tilePositions = StarboundBufferReader.readVector2IntegerArray(in);
-        this.layer = TileLayer.values()[StarboundBufferReader.readUnsignedByte(in)];
-        this.sourcePosition = StarboundBufferReader.readVector2Float(in);
-        this.tileDamage = new TileDamage(TileDamageType.values()[StarboundBufferReader.readUnsignedByte(in)], StarboundBufferReader.readFloatInt32(in));
-//        , readUnsignedInt(in)
-    }
-
-    /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
-     */
-    @Override
-    public void write(ByteBuf out) {
-        writeVector2IntegerArray(out, this.tilePositions);
-        writeByte(out, (byte) this.getLayer().ordinal());
-        writeVector2Float(out, this.sourcePosition);
-        writeByte(out, (byte) tileDamage.getTileDamageType().ordinal());
-        writeFloatInt32(out, tileDamage.getAmount());
-//        writeInt(out, tileDamage.getHarvestLevel());
     }
 }

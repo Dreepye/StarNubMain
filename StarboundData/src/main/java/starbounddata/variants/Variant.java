@@ -30,7 +30,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
  * Represents a Variant  which can be a byte, string, boolean, double, variant array, variant map.
- * <p>
+ * <p/>
  * This is a complex data type.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -41,6 +41,10 @@ public class Variant {
 
     @Getter
     private Object value;
+
+    public Variant(ByteBuf in) throws Exception {
+        readFromByteBuffer(in);
+    }
 
     public Variant(Object value) throws Exception {
         if (!(value == null ||
@@ -75,7 +79,7 @@ public class Variant {
                 variant.value = null;
                 break;
             case 2:
-                variant.value = StarboundBufferReader.readDoubleInt64(in);
+                variant.value = StarboundBufferReader.readDouble(in);
                 break;
             case 3:
                 variant.value = in.readBoolean();
@@ -100,7 +104,7 @@ public class Variant {
                 variant.value = dict;
                 break;
             default:
-                System.err.println("Unknown Variant Type: "+type);
+                System.err.println("Unknown Variant Type: " + type);
                 throw new Exception("Unknown Variant type");
         }
         return variant;

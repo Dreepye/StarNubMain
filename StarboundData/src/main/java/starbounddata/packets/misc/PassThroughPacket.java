@@ -18,60 +18,61 @@
 
 package starbounddata.packets.misc;
 
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import starbounddata.packets.Packet;
 
-import static server.server.packets.StarboundBufferWriter.writeByteArray;
+import static starbounddata.packets.StarboundBufferReader.readAllBytes;
+import static starbounddata.packets.StarboundBufferWriter.writeByteArray;
 
 /**
- * Pass through packet class. This is just a blank
- * container to hold unknown starbounddata.packets.
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the PassThroughPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet SHOULD NOT be edited freely. This packet is used for passing data through StarNub
+ * <p/>
+ * Notes 2: This packet has no constructor and should not be constructed beyond StarNub Internals
+ * <p/>
+ * Packet Direction: Server -> Client / Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @version 1.0, 24 May 2014
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class PassThroughPacket extends Packet {
 
-    /**
-     * starbounddata.packets.Packet ID that links the packet to a type
-     */
-    @Getter @Setter
-    private byte packetId;
-
-    /**
-     * byte[] which is the payload of the packet
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private byte[] payload;
 
     /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.payload = StarboundBufferReader.readAllBytes(in);
+        this.payload = readAllBytes(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
         writeByteArray(out, this.payload);
     }
-
-    public void getByteArray() {
-
-    }
-
 }

@@ -142,7 +142,7 @@ public enum MessageSender {
      *
      * @param sender           Object which represents the message sender can be a string, class, player, management client
      * @param playerIdentifier Object which represents the player identifier can be a Player name, Player class,
-     *                         Player IP, Player UUID, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
+     *                         Player IP, Player uuid, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
      * @param channel          ChatChannel the type of reply (universe, planet, whisper, command)
      * @param message          String the message to be sent to the player
      */
@@ -171,7 +171,7 @@ public enum MessageSender {
      *
      * @param sender           Object which represents the message sender can be a string, class, player, management client
      * @param playerIdentifier Object which represents the player identifier can be a Player name, Player class,
-     *                         Player IP, Player UUID, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
+     *                         Player IP, Player uuid, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
      * @param message          String the message to be sent to the player
      */
     public void playerMessage(Object sender, Object playerIdentifier, String message) {
@@ -189,7 +189,7 @@ public enum MessageSender {
      *
      * @param sender           Object which represents the message sender can be a string, class, player, management client
      * @param playerIdentifier Object which represents the player identifier can be a Player name, Player class,
-     *                         Player IP, Player UUID, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
+     *                         Player IP, Player uuid, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
      * @param channel          ChatChannel the type of reply (universe, planet, whisper, command)
      * @param message          String the message to be sent to the player
      */
@@ -212,7 +212,7 @@ public enum MessageSender {
      * <p>
      * @param sender           Object which represents the message sender can be a string, class, player, management client
      * @param playerReceiverIdentifier Object which represents the player identifier can be a Player name, Player class,
-     *                         Player IP, Player UUID, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
+     *                         Player IP, Player uuid, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
      * @param message          String the message to be sent to the player
      * @return boolean         If the whisper was successful
      */
@@ -374,7 +374,7 @@ public enum MessageSender {
      *
      * @param sender           Object which represents the message sender can be a string, class, player, management client
      * @param playerIdentifier Object which represents the player identifier can be a Player name, Player class,
-     *                         Player IP, Player UUID, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
+     *                         Player IP, Player uuid, Client ID or ChannelHandlerContext (CTX) (Server or Client Side)
      * @param channel          String for starbound starbounddata.packets.chat channel, acceptable is (planet, universe)
      * @param message          String the message to be sent to the player
      */

@@ -41,7 +41,7 @@ public class Characters extends TableWrapper<Character, Integer> {
             queryBuilder.where()
                     .eq("NAME", nameString)
                     .and()
-                    .eq("UUID", UUID);
+                    .eq("uuid", UUID);
             PreparedQuery<Character> preparedQuery = queryBuilder.prepare();
             return getTableDao().queryForFirst(preparedQuery);
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class Characters extends TableWrapper<Character, Integer> {
     public ArrayList<UUID> getCharactersUUIDListFromStarnubId(int starnubId) {
         try {
             /* Get UUIDs with that match the Starnub ID */
-            GenericRawResults<Object[]> rawResults = getTableDao().queryRaw("select UUID from CHARACTERS where STARNUB_ID = "+ starnubId, new DataType[] { DataType.UUID });
+            GenericRawResults<Object[]> rawResults = getTableDao().queryRaw("select uuid from CHARACTERS where STARNUB_ID = "+ starnubId, new DataType[] { DataType.UUID });
             /* Get results of the query */
             List<Object[]> results = rawResults.getResults();
             ArrayList<UUID> uuidList = new ArrayList<UUID>();

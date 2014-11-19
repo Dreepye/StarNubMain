@@ -18,64 +18,70 @@
 
 package starbounddata.packets.server;
 
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
 
-import static server.server.packets.StarboundBufferWriter.writeInt;
+import static starbounddata.packets.StarboundBufferReader.readInt;
+import static starbounddata.packets.StarboundBufferWriter.writeInt;
 
 /**
- * Protocol Version starbounddata.packets.Packet class. The protocol version
- * changes with each major update.
- * <p>
- * NOTE: This packet tells the client what starbounddata.packets.starbounddata.packets.server version is being run.
- * If you choose to modify this packet, the player may receive a incorrect
- * client error.
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the ProtocolVersionPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet SHOULD NOT be edited freely. If the wrong version is sent to the client they will not
+ * be able to connect to the server and received a wrong client version message. This is the first packet sent after a client completes a 3 way TCP handshake
+ * <p/>
+ * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class ProtocolVersionPacket extends Packet {
 
     /**
-     * The starbounddata.packets.starbounddata.packets.server's supported protocol version. Changes with each release
+     * Some int set by the server based on the servers Starbound version
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int protocolVersion;
+
     /**
      * @param protocolVersion int representing the protocol version
      */
-    public ProtocolVersionPacket(int protocolVersion) {
+    public ProtocolVersionPacket(ChannelHandlerContext DESTINATION_CTX, int protocolVersion) {
+        super(Packets.PROTOCOLVERSION.getPacketId(), null, DESTINATION_CTX);
         this.protocolVersion = protocolVersion;
     }
 
     /**
-     * @return byte representing the packet id for this class
-     */
-    @Override
-    public byte getPacketId() {
-        return 0;
-    }
-
-    /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.protocolVersion = StarboundBufferReader.readInt(in);
+        this.protocolVersion = readInt(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {

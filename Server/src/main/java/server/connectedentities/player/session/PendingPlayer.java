@@ -38,7 +38,7 @@ import java.net.InetAddress;
 public class PendingPlayer extends Sender {
 
     /**
-     * Represents the characters UUID for this session attempt
+     * Represents the characters uuid for this session attempt
      */
     @Getter
     private final Player PLAYER_SESSION;

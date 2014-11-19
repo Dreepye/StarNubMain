@@ -18,156 +18,104 @@
 
 package starbounddata.packets.connection;
 
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
-import starbounddata.variants.Variant;
+
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import starbounddata.packets.Packet;
+import starbounddata.variants.VLQ;
+import starbounddata.variants.Variant;
+
+import static starbounddata.packets.StarboundBufferReader.*;
+import static starbounddata.packets.StarboundBufferWriter.*;
 
 /**
- * Connection Response starbounddata.packets.Packet class. This packet tells the client
- * whether their starbounddata.packets.connection attempt is successful or if they have
- * been rejected. It is the final packet sent in the handshake process.
- * <p>
- * NOTE:
- * <P>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be
+ * interpreted by the client. This packet is sent to the client to notify them of connection success with all
+ * of the loading data
+ * <p/>
+ * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @version 1.0, 24 May 2014
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class ConnectResponsePacket extends Packet {
 
-    /**
-     * Whether or not the starbounddata.packets.connection was successful
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean success;
-
-    /**
-     * The identifier for the connecting client.
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private long clientId;
-
-    /**
-     * A string signifying why the user was rejected.
-     * This will be present even if the starbounddata.packets.connection was
-     * successful, but will simply have a length prefix of 0.
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String rejectionReason;
-
-    /**
-     * Determines whether the following celestial information exists.
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean celestialInformation;
-
-    /**
-     * The maximum number of orbital levels.
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int orbitalLevels;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int ChunkSize;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int XYCoordinateMin;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int XYCoordinateMax;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int ZCoordinateMin;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int ZCoordinateMax;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private long NumberofSectors;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String SectorId;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String SectorName;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private long SectorSeed;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String SectorPrefix;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private Variant Parameters;
-
-    /**
-     *
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private Variant SectorConfig;
-
-    @Getter @Setter
+    @Getter
+    @Setter
     private byte[] tempByteArray;
 
     /**
-     * @return byte representing the packet id for this class
-     */
-    @Override
-    public byte getPacketId() {
-        return 1;
-    }
-
-    /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.success = StarboundBufferReader.readBoolean(in);
-        this.clientId = StarboundBufferReader.readVLQ(in).getValue();
-        this.rejectionReason = StarboundBufferReader.readStringVLQ(in);
-        this.tempByteArray = StarboundBufferReader.readAllBytes(in);
+        this.success = readBoolean(in);
+        this.clientId = VLQ.readUnsignedFromBufferNoObject(in);
+        this.rejectionReason = readStringVLQ(in);
+        this.tempByteArray = readAllBytes(in);
 //        celestialInformation = stream.readBoolean();
 //        if (celestialInformation) {
 //            orbitalLevels = stream.readUnsignedInt();
@@ -186,12 +134,19 @@ public class ConnectResponsePacket extends Packet {
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
         writeBoolean(out, this.success);
-        writeVLQObject(out, this.clientId);
+        VLQ.writeSignedVLQNoObject(out, this.clientId);
         writeStringVLQ(out, this.rejectionReason);
         writeByteArray(out, this.tempByteArray);
     }

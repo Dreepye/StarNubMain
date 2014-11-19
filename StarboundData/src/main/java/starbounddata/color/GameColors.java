@@ -25,7 +25,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Represents the default colors set by the Server Owners configuration, contained with are the {@link starbounddata.color.GameColors.Colors} enumeration and methods as well as the {@link starbounddata.color.GameColors.Colors.Color} class used to create colors representations
+ * Represents the default colors set by the Server Owners configuration, contained with are
+ * the {@link starbounddata.color.GameColors.Colors} enumeration and methods as well as
+ * the {@link starbounddata.color.GameColors.Colors.Color} class used to create colors representations
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -36,6 +38,16 @@ public final class GameColors {
      * Singleton pattern for instantiation of only one instance of this class
      */
     private static final GameColors instance = new GameColors();
+    @Getter
+    private volatile String defaultNameColor;
+    @Getter
+    private volatile String defaultChatColor;
+    @Getter
+    private volatile String defaultServerNameColor;
+    @Getter
+    private volatile String defaultServerChatColor;
+    @Getter
+    private volatile String bracketColor;
 
     /**
      * Must be private to ensure integrity of the singleton pattern
@@ -49,17 +61,6 @@ public final class GameColors {
     public static GameColors getInstance() {
         return instance;
     }
-
-    @Getter
-    private volatile String defaultNameColor;
-    @Getter
-    private volatile String defaultChatColor;
-    @Getter
-    private volatile String defaultServerNameColor;
-    @Getter
-    private volatile String defaultServerChatColor;
-    @Getter
-    private volatile String bracketColor;
 
     /**
      * This represents a higher level method for StarNubs API.
@@ -80,7 +81,8 @@ public final class GameColors {
     ///////////////////     REPRESENTS THE COLORS ENUM     ///////////////////
 
     /**
-     * Represents Starbound colors represented in Verb Name, Hex, and StarNub shortcut annotation, this enumeration also contains the {@link starbounddata.color.GameColors.Colors.Color} class
+     * Represents Starbound colors represented in Verb Name, Hex, and StarNub shortcut annotation, this enumeration also contains
+     * the {@link starbounddata.color.GameColors.Colors.Color} class
      * <p/>
      *
      * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -436,9 +438,9 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
+         * This represents a lower level method for StarNubs API.
          * <p/>
-         * Recommended: For Plugin Developers & Anyone else.
+         * Recommended: For internal StarNub usage.
          * <p/>
          * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
          * <p/>

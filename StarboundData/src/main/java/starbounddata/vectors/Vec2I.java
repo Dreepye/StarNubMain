@@ -18,6 +18,7 @@
 
 package starbounddata.vectors;
 
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,23 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Vec2I {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private int x;
-    @Getter @Setter
+    @Getter
+    @Setter
     private int y;
+
+    public Vec2I(ByteBuf in) {
+        this.x = in.readInt();
+        this.y = in.readInt();
+    }
+
+    /**
+     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2I to
+     */
+    public void writeVec2I(ByteBuf out) {
+        out.writeInt(this.x);
+        out.writeInt(this.y);
+    }
 }

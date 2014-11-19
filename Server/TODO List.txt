@@ -117,7 +117,7 @@ Small Changes:
 
     •	Plugin Stuff
         o	NoCheats
-            	Detect someone joining on a banned IP or UUID, (If new UUID or IP ban it as well)
+            	Detect someone joining on a banned IP or uuid, (If new uuid or IP ban it as well)
 
 After 1.0 before 2.0
     •	Projectile Anti Greif

@@ -33,7 +33,7 @@ Base Features:
    - SQLite or MySQL with support for other databases (Player data storage)
 		- Data tracked:
 			- Player Sessions (Characters, start and end time, attached account)
-			- Characters (Cleaned name & UUID)
+			- Characters (Cleaned name & uuid)
 			- Characters and the IPs seen for each one
 			- Accounts, account settings, starbounddata.packets.chat rooms, achievements are just some
 			- Groups, group ladders and group permissions

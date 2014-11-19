@@ -18,60 +18,64 @@
 
 package starbounddata.packets.connection;
 
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import static server.server.packets.StarboundBufferWriter.writeVLQObject;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
+import starbounddata.variants.VLQ;
 
 /**
- * Heart Beat starbounddata.packets.Packet class. The protocol version
- * changes with each major update.
- * <p>
- * NOTE: This packet eventually will have a Starbound configuration
- * option that will be adjustable as per the Server Owner. Currently
- * the starbounddata.packets.starbounddata.packets.server sends 1 packet per second to the client incremented (1,2,3,4...)
- * which is the Starbound internal cycle rate. The Client response every 3
- * Heart Beats with a increment of the receive heartbeats(3,6,9,19...)
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the HeartbeatPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet SHOULD NOT be edited freely. This packet is generated ever step by the
+ * Starbound Server and sent to the Client, The client responds after 3 steps
+ * <p/>
+ * Packet Direction: Server -> Client / Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class HeartbeatPacket extends Packet {
 
-    /**
-     * The Server sends steps incremented by one, the client responds every 3, increments of 3.
-     */
-    @Getter @Setter
+    @Getter
+    @Setter
     private long currentStep;
 
-    @Override
-    public byte getPacketId() {
-        return 48;
+    public HeartbeatPacket(ChannelHandlerContext DESTINATION_CTX) {
+        super(Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
     }
 
     /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.currentStep = StarboundBufferReader.readVLQ(in).getValue();
+        this.currentStep = VLQ.readUnsignedFromBufferNoObject(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
-        writeVLQObject(out, this.currentStep);
+        VLQ.writeSignedVLQNoObject(out, this.currentStep);
     }
 }

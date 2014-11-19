@@ -18,60 +18,66 @@
 
 package starbounddata.packets.server;
 
-import starbounddata.packets.Packet;
-import starbounddata.packets.StarboundBufferReader;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
+import starbounddata.variants.VLQ;
 
 /**
- * Universe time Update starbounddata.packets.Packet class.
- * <p>
- * NOTE: This packet just increments up at what appears to be
- * the same rate of the starbounddata.packets.starbounddata.packets.server heartbeat (cycle) but has a
- * what appears to be an accumulative time from the starbounddata.packets.starbounddata.packets.server up time.
- * This packet has not been seen often except in latency or disconnects.
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the UniverseTimeUpdate and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet SHOULD NOT be edited freely.
+ * <p/>
+ * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class UniverseTimeUpdatePacket extends Packet {
 
     /**
-     * A time that increments up when sent by the starbounddata.packets.starbounddata.packets.server
+     * A time that increments up when sent by the server
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private long time;
 
-    /**
-     *
-     * @return byte representing the packetId
-     */
-    @Override
-    public byte getPacketId() {
-        return 5;
+    public UniverseTimeUpdatePacket(ChannelHandlerContext DESTINATION_CTX) {
+        super(Packets.UNIVERSETIMEUPDATE.getPacketId(), null, DESTINATION_CTX);
     }
 
     /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.time = StarboundBufferReader.readSignedVLQ(in).getValue();
+        this.time = VLQ.readSignedFromBufferNoObject(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
-        writeVLQObject(out, this.time);
+        VLQ.writeVLQNoObject(out, this.time);
     }
 }

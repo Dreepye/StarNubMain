@@ -18,63 +18,67 @@
 
 package starbounddata.packets.connection;
 
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
-import server.server.packets.StarboundBufferWriter;
+
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
+
+import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
+import static starbounddata.packets.StarboundBufferWriter.writeByte;
 
 /**
- * starbounddata.packets.Packet Class.
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the ClientDisconnectRequestPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet can be edited freely. This packet will send the server a disconnect request
+ * <p/>
+ * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @version 1.0, 24 May 2014
+ * @since 1.0 Beta
  */
+@NoArgsConstructor
 public class ClientDisconnectRequestPacket extends Packet {
 
+    @Getter
+    @Setter
     private byte emptyByte;
 
-    public ClientDisconnectRequestPacket() {
+    public ClientDisconnectRequestPacket(ChannelHandlerContext DESTINATION_CTX) {
+        super(Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);
         emptyByte = 1;
     }
 
-    @Override
-    public byte getPacketId() {
-        return 8;
-    }
-
-    //TODO Reverse Engineer
     /**
-     * @return the emptyByte
-     */
-    public byte getEmptyByte() {
-        return emptyByte;
-    }
-
-    /**
-     * @param emptyByte the emptyByte to set
-     */
-    public void setEmptyByte(byte emptyByte) {
-        this.emptyByte = emptyByte;
-    }
-
-    /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.emptyByte = StarboundBufferReader.readUnsignedByte(in);
+        this.emptyByte = readUnsignedByte(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
-        StarboundBufferWriter.writeByte(out, this.emptyByte);
+        writeByte(out, this.emptyByte);
     }
 }

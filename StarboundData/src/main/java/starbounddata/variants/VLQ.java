@@ -26,11 +26,11 @@ import lombok.Setter;
 
 /**
  * Represents a Variant Length Quantity(VLQ).
- * <p>
+ * <p/>
  * This is a complex data type. More information can be found here.
- * @see <a href="http://en.wikipedia.org/wiki/Variable-length_quantity">VLQ's in Action</a>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @see <a href="http://en.wikipedia.org/wiki/Variable-length_quantity">VLQ's in Action</a>
  * @since 1.0 Beta
  */
 @AllArgsConstructor
@@ -40,13 +40,15 @@ public class VLQ {
     /**
      * This is the length of the VLQ field
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private int length;
 
     /**
      * This is the actual value of the VLQ which represents how many bytes follow the VLQ
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private long value;
 
     ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
@@ -62,7 +64,7 @@ public class VLQ {
      * <p/>
      *
      * @param in ByteBuf in which is to be read
-     * @return VLQ which represent how many payload bytes exist after the {@link starbounddata.variants.VLQ}
+     * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.variants.VLQ}
      */
     public static VLQ signedFromBuffer(ByteBuf in) {
         VLQ value = unsignedFromBuffer(in);
@@ -86,7 +88,7 @@ public class VLQ {
      * <p/>
      *
      * @param in ByteBuf in which is to be read
-     * @return VLQ which represent how many payload bytes exist after the {@link starbounddata.variants.VLQ}
+     * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.variants.VLQ}
      * @throws IndexOutOfBoundsException if the {@link starbounddata.variants.VLQ} ran out of bytes while reading
      */
     public static VLQ unsignedFromBuffer(ByteBuf in) throws IndexOutOfBoundsException {
@@ -118,7 +120,7 @@ public class VLQ {
     public static byte[] createSignedVLQ(long value) {
         long result;
         if (value < 0) {
-            result = ((-(value+1)) << 1) | 1;
+            result = ((-(value + 1)) << 1) | 1;
         } else {
             result = value << 1;
         }
@@ -138,18 +140,17 @@ public class VLQ {
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual VLQ field
      */
-    public static byte[] createVLQ (long value) {
+    public static byte[] createVLQ(long value) {
         int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
         int numBytes = (numRelevantBits + 6) / 7;
         if (numBytes == 0)
             numBytes = 1;
         byte[] output = new byte[numBytes];
-        for (int i = numBytes - 1; i >= 0; i--)
-        {
-            int curByte = (int)(value & 0x7F);
+        for (int i = numBytes - 1; i >= 0; i--) {
+            int curByte = (int) (value & 0x7F);
             if (i != (numBytes - 1))
                 curByte |= 0x80;
-            output[i] = (byte)curByte;
+            output[i] = (byte) curByte;
             value >>>= 7;
         }
         return output;
@@ -167,8 +168,8 @@ public class VLQ {
      * Notes: This will not create a VLQ object and should be used
      * <p/>
      *
-     * @param in ByteBuf representing the bytes to be read for a payload length from a signed vlq
-     * @return int representing the payload length
+     * @param in ByteBuf representing the bytes to be read for a reason length from a signed vlq
+     * @return int representing the reason length
      */
     public static int readSignedFromBufferNoObject(ByteBuf in) {
         int payloadLength = readUnsignedFromBufferNoObject(in);
@@ -190,8 +191,8 @@ public class VLQ {
      * Notes: This will not create a VLQ object and should be used
      * <p/>
      *
-     * @param in ByteBuf representing the bytes to be read for a payload length from a vlq
-     * @return int representing the payload length
+     * @param in ByteBuf representing the bytes to be read for a reason length from a vlq
+     * @return int representing the reason length
      */
     public static int readUnsignedFromBufferNoObject(ByteBuf in) {
         int vlqLength = 0;
@@ -218,12 +219,12 @@ public class VLQ {
      * Notes: This will not create a VLQ object and should be used
      * <p/>
      *
-     * @param out ByteBuf in which is to be read
+     * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
      */
     public static void writeSignedVLQNoObject(ByteBuf out, long value) {
         if (value < 0) {
-            value = ((-(value+1)) << 1) | 1;
+            value = ((-(value + 1)) << 1) | 1;
         } else {
             value = value << 1;
         }
@@ -240,18 +241,18 @@ public class VLQ {
      * Notes: This will not create a VLQ object and should be used
      * <p/>
      *
-     * @param out ByteBuf in which is to be read
+     * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
      */
-    public static void writeVLQNoObject(ByteBuf out, long value){
+    public static void writeVLQNoObject(ByteBuf out, long value) {
         int numBytes = ((64 - Long.numberOfLeadingZeros(value)) + 6) / 7;
-        if (numBytes == 0){
+        if (numBytes == 0) {
             numBytes = 1;
         }
         out.writerIndex(numBytes + 1); /* Sets the write index at the number of bytes + 1 byte for packet id */
-        for (int i = numBytes - 1; i >= 0; i--){
-            int curByte = (int)(value & 0x7F);
-            if (i != (numBytes - 1)){
+        for (int i = numBytes - 1; i >= 0; i--) {
+            int curByte = (int) (value & 0x7F);
+            if (i != (numBytes - 1)) {
                 curByte |= 0x80;
             }
             out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */

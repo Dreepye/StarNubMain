@@ -18,111 +18,122 @@
 
 package starbounddata.packets.connection;
 
-import starbounddata.packets.server.StarNub;
-import server.server.packets.Packet;
-import starbounddata.variants.Variant;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
+import starbounddata.variants.Variant;
 
 import java.util.UUID;
 
+import static starbounddata.packets.StarboundBufferReader.*;
+import static starbounddata.packets.StarboundBufferWriter.*;
+
 /**
- * starbounddata.packets.Packet Class.
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
+ * <p/>
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client.
+ * This packet is sent when a client is initially requesting a connection to the server after it received
+ * the {@link starbounddata.packets.server.ProtocolVersionPacket}
+ * <p/>
+ * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @version 1.0, 24 May 2014
+ * @since 1.0 Beta
  */
 @NoArgsConstructor
 public class ClientConnectPacket extends Packet {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String assetDigest;
     @Deprecated
-    @Getter @Setter
+    @Getter
+    @Setter
     private Variant Claim;
-    @Getter @Setter
-    private java.util.UUID UUID;
-    @Getter @Setter
+    @Getter
+    @Setter
+    private java.util.UUID uuid;
+    @Getter
+    @Setter
     private String playerName;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String species;
-    @Getter @Setter
+    @Getter
+    @Setter
     private byte[] shipWorld;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String account;
 
-    public ClientConnectPacket(String playerName) {
-        assetDigest = null;
-        Claim = null;
-        UUID = null;
-        this.playerName = playerName;
-        species = null;
-        shipWorld = null;
-        account = null;
-    }
-
-    public ClientConnectPacket(String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
+    public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
+        super(Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
         this.assetDigest = assetDigest;
 //        Claim = claim;
-        UUID = uuid;
+        this.uuid = uuid;
         this.playerName = playerName;
         this.species = species;
         this.shipWorld = shipWorld;
         this.account = account;
     }
 
-    @Override
-    public byte getPacketId() {
-        return 7;
-    }
-
     /**
-     * @param in ByteBuf of the readable bytes of a received payload
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p/>
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
         this.assetDigest = readStringVLQ(in);
         try {
-            this.Claim = readVariant(in);
+            this.Claim = new Variant(in);
         } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+//            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e)); // ToDo some return facility for this
         }
         boolean uuid = readBoolean(in);
         if (uuid) {
-            this.UUID = readUUID(in);
+            this.uuid = readUUID(in);
         }
         this.playerName = readStringVLQ(in);
         this.species = readStringVLQ(in);
-        this.shipWorld = readVLQIntArray(in);
+        this.shipWorld = readVLQArray(in);
         this.account = readStringVLQ(in);
     }
 
     /**
-     * @param out ByteBuf to be written to for outbound starbounddata.packets
+     * This represents a lower level method for StarNubs API.
+     * <p/>
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
         writeStringVLQ(out, this.assetDigest);
         try {
-            writeVariant(out, this.Claim);
+            this.Claim.writeToByteBuffer(out);
         } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+//            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e)); // ToDo some return facility for this
         }
-        writeBoolean(out, this.UUID != null);
-        if (this.UUID != null) {
-            writeUUID(out, this.UUID);
+        writeBoolean(out, this.uuid != null);
+        if (this.uuid != null) {
+            writeUUID(out, this.uuid);
         }
         writeStringVLQ(out, this.playerName);
         writeStringVLQ(out, this.species);
-        writeVLQIntArray(out, this.shipWorld);
+        writeVLQArray(out, this.shipWorld);
         writeStringVLQ(out, this.account);
     }
 }

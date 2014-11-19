@@ -46,7 +46,7 @@ public class Restrictions {
     private int restrictionId;
 
     /**
-     * Represents the restrictedIdentifier which can be a IP or UUID
+     * Represents the restrictedIdentifier which can be a IP or uuid
      */
     @Getter
     @DatabaseField(dataType = DataType.STRING, unique = true, columnName = "IDENTIFIER")
@@ -123,7 +123,7 @@ public class Restrictions {
 
     /**
      * This method is for setting a ban restriction
-     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or UUID
+     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or uuid
      * @param dateRestrictionExpires long Represents the time the restriction will be removed
      */
     public void setBan(String restrictedIdentifier, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires) {
@@ -138,7 +138,7 @@ public class Restrictions {
 
     /**
      * This method is for setting a mute restriction
-     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or UUID
+     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or uuid
      * @param dateRestrictionExpires long Represents the time the restriction will be removed
      */
     public void setMuted(String restrictedIdentifier, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires) {
@@ -153,7 +153,7 @@ public class Restrictions {
 
     /**
      * This method is for setting a command block restriction
-     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or UUID
+     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or uuid
      * @param dateRestrictionExpires long Represents the time the restriction will be removed
      */
     public void setCommandBlocked(String restrictedIdentifier, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires) {
@@ -168,7 +168,7 @@ public class Restrictions {
 
     /**
      * This method is for setting a command block and mute restriction
-     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or UUID
+     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or uuid
      * @param dateRestrictionExpires long Represents the time the restriction will be removed
      */
     public void setMutedCommandBlocked(String restrictedIdentifier, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires) {
@@ -185,7 +185,7 @@ public class Restrictions {
     /**
      * This method is the master restriction setter. Used in the {@link server.server.Connections} enum
      * singleton.
-     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or UUID
+     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or uuid
      * @param muted boolean setting the mute restriction
      * @param commandBlocked boolean setting the commandblock restriction
      * @param banned boolean setting if banned restriction
