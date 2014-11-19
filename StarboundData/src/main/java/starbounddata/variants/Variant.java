@@ -20,20 +20,27 @@ package starbounddata.variants;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import starbounddata.packets.StarboundBufferReader;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
-import static starbounddata.packets.StarboundBufferWriter.writeVLQObject;
 
+/**
+ * Represents a Variant  which can be a byte, string, boolean, double, variant array, variant map.
+ * <p>
+ * This is a complex data type.
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+@NoArgsConstructor
 public class Variant {
 
     @Getter
     private Object value;
-
-    public Variant() {}
 
     public Variant(Object value) throws Exception {
         if (!(value == null ||
@@ -48,6 +55,18 @@ public class Variant {
         this.value = value;
     }
 
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will created a {@link starbounddata.variants.Variant} from a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     *
+     * @param in ByteBuf representing the bytes to be read into a {@link starbounddata.variants.Variant}
+     * @return Variant representing the {@link starbounddata.variants.Variant} object
+     * @throws Exception if this ByteBuf does not represent a {@link starbounddata.variants.Variant}
+     */
     public Variant readFromByteBuffer(ByteBuf in) throws Exception {
         Variant variant = new Variant();
         byte type = StarboundBufferReader.readUnsignedByte(in);
@@ -62,20 +81,20 @@ public class Variant {
                 variant.value = in.readBoolean();
                 break;
             case 4:
-                variant.value = StarboundBufferReader.readVLQ(in).getValue();
+                variant.value = VLQ.readUnsignedFromBufferNoObject(in);
                 break;
             case 5:
                 variant.value = StarboundBufferReader.readStringVLQ(in);
                 break;
             case 6:
-                Variant[] array = new Variant[(int) StarboundBufferReader.readVLQ(in).getValue()];
+                Variant[] array = new Variant[VLQ.readUnsignedFromBufferNoObject(in)];
                 for (int i = 0; i < array.length; i++)
                     array[i] = this.readFromByteBuffer(in);
                 variant.value = array;
                 break;
             case 7:
                 Map<String, Variant> dict = new HashMap<String, Variant>();
-                int length = (int) StarboundBufferReader.readVLQ(in).getValue();
+                int length = VLQ.readUnsignedFromBufferNoObject(in);
                 while (length-- > 0)
                     dict.put(StarboundBufferReader.readStringVLQ(in), this.readFromByteBuffer(in));
                 variant.value = dict;
@@ -87,38 +106,47 @@ public class Variant {
         return variant;
     }
 
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will write a {@link starbounddata.variants.Variant} to a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     *
+     * @param out ByteBuf representing the buffer to write the variant to
+     */
     @SuppressWarnings("unchecked")
     public void writeToByteBuffer(ByteBuf out) {
         if (value == null) {
             out.writeByte(1);
         } else if (value instanceof Double) {
             out.writeByte(2);
-            out.writeDouble((double) value);
+            out.writeDouble((Double) value);
         } else if (value instanceof Boolean) {
             out.writeByte(3);
-            out.writeBoolean((boolean) value);
+            out.writeBoolean((Boolean) value);
         } else if (value instanceof Long) {
             out.writeByte(4);
-            writeVLQObject(out, (long) value);
+            VLQ.writeVLQNoObject(out, (Long) value);
         } else if (value instanceof String) {
             out.writeByte(5);
             writeStringVLQ(out, (String) value);
         } else if (value instanceof Variant[]) {
             out.writeByte(6);
             Variant[] array = (Variant[]) value;
-            writeVLQObject(out, (long) array.length);
-            for (int i = 0; i < array.length; i++)
-                array[i].writeToByteBuffer(out);
+            VLQ.writeVLQNoObject(out, (long) array.length);
+            for (Variant anArray : array) {
+                anArray.writeToByteBuffer(out);
+            }
         } else if (value instanceof Map<?, ?>) {
             out.writeByte(7);
             Map<String, Variant> dict = (Map<String, Variant>) value;
-            writeVLQObject(out, (long) dict.size());
+            VLQ.writeVLQNoObject(out, (long) dict.size());
             for (Map.Entry<String, Variant> kvp : dict.entrySet()) {
                 writeStringVLQ(out, kvp.getKey());
                 kvp.getValue().writeToByteBuffer(out);
             }
         }
     }
-
-
 }

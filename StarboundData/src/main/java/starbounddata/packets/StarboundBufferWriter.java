@@ -61,31 +61,6 @@ public class StarboundBufferWriter {
         out.writeBytes(VLQ.createVLQ(value));
     }
 
-    public static void writeSignedVLQNoObject(ByteBuf out, long value) {
-        if (value < 0) {
-            value = ((-(value+1)) << 1) | 1;
-        } else {
-            value = value << 1;
-        }
-        writeVLQNoObject(out, value);
-    }
-
-    public static void writeVLQNoObject(ByteBuf out, long value){
-        int numBytes = ((64 - Long.numberOfLeadingZeros(value)) + 6) / 7;
-        if (numBytes == 0){
-            numBytes = 1;
-        }
-        out.writerIndex(numBytes + 1); /* Sets the write index at the number of bytes + 1 byte for packet id */
-        for (int i = numBytes - 1; i >= 0; i--){
-            int curByte = (int)(value & 0x7F);
-            if (i != (numBytes - 1)){
-                curByte |= 0x80;
-            }
-            out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */
-            value >>>= 7;
-        }
-    }
-
     public static void writeVLQIntArray(ByteBuf out, byte[] bytes) {
         out.writeBytes(VLQ.createVLQ(bytes.length));
         out.writeBytes(bytes);

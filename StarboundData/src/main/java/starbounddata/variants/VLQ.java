@@ -19,24 +19,22 @@
 package starbounddata.variants;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Represents a VLQ.
+ * Represents a Variant Length Quantity(VLQ).
  * <p>
  * This is a complex data type. More information can be found here.
- * <p>
- * http://en.wikipedia.org/wiki/Variable-length_quantity
- * <p>
- * Credit goes to: <br>
- * SirCmpwn - (https://github.com/SirCmpwn/StarNet) <br>
- * Mitch528 - (https://github.com/Mitch528/SharpStar) <br>
- * Starbound-Dev - (http://starbound-dev.org/)
+ * @see <a href="http://en.wikipedia.org/wiki/Variable-length_quantity">VLQ's in Action</a>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
+@AllArgsConstructor
+@NoArgsConstructor
 public class VLQ {
 
     /**
@@ -51,29 +49,23 @@ public class VLQ {
     @Getter @Setter
     private long value;
 
-    /**
-     * Default constructor
-     */
-    public VLQ() {
-    }
+    ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
 
     /**
-     * Constructor
-     * @param length int length of the VLQ
-     * @param value long set the VLQ which represent how many bytes will follow this VLQ
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will created a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     * Notes: This will create a VLQ object and SHOULD NOT be used when possible
+     * <p/>
+     *
+     * @param in ByteBuf in which is to be read
+     * @return VLQ which represent how many payload bytes exist after the {@link starbounddata.variants.VLQ}
      */
-    public VLQ(int length, long value) {
-        this.length = length;
-        this.value = value;
-    }
-
-    /**
-     * This reads a Signed VLQ
-     * @param buf ByteBuf a buffer from netty.io which is where we are reading the VLQ from.
-     * @return VLQ which represent how many bytes will follow this VLQ
-     */
-    public static VLQ signedFromBuffer(ByteBuf buf) {
-        VLQ value = unsignedFromBuffer(buf);
+    public static VLQ signedFromBuffer(ByteBuf in) {
+        VLQ value = unsignedFromBuffer(in);
         long val = value.getValue();
         if ((value.getValue() & 1) == 0x00)
             val = (long) val >> 1;
@@ -84,16 +76,24 @@ public class VLQ {
     }
 
     /**
-     * This reads a Unsigned VLQ
-     * @param buf ByteBuf a buffer from netty.io which is where we are reading the VLQ from.
-     * @return VLQ which represent how many bytes will follow this VLQ
-     * @throws IndexOutOfBoundsException if the VLQ is not found
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will created a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     * Notes: This will create a VLQ object and SHOULD NOT be used when possible
+     * <p/>
+     *
+     * @param in ByteBuf in which is to be read
+     * @return VLQ which represent how many payload bytes exist after the {@link starbounddata.variants.VLQ}
+     * @throws IndexOutOfBoundsException if the {@link starbounddata.variants.VLQ} ran out of bytes while reading
      */
-    public static VLQ unsignedFromBuffer(ByteBuf buf) throws IndexOutOfBoundsException {
+    public static VLQ unsignedFromBuffer(ByteBuf in) throws IndexOutOfBoundsException {
         long value = 0L;
         int length = 0;
         while (length <= 10) {
-            byte tmp = buf.readByte();
+            byte tmp = in.readByte();
             value = (value << 7) | (long) (tmp & 0x7f);
             length++;
             if ((tmp & 0x80) == 0)
@@ -103,7 +103,15 @@ public class VLQ {
     }
 
     /**
-     * Creates a Signed VLQ
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will created a s{@link starbounddata.variants.VLQ} from a long
+     * <p/>
+     * Notes: This will create a VLQ object and SHOULD NOT be used when possible
+     * <p/>
+     *
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual sVLQ field
      */
@@ -118,7 +126,15 @@ public class VLQ {
     }
 
     /**
-     * Creates a Unsigned VLQ
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will created a u{@link starbounddata.variants.VLQ} from a long
+     * <p/>
+     * Notes: This will create a VLQ object and SHOULD NOT be used when possible
+     * <p/>
+     *
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual VLQ field
      */
@@ -137,5 +153,109 @@ public class VLQ {
             value >>>= 7;
         }
         return output;
+    }
+
+    ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
+
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will read a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     * Notes: This will not create a VLQ object and should be used
+     * <p/>
+     *
+     * @param in ByteBuf representing the bytes to be read for a payload length from a signed vlq
+     * @return int representing the payload length
+     */
+    public static int readSignedFromBufferNoObject(ByteBuf in) {
+        int payloadLength = readUnsignedFromBufferNoObject(in);
+        if ((payloadLength & 1) == 0x00) {
+            payloadLength = payloadLength >> 1;
+        } else {
+            payloadLength = -((payloadLength >> 1) + 1);
+        }
+        return payloadLength;
+    }
+
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will read a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     * Notes: This will not create a VLQ object and should be used
+     * <p/>
+     *
+     * @param in ByteBuf representing the bytes to be read for a payload length from a vlq
+     * @return int representing the payload length
+     */
+    public static int readUnsignedFromBufferNoObject(ByteBuf in) {
+        int vlqLength = 0;
+        int payloadLength = 0;
+        while (vlqLength <= 10) {
+            int tmpByte = in.readByte();
+            payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);
+            vlqLength++;
+            if ((tmpByte & 0x80) == 0) {
+                break;
+            }
+        }
+        return payloadLength;
+    }
+
+
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will write a s{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     * Notes: This will not create a VLQ object and should be used
+     * <p/>
+     *
+     * @param out ByteBuf in which is to be read
+     * @param value long representing the VLQ value to be written out
+     */
+    public static void writeSignedVLQNoObject(ByteBuf out, long value) {
+        if (value < 0) {
+            value = ((-(value+1)) << 1) | 1;
+        } else {
+            value = value << 1;
+        }
+        writeVLQNoObject(out, value);
+    }
+
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will write a u{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * <p/>
+     * Notes: This will not create a VLQ object and should be used
+     * <p/>
+     *
+     * @param out ByteBuf in which is to be read
+     * @param value long representing the VLQ value to be written out
+     */
+    public static void writeVLQNoObject(ByteBuf out, long value){
+        int numBytes = ((64 - Long.numberOfLeadingZeros(value)) + 6) / 7;
+        if (numBytes == 0){
+            numBytes = 1;
+        }
+        out.writerIndex(numBytes + 1); /* Sets the write index at the number of bytes + 1 byte for packet id */
+        for (int i = numBytes - 1; i >= 0; i--){
+            int curByte = (int)(value & 0x7F);
+            if (i != (numBytes - 1)){
+                curByte |= 0x80;
+            }
+            out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */
+            value >>>= 7;
+        }
     }
 }

@@ -19,22 +19,37 @@
 package starbounddata.color;
 
 import lombok.Getter;
-import utilities.yaml.YamlLoader;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Represents StarNubs GameColor functions that
- * provide some ease of use for colors for API users.
+ * Represents the default colors set by the Server Owners configuration, contained with are the {@link starbounddata.color.GameColors.Colors} enumeration and methods as well as the {@link starbounddata.color.GameColors.Colors.Color} class used to create colors representations
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 public final class GameColors {
 
-    @Getter
-    private ConcurrentHashMap<String, String> colorMap;
+    /**
+     * Singleton pattern for instantiation of only one instance of this class
+     */
+    private static final GameColors instance = new GameColors();
+
+    /**
+     * Must be private to ensure integrity of the singleton pattern
+     */
+    private GameColors() {
+    }
+
+    /**
+     * @return GameColors this and the only instance of GameColors due to the Singleton Pattern
+     */
+    public static GameColors getInstance() {
+        return instance;
+    }
+
     @Getter
     private volatile String defaultNameColor;
     @Getter
@@ -46,107 +61,461 @@ public final class GameColors {
     @Getter
     private volatile String bracketColor;
 
-    //TODO shadow
-
-    /**
-     * Default constructor
-     */
-    public GameColors(){
-    }
-
-    /**
-     * This represents the way we set the color HashMap up
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is used to set up plain word colors to hex values.
-     * <p>
-     */
-    public void setColors () {
-        colorMap = new ConcurrentHashMap<String, String>();
-        YamlLoader yamlLoader = new YamlLoader();
-        Map<String, Object> colorMap = yamlLoader.resourceYamlLoader("starbound/hex_colors.yml");
-        for (String color : colorMap.keySet()) {
-            this.colorMap.put(color, (String) colorMap.get(color));
-        }
-        reloadDefaultColor();
-    }
-
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: This will refresh the default colors in this class
-     * <p>
+     * <p/>
      */
-    public void reloadDefaultColor (String defaultNameColor, String defaultChatColor, String defaultServerNameColor, String defaultServerChatColor, String bracketColor) {
+    public void setColors(String defaultNameColor, String defaultChatColor, String defaultServerNameColor, String defaultServerChatColor, String bracketColor) {
         this.defaultNameColor = defaultNameColor;
         this.defaultChatColor = defaultChatColor;
         this.defaultServerNameColor = defaultServerNameColor;
         this.defaultServerChatColor = defaultServerChatColor;
         this.bracketColor = bracketColor;
-     }
-
-     /**
-     * This method should be used when using colors
-     * in StarNub, it will verify the color is correctly
-     * formatted or look the plain text color up and get
-     * the hex format
-     *
-     * @param color String color to be checked "red", "FF0000" , "^#FF0000;"
-     * @return
-     */
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will validate any colors to make sure its properly formatted. If something goes wrong
-     * and the color cannot be validated, the default color will be returned.
-     * <p>
-     * @param color String color to be checked "red", "FF0000" , "^#FF0000;"
-     * @return String with the proper color format
-     */
-    public String validateColor(String color) {
-        String validColor;
-        if (color.contains("^") || color.contains("#") || color.contains(";")) {
-            validColor = color.toLowerCase();
-            if (!validColor.contains("^")){
-                validColor = "^"+validColor;
-            }
-            if (!validColor.contains("#")){
-                validColor = validColor.replace("^", "^#");
-            }
-            if (!validColor.contains(";")){
-                validColor = validColor+";";
-            }
-        } else {
-            return getHexValue(color.toLowerCase());
-        }
-        return validColor;
     }
 
+    ///////////////////     REPRESENTS THE COLORS ENUM     ///////////////////
+
     /**
-     * Will return the verb color in hex form.
-     * If it does not exist, the default color from
-     * the StarNub users config will be selected.
+     * Represents Starbound colors represented in Verb Name, Hex, and StarNub shortcut annotation, this enumeration also contains the {@link starbounddata.color.GameColors.Colors.Color} class
+     * <p/>
      *
-     * @param color String color that is supported for conversion
-     * @return String containing the hex value for the color
+     * @author Daniel (Underbalanced) (www.StarNub.org)
+     * @since 1.0 Beta
      */
-    private String getHexValue (String color) {
-        if (!color.contains("#")) {
-            if (colorMap.containsKey(color)){
-                return "^"+colorMap.get(color)+";";
-            } else {
-//                StarNub.getLogger().cErrPrint("StarNub", "Something tried to use a color that is not mapped to a hex String.");
-                return defaultChatColor;
-            }
-        } else {
-//            StarNub.getLogger().cErrPrint("StarNub", "Something is attempting to use GameColor.getHexValue for a already converted color.");
+    public enum Colors {
+        ALICEBLUE("F0F8FF", "AB"),
+        ANTIQUEWHITE("FAEBD7", "AW"),
+        AQUA("00FFFF", "A"),
+        AQUAMARINE("7FFFD4", "AM"),
+        AZURE("F0FFFF", "AZ"),
+        BEIGE("F5F5DC", "BE"),
+        BISQUE("FFE4C4", "BI"),
+        BLACK("000000", "BL"),
+        BLANCHEDALMOND("FFEBCD", "BA"),
+        BLUE("0000FF", "B"),
+        BLUEVIOLET("8A2BE2", "BV"),
+        BROWN("A52A2A", "BR"),
+        BURLYWOOD("DEB887", "BW"),
+        CADETBLUE("5F9EA0", "CB"),
+        CHARTREUSE("7FFF00", "CR"),
+        CHOCOLATE("D2691E", "CH"),
+        CORAL("FF7F50", "CO"),
+        CORNFLOWERBLUE("6495ED", "CFB"),
+        CORNSILK("FFF8DC", "CS"),
+        CRIMSON("DC143C", "C"),
+        CYAN("00FFFF", "CY"),
+        DARKBLUE("00008B", "DB"),
+        DARKCYAN("008B8B", "DCY"),
+        DARKGOLDENROD("B8860B", "DGOR"),
+        DARKGRAY("A9A9A9", "DGR"),
+        DARKGREEN("006400", "DG"),
+        DARKKHAKI("BDB76B", "DK"),
+        DARKMAGENTA("8B008B", "DM"),
+        DARKOLIVEGREEN("556B2F", "DOG"),
+        DARKORANGE("FF8C00", "DO"),
+        DARKORCHID("9932CC", "DOR"),
+        DARKRED("8B0000", "DR"),
+        DARKSALMON("E9967A", "DS"),
+        DARKSEAGREEN("8FBC8F", "DSG"),
+        DARKSLATEBLUE("483D8B", "DSLB"),
+        DARKSLATEGRAY("2F4F4F", "DSLGR"),
+        DARKTURQUOISE("00CED1", "DT"),
+        DARKVIOLET("9400D3", "DV"),
+        DEEPPINK("FF1493", "DP"),
+        DEEPSKYBLUE("00BFFF", "DSB"),
+        DIMGRAY("696969", "DIGR"),
+        DODGERBLUE("1E90FF", "DOB"),
+        FIREBRICK("B22222", "FB"),
+        FLORALWHITE("FFFAF0", "FW"),
+        FORESTGREEN("228B22", "FG"),
+        FUCHSIA("FF00FF", "F"),
+        GAINSBORO("DCDCDC", "GB"),
+        GHOSTWHITE("F8F8FF", "GW"),
+        GOLD("FFD700", "GO"),
+        GOLDENROD("DAA520", "GOR"),
+        GRAY("808080", "GR"),
+        GREEN("008000", "G"),
+        GREENYELLOW("ADFF2F", "GY"),
+        HONEYDEW("F0FFF0", "HD"),
+        HOTPINK("FF69B4", "HP"),
+        INDIANRED("CD5C5C", "IR"),
+        INDIGO("4B0082", "IN"),
+        IVORY("FFFFF0", "I"),
+        KHAKI("F0E68C", "K"),
+        LAVENDER("E6E6FA", "LA"),
+        LAVENDERBLUSH("FFF0F5", "LAB"),
+        LAWNGREEN("7CFC00", "LAG"),
+        LEMONCHIFFON("FFFACD", "LCH"),
+        LIGHTBLUE("ADD8E6", "LB"),
+        LIGHTCORAL("F08080", "LC"),
+        LIGHTCYAN("E0FFFF", "LCY"),
+        LIGHTGOLDENRODYELLOW("FAFAD2", "LGOR"),
+        LIGHTGRAY("D3D3D3", "LGR"),
+        LIGHTGREEN("90EE90", "LG"),
+        LIGHTPINK("FFB6C1", "LP"),
+        LIGHTSALMON("FFA07A", "LS"),
+        LIGHTSEAGREEN("20B2AA", "LSG"),
+        LIGHTSKYBLUE("87CEFA", "LSB"),
+        LIGHTSLATEGRAY("778899", "LSGR"),
+        LIGHTSTEELBLUE("B0C4DE", "LSTB"),
+        LIGHTYELLOW("FFFFE0", "LY"),
+        LIME("00FF00", "L"),
+        LIMEGREEN("32CD32", "LIG"),
+        LINEN("FAF0E6", "LI"),
+        MAGENTA("FF00FF", "MA"),
+        MAROON("800000", "MAR"),
+        MEDIUMAQUAMARINE("66CDAA", "MEA"),
+        MEDIUMBLUE("0000CD", "MEB"),
+        MEDIUMORCHID("BA55D3", "MEO"),
+        MEDIUMPURPLE("9370DB", "MEP"),
+        MEDIUMSEAGREEN("3CB371", "MESG"),
+        MEDIUMSLATEBLUE("7B68EE", "MESB"),
+        MEDIUMSPRINGGREEN("00FA9A", "MESPG"),
+        MEDIUMTURQUOISE("48D1CC", "METU"),
+        MEDIUMVIOLETRED("C71585", "MVR"),
+        MIDNIGHTBLUE("191970", "MB"),
+        MINTCREAM("F5FFFA", "MC"),
+        MISTYROSE("FFE4E1", "MR"),
+        MOCCASIN("FFE4B5", "MO"),
+        NAVAJOWHITE("FFDEAD", "NW"),
+        NAVY("000080", "N"),
+        OLDLACE("FDF5E6", "OLL"),
+        OLIVE("808000", "OL"),
+        OLIVEDRAB("6B8E23", "OD"),
+        ORANGE("FFA500", "O"),
+        ORANGERED("FF4500", "OR"),
+        ORCHID("DA70D6", "ORC"),
+        PALEGOLDENROD("EEE8AA", "PGOR"),
+        PALEGREEN("98FB98", "PG"),
+        PALETURQUOISE("AFEEEE", "PT"),
+        PALEVIOLETRED("DB7093", "PVR"),
+        PAPAYAWHIP("FFEFD5", "PW"),
+        PEACHPUFF("FFDAB9", "PP"),
+        PERU("CD853F", "PE"),
+        PINK("FFC0CB", "P"),
+        PLUM("DDA0DD", "PL"),
+        POWDERBLUE("B0E0E6", "PB"),
+        PURPLE("800080", "PU"),
+        RED("FF0000", "R"),
+        ROSYBROWN("BC8F8F", "RBR"),
+        ROYALBLUE("4169E1", "RB"),
+        SADDLEBROWN("8B4513", "SABR"),
+        SALMON("FA8072", "SA"),
+        SANDYBROWN("F4A460", "SBR"),
+        SEAGREEN("2E8B57", "SEG"),
+        SEASHELL("FFF5EE", "SS"),
+        SIENNA("A0522D", "SIL"),
+        SILVER("C0C0C0", "S"),
+        SKYBLUE("87CEEB", "SKB"),
+        SLATEBLUE("6A5ACD", "SLB"),
+        SLATEGRAY("708090", "SLGR"),
+        SNOW("FFFAFA", "SN"),
+        SPRINGGREEN("00FF7F", "SG"),
+        STEELBLUE("4682B4", "SB"),
+        TAN("D2B48C", "TA"),
+        TEAL("008080", "T"),
+        THISTLE("D8BFD8", "TH"),
+        TOMATO("FF6347", "TO"),
+        TURQUOISE("40E0D0", "TU"),
+        VIOLET("EE82EE", "V"),
+        WHEAT("F5DEB3", "WH"),
+        WHITE("FFFFFF", "W"),
+        WHITESMOKE("F5F5F5", "WS"),
+        YELLOW("FFFF00", "Y"),
+        YELLOWGREEN("9ACD32", "YG");
+
+        @Getter
+        private final String hexValue;
+        @Getter
+        private final String shortcut;
+
+        Colors(String hexValue, String shortcut) {
+            this.hexValue = hexValue;
+            this.shortcut = shortcut;
         }
-        return defaultChatColor;
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will return a color or hex based on a shortcut.
+         * <p/>
+         *
+         * @param shortcut String shortcut to be looked up
+         * @param format   boolean should this be formatted for in game color display
+         * @param hex      boolean do you want to have it returned as a hex value
+         * @return String representing the looked up value
+         */
+        public static String fromShortcut(String shortcut, boolean format, boolean hex) {
+            for (Colors c : Colors.values()) {
+                if (c.shortcut.equalsIgnoreCase(shortcut)) {
+                    if (hex) {
+                        return format ? format(c.getHexValue(), true) : c.getHexValue();
+                    } else {
+                        return format ? format(c.toString(), false) : c.toString();
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will return a hex value based on a color name
+         * <p/>
+         *
+         * @param color  String representing the color name
+         * @param format boolean do you want to have it formatted for in game color display
+         * @return String representing the hex value of the color
+         */
+        public static String fromColor(String color, boolean format) {
+            color = cleanString(color);
+            for (Colors c : Colors.values()) {
+                if (c.toString().equalsIgnoreCase(color)) {
+                    return format ? format(c.getHexValue(), true) : c.getHexValue();
+                }
+            }
+            return null;
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will look up a color value based on the hex value
+         * <p/>
+         *
+         * @param hex    String representing the hex value to be looked up
+         * @param format boolean do you want to have it formatted for in game color display
+         * @return String representing the color value
+         */
+        public static String fromHex(String hex, boolean format) {
+            hex = cleanString(hex);
+            for (Colors c : Colors.values()) {
+                if (c.hexValue.equalsIgnoreCase(hex)) {
+                    return format ? format(c.toString(), false) : c.toString();
+                }
+            }
+            return null;
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will remove the color special characters from a string "^, # and ;"
+         * <p/>
+         *
+         * @param string String representing the string to be cleaned
+         * @return String representing the cleaned up string
+         */
+        public static String cleanString(String string) {
+            if (string.contains("^") || string.contains("#") || string.contains(";")) {
+                return string.replaceAll("\\^|#|;", "");
+            } else {
+                return string;
+            }
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will format a string for in game use
+         * <p/>
+         *
+         * @param string String repenting the value to be formatted for in game
+         * @param hex    boolean representing if the value is a hex value or not
+         * @return String representing the string formmated for in game
+         */
+        public static String format(String string, boolean hex) {
+            return hex ? "^#" + string + ";" : "^" + string + ";";
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will validate a color or hex value returning it if it exist in game
+         * <p/>
+         *
+         * @param string String representing the string to be validated
+         * @param format boolean do you want to have it formatted for in game color display
+         * @return String valid color string, will return null if color does not exist
+         */
+        public static String validate(String string, boolean format) {
+            int index = string.contains("#") ? 2 : 1;
+            String substring = string.substring(index, string.lastIndexOf(";"));
+            int stringLength = substring.length();
+            if ((stringLength == 3 || stringLength == 6) && string.matches(".*\\d.*")) {
+                return fromHex(substring, format);
+            } else {
+                return fromColor(substring, format);
+            }
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will replace shortcuts with the hex color tag
+         * <p/>
+         *
+         * @param string String representing the whole entire message to be scanned for color shortcuts
+         * @return String repsenting the whole entire message with the shortcut colors replaced with hex colors for game display
+         */
+        public static String shortcutReplacement(String string) {
+            Pattern p = Pattern.compile("\\{.\\}");
+            Matcher m = p.matcher(string);
+            StringBuffer sb = new StringBuffer();
+            while (m.find()) {
+                String shortcut = m.group();
+                String replacement = Colors.fromShortcut(shortcut, true, true);
+                m.appendReplacement(sb, replacement);
+            }
+            return m.appendTail(sb).toString();
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code
+         * <p/>
+         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         *
+         * @return HashSet representing all of the {@link starbounddata.color.GameColors.Colors.Color}'s available
+         */
+        public static HashSet<Color> colorList() {
+            HashSet<Color> colors = new HashSet<Color>();
+            for (Colors c : Colors.values()) {
+                colors.add(buildColor(c));
+            }
+            return colors;
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code based on a provided search term.
+         * The method will return anything contains the searched text, Example: findColors("Blue") or findColors("bLuE") would return (Aliceblue, blue, blueviolet,
+         * cadetblue, darkslateblue, deepskyblue, dodgerblue, lightskyblue, lightsteelblue, midnightblue, powderblue, royalblue, skyblue, slateblue, steelblue). This
+         * search is case insensitive.
+         * <p/>
+         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         *
+         * @param searchTerm String representing the color or colors to be searched
+         * @return HashSet representing all of the found {@link starbounddata.color.GameColors.Colors.Color}'s
+         */
+        public static HashSet<Color> findColors(String searchTerm) {
+            HashSet<Color> colors = new HashSet<Color>();
+            searchTerm = cleanString(searchTerm).toLowerCase();
+            for (Colors c : Colors.values()) {
+                String cColor = c.toString().toLowerCase();
+                if (cColor.contains(searchTerm)) {
+                    colors.add(buildColor(c));
+                }
+            }
+            return colors;
+        }
+
+        /**
+         * This represents a higher level method for StarNubs API.
+         * <p/>
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p/>
+         * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
+         * <p/>
+         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         *
+         * @param c Enumeration representing the color
+         * @return Color representing the build color
+         */
+        private static Color buildColor(Colors c) {
+            return new Color(c.toString(), c.getHexValue(), c.getShortcut());
+        }
+
+        ///////////////////     REPRESENTS THE COLOR CLASS     ///////////////////
+
+        /**
+         * Represents a Starbound Color
+         * <p/>
+         *
+         * @author Daniel (Underbalanced) (www.StarNub.org)
+         * @since 1.0 Beta
+         */
+        public static class Color {
+
+            @Getter
+            private final String COLOR_NAME;
+            @Getter
+            private final String HEX_STRING;
+            @Getter
+            private final String SHORTCUT;
+
+            public Color(String COLOR_NAME, String HEX_STRING, String SHORTCUT) {
+                this.COLOR_NAME = COLOR_NAME;
+                this.HEX_STRING = HEX_STRING;
+                this.SHORTCUT = SHORTCUT;
+            }
+
+            /**
+             * This represents a higher level method for StarNubs API.
+             * <p/>
+             * Recommended: For Plugin Developers & Anyone else.
+             * <p/>
+             * Uses: This returns the color name formatted as such without the quotes "^COLOR;"
+             * <p/>
+             *
+             * @return String representing the color name in, in game display format that can be used in chat or plugins
+             */
+            public String formatName() {
+                return "^" + COLOR_NAME + ";";
+            }
+
+            /**
+             * This represents a higher level method for StarNubs API.
+             * <p/>
+             * Recommended: For Plugin Developers & Anyone else.
+             * <p/>
+             * Uses: This returns the color hex formatted as such without the quotes "^HEX_STRING;"
+             * <p/>
+             *
+             * @return String representing the hex string of the color in, in game display format that can be used in chat or plugins
+             */
+            public String formatHex() {
+                return "^#" + HEX_STRING + ";";
+            }
+
+            /**
+             * This represents a higher level method for StarNubs API.
+             * <p/>
+             * Recommended: For Plugin Developers & Anyone else.
+             * <p/>
+             * Uses: This returns the color shortcut formatted as such without the quotes "{SHORTCUT}"
+             * <p/>
+             *
+             * @return String representing the color shortcut that can be used in chat or plugins
+             */
+            public String formatShortcut() {
+                return "{" + SHORTCUT + "}";
+            }
+        }
     }
 }

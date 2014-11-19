@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package server.eventsrouter.internaldebugging;
+package server.eventsrouter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -25,8 +25,8 @@ import org.codehome.utilities.files.YamlLoader;
 import org.reflections.Reflections;
 import server.StarNub;
 import server.eventsrouter.handlers.PacketEventHandler;
-import starbounddata.vectors.Vec2I;
 import server.server.packets.Packet;
+import server.server.packets.StarboundBufferReader;
 import server.server.packets.chat.ChatReceivePacket;
 import server.server.packets.chat.ChatSendPacket;
 import server.server.packets.global.PlayerWarpPacket;
@@ -35,7 +35,7 @@ import server.server.packets.server.UniverseTimeUpdatePacket;
 import server.server.packets.tile.DamageTileGroupPacket;
 import server.server.packets.world.WorldStartPacket;
 import server.server.packets.world.WorldStopPacket;
-import server.server.packets.StarboundBufferReader;
+import starbounddata.vectors.Vec2I;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

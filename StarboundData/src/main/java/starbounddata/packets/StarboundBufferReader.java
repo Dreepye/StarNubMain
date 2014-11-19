@@ -96,7 +96,6 @@ public class StarboundBufferReader {
         return VLQ.signedFromBuffer(in);
     }
 
-
     public static VLQ readVLQ(ByteBuf in) {
         return VLQ.unsignedFromBuffer(in);
     }
@@ -118,6 +117,9 @@ public class StarboundBufferReader {
     }
 
     public static List<Vec2I> readVector2IntegerArray(ByteBuf in){
+
+
+
         VLQ vlq = readVLQ(in);
         List<Vec2I> position = new ArrayList<Vec2I>();
         for (int i = 0; i < (int)vlq.getValue(); i++) {
