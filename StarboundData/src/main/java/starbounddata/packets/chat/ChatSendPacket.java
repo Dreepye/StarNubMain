@@ -22,7 +22,6 @@ package starbounddata.packets.chat;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
@@ -42,7 +41,6 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@NoArgsConstructor
 public class ChatSendPacket extends Packet {
 
     /**

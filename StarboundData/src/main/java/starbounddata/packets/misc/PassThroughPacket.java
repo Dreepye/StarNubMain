@@ -19,8 +19,8 @@
 package starbounddata.packets.misc;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import starbounddata.packets.Packet;
 
@@ -39,12 +39,15 @@ import static starbounddata.packets.StarboundBufferWriter.writeByteArray;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@NoArgsConstructor
 public class PassThroughPacket extends Packet {
 
     @Getter
     @Setter
     private byte[] payload;
+
+    public PassThroughPacket(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(PACKET_ID, SENDER_CTX, DESTINATION_CTX);
+    }
 
     /**
      * This represents a lower level method for StarNubs API.

@@ -21,7 +21,6 @@ package starbounddata.packets.server;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
@@ -37,7 +36,6 @@ import starbounddata.variants.VLQ;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@NoArgsConstructor
 public class UniverseTimeUpdatePacket extends Packet {
 
     /**

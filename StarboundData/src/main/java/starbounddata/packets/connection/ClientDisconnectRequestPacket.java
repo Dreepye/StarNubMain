@@ -22,7 +22,6 @@ package starbounddata.packets.connection;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
@@ -40,7 +39,6 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@NoArgsConstructor
 public class ClientDisconnectRequestPacket extends Packet {
 
     @Getter

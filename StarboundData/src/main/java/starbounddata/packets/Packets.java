@@ -136,6 +136,6 @@ public enum Packets {
 //        //HashMap Generator
 //        //Packet Creator - remove ids from packets hard coding
 //        //Value returns
-//        //
+//        //Debugs will be passed back in a hashset
 //
 }

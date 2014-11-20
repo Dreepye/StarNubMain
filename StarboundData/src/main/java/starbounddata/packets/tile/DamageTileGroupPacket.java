@@ -44,7 +44,6 @@ import static starbounddata.packets.StarboundBufferWriter.writeFloat;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@NoArgsConstructor
 public class DamageTileGroupPacket extends Packet {
 
     @Getter
