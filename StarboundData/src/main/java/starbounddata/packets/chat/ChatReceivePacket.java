@@ -21,9 +21,6 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -52,33 +49,67 @@ public class ChatReceivePacket extends Packet {
      * <br>
      * 3 - Command
      */
-    @Getter
-    @Setter
     private ChatReceiveChannel channel;
+
     /**
      * ToDo: Insert expected string display
      */
-    @Getter
-    @Setter
     private String world;
+
     /**
      * ClientId of the sender which is assigned by the Starbound server
      */
-    @Getter
-    @Setter
     private int clientId;
+
     /**
      * Name of who sent the message
      */
-    @Getter
-    @Setter
     private String name;
+
     /**
      * Message sent from the server
      */
-    @Getter
-    @Setter
     private String message;
+
+    public ChatReceiveChannel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(ChatReceiveChannel channel) {
+        this.channel = channel;
+    }
+
+    public String getWorld() {
+        return world;
+    }
+
+    public void setWorld(String world) {
+        this.world = world;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     /**
      * @param channel         String one of the following:

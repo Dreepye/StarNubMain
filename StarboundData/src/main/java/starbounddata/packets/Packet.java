@@ -20,8 +20,6 @@ package starbounddata.packets;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -37,23 +35,35 @@ import lombok.Setter;
  */
 public abstract class Packet {
 
-    @Getter
     private final byte PACKET_ID;
-
-    @Getter
     private final ChannelHandlerContext SENDER_CTX;
-
-    @Getter
     private final ChannelHandlerContext DESTINATION_CTX;
-
-    @Getter
-    @Setter
     private boolean recycle;
 
     public Packet(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
         this.PACKET_ID = PACKET_ID;
         this.SENDER_CTX = SENDER_CTX;
         this.DESTINATION_CTX = DESTINATION_CTX;
+    }
+
+    public byte getPACKET_ID() {
+        return PACKET_ID;
+    }
+
+    public ChannelHandlerContext getSENDER_CTX() {
+        return SENDER_CTX;
+    }
+
+    public ChannelHandlerContext getDESTINATION_CTX() {
+        return DESTINATION_CTX;
+    }
+
+    public boolean isRecycle() {
+        return recycle;
+    }
+
+    public void setRecycle(boolean recycle) {
+        this.recycle = recycle;
     }
 
     /**

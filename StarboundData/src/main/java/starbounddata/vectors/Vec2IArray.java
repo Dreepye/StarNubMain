@@ -34,12 +34,12 @@ import java.util.ArrayList;
 public class Vec2IArray extends ArrayList<Vec2I> {
 
     /**
-     * @param in ByteBuf data to be read into the Vec2I Array. 200 is set as a cap for data to prevent attacks against the server. This is still a sizable area
+     * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the server. This is still a sizable area
      */
-    public Vec2IArray(ByteBuf in) {
+    public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException{
         int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (arrayLength > 200) {
-            arrayLength = 200;
+        if (arrayLength > 100) {
+            throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {
             this.add(new Vec2I(in));

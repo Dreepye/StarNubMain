@@ -21,8 +21,6 @@ package starbounddata.packets.connection;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -41,9 +39,15 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
  */
 public class ClientDisconnectRequestPacket extends Packet {
 
-    @Getter
-    @Setter
     private byte emptyByte;
+
+    public byte getEmptyByte() {
+        return emptyByte;
+    }
+
+    public void setEmptyByte(byte emptyByte) {
+        this.emptyByte = emptyByte;
+    }
 
     public ClientDisconnectRequestPacket(ChannelHandlerContext DESTINATION_CTX) {
         super(Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);

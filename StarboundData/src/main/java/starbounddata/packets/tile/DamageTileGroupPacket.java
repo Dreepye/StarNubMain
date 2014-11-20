@@ -20,19 +20,14 @@ package starbounddata.packets.tile;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.tiles.TileDamage;
 import starbounddata.vectors.Vec2F;
 import starbounddata.vectors.Vec2IArray;
 
-import static starbounddata.packets.StarboundBufferReader.readFloat;
 import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
 import static starbounddata.packets.StarboundBufferWriter.writeByte;
-import static starbounddata.packets.StarboundBufferWriter.writeFloat;
 
 /**
  * Represents the DamageTileGroup and methods to generate a packet data for StarNub and Plugins
@@ -46,17 +41,9 @@ import static starbounddata.packets.StarboundBufferWriter.writeFloat;
  */
 public class DamageTileGroupPacket extends Packet {
 
-    @Getter
-    @Setter
     TileDamage tileDamage;
-    @Getter
-    @Setter
     private Vec2IArray tilePositions;
-    @Getter
-    @Setter
     private TileLayer layer;
-    @Getter
-    @Setter
     private Vec2F sourcePosition;
 
     public DamageTileGroupPacket(ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
@@ -67,6 +54,38 @@ public class DamageTileGroupPacket extends Packet {
         this.tileDamage = tileDamage;
     }
 
+    public TileDamage getTileDamage() {
+        return tileDamage;
+    }
+
+    public void setTileDamage(TileDamage tileDamage) {
+        this.tileDamage = tileDamage;
+    }
+
+    public Vec2IArray getTilePositions() {
+        return tilePositions;
+    }
+
+    public void setTilePositions(Vec2IArray tilePositions) {
+        this.tilePositions = tilePositions;
+    }
+
+    public TileLayer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(TileLayer layer) {
+        this.layer = layer;
+    }
+
+    public Vec2F getSourcePosition() {
+        return sourcePosition;
+    }
+
+    public void setSourcePosition(Vec2F sourcePosition) {
+        this.sourcePosition = sourcePosition;
+    }
+
     /**
      * This represents a lower level method for StarNubs API.
      * <p/>
@@ -74,16 +93,21 @@ public class DamageTileGroupPacket extends Packet {
      * <p/>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p/>
+     * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.vectors.Vec2IArray} constructor
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.tilePositions = new Vec2IArray(in);
-        this.layer = TileLayer.values()[readUnsignedByte(in)];
-        this.sourcePosition = new Vec2F(in);
-        this.tileDamage = new TileDamage(TileDamage.TileDamageType.values()[readUnsignedByte(in)], readFloat(in));
-        // Harvest Level
+        try {
+            this.tilePositions = new Vec2IArray(in);
+            this.layer = TileLayer.values()[readUnsignedByte(in)];
+            this.sourcePosition = new Vec2F(in);
+            this.tileDamage = new TileDamage(in);
+        } catch (ArrayIndexOutOfBoundsException e){
+            super.setRecycle(true);
+            in.skipBytes(in.readableBytes());
+        }
     }
 
     /**
@@ -101,9 +125,7 @@ public class DamageTileGroupPacket extends Packet {
         this.tilePositions.writeVec2IArray(out);
         writeByte(out, (byte) this.getLayer().ordinal());
         this.sourcePosition.writeVec2F(out);
-        writeByte(out, (byte) tileDamage.getTileDamageType().ordinal());
-        writeFloat(out, tileDamage.getAmount());
-//        writeInt(out, tileDamage.getHarvestLevel());
+        this.tilePositions.writeVec2IArray(out);
     }
 
     public enum TileLayer {

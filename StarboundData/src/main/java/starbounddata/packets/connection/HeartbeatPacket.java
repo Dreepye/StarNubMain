@@ -20,8 +20,6 @@ package starbounddata.packets.connection;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.variants.VLQ;
@@ -39,12 +37,18 @@ import starbounddata.variants.VLQ;
  */
 public class HeartbeatPacket extends Packet {
 
-    @Getter
-    @Setter
     private long currentStep;
 
     public HeartbeatPacket(ChannelHandlerContext DESTINATION_CTX) {
         super(Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
+    }
+
+    public long getCurrentStep() {
+        return currentStep;
+    }
+
+    public void setCurrentStep(long currentStep) {
+        this.currentStep = currentStep;
     }
 
     /**

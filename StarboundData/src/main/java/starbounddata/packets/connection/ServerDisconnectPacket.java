@@ -20,8 +20,6 @@ package starbounddata.packets.connection;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -40,12 +38,18 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
  */
 public class ServerDisconnectPacket extends Packet {
 
-    @Getter
-    @Setter
     private String reason;
 
     public ServerDisconnectPacket(ChannelHandlerContext DESTINATION_CTX, String reason) {
         super(Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
         this.reason = reason;
     }
 

@@ -38,21 +38,37 @@ public final class GameColors {
      * Singleton pattern for instantiation of only one instance of this class
      */
     private static final GameColors instance = new GameColors();
-    @Getter
+
     private volatile String defaultNameColor;
-    @Getter
     private volatile String defaultChatColor;
-    @Getter
     private volatile String defaultServerNameColor;
-    @Getter
     private volatile String defaultServerChatColor;
-    @Getter
     private volatile String bracketColor;
 
     /**
      * Must be private to ensure integrity of the singleton pattern
      */
     private GameColors() {
+    }
+
+    public String getDefaultNameColor() {
+        return defaultNameColor;
+    }
+
+    public String getDefaultChatColor() {
+        return defaultChatColor;
+    }
+
+    public String getDefaultServerNameColor() {
+        return defaultServerNameColor;
+    }
+
+    public String getDefaultServerChatColor() {
+        return defaultServerChatColor;
+    }
+
+    public String getBracketColor() {
+        return bracketColor;
     }
 
     /**

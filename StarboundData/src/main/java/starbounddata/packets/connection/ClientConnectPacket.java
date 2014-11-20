@@ -20,8 +20,6 @@ package starbounddata.packets.connection;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.variants.Variant;
@@ -45,28 +43,70 @@ import static starbounddata.packets.StarboundBufferWriter.*;
  */
 public class ClientConnectPacket extends Packet {
 
-    @Getter
-    @Setter
     private String assetDigest;
     @Deprecated
-    @Getter
-    @Setter
     private Variant Claim;
-    @Getter
-    @Setter
     private java.util.UUID uuid;
-    @Getter
-    @Setter
     private String playerName;
-    @Getter
-    @Setter
     private String species;
-    @Getter
-    @Setter
     private byte[] shipWorld;
-    @Getter
-    @Setter
     private String account;
+
+    public String getAssetDigest() {
+        return assetDigest;
+    }
+
+    public void setAssetDigest(String assetDigest) {
+        this.assetDigest = assetDigest;
+    }
+
+    public Variant getClaim() {
+        return Claim;
+    }
+
+    public void setClaim(Variant claim) {
+        Claim = claim;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    public byte[] getShipWorld() {
+        return shipWorld;
+    }
+
+    public void setShipWorld(byte[] shipWorld) {
+        this.shipWorld = shipWorld;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
 
     public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
         super(Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);

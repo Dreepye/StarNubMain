@@ -21,8 +21,6 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -50,15 +48,28 @@ public class ChatSendPacket extends Packet {
      * 1 - Planet  (String: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
      * <br>
      */
-    @Getter
-    @Setter
     private ChatSendChannel channel;
+
     /**
      * Message sent from the client
      */
-    @Getter
-    @Setter
     private String message;
+
+    public ChatSendChannel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(ChatSendChannel channel) {
+        this.channel = channel;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     /**
      * @param channel String one of the following:

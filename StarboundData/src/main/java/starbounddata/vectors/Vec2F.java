@@ -19,9 +19,6 @@
 package starbounddata.vectors;
 
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Represents a 2 dimensional floating point vector of (x, y)
@@ -29,15 +26,31 @@ import lombok.Setter;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@AllArgsConstructor
 public class Vec2F {
 
-    @Getter
-    @Setter
     private float x;
-    @Getter
-    @Setter
     private float y;
+
+    public Vec2F(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
 
     public Vec2F(ByteBuf in) {
         this.x = in.readFloat();

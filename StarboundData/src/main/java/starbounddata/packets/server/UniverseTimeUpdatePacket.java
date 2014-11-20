@@ -20,8 +20,6 @@ package starbounddata.packets.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.variants.VLQ;
@@ -41,12 +39,18 @@ public class UniverseTimeUpdatePacket extends Packet {
     /**
      * A time that increments up when sent by the server
      */
-    @Getter
-    @Setter
     private long time;
 
     public UniverseTimeUpdatePacket(ChannelHandlerContext DESTINATION_CTX) {
         super(Packets.UNIVERSETIMEUPDATE.getPacketId(), null, DESTINATION_CTX);
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     /**

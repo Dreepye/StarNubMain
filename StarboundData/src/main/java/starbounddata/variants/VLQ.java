@@ -19,10 +19,6 @@
 package starbounddata.variants;
 
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Represents a Variant Length Quantity(VLQ).
@@ -33,23 +29,41 @@ import lombok.Setter;
  * @see <a href="http://en.wikipedia.org/wiki/Variable-length_quantity">VLQ's in Action</a>
  * @since 1.0 Beta
  */
-@AllArgsConstructor
-@NoArgsConstructor
 public class VLQ {
 
     /**
      * This is the length of the VLQ field
      */
-    @Getter
-    @Setter
     private int length;
 
     /**
      * This is the actual value of the VLQ which represents how many bytes follow the VLQ
      */
-    @Getter
-    @Setter
     private long value;
+
+    public VLQ() {
+    }
+
+    public VLQ(int length, long value) {
+        this.length = length;
+        this.value = value;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public long getValue() {
+        return value;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
+    }
 
     ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
 

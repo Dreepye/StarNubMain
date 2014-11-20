@@ -19,7 +19,6 @@
 package starbounddata.packets;
 
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
 
 /**
  * Represents all of the packets and methods to generate a packet data for StarNub and Plugins
@@ -80,9 +79,7 @@ public enum Packets {
     UPDATEWORLDPROPERTIES("PassThroughPacket.class", false),
     HEARTBEAT("PassThroughPacket.class", false);
 
-    @Getter
     private String classString;
-    @Getter
     private boolean debug;
 
     //        @Getter
@@ -90,6 +87,22 @@ public enum Packets {
 //
     Packets(String classString, boolean debug) {
         this.classString = classString;
+        this.debug = debug;
+    }
+
+    public String getClassString() {
+        return classString;
+    }
+
+    public void setClassString(String classString) {
+        this.classString = classString;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
         this.debug = debug;
     }
 

@@ -19,8 +19,6 @@
 package starbounddata.variants;
 
 import io.netty.buffer.ByteBuf;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import starbounddata.packets.StarboundBufferReader;
 
 import java.util.HashMap;
@@ -36,14 +34,23 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-@NoArgsConstructor
 public class Variant {
 
-    @Getter
     private Object value;
+
+    public Variant() {
+    }
 
     public Variant(ByteBuf in) throws Exception {
         readFromByteBuffer(in);
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     public Variant(Object value) throws Exception {

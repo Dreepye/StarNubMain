@@ -21,8 +21,6 @@ package starbounddata.packets.connection;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.variants.VLQ;
 import starbounddata.variants.Variant;
@@ -44,60 +42,168 @@ import static starbounddata.packets.StarboundBufferWriter.*;
  */
 public class ConnectResponsePacket extends Packet {
 
-    @Getter
-    @Setter
     private boolean success;
-    @Getter
-    @Setter
     private long clientId;
-    @Getter
-    @Setter
     private String rejectionReason;
-    @Getter
-    @Setter
     private boolean celestialInformation;
-    @Getter
-    @Setter
     private int orbitalLevels;
-    @Getter
-    @Setter
     private int ChunkSize;
-    @Getter
-    @Setter
     private int XYCoordinateMin;
-    @Getter
-    @Setter
     private int XYCoordinateMax;
-    @Getter
-    @Setter
     private int ZCoordinateMin;
-    @Getter
-    @Setter
     private int ZCoordinateMax;
-    @Getter
-    @Setter
     private long NumberofSectors;
-    @Getter
-    @Setter
     private String SectorId;
-    @Getter
-    @Setter
     private String SectorName;
-    @Getter
-    @Setter
     private long SectorSeed;
-    @Getter
-    @Setter
     private String SectorPrefix;
-    @Getter
-    @Setter
     private Variant Parameters;
-    @Getter
-    @Setter
     private Variant SectorConfig;
-    @Getter
-    @Setter
     private byte[] tempByteArray;
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
+    public boolean isCelestialInformation() {
+        return celestialInformation;
+    }
+
+    public void setCelestialInformation(boolean celestialInformation) {
+        this.celestialInformation = celestialInformation;
+    }
+
+    public int getOrbitalLevels() {
+        return orbitalLevels;
+    }
+
+    public void setOrbitalLevels(int orbitalLevels) {
+        this.orbitalLevels = orbitalLevels;
+    }
+
+    public int getChunkSize() {
+        return ChunkSize;
+    }
+
+    public void setChunkSize(int chunkSize) {
+        ChunkSize = chunkSize;
+    }
+
+    public int getXYCoordinateMin() {
+        return XYCoordinateMin;
+    }
+
+    public void setXYCoordinateMin(int XYCoordinateMin) {
+        this.XYCoordinateMin = XYCoordinateMin;
+    }
+
+    public int getXYCoordinateMax() {
+        return XYCoordinateMax;
+    }
+
+    public void setXYCoordinateMax(int XYCoordinateMax) {
+        this.XYCoordinateMax = XYCoordinateMax;
+    }
+
+    public int getZCoordinateMin() {
+        return ZCoordinateMin;
+    }
+
+    public void setZCoordinateMin(int ZCoordinateMin) {
+        this.ZCoordinateMin = ZCoordinateMin;
+    }
+
+    public int getZCoordinateMax() {
+        return ZCoordinateMax;
+    }
+
+    public void setZCoordinateMax(int ZCoordinateMax) {
+        this.ZCoordinateMax = ZCoordinateMax;
+    }
+
+    public long getNumberofSectors() {
+        return NumberofSectors;
+    }
+
+    public void setNumberofSectors(long numberofSectors) {
+        NumberofSectors = numberofSectors;
+    }
+
+    public String getSectorId() {
+        return SectorId;
+    }
+
+    public void setSectorId(String sectorId) {
+        SectorId = sectorId;
+    }
+
+    public String getSectorName() {
+        return SectorName;
+    }
+
+    public void setSectorName(String sectorName) {
+        SectorName = sectorName;
+    }
+
+    public long getSectorSeed() {
+        return SectorSeed;
+    }
+
+    public void setSectorSeed(long sectorSeed) {
+        SectorSeed = sectorSeed;
+    }
+
+    public String getSectorPrefix() {
+        return SectorPrefix;
+    }
+
+    public void setSectorPrefix(String sectorPrefix) {
+        SectorPrefix = sectorPrefix;
+    }
+
+    public Variant getParameters() {
+        return Parameters;
+    }
+
+    public void setParameters(Variant parameters) {
+        Parameters = parameters;
+    }
+
+    public Variant getSectorConfig() {
+        return SectorConfig;
+    }
+
+    public void setSectorConfig(Variant sectorConfig) {
+        SectorConfig = sectorConfig;
+    }
+
+    public byte[] getTempByteArray() {
+        return tempByteArray;
+    }
+
+    public void setTempByteArray(byte[] tempByteArray) {
+        this.tempByteArray = tempByteArray;
+    }
 
     public ConnectResponsePacket(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
         super(PACKET_ID, SENDER_CTX, DESTINATION_CTX);

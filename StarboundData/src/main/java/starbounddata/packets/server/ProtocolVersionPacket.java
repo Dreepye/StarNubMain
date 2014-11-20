@@ -20,8 +20,6 @@ package starbounddata.packets.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
-import lombok.Setter;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -44,8 +42,6 @@ public class ProtocolVersionPacket extends Packet {
     /**
      * Some int set by the server based on the servers Starbound version
      */
-    @Getter
-    @Setter
     private int protocolVersion;
 
     /**
@@ -53,6 +49,14 @@ public class ProtocolVersionPacket extends Packet {
      */
     public ProtocolVersionPacket(ChannelHandlerContext DESTINATION_CTX, int protocolVersion) {
         super(Packets.PROTOCOLVERSION.getPacketId(), null, DESTINATION_CTX);
+        this.protocolVersion = protocolVersion;
+    }
+
+    public int getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public void setProtocolVersion(int protocolVersion) {
         this.protocolVersion = protocolVersion;
     }
 
