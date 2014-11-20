@@ -18,8 +18,6 @@
 
 package starbounddata.color;
 
-import lombok.Getter;
-
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -246,14 +244,20 @@ public final class GameColors {
         YELLOW("FFFF00", "Y"),
         YELLOWGREEN("9ACD32", "YG");
 
-        @Getter
         private final String hexValue;
-        @Getter
         private final String shortcut;
 
         Colors(String hexValue, String shortcut) {
             this.hexValue = hexValue;
             this.shortcut = shortcut;
+        }
+
+        public String getHexValue() {
+            return hexValue;
+        }
+
+        public String getShortcut() {
+            return shortcut;
         }
 
         /**
@@ -480,12 +484,21 @@ public final class GameColors {
          */
         public static class Color {
 
-            @Getter
             private final String COLOR_NAME;
-            @Getter
             private final String HEX_STRING;
-            @Getter
             private final String SHORTCUT;
+
+            public String getCOLOR_NAME() {
+                return COLOR_NAME;
+            }
+
+            public String getHEX_STRING() {
+                return HEX_STRING;
+            }
+
+            public String getSHORTCUT() {
+                return SHORTCUT;
+            }
 
             public Color(String COLOR_NAME, String HEX_STRING, String SHORTCUT) {
                 this.COLOR_NAME = COLOR_NAME;
