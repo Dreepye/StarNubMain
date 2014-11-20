@@ -1,6 +1,23 @@
+/*
+* Copyright (C) 2014 www.StarNub.org - Underbalanced
+*
+* This file is part of org.starnub a Java Wrapper for Starbound.
+*
+* This above mentioned StarNub software is free software:
+* you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free
+* Software Foundation, either version  3 of the License, or
+* any later version. This above mentioned CodeHome software
+* is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+* the GNU General Public License for more details. You should
+* have received a copy of the GNU General Public License in
+* this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package server.cache.wrappers;
 
-import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
 import server.cache.objects.AbstractCache;
@@ -10,23 +27,55 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents Abstract CacheWrapper that can be transformed to accept any type of key and be used with any
+ * specific types of cache found in (@link server.cache.objects}.
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public abstract class CacheWrapper<E1> {
 
-    @Getter
     private final TimeUnit TIME_UNIT;
-    @Getter
     private final int CACHE_PRUNE_TASK_TIME;
-    @Getter
     private final int CACHE_PURGE_TAKE_TIME;
-    @Getter
     private final boolean AUTO_CACHE_PURGER;
-    @Getter
     private final ConcurrentHashMap<E1, AbstractCache> cacheMap;
-    @Getter
     private final String CACHE_OWNER;
-    @Getter
     private final String CACHE_NAME;
     private final String ERROR_MSG = "A StarNub Cache system being used is not being used properly. CACHE OWNER: %s, CACHE NAME: %s - NULL KEY OR VALUE USED.";
+
+    public TimeUnit getTIME_UNIT() {
+        return TIME_UNIT;
+    }
+
+    public int getCACHE_PRUNE_TASK_TIME() {
+        return CACHE_PRUNE_TASK_TIME;
+    }
+
+    public int getCACHE_PURGE_TAKE_TIME() {
+        return CACHE_PURGE_TAKE_TIME;
+    }
+
+    public boolean isAUTO_CACHE_PURGER() {
+        return AUTO_CACHE_PURGER;
+    }
+
+    public ConcurrentHashMap<E1, AbstractCache> getCacheMap() {
+        return cacheMap;
+    }
+
+    public String getCACHE_OWNER() {
+        return CACHE_OWNER;
+    }
+
+    public String getCACHE_NAME() {
+        return CACHE_NAME;
+    }
+
+    public String getERROR_MSG() {
+        return ERROR_MSG;
+    }
 
     /**
      * Basic constructor. RECOMMENDED.

@@ -1,8 +1,33 @@
+/*
+* Copyright (C) 2014 www.StarNub.org - Underbalanced
+*
+* This file is part of org.starnub a Java Wrapper for Starbound.
+*
+* This above mentioned StarNub software is free software:
+* you can redistribute it and/or modify it under the terms
+* of the GNU General Public License as published by the Free
+* Software Foundation, either version  3 of the License, or
+* any later version. This above mentioned CodeHome software
+* is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+* the GNU General Public License for more details. You should
+* have received a copy of the GNU General Public License in
+* this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package server.cache.wrappers;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents {@link java.util.UUID} CacheWrapper which uses a {@link java.util.UUID}
+ * as a key and can be used with any CacheObjects found at (@link server.cache.objects}
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class PlayerUUIDCacheWrapper extends CacheWrapper<UUID> {
 
     /**
