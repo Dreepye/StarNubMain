@@ -32,40 +32,40 @@ public abstract class AbstractCache {
      */
     private volatile long cacheTime;
 
+    /**
+     * No Args constructor will the set cacheTime to the current system time.
+     */
+    protected AbstractCache() {
+        cacheTime = System.currentTimeMillis();
+    }
+
     public long getCacheTime() {
         return cacheTime;
     }
 
     /**
-     * No Args constructor will the set cacheTime to the current system time.
-     */
-    protected AbstractCache(){
-        cacheTime = System.currentTimeMillis();
-    }
-
-    /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Sets the cacheTime for this Cache to the current system time.
-     * <p>
-     *
+     * <p/>
      */
-    public void setCacheTimeNow(){
+    public void setCacheTimeNow() {
         this.cacheTime = System.currentTimeMillis();
     }
 
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Sets the cacheTime for this Cache to the current system time and returns the previous time in cache
-     * <p>
+     * <p/>
+     *
      * @return long representing the cacheTime that was just replaced
      */
-    public long getCacheTimeSetCacheTimeNow(){
+    public long getCacheTimeSetCacheTimeNow() {
         long cacheTimeReturn = cacheTime;
         cacheTime = System.currentTimeMillis();
         return cacheTimeReturn;
@@ -73,28 +73,30 @@ public abstract class AbstractCache {
 
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Returns the time in milliseconds from the time this cacheTime was set on the Cache and the current system time
-     * <p>
+     * <p/>
+     *
      * @return long representing the cacheTime subtracted from the current system time, to equal the age in milliseconds
      */
-    public long getCacheAge(){
+    public long getCacheAge() {
         return System.currentTimeMillis() - cacheTime;
     }
 
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Returns the time in milliseconds from the time this cacheTime was set on the Cache and the current system time as well as refreshed
      * the cacheTime to the current system time
-     * <p>
+     * <p/>
+     *
      * @return long representing the cacheTime subtracted from the current system time, to equal the age in milliseconds
      */
-    public long getCacheAgeRefreshTimeNow(){
+    public long getCacheAgeRefreshTimeNow() {
         long now = System.currentTimeMillis();
         long cacheTimeReturn = now - cacheTime;
         cacheTime = now;
@@ -103,34 +105,36 @@ public abstract class AbstractCache {
 
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Evaluates the supplied time in milliseconds to the cacheTime for this Cache subtracting the current system time
      * to get the cacheAge and returns if the time is past
-     * <p>
+     * <p/>
+     *
      * @param pastTime long representing some time in milliseconds to check for
      * @return boolean if the time is past
      */
-    public boolean isPastDesignatedTime(long pastTime){
+    public boolean isPastDesignatedTime(long pastTime) {
         return pastTime < getCacheAge();
     }
 
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Evaluates the supplied time in milliseconds to the cacheTime for this Cache subtracting the current system time
      * to get the cacheAge and returns if the time is past
-     * <p>
+     * <p/>
+     *
      * @param timePassed long representing some time in milliseconds to check for
      * @return boolean if the time is past
      */
-    public boolean isPastDesignatedTimeRefreshTimeNowIfPast(long timePassed){
+    public boolean isPastDesignatedTimeRefreshTimeNowIfPast(long timePassed) {
         long now = System.currentTimeMillis();
         boolean pastDesignatedTime = timePassed < (now - cacheTime);
-        if (pastDesignatedTime){
+        if (pastDesignatedTime) {
             cacheTime = now;
             return true;
         } else {
@@ -140,19 +144,20 @@ public abstract class AbstractCache {
 
     /**
      * This represents a higher level method for StarNubs API.
-     * <p>
+     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
-     * <p>
+     * <p/>
      * Uses: Evaluates the supplied time in milliseconds to the cacheTime for this Cache subtracting the current system time
      * to get the cacheAge and returns if the time is past
-     * <p>
+     * <p/>
+     *
      * @param timePassed long representing some time in milliseconds to check for
      * @return boolean if the time is past
      */
-    public boolean isPastDesignatedTimeRefreshTimeNowAlways(long timePassed){
+    public boolean isPastDesignatedTimeRefreshTimeNowAlways(long timePassed) {
         long now = System.currentTimeMillis();
         boolean pastDesignatedTime = timePassed < (now - cacheTime);
-        if (pastDesignatedTime){
+        if (pastDesignatedTime) {
             cacheTime = now;
             return true;
         } else {
