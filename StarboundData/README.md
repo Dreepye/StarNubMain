@@ -12,7 +12,7 @@ Requirements
 
 Current Data Types
 ========
-Colors:
+- Colors:
 	- GameColors - All the colors in the game with look up methods
 	- Color - Holds details about a color by name, hex and shortcut
 
