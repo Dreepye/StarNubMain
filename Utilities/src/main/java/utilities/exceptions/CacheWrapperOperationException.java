@@ -19,16 +19,16 @@
 package utilities.exceptions;
 
 /**
- * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
+ * Represents a CollectionDoesNotExistException, this is used in the Cache Wrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class CollectionDoesNotExistException extends Exception {
+public class CacheWrapperOperationException extends Exception{
 
-    public CollectionDoesNotExistException() {}
+    public CacheWrapperOperationException() {}
 
-    public CollectionDoesNotExistException(String message){
+    public CacheWrapperOperationException(String message){
         super(message);
     }
 }

@@ -16,19 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.exceptions;
-
 /**
- * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * cache.wrappers is the package containing the basic Cache Wrappers
  */
-public class CollectionDoesNotExistException extends Exception {
-
-    public CollectionDoesNotExistException() {}
-
-    public CollectionDoesNotExistException(String message){
-        super(message);
-    }
-}
+package cache.wrappers;

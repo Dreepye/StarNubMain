@@ -16,19 +16,27 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.exceptions;
+package cache.objects;
 
 /**
- * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
+ * Represents a String Cache. This cache can be used in any Cache Wrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class CollectionDoesNotExistException extends Exception {
+public class StringCache extends TimeCache {
 
-    public CollectionDoesNotExistException() {}
+    private volatile String string;
 
-    public CollectionDoesNotExistException(String message){
-        super(message);
+    public StringCache(String string) {
+        this.string = string;
+    }
+
+    public String getString() {
+        return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
     }
 }

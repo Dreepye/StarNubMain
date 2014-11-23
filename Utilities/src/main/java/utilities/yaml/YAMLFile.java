@@ -21,7 +21,6 @@ package utilities.yaml;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -138,8 +137,8 @@ public class YAMLFile {
      *
      * @throws Exception if the file cannot be loaded
      */
-    protected HashMap<String, Object> loadOnConstruct() throws Exception {
-        HashMap<String, Object> DATA;
+    protected Map<String, Object> loadOnConstruct() throws Exception {
+        Map<String, Object> DATA;
         try {
             DATA = loadFromDisk();
             if (DATA != null) {
@@ -163,9 +162,9 @@ public class YAMLFile {
      * @return boolean returns true if the HashMap containing the file data is empty
      */
     @SuppressWarnings("unchecked")
-    protected HashMap<String, Object> loadFromDisk() throws IOException {
+    protected Map<String, Object> loadFromDisk() throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(DISK_FILE)) {
-            return (HashMap<String, Object>) new Yaml().load(fileInputStream);
+            return (Map<String, Object>) new Yaml().load(fileInputStream);
         }
     }
 
@@ -176,15 +175,15 @@ public class YAMLFile {
      * <p>
      */
     @SuppressWarnings("unchecked")
-    protected HashMap<String, Object> loadFromDefault() throws Exception {
+    protected Map<String, Object> loadFromDefault() throws Exception {
         if (DEFAULT_FILE_PATH instanceof String) {
             try (InputStream resourceAsStream = this.getClass().getResourceAsStream((String) DEFAULT_FILE_PATH)) {
-                return (HashMap<String, Object>) new Yaml().load(resourceAsStream);
+                return (Map<String, Object>) new Yaml().load(resourceAsStream);
             }
         } else if (DEFAULT_FILE_PATH instanceof InputStream) {
-            return (HashMap<String, Object>) new Yaml().load((InputStream) DEFAULT_FILE_PATH);
+            return (Map<String, Object>) new Yaml().load((InputStream) DEFAULT_FILE_PATH);
         } else if (DEFAULT_FILE_PATH instanceof Map){
-            return (HashMap<String, Object>) DEFAULT_FILE_PATH;
+            return (Map<String, Object>) DEFAULT_FILE_PATH;
         }
         return null;
     }

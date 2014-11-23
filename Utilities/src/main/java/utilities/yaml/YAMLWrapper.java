@@ -19,9 +19,11 @@
 package utilities.yaml;
 
 import org.yaml.snakeyaml.Yaml;
+import utilities.exceptions.CollectionDoesNotExistException;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
@@ -34,8 +36,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  */
 public class YAMLWrapper extends YAMLFile {
 
-    private final Object HASHMAP_LOCK_OBJECT = new Object();
-    private HashMap<String, Object> DATA;
+    private final Object LOCK_OBJECT = new Object();
+    private ConcurrentHashMap<String, Object> DATA = new ConcurrentHashMap<>();
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
@@ -52,7 +54,7 @@ public class YAMLWrapper extends YAMLFile {
     public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction) throws Exception {
         super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, DUMP_ON_MODIFICATION);
         if (loadOnConstruct) {
-            DATA = loadOnConstruct();
+            DATA.putAll(loadOnConstruct());
         }
         if (validateOnConstruction) {
             mapVerifyInternally();
@@ -75,14 +77,14 @@ public class YAMLWrapper extends YAMLFile {
     public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
         super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, AUTO_DUMP_INTERVAL, DUMP_ON_MODIFICATION, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, map);
         if (loadOnConstruct) {
-            DATA = loadOnConstruct();
+            DATA.putAll(loadOnConstruct());
         }
         if (validateOnConstruction) {
             mapVerifyInternally();
         }
     }
 
-    public HashMap<String, Object> getDATA() {
+    public Map<String, Object> getDATA() {
         return DATA;
     }
 
@@ -93,12 +95,10 @@ public class YAMLWrapper extends YAMLFile {
      * Map match the Default Map data types. If the a List exist then the quantity is trivial and only
      * the data types are checked.
      * <p>
-     *
-     * @param mapToVerify Map the map to be verified
-     * @param defaultMap  Map the default map to be used as the verification map
-     */
+     *  @param mapToVerify Map the map to be verified
+     * @param defaultMap  Map the default map to be used as the verification map*/
     @SuppressWarnings("unchecked")
-    public static HashMap<String, Object> mapVerify(HashMap<String, Object> mapToVerify, HashMap<String, Object> defaultMap) {
+    public static Map<String, Object> mapVerify(Map<String, Object> mapToVerify, Map<String, Object> defaultMap) {
         mapToVerify = mapPurge(mapToVerify, defaultMap);
         for (Map.Entry <String, Object> entrySet : defaultMap.entrySet()) {
             String s = entrySet.getKey();
@@ -108,7 +108,7 @@ public class YAMLWrapper extends YAMLFile {
                 mapToVerify.put(s, defaultObject);
             } else if (defaultObject instanceof Map) {
                 if (objectToVerify instanceof Map) {
-                    mapVerify((HashMap<String, Object>) objectToVerify, (HashMap<String, Object>) defaultObject);
+                    mapVerify((Map<String, Object>) objectToVerify, (Map<String, Object>) defaultObject);
                 } else {
                     mapToVerify.put(s, defaultObject);
                 }
@@ -136,7 +136,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return Map returns the purged map
      */
     @SuppressWarnings("unchecked")
-    private static HashMap<String, Object> mapPurge(HashMap<String, Object> mapToVerify, HashMap<String, Object> defaultMap) {
+    private static Map<String, Object> mapPurge(Map<String, Object> mapToVerify, Map<String, Object> defaultMap) {
         HashSet<String> keysToRemove = new HashSet<>();
         for (Map.Entry <String, Object> entrySet : mapToVerify.entrySet()) {
             String s = entrySet.getKey();
@@ -146,7 +146,7 @@ public class YAMLWrapper extends YAMLFile {
                 Object objectToVerify = mapToVerify.get(s);
                 Object defaultObject = entrySet.getValue();
                 if (objectToVerify instanceof Map && defaultObject instanceof Map) {
-                    mapPurge((HashMap<String, Object>) objectToVerify, ((HashMap<String, Object>) defaultObject));
+                    mapPurge((Map<String, Object>) objectToVerify, ((Map<String, Object>) defaultObject));
                 } else if (!(objectToVerify instanceof Map) && defaultObject instanceof Map) {
                     mapToVerify.put(s, defaultObject);
                 }
@@ -225,7 +225,7 @@ public class YAMLWrapper extends YAMLFile {
      * This will make sure the Map set here is valid
      */
     protected void mapVerifyInternally() throws Exception {
-        DATA = mapVerify(DATA, loadFromDefault());
+        DATA.putAll(mapVerify(DATA, loadFromDefault()));
         super.dumpOnModification(DATA);
     }
 
@@ -271,9 +271,7 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean addKeyValue(Object value, String key) throws IOException {
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            DATA.put(key, value);
-        }
+        DATA.put(key, value);
         dumpOnModification(DATA);
         return DATA.containsValue(value);
     }
@@ -320,21 +318,20 @@ public class YAMLWrapper extends YAMLFile {
     public boolean addNestedValue(Object value, String... keys) throws IOException {
         int index = 0;
         int indexLength = keys.length - 1;
-        HashMap<String, Object> tempMap = DATA;
+        Map<String, Object> tempMap = DATA;
         Object o;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            while (index < indexLength) {
-                String key = keys[index];
-                o = tempMap.get(key);
-                if (o == null || !(o instanceof Map)) {
-                    tempMap.put(key, new HashMap<>());
-                } else {
-                    tempMap = (HashMap<String, Object>) o;
-                    index++;
-                }
+        while (index < indexLength) {
+            String key = keys[index];
+            o = tempMap.get(key);
+            if (o == null || !(o instanceof Map)) {
+                tempMap.put(key, new HashMap<>());
+            } else {
+                tempMap = (Map<String, Object>) o;
+                index++;
             }
-            tempMap.put(keys[index], value);
         }
+        tempMap.put(keys[index], value);
+
         dumpOnModification(DATA);
         return hasValue(value, keys);
     }
@@ -383,9 +380,7 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeValue(String key) throws IOException {
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            DATA.remove(key);
-        }
+        DATA.remove(key);
         dumpOnModification(DATA);
         return DATA.containsKey(key);
     }
@@ -410,21 +405,19 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean removeNestedValue(String... keys) throws IOException {
-        HashMap<String, Object> tempMap = DATA;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            int index = 0;
-            int indexLength = keys.length - 1;
-            while (index < indexLength) {
-                String key = keys[index];
-                tempMap = (HashMap<String, Object>) tempMap.get(key);
-                index++;
-            }
+        Map<String, Object> tempMap = DATA;
+        int index = 0;
+        int indexLength = keys.length - 1;
+        while (index < indexLength) {
             String key = keys[index];
-            if (tempMap.containsKey(key)) {
-                tempMap.remove(key);
-                dumpOnModification(DATA);
-                return tempMap.containsKey(key);
-            }
+            tempMap = (HashMap<String, Object>) tempMap.get(key);
+            index++;
+        }
+        String key = keys[index];
+        if (tempMap.containsKey(key)) {
+            tempMap.remove(key);
+            dumpOnModification(DATA);
+            return tempMap.containsKey(key);
         }
         return false;
     }
@@ -465,23 +458,21 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     private Object mapUnwrapper(String... keys) {
-        HashMap<String, Object> tempHashMap = null;
-        int index = 0;
-        int keysLastIndex = keys.length - 1;
-        boolean firstLoop = true;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            while (index < keysLastIndex) {
-                if (firstLoop) {
-                    firstLoop = false;
-                    tempHashMap = (HashMap<String, Object>) DATA.get(keys[index]);
-                } else {
-                    tempHashMap = (HashMap<String, Object>) tempHashMap.get(keys[index]);
-                }
-                index++;
+    HashMap<String, Object> tempHashMap = null;
+    int index = 0;
+    int keysLastIndex = keys.length - 1;
+    boolean firstLoop = true;
+        while (index < keysLastIndex) {
+            if (firstLoop) {
+                firstLoop = false;
+                tempHashMap = (HashMap<String, Object>) DATA.get(keys[index]);
+            } else {
+                tempHashMap = (HashMap<String, Object>) tempHashMap.get(keys[index]);
             }
-            if (tempHashMap != null) {
-                return tempHashMap.get(keys[index]);
-            }
+            index++;
+        }
+        if (tempHashMap != null) {
+            return tempHashMap.get(keys[index]);
         }
         return null;
     }
@@ -540,16 +531,15 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addToCollection(Object value, String key) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) DATA.get(key);
-            if (collection != null) {
+        Collection collection = (Collection) DATA.get(key);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.add(value);
-            } else {
-                throw new CollectionDoesNotExistException();
             }
-            dumpOnModification(DATA);
+        } else {
+            throw new CollectionDoesNotExistException();
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -563,16 +553,15 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addToCollection(Object value, String... keys) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) mapUnwrapper(keys);
-            if (collection != null) {
+        Collection collection = (Collection) mapUnwrapper(keys);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.add(value);
-            } else {
-                throw new CollectionDoesNotExistException();
             }
-            dumpOnModification(DATA);
+        } else {
+            throw new CollectionDoesNotExistException();
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -586,16 +575,15 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, String key) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) DATA.get(key);
-            if (collection != null) {
+        Collection collection = (Collection) DATA.get(key);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.addAll(value);
-            } else {
-                throw new CollectionDoesNotExistException();
             }
-            dumpOnModification(DATA);
+        } else {
+            throw new CollectionDoesNotExistException();
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -609,16 +597,15 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, String... keys) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) mapUnwrapper(keys);
-            if (collection != null) {
+        Collection collection = (Collection) mapUnwrapper(keys);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.addAll(value);
-            } else {
-                throw new CollectionDoesNotExistException();
             }
-            dumpOnModification(DATA);
+        } else {
+            throw new CollectionDoesNotExistException();
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -633,24 +620,26 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addToCollection(Object value, boolean hashSet, String key) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) DATA.get(key);
-            if (collection != null) {
+        Collection collection = (Collection) DATA.get(key);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.add(value);
-            }  else {
-                if (hashSet){
-                    createNestedSet(key);
-                } else {
-                    createNestedList(key);
-                }
-                collection = (Collection) DATA.get(key);
-                if (collection !=null) {
-                    collection.add(value);
-                } else {
-                    throw new CollectionDoesNotExistException();
-                }
             }
+        }  else {
+            if (hashSet){
+                createNestedSet(key);
+            } else {
+                createNestedList(key);
+            }
+            collection = (Collection) DATA.get(key);
+            if (collection !=null) {
+                synchronized (LOCK_OBJECT) {
+                    collection.add(value);
+                }
+            } else {
+                throw new CollectionDoesNotExistException();
+            }
+
             dumpOnModification(DATA);
         }
         return collection.contains(value);
@@ -667,26 +656,27 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addToCollection(Object value, boolean hashSet, String... keys) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) mapUnwrapper(keys);
-            if (collection != null) {
+        Collection collection = (Collection) mapUnwrapper(keys);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.add(value);
-            }  else {
-                if (hashSet){
-                    createNestedSet(keys);
-                } else {
-                    createNestedList(keys);
-                }
-                collection = (Collection) mapUnwrapper(keys);
-                if (collection !=null) {
-                    collection.add(value);
-                } else {
-                    throw new CollectionDoesNotExistException();
-                }
             }
-            dumpOnModification(DATA);
+        }  else {
+            if (hashSet){
+                createNestedSet(keys);
+            } else {
+                createNestedList(keys);
+            }
+            collection = (Collection) mapUnwrapper(keys);
+            if (collection !=null) {
+                synchronized (LOCK_OBJECT) {
+                    collection.add(value);
+                }
+            } else {
+                throw new CollectionDoesNotExistException();
+            }
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -701,26 +691,27 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, boolean hashSet, String key) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) DATA.get(key);
-            if (collection != null) {
+        Collection collection = (Collection) DATA.get(key);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.addAll(value);
-            }  else {
-                if (hashSet){
-                    createNestedSet(key);
-                } else {
-                    createNestedList(key);
-                }
-                collection = (Collection) DATA.get(key);
-                if (collection !=null) {
-                    collection.addAll(value);
-                } else {
-                    throw new CollectionDoesNotExistException();
-                }
             }
-            dumpOnModification(DATA);
+        }  else {
+            if (hashSet){
+                createNestedSet(key);
+            } else {
+                createNestedList(key);
+            }
+            collection = (Collection) DATA.get(key);
+            if (collection !=null) {
+                synchronized (LOCK_OBJECT) {
+                    collection.addAll(value);
+                }
+            } else {
+                throw new CollectionDoesNotExistException();
+            }
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -735,26 +726,27 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, boolean hashSet ,String... keys) throws IOException, CollectionDoesNotExistException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) mapUnwrapper(keys);
-            if (collection != null) {
+        Collection collection= (Collection) mapUnwrapper(keys);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.addAll(value);
-            } else {
-                if (hashSet){
-                    createNestedSet(keys);
-                } else {
-                    createNestedList(keys);
-                }
-                collection = (Collection) mapUnwrapper(keys);
-                if (collection !=null) {
-                    collection.addAll(value);
-                } else {
-                    throw new CollectionDoesNotExistException();
-                }
             }
-            dumpOnModification(DATA);
+        } else {
+            if (hashSet){
+                createNestedSet(keys);
+            } else {
+                createNestedList(keys);
+            }
+            collection = (Collection) mapUnwrapper(keys);
+            if (collection !=null) {
+                synchronized (LOCK_OBJECT) {
+                    collection.addAll(value);
+                }
+            } else {
+                throw new CollectionDoesNotExistException();
+            }
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -767,14 +759,13 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromCollection(Object value, String key) throws IOException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) DATA.get(key);
-            if (collection != null) {
+        Collection collection = (Collection) DATA.get(key);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.remove(value);
             }
-            dumpOnModification(DATA);
         }
+        dumpOnModification(DATA);
         return collection != null && collection.contains(value);
     }
 
@@ -787,14 +778,13 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromCollection(Object value, String... keys) throws IOException {
-        Collection collection;
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            collection = (Collection) mapUnwrapper(keys);
-            if (collection != null) {
+        Collection collection= (Collection) mapUnwrapper(keys);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
                 collection.remove(value);
             }
-            dumpOnModification(DATA);
         }
+        dumpOnModification(DATA);
         return collection != null && collection.contains(value);
     }
 
@@ -807,7 +797,9 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean collectionContains(Object value, String key) throws IOException, NullPointerException {
-        return ((Collection) DATA.get(key)).contains(value);
+        synchronized (LOCK_OBJECT) {
+            return ((Collection) DATA.get(key)).contains(value);
+        }
     }
 
     /**
@@ -819,7 +811,9 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean collectionContains(Object value, String... keys) throws IOException, NullPointerException {
-        return ((Collection) mapUnwrapper(keys)).contains(value);
+        synchronized (LOCK_OBJECT) {
+            return ((Collection) mapUnwrapper(keys)).contains(value);
+        }
     }
 
     /**
@@ -829,9 +823,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return Object representing if the value exist
      */
     public Object getValue(String key){
-        synchronized (HASHMAP_LOCK_OBJECT) {
-            return DATA.get(key);
-        }
+        return DATA.get(key);
     }
 
     /**

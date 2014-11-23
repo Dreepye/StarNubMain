@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package server.cache.objects;
+package cache.objects;
 
 /**
  * Represents a Boolean Cache. This cache can be used in any Cache Wrapper
@@ -24,7 +24,7 @@ package server.cache.objects;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class BooleanCache extends AbstractCache {
+public class BooleanCache extends TimeCache {
 
     private volatile boolean bool;
 
