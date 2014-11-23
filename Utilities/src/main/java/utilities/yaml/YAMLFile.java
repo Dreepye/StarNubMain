@@ -39,24 +39,28 @@ public class YAMLFile {
      *
      * @param OWNER                String owner of this YAMLFile
      * @param FILE_NAME            String file name of the file
-     * @param DEFAULT_FILE_PATH    String default path to the file
+     * @param DEFAULT_FILE_PATH    Object default path to the file (String, InputString, Map)
      * @param DISK_FILE_PATH       String default path to file on the disk
      * @param DUMP_ON_MODIFICATION boolean are we dumping on modification
      * @throws Exception
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean DUMP_ON_MODIFICATION) throws Exception {
+    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION) throws Exception {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
-        this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
-        this.DISK_FILE_PATH = DISK_FILE_PATH;
-        this.DISK_FILE = new File(DISK_FILE_PATH);
+        if (DEFAULT_FILE_PATH instanceof String) {
+            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, true);
+        } else {
+            this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
+        }
+        this.DISK_FILE_PATH = buildPath(DISK_FILE_PATH, FILE_NAME, absolutePath);
+        this.DISK_FILE = new File(this.DISK_FILE_PATH);
         this.YAML_DUMPER = new YAMLDumper(null, DUMP_ON_MODIFICATION);
     }
 
     /**
      * @param OWNER                                      String owner of this YAMLFile
      * @param FILE_NAME                                  String file name of the file
-     * @param DEFAULT_FILE_PATH                          String default path to the file
+     * @param DEFAULT_FILE_PATH                          Object default path to the file (String, InputString, Map)
      * @param DISK_FILE_PATH                             String default path to file on the disk
      * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes
      * @param DUMP_ON_MODIFICATION                       boolean are we dumping on modification
@@ -64,12 +68,16 @@ public class YAMLFile {
      * @param map                                        Map representing the map to auto dump
      * @throws Exception
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
+    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
-        this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
-        this.DISK_FILE_PATH = DISK_FILE_PATH;
-        this.DISK_FILE = new File(DISK_FILE_PATH);
+        if (DEFAULT_FILE_PATH instanceof String) {
+            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, true);
+        } else {
+            this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
+        }
+        this.DISK_FILE_PATH = buildPath(DISK_FILE_PATH, FILE_NAME, absolutePath);
+        this.DISK_FILE = new File(this.DISK_FILE_PATH);
         YAMLAutoDump yamlAutoDump = null;
         if (AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR != null) {
             yamlAutoDump = new YAMLAutoDump(true, AUTO_DUMP_INTERVAL, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR);
@@ -100,6 +108,28 @@ public class YAMLFile {
 
     public YAMLDumper getYAML_DUMPER() {
         return YAML_DUMPER;
+    }
+
+    /**
+     * This insure the file filePath is correct
+     *
+     * @param filePath String filePath to file
+     * @param file String the file
+     * @return String full file filePath
+     */
+    @SuppressWarnings("unchecked")
+    private String buildPath(String filePath, String file, boolean absolutePath){
+        File dir = new File(filePath);
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
+        if (!(filePath).startsWith("/") && absolutePath) {
+            filePath = "/" + filePath;
+        }
+        if (!(filePath).endsWith("/") && filePath.length() > 0){
+            filePath = filePath + "/";
+        }
+        return filePath + file;
     }
 
     /**
@@ -148,15 +178,13 @@ public class YAMLFile {
     @SuppressWarnings("unchecked")
     public HashMap<String, Object> loadFromDefault() throws Exception {
         if (DEFAULT_FILE_PATH instanceof String) {
-            String modifiedPath = DEFAULT_FILE_PATH.toString();
-            if (!((String) DEFAULT_FILE_PATH).startsWith("/")) {
-                modifiedPath = "/" + modifiedPath;
-            }
-            try (InputStream resourceAsStream = this.getClass().getResourceAsStream(modifiedPath)) {
+            try (InputStream resourceAsStream = this.getClass().getResourceAsStream((String) DEFAULT_FILE_PATH)) {
                 return (HashMap<String, Object>) new Yaml().load(resourceAsStream);
             }
         } else if (DEFAULT_FILE_PATH instanceof InputStream) {
             return (HashMap<String, Object>) new Yaml().load((InputStream) DEFAULT_FILE_PATH);
+        } else if (DEFAULT_FILE_PATH instanceof Map){
+            return (HashMap<String, Object>) DEFAULT_FILE_PATH;
         }
         return null;
     }

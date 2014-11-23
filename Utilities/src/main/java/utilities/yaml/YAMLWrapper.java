@@ -47,8 +47,8 @@ public class YAMLWrapper extends YAMLFile {
      * @param validateOnConstruction boolean validate the Map against the Default Map on construction
      * @throws Exception
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction) throws Exception {
-        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, DUMP_ON_MODIFICATION);
+    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction) throws Exception {
+        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, DUMP_ON_MODIFICATION);
         if (loadOnConstruct) {
             DATA = loadOnConstruct();
         }
@@ -70,8 +70,8 @@ public class YAMLWrapper extends YAMLFile {
      * @param map                                        Map representing the map to auto dump
      * @throws Exception
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
-        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, AUTO_DUMP_INTERVAL, DUMP_ON_MODIFICATION, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, map);
+    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
+        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, AUTO_DUMP_INTERVAL, DUMP_ON_MODIFICATION, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, map);
         if (loadOnConstruct) {
             DATA = loadOnConstruct();
         }
@@ -91,6 +91,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param mapToVerify Map the map to be verified
      * @param defaultMap  Map the default map to be used as the verification map
      */
+    @SuppressWarnings("unchecked")
     public static HashMap<String, Object> mapVerify(HashMap<String, Object> mapToVerify, HashMap<String, Object> defaultMap) {
         mapToVerify = mapPurge(mapToVerify, defaultMap);
         for (Map.Entry <String, Object> entrySet : defaultMap.entrySet()) {
@@ -286,6 +287,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean representing if the value was added
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
+    @SuppressWarnings("unchecked")
     public boolean addNestedValue(Object value, String... keys) throws IOException {
         int index = 0;
         int indexLength = keys.length - 1;
@@ -377,6 +379,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean representing if the value was added
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
+    @SuppressWarnings("unchecked")
     public boolean removeNestedValue(String... keys) throws IOException {
         HashMap<String, Object> tempMap = DATA;
         synchronized (HASHMAP_LOCK_OBJECT) {
@@ -431,6 +434,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param keys String... representing a list of the keys to retrieve an Object from
      * @return Object the object to be returned
      */
+    @SuppressWarnings("unchecked")
     private Object mapUnwrapper(String... keys) {
         HashMap<String, Object> tempHashMap = null;
         int index = 0;
@@ -505,6 +509,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
+    @SuppressWarnings("unchecked")
     public boolean addToCollection(Object value, String key) throws IOException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
@@ -525,6 +530,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
+    @SuppressWarnings("unchecked")
     public boolean addToCollection(Object value, String... keys) throws IOException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
@@ -545,6 +551,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
+    @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, String key) throws IOException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
@@ -565,6 +572,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
+    @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, String... keys) throws IOException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
@@ -625,7 +633,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
-    public boolean collectionContains(Object value, String key) throws IOException {
+    public boolean collectionContains(Object value, String key) throws IOException, NullPointerException {
         return ((Collection) DATA.get(key)).contains(value);
     }
 
@@ -637,7 +645,7 @@ public class YAMLWrapper extends YAMLFile {
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
-    public boolean collectionContains(Object value, String... keys) throws IOException {
+    public boolean collectionContains(Object value, String... keys) throws IOException, NullPointerException {
         return ((Collection) mapUnwrapper(keys)).contains(value);
     }
 }
