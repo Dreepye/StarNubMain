@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -49,6 +49,13 @@ public final class GameColors {
     private GameColors() {
     }
 
+    /**
+     * @return GameColors the only instance of GameColors because of the Singleton Pattern used
+     */
+    public static GameColors getInstance() {
+        return instance;
+    }
+
     public String getDefaultNameColor() {
         return defaultNameColor;
     }
@@ -67,13 +74,6 @@ public final class GameColors {
 
     public String getBracketColor() {
         return bracketColor;
-    }
-
-    /**
-     * @return GameColors this and the only instance of GameColors due to the Singleton Pattern
-     */
-    public static GameColors getInstance() {
-        return instance;
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,7 +18,6 @@
 
 package server;
 
-import lombok.Getter;
 import org.codehome.utilities.files.YamlDumper;
 import org.codehome.utilities.files.YamlLoader;
 
@@ -45,14 +44,26 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class Configuration {
 
-    @Getter
     private final String configType;
-    @Getter
     private ConcurrentHashMap<String, Object> configuration;
-    @Getter
     private final String diskConfigString;
-    @Getter
     private final Object defaultConfigObject;
+
+    public String getConfigType() {
+        return configType;
+    }
+
+    public ConcurrentHashMap<String, Object> getConfiguration() {
+        return configuration;
+    }
+
+    public String getDiskConfigString() {
+        return diskConfigString;
+    }
+
+    public Object getDefaultConfigObject() {
+        return defaultConfigObject;
+    }
 
     /**
      * Public Constructor
@@ -118,7 +129,7 @@ public final class Configuration {
      * <p>
      * Recommended: For internal use with StarNub.
      * <p>
-     * Uses: This method will load a resource file from StarNub or a Plugin
+     * Uses: This method will load a resource utilities.file from StarNub or a Plugin
      * <p>
      *
      * @param defaultConfigObject Object which is a String path inside of StarNub or a InputStream for another jar
@@ -138,7 +149,7 @@ public final class Configuration {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This class will reload the configuration file
+     * Uses: This class will reload the configuration utilities.file
      * <p>
      */
     public void reloadConfiguration(boolean snConfig){
@@ -150,7 +161,7 @@ public final class Configuration {
      * <p>
      * Recommended: For internal use with StarNub.
      * <p>
-     * Uses: This method will load a resource file from StarNub or a Plugin
+     * Uses: This method will load a resource utilities.file from StarNub or a Plugin
      * <p>
      */
     private void saveConfiguration() {

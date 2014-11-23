@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -46,19 +46,19 @@ class StatusQuery implements Runnable {
      * String representing type of query,
      * "startup" or "responsive".
      */
-    @Getter
+
     private volatile static String type;
 
     /**
      * We need to keep track of query attempts
      */
-    @Getter
+
     protected volatile static int queryAttempts = 0;
 
     /**
      * Starbound Server query success
      */
-    @Getter @Setter
+
     private volatile static boolean online;
 
     /**

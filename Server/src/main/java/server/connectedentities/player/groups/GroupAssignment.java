@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -21,7 +21,6 @@ package server.connectedentities.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import server.connectedentities.player.account.Account;
 
 @DatabaseTable(tableName = "GROUP_ASSIGNMENTS")
@@ -30,21 +29,21 @@ public class GroupAssignment {
     /**
      * Represents a group assignment id
      */
-    @Getter
+
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = "GROUP_ASSIGNMENT_ID")
     private volatile int groupAssignmentId;
 
     /**
      * Represents the starnubId which has an associated group
      */
-    @Getter
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "STARNUB_ID")
     private volatile Account starnubId;
 
     /**
      * Represents this Players IP ina string mainly used for the database
      */
-    @Getter
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "GROUP")
     private volatile Group group;
 
@@ -52,6 +51,18 @@ public class GroupAssignment {
      * Constructor for database purposes
      */
     public GroupAssignment(){}
+
+    public int getGroupAssignmentId() {
+        return groupAssignmentId;
+    }
+
+    public Account getStarnubId() {
+        return starnubId;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
 
     /**
      * Constructor used in adding, removing or updating a group assignment for a account

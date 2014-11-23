@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -31,11 +31,11 @@ import server.StarNub;
  */
 final class GetFilePath {
 
-    @Getter
+
     private String filePath = setFilePath();
 
     /**
-     * This method will return a file path based on the OS Version and Bit
+     * This method will return a utilities.file path based on the OS Version and Bit
      * Version.
      *
      * @return A integer that represents the bit version.
@@ -49,10 +49,10 @@ final class GetFilePath {
 
     /**
      * This method will find what OS the user is using
-     * and return a String file path for where Starbound
+     * and return a String utilities.file path for where Starbound
      * should be located.
      *
-     * @return String that represents the file path
+     * @return String that represents the utilities.file path
      */
     private String setFilePath() {
         String starting = "Starting the Starbound Server. ";

@@ -3,7 +3,7 @@ package server.server;
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -31,7 +31,7 @@ import server.NamedThreadFactory;
 import server.StarNub;
 import server.eventsrouter.events.StarboundServerStatusEvent;
 import server.eventsrouter.internaldebugging.PacketDebugger;
-import server.server.chat.ServerChat;
+import chatmanager.chat.ServerChat;
 //import org.starnub.starbounddata.packets.starbounddata.packets.server.starbounddata.packets.KnownPackets;
 import server.server.packets.server.ProtocolVersionPacket;
 import server.server.starbound.StarboundManager;
@@ -52,21 +52,21 @@ import java.util.concurrent.Executors;
 public enum Server {
     INSTANCE;
 
-    @Getter
+
     private TCPProxyServer tcpProxyServer;
-    @Getter
+
     private Thread udpProxyServer;
-    @Getter
+
     private StarboundManager starboundManager;
-    @Getter
+
     private PacketDebugger packetDebugger;
-    @Getter
+
     private ProtocolVersionPacket protocolVersionPacket;
-    @Getter
+
     private NioEventLoopGroup starboundQueryGroup;
-    @Getter
+
     private Connections connections;
-    @Getter
+
     private ServerChat serverChat;
 
     {
@@ -151,7 +151,7 @@ public enum Server {
     }
 
     /**
-     * References the serverChat variable to the {@link server.server.chat.ServerChat} Enum singleton.
+     * References the serverChat variable to the {@link chatmanager.chat.ServerChat} Enum singleton.
      */
     private void setServerChat() {
         serverChat = ServerChat.INSTANCE;

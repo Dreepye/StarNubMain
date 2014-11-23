@@ -1,6 +1,6 @@
 package server.eventsrouter.handlers;
 
-import server.server.packets.Packet;
+import starbounddata.packets.Packet;
 
 public abstract class PacketEventHandler extends EventHandler{
 

@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -17,8 +17,6 @@
 */
 
 package server.plugins;
-
-import lombok.Getter;
 
 import java.util.ArrayList;
 
@@ -45,7 +43,7 @@ public class CommandPackage {
      * /{pluginname or alias} menu
      * /{pluginname or alias} command
      */
-    @Getter
+
     public final ArrayList<String> COMMANDS;
 
     /**
@@ -58,13 +56,13 @@ public class CommandPackage {
      * /{pluginname or alias} menu
      * /{pluginname or alias} command
      */
-    @Getter
+
     public final ArrayList<String> COMMAND_MAIN_ARGS;
 
     /**
      * Where this command is located in the plugin
      */
-    @Getter
+
     public final String COMMAND_CLASS;
 
 //    /**
@@ -83,7 +81,7 @@ public class CommandPackage {
      * {pluginname or alias}.*
      * <p>
      */
-    @Getter
+
     public final String PERMISSIONS;
 
     /**
@@ -91,19 +89,19 @@ public class CommandPackage {
      * can use this command. False will block the console from using or seeing
      * the command. 1 = Player, 2 = Remote Player, 3 = Both
      */
-    @Getter
+
     public final int CAN_USE;
 
     /**
      * A short description about your command.
      */
-    @Getter
+
     public final String DESCRIPTION;
 
     /**
      * The actual command code for the this command
      */
-    @Getter
+
     private final Command COMMAND;
 
     /**
@@ -123,5 +121,33 @@ public class CommandPackage {
         this.CAN_USE = CAN_USE;
         this.DESCRIPTION = DESCRIPTION;
         this.COMMAND = COMMAND;
+    }
+
+    public ArrayList<String> getCOMMANDS() {
+        return COMMANDS;
+    }
+
+    public ArrayList<String> getCOMMAND_MAIN_ARGS() {
+        return COMMAND_MAIN_ARGS;
+    }
+
+    public String getCOMMAND_CLASS() {
+        return COMMAND_CLASS;
+    }
+
+    public String getPERMISSIONS() {
+        return PERMISSIONS;
+    }
+
+    public int getCAN_USE() {
+        return CAN_USE;
+    }
+
+    public String getDESCRIPTION() {
+        return DESCRIPTION;
+    }
+
+    public Command getCOMMAND() {
+        return COMMAND;
     }
 }

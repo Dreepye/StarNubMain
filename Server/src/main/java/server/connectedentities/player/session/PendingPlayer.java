@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -19,7 +19,6 @@
 package server.connectedentities.player.session;
 
 import io.netty.channel.ChannelHandlerContext;
-import lombok.Getter;
 import server.connectedentities.Sender;
 
 import java.net.InetAddress;
@@ -40,39 +39,63 @@ public class PendingPlayer extends Sender {
     /**
      * Represents the characters uuid for this session attempt
      */
-    @Getter
+
     private final Player PLAYER_SESSION;
 
     /**
      * Represents the session ip
      */
-    @Getter
+
     private final InetAddress SESSION_IP;
 
     /**
      * Represents the ChannelHandlerContext for the starbounddata.packets.starbounddata.packets.server side part of this session
      */
-    @Getter
+
     private final ChannelHandlerContext SESSION_SERVER_CTX;
 
     /**
      * Represents the time the starbounddata.packets.connection attempt was started.
      */
-    @Getter
+
     private final long CONNECTION_PENDING_TIME;
 
     /**
      * Represents a reason for rejecting a client (online, ban, tban, whitelist)
      */
-    @Getter
+
     private final String REJECT_CLIENT;
 
 
     /**
      * Represents a explanation reason for a client rejection to be sent to the client that was rejected
      */
-    @Getter
+
     private final String REJECTION_REASON;
+
+    public Player getPLAYER_SESSION() {
+        return PLAYER_SESSION;
+    }
+
+    public InetAddress getSESSION_IP() {
+        return SESSION_IP;
+    }
+
+    public ChannelHandlerContext getSESSION_SERVER_CTX() {
+        return SESSION_SERVER_CTX;
+    }
+
+    public long getCONNECTION_PENDING_TIME() {
+        return CONNECTION_PENDING_TIME;
+    }
+
+    public String getREJECT_CLIENT() {
+        return REJECT_CLIENT;
+    }
+
+    public String getREJECTION_REASON() {
+        return REJECTION_REASON;
+    }
 
     /**
      * Constructor used in setting the data for this class

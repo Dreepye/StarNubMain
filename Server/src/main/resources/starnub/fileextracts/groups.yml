@@ -8,7 +8,7 @@
       "admin"
     ],
     "group_ranking": {
-      "name": "owner",
+      "NAME": "owner",
       "rank": 999
     },
     "permissions": [
@@ -25,7 +25,7 @@
       "communitymanager"
     ],
     "group_ranking": {
-      "name": "staff",
+      "NAME": "staff",
       "rank": 300
     },
     "permissions": [
@@ -42,7 +42,7 @@
       "moderator"
     ],
     "group_ranking": {
-      "name": "staff",
+      "NAME": "staff",
       "rank": 200
     },
     "permissions": [
@@ -52,7 +52,7 @@
       "starnub.admin.ban",
       "starnub.appear.*",
       "starnubinternals.starbounddata.packets.chat.*",
-      "starnubinternals.name.*",
+      "starnubinternals.NAME.*",
       "starnub.admin.restart",
       "starnub.admin.broadcast"
     ]
@@ -67,7 +67,7 @@
       "trustee"
     ],
     "group_ranking": {
-      "name": "staff",
+      "NAME": "staff",
       "rank": 100
     },
     "permissions": [
@@ -88,7 +88,7 @@
       "citizen"
     ],
     "group_ranking": {
-      "name": "staff",
+      "NAME": "staff",
       "rank": 0
     },
     "permissions": [
@@ -108,7 +108,7 @@
       "outcast"
     ],
     "group_ranking": {
-      "name": "regular_users",
+      "NAME": "regular_users",
       "rank": 100
     },
     "permissions": [
@@ -125,7 +125,7 @@
       "visitor"
     ],
     "group_ranking": {
-      "name": "regular_users",
+      "NAME": "regular_users",
       "rank": 0
     },
     "permissions": [
@@ -144,13 +144,13 @@
       "None"
     ],
     "group_ranking": {
-      "name": "noaccount",
+      "NAME": "noaccount",
       "rank": 0
     },
     "permissions": [
       "starnub.commands.*",
-      "starnubinternals.name.color",
-      "starnubinternals.name.singlespaces",
+      "starnubinternals.NAME.color",
+      "starnubinternals.NAME.singlespaces",
       "starnubinternals.chatrate.5000",
       "starnubinternals.starbounddata.packets.starbounddata.packets.server.starbounddata.packets.chat",
       "starnubinternals.starbounddata.packets.starbounddata.packets.server.whisper",

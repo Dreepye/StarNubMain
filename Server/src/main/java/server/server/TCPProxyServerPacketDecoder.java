@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -31,8 +31,7 @@ import server.StarNub;
 import server.eventsrouter.events.StarNubEventsInternals;
 import server.eventsrouter.handlers.PacketEventHandler;
 import server.eventsrouter.subscriptions.EventSubscription;
-import server.server.packets.Packet;
-import server.server.packets.misc.PassThroughPacket;
+import starbounddata.packets.Packet;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -137,10 +136,10 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                         return;
                     }
                     for (EventSubscription<PacketEventHandler> packetEventSubscription : hashSet) {
-                        packet = packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
                         if (packet.isRecycle()) {
                             break;
                         }
+                        packet = packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
                     }
                     /* Write starbounddata.packets.Packet Out, if not recycling */
                     if (!packet.isRecycle()) {

@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -40,6 +40,11 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
  * @since 1.0 Beta
  */
 public class ChatSendPacket extends Packet {
+
+    public enum ChatSendChannel {
+        UNIVERSE,
+        PLANET
+    }
 
     /**
      * <br>
@@ -116,10 +121,5 @@ public class ChatSendPacket extends Packet {
     public void write(ByteBuf out) {
         writeStringVLQ(out, this.message);
         writeByte(out, (byte) this.channel.ordinal());
-    }
-
-    public enum ChatSendChannel {
-        UNIVERSE,
-        PLANET
     }
 }

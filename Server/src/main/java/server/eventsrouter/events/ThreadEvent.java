@@ -1,20 +1,27 @@
 package server.eventsrouter.events;
 
-import lombok.Getter;
 import server.StarNub;
 
 public class ThreadEvent extends StarNubEvent<String> {
 
-    @Getter
+
     private final String THREAD_OWNER;
 
-    @Getter
+
     private final Object TASK_OBJECT;
 
     public ThreadEvent(String EVENT_KEY, String THREAD_OWNER, Object TASK_OBJECT) {
         super(EVENT_KEY);
         this.THREAD_OWNER = THREAD_OWNER;
         this.TASK_OBJECT = TASK_OBJECT;
+    }
+
+    public String getTHREAD_OWNER() {
+        return THREAD_OWNER;
+    }
+
+    public Object getTASK_OBJECT() {
+        return TASK_OBJECT;
     }
 
     public static void eventSend_Permanent_Thread_Started(String threadOwner, Object taskObject){

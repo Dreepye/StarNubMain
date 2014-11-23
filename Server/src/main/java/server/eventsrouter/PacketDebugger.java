@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,23 +18,18 @@
 
 package server.eventsrouter;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.codehome.utilities.files.YamlLoader;
 import org.reflections.Reflections;
 import server.StarNub;
 import server.eventsrouter.handlers.PacketEventHandler;
-import server.server.packets.Packet;
-import server.server.packets.StarboundBufferReader;
-import server.server.packets.chat.ChatReceivePacket;
-import server.server.packets.chat.ChatSendPacket;
-import server.server.packets.global.PlayerWarpPacket;
-import server.server.packets.server.ProtocolVersionPacket;
-import server.server.packets.server.UniverseTimeUpdatePacket;
-import server.server.packets.tile.DamageTileGroupPacket;
-import server.server.packets.world.WorldStartPacket;
-import server.server.packets.world.WorldStopPacket;
+import starbounddata.packets.Packet;
+import starbounddata.packets.chat.ChatReceivePacket;
+import starbounddata.packets.chat.ChatSendPacket;
+import starbounddata.packets.connection.*;
+import starbounddata.packets.server.ProtocolVersionPacket;
+import starbounddata.packets.server.UniverseTimeUpdatePacket;
+import starbounddata.packets.tile.DamageTileGroupPacket;
 import starbounddata.vectors.Vec2I;
 
 import java.lang.reflect.InvocationTargetException;
@@ -59,7 +54,7 @@ public enum PacketDebugger {
      * due to the volatility of playing with this while needing them for player connections. This
      * method will also set up starbounddata.packets.Packet Debugging by invoking eventsrouter located at
      * this debugging variables are in the
-     * resource file "starbound_packet_types.yml"
+     * resource utilities.file "starbound_packet_types.yml"
      */
     @SuppressWarnings("unchecked")
     public synchronized void setPacketDebugging() {
@@ -94,9 +89,6 @@ public enum PacketDebugger {
     }
 
 
-    /**
-     * Used in debugging {@link server.server.packets.chat.ChatReceivePacket}
-     */
     public void ChatReceivePacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ChatReceivePacket.class, new PacketEventHandler() {
             @Override
@@ -113,9 +105,6 @@ public enum PacketDebugger {
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.chat.ChatSendPacket}
-     */
     public void ChatSendPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ChatSendPacket.class, new PacketEventHandler() {
             @Override
@@ -129,9 +118,6 @@ public enum PacketDebugger {
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.connection.ClientConnectPacket}
-     */
     public void ClientConnectPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ClientConnectPacket.class, new PacketEventHandler() {
             @Override
@@ -140,7 +126,7 @@ public enum PacketDebugger {
                 StarNub.getLogger().cDebPrint("StarNub", "PACKET ClientConnectPacket Data: \n"
                         //                          + clieConnPacket.getAssetDigest() + "\n"
                         + clieConnPacket.getClaim() + "\n"
-                        + clieConnPacket.getUUID() + "\n"
+                        + clieConnPacket.getUuid() + "\n"
                         + clieConnPacket.getPlayerName() + "\n"
                         + clieConnPacket.getSpecies() + "\n"
                         //                          + new String(clieConnPacket.getShipWorld()) + "\n"
@@ -150,9 +136,6 @@ public enum PacketDebugger {
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.connection.ClientDisconnectRequestPacket}
-     */
     public void ClientDisconnectRequestPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ClientDisconnectRequestPacket.class, new PacketEventHandler() {
             @Override
@@ -165,9 +148,6 @@ public enum PacketDebugger {
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.connection.ConnectResponsePacket}
-     */
     public void ConnectResponsePacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ConnectResponsePacket.class, new PacketEventHandler() {
             @Override
@@ -196,10 +176,6 @@ public enum PacketDebugger {
         });
     }
 
-
-    /**
-     * Used in debugging {@link server.server.packets.tile.DamageTileGroupPacket}
-     */
     public void DamageTileGroupPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", DamageTileGroupPacket.class, new PacketEventHandler() {
             @Override
@@ -228,45 +204,21 @@ public enum PacketDebugger {
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.connection.HeartbeatPacket}
-     */
     public void HeartbeatPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", HeartbeatPacket.class, new PacketEventHandler() {
             @Override
             public Packet onEvent(Packet eventData) {
                 HeartbeatPacket herBeaPacket = (HeartbeatPacket) eventData;
                 StarNub.getLogger().cDebPrint("StarNub", "PACKET HeartbeatPacket Data: \n" +
-                        "starbounddata.packets.Packet ID: " + herBeaPacket.getPacketId() +
+                        "starbounddata.packets.Packet ID: " + herBeaPacket.getPACKET_ID() +
                         "\nstarbounddata.packets.Packet Payload: " + herBeaPacket.getCurrentStep());
                 return eventData;
             }
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.chat.ChatSendPacket}
-     */
-    public void PlayerWarpPacket() {
-        StarNub.getPacketEventRouter().registerEventSubscription("StarNub", PlayerWarpPacket.class, new PacketEventHandler() {
-            @Override
-            public Packet onEvent(Packet eventData) {
-                PlayerWarpPacket playerWarpPacket = (PlayerWarpPacket) eventData;
-                StarNub.getLogger().cDebPrint("StarNub", "PACKET PlayerWarpPacket Data: \n" +
-                                playerWarpPacket.getWarpType() + "\n"
-                        //                    playerWarpPacket.getWarpTarget()+"\n"+
-                        //                    Arrays.toString(playerWarpPacket.getPayload())
-                );
-                ByteBuf byteBuf = Unpooled.copiedBuffer(playerWarpPacket.getPayload());
-                System.out.println(StarboundBufferReader.readStringVLQ(byteBuf));
-                return eventData;
-            }
-        });
-    }
 
-    /**
-     * Used in debugging {@link server.server.packets.server.ProtocolVersionPacket}
-     */
+
     public void ProtocolVersionPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ProtocolVersionPacket.class, new PacketEventHandler() {
             @Override
@@ -278,59 +230,27 @@ public enum PacketDebugger {
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.connection.ServerDisconnectPacket}
-     */
+
     public void ServerDisconnectPacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", ServerDisconnectPacket.class, new PacketEventHandler() {
             @Override
             public Packet onEvent(Packet eventData) {
-                ServerDisconnectPacket serDisPacket = (ServerDisconnectPacket) eventData;
-                StarNub.getLogger().cDebPrint("StarNub", "PACKET ServerDisconnectPacket Data: \n" +
-                        "starbounddata.packets.Packet ID: " + serDisPacket.getPacketId() +
-                        "\nstarbounddata.packets.Packet Payload: " + serDisPacket.getPayload());
+//                ServerDisconnectPacket serDisPacket = (ServerDisconnectPacket) eventData;
+//                StarNub.getLogger().cDebPrint("StarNub", "PACKET ServerDisconnectPacket Data: \n" +
+//                        "starbounddata.packets.Packet ID: " + serDisPacket.getPACKET_ID()) +
+//                        "\nstarbounddata.packets.Packet Payload: " + serDisPacket.getReason());
                 return eventData;
             }
         });
     }
 
-    /**
-     * Used in debugging {@link server.server.packets.server.UniverseTimeUpdatePacket}
-     */
+
     public void UniverseTimeUpdatePacket() {
         StarNub.getPacketEventRouter().registerEventSubscription("StarNub", UniverseTimeUpdatePacket.class, new PacketEventHandler() {
             @Override
             public Packet onEvent(Packet eventData) {
                 UniverseTimeUpdatePacket univTimPacket = (UniverseTimeUpdatePacket) eventData;
                 StarNub.getLogger().cDebPrint("StarNub", "PACKET UniverseTimeUpdate Data: Time: " + univTimPacket.getTime());
-                return eventData;
-            }
-        });
-    }
-
-    /**
-     * Used in debugging {@link server.server.packets.server.UniverseTimeUpdatePacket}
-     */
-    public void WorldStartPacket() {
-        StarNub.getPacketEventRouter().registerEventSubscription("StarNub", WorldStartPacket.class, new PacketEventHandler() {
-            @Override
-            public Packet onEvent(Packet eventData) {
-                WorldStartPacket worlStarPacket = (WorldStartPacket) eventData;
-                StarNub.getLogger().cDebPrint("StarNub", "PACKET WorldStartPacket Data: Reason: " + worlStarPacket.getStartReason());
-                return eventData;
-            }
-        });
-    }
-
-    /**
-     * Used in debugging {@link server.server.packets.server.UniverseTimeUpdatePacket}
-     */
-    public void WorldStopPacket() {
-        StarNub.getPacketEventRouter().registerEventSubscription("StarNub", WorldStopPacket.class, new PacketEventHandler() {
-            @Override
-            public Packet onEvent(Packet eventData) {
-                WorldStopPacket worlStopPacket = (WorldStopPacket) eventData;
-                StarNub.getLogger().cDebPrint("StarNub", "PACKET WorldStopPacket Data: Reason: " + worlStopPacket.getStopReason());
                 return eventData;
             }
         });

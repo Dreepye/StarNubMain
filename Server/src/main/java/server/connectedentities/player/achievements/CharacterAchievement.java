@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -19,7 +19,6 @@ package server.connectedentities.player.achievements;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import server.connectedentities.player.character.Character;
 
 @DatabaseTable(tableName = "CHARACTER_ACHIEVEMENTS")
@@ -34,14 +33,14 @@ public class CharacterAchievement {
     /**
      * Representa characterId and the associated achievements
      */
-    @Getter
+
     @DatabaseField(foreign = true, columnName = "CHARACTER_ID")
     private volatile server.connectedentities.player.character.Character characterId;
 
     /**
      * Represents this Players IP ina string mainly used for the database
      */
-    @Getter
+
     @DatabaseField(foreign = true, columnName = "ACHIEVEMENT_ID")
     private volatile Achievement achievementId;
 
@@ -49,6 +48,18 @@ public class CharacterAchievement {
      * Constructor for database purposes
      */
     public CharacterAchievement(){}
+
+    public int getCharacterAcheivmentId() {
+        return characterAcheivmentId;
+    }
+
+    public Character getCharacterId() {
+        return characterId;
+    }
+
+    public Achievement getAchievementId() {
+        return achievementId;
+    }
 
     /**
      * Constructor used in adding, removing or updating a achievement record

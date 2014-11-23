@@ -18,7 +18,7 @@ public class StarNubEventRouter extends EventRouter<String> {
     private volatile int maxThreadCount;
     private volatile HashSet<StarNubRunnable> currentThreads;
     private ArrayBlockingQueue<StarNubEvent<String>> starNubEventsQue;
-    @Setter
+
     private boolean shuttingDown;
 
     public StarNubEventRouter(){

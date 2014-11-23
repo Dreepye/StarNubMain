@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -31,31 +31,55 @@ import java.sql.SQLException;
 @DatabaseTable(tableName = "GROUPS")
 public class Group {
 
-    @Getter
+
     @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = "GROUP_NAME")
     private volatile String name;
 
-    @Getter
+
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, columnName = "TAG")
     private Tag tag;
 
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "LADDER_NAME")
     private volatile String ladderName;
 
-    @Getter
+
     @DatabaseField(dataType = DataType.INTEGER, columnName = "LADDER_RANK")
     private volatile int ladderRank;
 
-    @Getter
+
     @ForeignCollectionField(eager = true, columnName = "INHERITED_GROUPS")
     ForeignCollection<GroupInheritance> inheritedGroups;
 
-    @Getter
+
     @ForeignCollectionField(eager = true, columnName = "PERMISSIONS")
     ForeignCollection<GroupPermission> permissions;
 
     public Group(){}
+
+    public String getName() {
+        return name;
+    }
+
+    public Tag getTag() {
+        return tag;
+    }
+
+    public String getLadderName() {
+        return ladderName;
+    }
+
+    public int getLadderRank() {
+        return ladderRank;
+    }
+
+    public ForeignCollection<GroupInheritance> getInheritedGroups() {
+        return inheritedGroups;
+    }
+
+    public ForeignCollection<GroupPermission> getPermissions() {
+        return permissions;
+    }
 
     public Group(String name, Tag tag, String ladderName, int ladderRank) {
         this.name = name;

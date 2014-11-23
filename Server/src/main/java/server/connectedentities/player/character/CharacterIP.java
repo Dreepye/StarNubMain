@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -21,11 +21,10 @@ package server.connectedentities.player.character;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.*;
+import java.lang.Character;
 import java.net.InetAddress;
 
 @DatabaseTable(tableName = "CHARACTER_IP_LOG")
@@ -34,21 +33,21 @@ public class CharacterIP {
     /**
      * Represents a an ID for a character id and IP pair
      */
-    @Getter @Setter
+
     @DatabaseField(generatedId = true, columnName = "IP_LOG_ID")
     private int characterIDIPPairid;
 
     /**
      * Represents the character that was seen with a specific IP
      */
-    @Getter @Setter
+
     @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, foreignAutoRefresh = true, columnName = "CHARACTER_ID")
     private java.lang.Character character;
 
     /**
      * Represents this Characters IP in a string used for the database storage, cannot store InetAddress
      */
-    @Getter @Setter
+
     @DatabaseField(dataType = DataType.STRING, canBeNull = false,  uniqueCombo = true, columnName = "IP")
     private String sessionIpString;
 
@@ -56,6 +55,18 @@ public class CharacterIP {
      * Constructor for database purposes
      */
     public CharacterIP(){}
+
+    public int getCharacterIDIPPairid() {
+        return characterIDIPPairid;
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
+
+    public String getSessionIpString() {
+        return sessionIpString;
+    }
 
     /**
      * Constructor used in adding, removing or updating a object in the database table character_ip_log

@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -28,15 +28,25 @@ import java.util.concurrent.TimeUnit;
 public enum Task {
     INSTANCE;
 
-    @Getter
+
     private TaskScheduler taskScheduler;
-    @Getter
     private ServerStats serverStats;
-    @Getter
     private boolean shuttingDown = false;
 
     {
         setTask();
+    }
+
+    public TaskScheduler getTaskScheduler() {
+        return taskScheduler;
+    }
+
+    public ServerStats getServerStats() {
+        return serverStats;
+    }
+
+    public boolean isShuttingDown() {
+        return shuttingDown;
     }
 
     /**

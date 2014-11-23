@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -47,19 +47,19 @@ import java.util.concurrent.Executors;
  */
 class TCPProxyServer {
 
-    @Getter
+
     private static NioEventLoopGroup connectionBossGroup;
-    @Getter
+
     private static NioEventLoopGroup connectionWorkerGroup;
-    @Getter
+
     private static boolean tcpNoDelay;
-    @Getter
+
     private static PooledByteBufAllocator socketBuffer;
-    @Getter
+
     private static int recvBuffer;
-    @Getter
+
     private static int sendBuffer;
-    @Getter
+
     private static int writeHighWaterMark;
 
     static {

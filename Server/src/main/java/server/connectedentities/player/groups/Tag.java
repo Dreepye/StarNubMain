@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -29,19 +29,31 @@ import java.util.Map;
 @DatabaseTable(tableName = "TAGS")
 public class Tag {
 
-    @Getter
+
     @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = "TAG")
     private volatile String name;
 
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "TAG_COLOR")
     private volatile String color;
 
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "TYPE")
     private volatile String typeOfTag;
 
     public Tag(){}
+
+    public String getName() {
+        return name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getTypeOfTag() {
+        return typeOfTag;
+    }
 
     public Tag(String typeOfTag, String name, String color) {
         this.typeOfTag = typeOfTag;

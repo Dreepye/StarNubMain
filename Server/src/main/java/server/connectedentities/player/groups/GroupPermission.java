@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -21,7 +21,6 @@ package server.connectedentities.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 
 @DatabaseTable(tableName = "GROUP_PERMISSIONS")
 public class GroupPermission {
@@ -29,21 +28,21 @@ public class GroupPermission {
     /**
      * Represents a group permissions id
      */
-    @Getter
+
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = "GROUP_PERMISSIONS_ID")
     private volatile int groupPermissionsId;
 
     /**
      * Represents a group that the permission is attached to
      */
-    @Getter
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "GROUP")
     private volatile Group group;
 
     /**
      * Represents a permission which is assigned to the group
      */
-    @Getter
+
     @DatabaseField(columnName = "PERMISSION")
     private volatile String permission;
 
@@ -51,6 +50,18 @@ public class GroupPermission {
      * Constructor for database purposes
      */
     public GroupPermission(){}
+
+    public int getGroupPermissionsId() {
+        return groupPermissionsId;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
 
     /**
      * Constructor used in adding, removing or updating a groups permission

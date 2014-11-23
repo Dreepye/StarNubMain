@@ -21,19 +21,19 @@ Current Features
 Base Features:
    - Easy Install
    - StarNub Configuration:
-		- Step by step setup, or extract a file and edit
+		- Step by step setup, or extract a utilities.file and edit
 		- Configuration self heals data types
 		- Most configuration items can be modified while the starbounddata.packets.starbounddata.packets.server is running
    - Starbound Configuration:
 		- Auto generate configuration if it does not exist in directory
 		*- Auto write configuration variables when changed in StarNub configuration
-   - Highly configurable logging to screen and file
-		- Log rotation every new day and if specified file size of your choice is met a new file will be created
+   - Highly configurable logging to screen and utilities.file
+		- Log rotation every new day and if specified utilities.file size of your choice is met a new utilities.file will be created
 		- Can filter, Debug, Events, Commands, Chat, Information, Warning (Error and Fatal can not be turned off)
    - SQLite or MySQL with support for other databases (Player data storage)
 		- Data tracked:
 			- Player Sessions (Characters, start and end time, attached account)
-			- Characters (Cleaned name & uuid)
+			- Characters (Cleaned NAME & uuid)
 			- Characters and the IPs seen for each one
 			- Accounts, account settings, starbounddata.packets.chat rooms, achievements are just some
 			- Groups, group ladders and group permissions
@@ -57,8 +57,8 @@ Base Features:
 			*- Block repeat messages or messages that are almost the same
 			*- Word filter
 			- Spam reply message
-		- Server name and starbounddata.packets.chat - color options
-		- Global name and starbounddata.packets.chat - color option
+		- Server NAME and starbounddata.packets.chat - color options
+		- Global NAME and starbounddata.packets.chat - color option
 		*- Player prefix and suffix selectable by the player based on groups and achievements they have
 		- Customizable tage start and end example..."[", "]".
 		- Chat Rooms: 
@@ -72,7 +72,7 @@ Base Features:
 		*- Tokens for information an colors instead of ^blue; or ^#0000CC; you could use {bl} for online {online}
 		- Illegal names and nick names are automatically changed when a player joins and sent to the starbounddata.packets.starbounddata.packets.server
 		- PVP messages are no longer starbounddata.packets.global but local
-		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character name colored or not, nick name, ip, uuid
+		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character NAME colored or not, nick NAME, ip, uuid
 			- Example /w 2 hey = Starbound id, /w 2s hey statnubd up, /w underbalanced hey, /w 127.0.0.1 hey who is this?
 		
    - Commands: 
@@ -89,7 +89,7 @@ Base Features:
 		- Commands are used by /{commandname or alias} {command}
 			- Example /starnub online or /sn online - would return whos online
 			- Commands can be mapped to shortcuts using the shortcut.yml in StarNub directory
-				- Example: Config file would be starnub: ['online', 'who'], starbound: ['ban', 'kick']
+				- Example: Config utilities.file would be starnub: ['online', 'who'], starbound: ['ban', 'kick']
 					- ^-this would map /starnub online or /starnub who to /online or /who and /starbound ban and /starbound kick to /ban and /kick
 			- Only one unique command can be mapped, so if both starnub and starbound both have 'ban' only one can be shortcut's
 		- Players can be command blocked
@@ -97,18 +97,18 @@ Base Features:
 	- Whitelisted starbounddata.packets.starbounddata.packets.server option (uuid, ip or starnub id)
 	
 	- Restrictions: 
-		- Offline banning by uuid, ip, character name, starnub id
-		- Online banning by uuid, ip, character name, starbound id*preferd, starnub id* prefered
+		- Offline banning by uuid, ip, character NAME, starnub id
+		- Online banning by uuid, ip, character NAME, starbound id*preferd, starnub id* prefered
 		- Can ban session uuid, ip or ban all ips ever seen with character and every uuid seen with an ip
 		- Players can be permanently muted, command blocked or banned
 		- Players can also be temporarily muted command blocked or banned, these are automatically removed after the time expired
 
 	*- Achievements:
-		- Can be created by file but will need a plugin to track and give
+		- Can be created by utilities.file but will need a plugin to track and give
 		
 	- Groups:
 		- Have tags, colors, permissions, inheritances
-		- Can simle load or update from file, but data is stored permanently in database
+		- Can simle load or update from utilities.file, but data is stored permanently in database
 		- Multiple can be assigned to player
 		
 	- Plugins

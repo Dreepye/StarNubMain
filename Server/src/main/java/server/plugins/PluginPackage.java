@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,8 +18,6 @@
 
 package server.plugins;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.codehome.utilities.files.GetFileSize;
 import server.Configuration;
 import server.StarNub;
@@ -47,41 +45,41 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class PluginPackage {
 
-    @Getter
+
     public final String PLUGIN_NAME;
-    @Getter
+
     public final double VERSION;
-    @Getter
+
     public final double SIZE_KBS;
-    @Getter
+
     public final String DEPENDENCIES;
-    @Getter
+
     public final boolean HAS_CONFIGURATION_FILE;
-    @Getter
+
     public final Configuration CONFIGURATION;
-    @Getter
+
     public final String PLUGIN_LANGUAGE;
-    @Getter
+
     public final String PLUGIN_AUTHOR;
-    @Getter
+
     public final String PLUGIN_URL;
-    @Getter
+
     public final String PLUGIN_DESCRIPTION;
-    @Getter
+
     private final Plugin PLUGIN;
-    @Getter
+
     public final boolean HAS_COMMANDS;
-    @Getter
+
     public final String COMMANDS_NAME;
-    @Getter
+
     public final String COMMANDS_ALIAS;
-    @Getter
+
     private final ConcurrentHashMap<ArrayList<String>, CommandPackage> COMMAND_PACKAGES;
-    @Getter @Setter
+
     private boolean isEnabled;
-    @Getter @Setter
+
     private boolean hasThreads;
-    @Getter @Setter
+
     private ConcurrentHashMap<Thread, StarNubRunnable> threads;
 
     /**
@@ -98,7 +96,7 @@ public abstract class PluginPackage {
      * @param pluginAuthor            String the authors name
      * @param pluginURL               String the url for the plugins page, download, help, etc
      * @param pluginDescription       String a short description of the plugin
-     * @param plugin                  Plugin the actual plugin file
+     * @param plugin                  Plugin the actual plugin utilities.file
      * @param pluginCommands          boolean does the plugin have commands
      * @param pluginCommandsName      String representing the commands name
      * @param pluginCommandsAlias     String representing the commands alias
@@ -141,6 +139,90 @@ public abstract class PluginPackage {
         this.COMMANDS_ALIAS = pluginCommandsAlias;
         this.COMMAND_PACKAGES = pluginCommandPackages;
         this.hasThreads = hasThreads;
+        this.threads = threads;
+    }
+
+    public String getPLUGIN_NAME() {
+        return PLUGIN_NAME;
+    }
+
+    public double getVERSION() {
+        return VERSION;
+    }
+
+    public double getSIZE_KBS() {
+        return SIZE_KBS;
+    }
+
+    public String getDEPENDENCIES() {
+        return DEPENDENCIES;
+    }
+
+    public boolean isHAS_CONFIGURATION_FILE() {
+        return HAS_CONFIGURATION_FILE;
+    }
+
+    public Configuration getCONFIGURATION() {
+        return CONFIGURATION;
+    }
+
+    public String getPLUGIN_LANGUAGE() {
+        return PLUGIN_LANGUAGE;
+    }
+
+    public String getPLUGIN_AUTHOR() {
+        return PLUGIN_AUTHOR;
+    }
+
+    public String getPLUGIN_URL() {
+        return PLUGIN_URL;
+    }
+
+    public String getPLUGIN_DESCRIPTION() {
+        return PLUGIN_DESCRIPTION;
+    }
+
+    public Plugin getPLUGIN() {
+        return PLUGIN;
+    }
+
+    public boolean isHAS_COMMANDS() {
+        return HAS_COMMANDS;
+    }
+
+    public String getCOMMANDS_NAME() {
+        return COMMANDS_NAME;
+    }
+
+    public String getCOMMANDS_ALIAS() {
+        return COMMANDS_ALIAS;
+    }
+
+    public ConcurrentHashMap<ArrayList<String>, CommandPackage> getCOMMAND_PACKAGES() {
+        return COMMAND_PACKAGES;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    public boolean isHasThreads() {
+        return hasThreads;
+    }
+
+    public void setHasThreads(boolean hasThreads) {
+        this.hasThreads = hasThreads;
+    }
+
+    public ConcurrentHashMap<Thread, StarNubRunnable> getThreads() {
+        return threads;
+    }
+
+    public void setThreads(ConcurrentHashMap<Thread, StarNubRunnable> threads) {
         this.threads = threads;
     }
 

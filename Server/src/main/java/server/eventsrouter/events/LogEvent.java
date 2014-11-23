@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public class LogEvent extends StarNubEvent<String> {
 
-    @Getter
+
     private final String LOG_STRING;
 
     public LogEvent(String EVENT_KEY, String LOG_STRING) {

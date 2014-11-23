@@ -16,8 +16,8 @@ import java.util.Map;
  * various levels 0 - Not Logging, 1 - Log To Screen, 2 - Log To File and
  * 3 - Log to Screen and File.
  * <p>
- * The defaults are not to log eventsrouter and debug, log starbounddata.packets.chat to screen and file and
- * everything else to file only.
+ * The defaults are not to log eventsrouter and debug, log starbounddata.packets.chat to screen and utilities.file and
+ * everything else to utilities.file only.
  *
  *
  *
@@ -26,27 +26,27 @@ import java.util.Map;
  */
 public class MultiOutputLogger {
 
-    @Getter
+
     private static final MultiOutputLogger instance = new MultiOutputLogger();
-    @Getter
+
     private final FileLog EVENT_DEBUG_LOGGER;
     private volatile int logEvent = 0;
     private volatile int logDebug = 0;
-    @Getter
+
     private final FileLog CHAT_LOGGER;
     private volatile int logChat = 3;
-    @Getter
+
     private final FileLog COMMAND_LOGGER;
     private volatile int logCommand = 2;
-    @Getter
+
     private final FileLog INFORMATION_WARNING_LOGGER;
     private volatile int logInformation = 2;
     private volatile int logWarning = 2;
-    @Getter
+
     private final FileLog ERROR_FATAL_LOGGER;
     private volatile int logError = 3;
     private volatile int logFatal = 3;
-    @Getter
+
     private volatile int dayOfMonth;
 
     private MultiOutputLogger() {
@@ -135,7 +135,7 @@ public class MultiOutputLogger {
                         if (logLevelError == 2) {
                             this.logError = 2;
                         } else {
-                            System.err.println("StarNub Setup - Logging - Cannot Set Error - Error logging will at a minimum log to file.");
+                            System.err.println("StarNub Setup - Logging - Cannot Set Error - Error logging will at a minimum log to utilities.file.");
                         }
                         break;
                     }
@@ -146,7 +146,7 @@ public class MultiOutputLogger {
                         if (logLevelFatal == 2) {
                             this.logError = 2;
                         } else {
-                            System.err.println("StarNub Setup - Logging - Cannot Set Fatal - Fatal logging will at a minimum log to file.");
+                            System.err.println("StarNub Setup - Logging - Cannot Set Fatal - Fatal logging will at a minimum log to utilities.file.");
                         }
                         break;
                     }
@@ -300,7 +300,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Event logging to file is on.
+     * Uses: Checks to see if Event logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -342,7 +342,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Debug logging to file is on.
+     * Uses: Checks to see if Debug logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -384,7 +384,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Chat logging to file is on.
+     * Uses: Checks to see if Chat logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -426,7 +426,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Command logging to file is on.
+     * Uses: Checks to see if Command logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -469,7 +469,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Info logging to file is on.
+     * Uses: Checks to see if Info logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -511,7 +511,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Warn logging to file is on.
+     * Uses: Checks to see if Warn logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -553,7 +553,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Error logging to file is on.
+     * Uses: Checks to see if Error logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on
@@ -595,7 +595,7 @@ public class MultiOutputLogger {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Checks to see if Fatal logging to file is on.
+     * Uses: Checks to see if Fatal logging to utilities.file is on.
      * <p>
      *
      * @return boolean true if on

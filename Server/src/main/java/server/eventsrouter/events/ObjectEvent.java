@@ -1,11 +1,12 @@
 package server.eventsrouter.events;
 
-import lombok.Getter;
-
 public class ObjectEvent extends StarNubEvent<String> {
 
-    @Getter
     private final Object OBJECT;
+
+    public Object getOBJECT() {
+        return OBJECT;
+    }
 
     public ObjectEvent(String EVENT_KEY, Object OBJECT) {
         super(EVENT_KEY);

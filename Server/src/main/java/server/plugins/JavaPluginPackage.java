@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,7 +18,6 @@
 
 package server.plugins;
 
-import lombok.Getter;
 import server.Configuration;
 import server.plugins.runnable.StarNubRunnable;
 
@@ -45,7 +44,7 @@ public class JavaPluginPackage extends PluginPackage {
     /**
      * Where we find the main class for the plugin
      */
-    @Getter
+
     public final String MAIN_CLASS;
 
     /**
@@ -63,7 +62,7 @@ public class JavaPluginPackage extends PluginPackage {
      * @param pluginAuthor            String the authors name
      * @param pluginURL               String the url for the plugins page, download, help, etc
      * @param pluginDescription       String a short description of the plugin
-     * @param plugin                  Plugin the actual plugin file
+     * @param plugin                  Plugin the actual plugin utilities.file
      * @param pluginCommands          boolean does the plugin have commands
      * @param pluginCommandsName      String representing the commands name
      * @param pluginCommandsAlias     String representing the commands alias
@@ -75,5 +74,9 @@ public class JavaPluginPackage extends PluginPackage {
     public JavaPluginPackage(String pluginName, double version, File pluginLocation, String dependencies, boolean pluginConfigurationFile, Configuration pluginConfiguration, String pluginLanguage, String pluginAuthor, String pluginURL, String pluginDescription, Plugin plugin, boolean pluginCommands, String pluginCommandsName, String pluginCommandsAlias, ConcurrentHashMap<ArrayList<String>, CommandPackage> pluginCommandPackages, boolean HAS_THREADS, ConcurrentHashMap<Thread, StarNubRunnable> THREADS, String MAIN_CLASS) {
         super(pluginName, version, pluginLocation, dependencies, pluginConfigurationFile, pluginConfiguration, pluginLanguage, pluginAuthor, pluginURL, pluginDescription, plugin, pluginCommands, pluginCommandsName, pluginCommandsAlias, pluginCommandPackages, HAS_THREADS, THREADS);
         this.MAIN_CLASS = MAIN_CLASS;
+    }
+
+    public String getMAIN_CLASS() {
+        return MAIN_CLASS;
     }
 }

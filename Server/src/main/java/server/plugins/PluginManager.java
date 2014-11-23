@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,14 +18,13 @@
 
 package server.plugins;
 
-import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.codehome.utilities.files.YamlLoader;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 import server.StarNub;
 import server.eventsrouter.events.ThreadEvent;
 import server.plugins.runnable.StarNubRunnable;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -49,12 +48,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum PluginManager {
     INSTANCE;
 
-    @Getter
+
     protected final static String pluginDirString = "StarNub/Plugins/";
-    @Getter
+
     protected static ConcurrentHashMap<String, UnloadedPlugin> unloadedPlugins;
-    @Getter
+
     protected static ConcurrentHashMap<String, PluginPackage> loadedPlugins;
+
+    public static String getPluginDirString() {
+        return pluginDirString;
+    }
+
+    public static ConcurrentHashMap<String, UnloadedPlugin> getUnloadedPlugins() {
+        return unloadedPlugins;
+    }
+
+    public static void setUnloadedPlugins(ConcurrentHashMap<String, UnloadedPlugin> unloadedPlugins) {
+        PluginManager.unloadedPlugins = unloadedPlugins;
+    }
+
+    public static ConcurrentHashMap<String, PluginPackage> getLoadedPlugins() {
+        return loadedPlugins;
+    }
+
+    public static void setLoadedPlugins(ConcurrentHashMap<String, PluginPackage> loadedPlugins) {
+        PluginManager.loadedPlugins = loadedPlugins;
+    }
 
     /**
      * This represents a lower level method for StarNubs API.
@@ -122,14 +141,14 @@ public enum PluginManager {
                         String removeFile = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_FILE().toString();
                         unloadedPluginConcurrentHashMap.remove(pluginName);
                         if (!isUpdating) {
-                            StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older file named " + removeFile + ".");
+                            StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older utilities.file named " + removeFile + ".");
                         }
                     }
                 }
                 unloadedPluginConcurrentHashMap.putIfAbsent(pluginName, new UnloadedPlugin(pluginName, version, pluginUrl, classLoader, data));
 
             } catch (Exception e) {
-                StarNub.getLogger().cErrPrint("sn","Could not load a file in the plugins directory "+pluginFile.toString()+"unknown issue URI or URL. Maybe this is not a plugin?");
+                StarNub.getLogger().cErrPrint("sn","Could not load a utilities.file in the plugins directory "+pluginFile.toString()+"unknown issue URI or URL. Maybe this is not a plugin?");
             }
         }
         return unloadedPluginConcurrentHashMap;
@@ -249,7 +268,7 @@ public enum PluginManager {
      * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will attempt to load a specific plugin by its plugin name by using the file scanner.
+     * Uses: This will attempt to load a specific plugin by its plugin name by using the utilities.file scanner.
      * <p>
      *
      */
@@ -419,14 +438,14 @@ public enum PluginManager {
 //                    String removeFile = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_FILE().toString();
 //                    unloadedPluginConcurrentHashMap.remove(pluginName);
 //                    if (!isUpdating) {
-//                        StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older file named " + removeFile + ".");
+//                        StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older utilities.file named " + removeFile + ".");
 //                    }
 //                }
 //            }
 //            unloadedPluginConcurrentHashMap.putIfAbsent(pluginName, new UnloadedPlugin(pluginName, version, pluginUrl, classLoader, data));
 //
 //        } catch (Exception e) {
-//            StarNub.getLogger().cErrPrint("sn","Could not load a file in the plugins directory "+pluginFile.toString()+"unknown issue URI or URL. Maybe this is not a plugin?");
+//            StarNub.getLogger().cErrPrint("sn","Could not load a utilities.file in the plugins directory "+pluginFile.toString()+"unknown issue URI or URL. Maybe this is not a plugin?");
 //        }
 
     }

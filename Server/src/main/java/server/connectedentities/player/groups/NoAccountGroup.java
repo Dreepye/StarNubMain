@@ -12,11 +12,17 @@ import java.util.stream.Collectors;
 
 public class NoAccountGroup {
 
-    @Getter
-    private volatile String name;
 
-    @Getter
+    private volatile String name;
     private volatile Tag tag;
+
+    public String getName() {
+        return name;
+    }
+
+    public Tag getTag() {
+        return tag;
+    }
 
     /**
      * Represents the permissions an account has. They are stored in a tree for mate.

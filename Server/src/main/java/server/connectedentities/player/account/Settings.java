@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -30,54 +30,94 @@ import server.connectedentities.player.groups.Group;
 import server.connectedentities.player.groups.GroupAssignment;
 import server.connectedentities.player.groups.Tag;
 import server.connectedentities.player.session.Player;
-import server.server.chat.ChatRoom;
+import chatmanager.chat.ChatRoom;
 
 import java.util.Map;
 
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
 public class Settings {
 
-    @Getter
+
     @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS")
     private volatile String accountSettings;
 
-    @Getter
+
     @DatabaseField(foreign = true,  foreignAutoRefresh = true, columnName = "DEFAULT_CHAT_ROOM")
     private volatile ChatRoom defaultChatRoom;
 
-    @Getter
+
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_1")
     private volatile Tag chatPrefix1;
 
-    @Getter
+
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_2")
     private volatile Tag chatPrefix2;
 
-    @Getter
+
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_SUFFIX_1")
     private volatile Tag chatSuffix1;
 
-    @Getter
+
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_SUFFIX_2")
     private volatile Tag chatSuffix2;
 
-    @Getter
+
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = "BLOCK_WHISPERS")
     private volatile boolean whisperBlocking;
 
-    @Getter
+
     @ForeignCollectionField(eager = true, maxEagerLevel = 3)
     private volatile ForeignCollection<CharacterIgnore> characterIgnores;
 
-    @Getter
+
     @ForeignCollectionField(eager = true, maxEagerLevel = 3)
     private volatile ForeignCollection<ChatRoomSubscription> chatRoomSubscriptions;
 
-    @Getter
+
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = "APPEAR_OFFLINE")
     private volatile boolean appearOffline;
 
     public Settings(){}
+
+    public String getAccountSettings() {
+        return accountSettings;
+    }
+
+    public ChatRoom getDefaultChatRoom() {
+        return defaultChatRoom;
+    }
+
+    public Tag getChatPrefix1() {
+        return chatPrefix1;
+    }
+
+    public Tag getChatPrefix2() {
+        return chatPrefix2;
+    }
+
+    public Tag getChatSuffix1() {
+        return chatSuffix1;
+    }
+
+    public Tag getChatSuffix2() {
+        return chatSuffix2;
+    }
+
+    public boolean isWhisperBlocking() {
+        return whisperBlocking;
+    }
+
+    public ForeignCollection<CharacterIgnore> getCharacterIgnores() {
+        return characterIgnores;
+    }
+
+    public ForeignCollection<ChatRoomSubscription> getChatRoomSubscriptions() {
+        return chatRoomSubscriptions;
+    }
+
+    public boolean isAppearOffline() {
+        return appearOffline;
+    }
 
     public Settings(String accountSettings, ChatRoom defaultChatRoom) {
         this.accountSettings = accountSettings;

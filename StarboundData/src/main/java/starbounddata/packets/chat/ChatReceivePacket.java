@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -38,6 +38,13 @@ import static starbounddata.packets.StarboundBufferWriter.*;
  * @since 1.0 Beta
  */
 public class ChatReceivePacket extends Packet {
+
+    public enum ChatReceiveChannel {
+        PLANET,
+        UNIVERSE,
+        WHISPER,
+        COMMAND
+    }
 
     /**
      * <br>
@@ -172,12 +179,5 @@ public class ChatReceivePacket extends Packet {
         writeInt(out, this.clientId);
         writeStringVLQ(out, this.name);
         writeStringVLQ(out, this.message);
-    }
-
-    public enum ChatReceiveChannel {
-        PLANET,
-        UNIVERSE,
-        WHISPER,
-        COMMAND
     }
 }

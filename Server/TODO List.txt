@@ -34,7 +34,7 @@ After the above I am going to get to work to finishing StarNub and preparing it 
     •	 Python and Lua Support
         -	This will be for commands only, making commands should become simpler
 
-    •	Command API changes to how they are stored and executed, I do not like the shortcut and non-shortcut. I will most likely detach the command from the plugin and store it internally rather than the current method. Perhaps look at .Java plugins instead of full blown jars, flexibility and easy fast creation is my goal. *Note file dump null  permission *
+    •	Command API changes to how they are stored and executed, I do not like the shortcut and non-shortcut. I will most likely detach the command from the plugin and store it internally rather than the current method. Perhaps look at .Java plugins instead of full blown jars, flexibility and easy fast creation is my goal. *Note utilities.file dump null  permission *
 
     •	Fix the plugin loader to support the above
 
@@ -60,7 +60,7 @@ After the above I am going to get to work to finishing StarNub and preparing it 
         -	Player history tracking (Load purposes)
         -	Thread Checking
         -	DOS/DDOS protection suite (Have frame work in place)
-        -	Plugin file locking, removal after update or removal of plugin
+        -	Plugin utilities.file locking, removal after update or removal of plugin
 
     •	API to complete (Ability to manipulate data)(Needed for commands)
          -	Plugin resource extraction
@@ -131,7 +131,7 @@ After 1.0 before 2.0
         o	Remote Management is a Subset of this
     •	Reserved Slot System to be level system. Starnub.reserved.#
     •	File monitoring and access API
-        o	Could be used for back up plugins, on file changes update X file in wrapper
+        o	Could be used for back up plugins, on utilities.file changes update X utilities.file in wrapper
         o	Codex for plugin info and commands
 
 3.0 Features

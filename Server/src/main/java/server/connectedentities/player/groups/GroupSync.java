@@ -15,18 +15,26 @@ import java.util.stream.Collectors;
 public enum GroupSync {
     INSTANCE;
 
-    @Getter
+
     private Map<String, Object> groups;
 
-    @Getter
+
     private NoAccountGroup noAccountGroup;
 
-    // This will synchronize groups from file to DB
+    public Map<String, Object> getGroups() {
+        return groups;
+    }
+
+    public NoAccountGroup getNoAccountGroup() {
+        return noAccountGroup;
+    }
+
+    // This will synchronize groups from utilities.file to DB
     public void groupSynchronizeFileToDB(Object sender){
         loadGroupsFromDisk();
         if (this.groups == null){
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "The groups from file could not be synchronized with the" +
-                    "Database groups, make sure that the StarNub/groups.yml file exist and that their is no YAML syntax errors.");
+            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "The groups from utilities.file could not be synchronized with the" +
+                    "Database groups, make sure that the StarNub/groups.yml utilities.file exist and that their is no YAML syntax errors.");
             return;
         }
         synchronizeGroupsFileToDB();
@@ -204,7 +212,7 @@ public enum GroupSync {
     }
 
     /**
-     * This method will save the configuration to file.
+     * This method will save the configuration to utilities.file.
      */
     private void saveGroupsFile() {
         new YamlDumper().toFileYamlDump(this.groups, "StarNub/groups.yml");

@@ -1,6 +1,5 @@
 package server.eventsrouter;
 
-import lombok.Getter;
 import server.eventsrouter.handlers.EventHandler;
 import server.eventsrouter.subscriptions.EventSubscription;
 
@@ -11,11 +10,15 @@ public abstract class EventRouter<T> {
 
     private final Object HASHMAP_LOCK_OBJECT_1 = new Object();
     private final Object HASHSET_LOCK_OBJECT_1 = new Object();
-    @Getter
+
     private final HashMap<T, HashSet<EventSubscription>> EVENT_SUBSCRIPTION_MAP;
 
     {
         EVENT_SUBSCRIPTION_MAP = new HashMap<>();
+    }
+
+    public HashMap<T, HashSet<EventSubscription>> getEVENT_SUBSCRIPTION_MAP() {
+        return EVENT_SUBSCRIPTION_MAP;
     }
 
     @SuppressWarnings("unchecked")

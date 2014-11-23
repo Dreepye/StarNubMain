@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,28 +18,49 @@
 
 package server.eventsrouter.events;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public abstract class TaskEvent extends StarNubEvent<String> {
 
     /**
      * This indicates that we are starting a task
      */
-    @Getter @Setter
+
     private volatile boolean starting;
 
     /**
      * This indicates the task is running
      */
-    @Getter @Setter
+
     private volatile boolean running;
 
     /**
      * This indicates the task has completed
      */
-    @Getter @Setter
+
     private volatile boolean complete;
+
+    public boolean isStarting() {
+        return starting;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setStarting(boolean starting) {
+        this.starting = starting;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
 
     protected TaskEvent(String EVENT_KEY, boolean starting, boolean running, boolean complete) {
         super(EVENT_KEY);

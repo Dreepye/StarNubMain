@@ -1,12 +1,17 @@
 package server.plugins.runnable;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public abstract class StarNubRunnable implements Runnable {
 
-    @Getter @Setter
+
     public boolean isShuttingDown;
+
+    public boolean isShuttingDown() {
+        return isShuttingDown;
+    }
+
+    public void setShuttingDown(boolean isShuttingDown) {
+        this.isShuttingDown = isShuttingDown;
+    }
 
     /**
      * When an object implementing interface <code>Runnable</code> is used

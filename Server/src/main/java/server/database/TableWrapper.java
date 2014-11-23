@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
 
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 
 public abstract class TableWrapper<T1, T2> {
 
-    @Getter
+
     private Dao<T1, T2> tableDao;
     final Class<T1> typeParameterDBClass;
     final Class<T2> typeParameterIDClass;
@@ -26,6 +25,22 @@ public abstract class TableWrapper<T1, T2> {
         this.typeParameterDBClass = typeParameterDBClass;
         this.typeParameterIDClass = typeParameterIDClass;
         setTableWrapper(connectionSource, oldVersion);
+    }
+
+    public Dao<T1, T2> getTableDao() {
+        return tableDao;
+    }
+
+    public void setTableDao(Dao<T1, T2> tableDao) {
+        this.tableDao = tableDao;
+    }
+
+    public Class<T1> getTypeParameterDBClass() {
+        return typeParameterDBClass;
+    }
+
+    public Class<T2> getTypeParameterIDClass() {
+        return typeParameterIDClass;
     }
 
     @SuppressWarnings("unchecked")
@@ -47,7 +62,6 @@ public abstract class TableWrapper<T1, T2> {
             e.printStackTrace();
         }
     }
-
 
     public abstract void tableUpdater(ConnectionSource connection, int oldVersion) throws SQLException;
 

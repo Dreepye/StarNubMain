@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -37,13 +37,13 @@ public enum StarboundManager {
     /**
      * StarNub internal use only
      */
-    @Getter
+
     private StarboundServerStatusEvent starboundStatus;
 
     /**
      * StarNub internal use only
      */
-    @Getter
+
     private StarboundQueryTaskEvent starboundQueryTask;
 
     /**

@@ -12,11 +12,11 @@
     <artifactId>server</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>server</name>
+    <NAME>server</NAME>
     <url>http://www.starnub.org</url>
     <description>Java Wrapper for Starbound.</description>
     <organization>
-        <name>StarNub</name>
+        <NAME>StarNub</NAME>
         <url>http://www.starnub.org</url>
     </organization>
     <scm>
@@ -35,8 +35,8 @@
     <distributionManagement>
         <repository>
             <id>starnub-repository</id>
-            <name>StarNub Repository</name>
-            <url>file://H:\Back Up\Servers\Programming\deployed_artifacts</url>
+            <NAME>StarNub Repository</NAME>
+            <url>utilities.file://H:\Back Up\Servers\Programming\deployed_artifacts</url>
         </repository>
     </distributionManagement>
     <build>

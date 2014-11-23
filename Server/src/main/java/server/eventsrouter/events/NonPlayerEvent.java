@@ -1,16 +1,21 @@
 package server.eventsrouter.events;
 
-import lombok.Getter;
 import server.StarNub;
 import server.connectedentities.Sender;
 
 public class NonPlayerEvent extends StarNubEvent<String> {
 
-    @Getter
-    private final Sender NON_PLAYER;
 
-    @Getter
+    private final Sender NON_PLAYER;
     private final Object EVENT_DATA_OBJECT;
+
+    public Sender getNON_PLAYER() {
+        return NON_PLAYER;
+    }
+
+    public Object getEVENT_DATA_OBJECT() {
+        return EVENT_DATA_OBJECT;
+    }
 
     /**
      *

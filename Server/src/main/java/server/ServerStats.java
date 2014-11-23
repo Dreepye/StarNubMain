@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,7 +18,6 @@
 
 package server;
 
-import lombok.Getter;
 import org.joda.time.DateTime;
 
 /**
@@ -28,37 +27,37 @@ public enum ServerStats {
     INSTANCE;
 
     //TODO PLUGIN
-    @Getter
+
     private volatile int todaysDay;
 
     /* Time Trackers */
-    @Getter
+
     private volatile static DateTime starnubOnlineTime; /* Java time stamp in milliseconds */
-    @Getter
+
     private volatile static DateTime starboundOnlineTime; /* Divide by /1000 for Unix time stamp */
-    @Getter
+
     private volatile static long lastAutoRestart;
 
     /* For Ever Tracker */
-    @Getter
+
     private volatile static int starboundAutoRestarts = 0;
-    @Getter
+
     private volatile static int starboundCrashes = 0;
-    @Getter
+
     private volatile static int starboundUnresponsive = 0;
 
     /* Since Wrapper Start */
-    @Getter
+
     private volatile static int sbAutoRestartsWrap = 0;
-    @Getter
+
     private volatile static int sbCrashesWrap = 0;
-    @Getter
+
     private volatile static int sbUnresponsiveWrap = 0;
 
     /* Since SB Last Auto Restart */
-    @Getter
+
     private volatile static int sbCrashesTemp = 0;
-    @Getter
+
     private volatile static int sbUnresponsiveTemp = 0;
 
 

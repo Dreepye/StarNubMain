@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -39,7 +39,7 @@ public abstract class Command {
      * Uses: This method is required when a plugin is making a command they will make a command class that extends Command and
       * this method is what StarNub will invoke when running a command for a user.
      *
-     * @param senderClass  the client file of the sender, 0 will be console (remote or local) management. You can use this item to look up
+     * @param senderClass  the client utilities.file of the sender, 0 will be console (remote or local) management. You can use this item to look up
      *                          the Connected Player records use  variableName  = StarNub.getServer().getConnectedPlayers().get(senderClientID);
      * @param command           String the command that was used
      * @param args              String[] the actual arguments accessible by args[0], args[1],... etc

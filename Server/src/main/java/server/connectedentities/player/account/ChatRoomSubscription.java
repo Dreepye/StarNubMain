@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -20,8 +20,7 @@ package server.connectedentities.player.account;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
-import server.server.chat.ChatRoom;
+import chatmanager.chat.ChatRoom;
 
 @DatabaseTable(tableName = "CHAT_ROOM_SUBSCRIPTIONS")
 public class ChatRoomSubscription {
@@ -35,14 +34,14 @@ public class ChatRoomSubscription {
     /**
      * Represents the starnubId that has ignored players
      */
-    @Getter
+
     @DatabaseField(foreign = true, columnName = "ACCOUNT_SETTING")
     private Settings accountSetting;
 
     /**
      * Represents a starbounddata.packets.chat room id
      */
-    @Getter
+
     @DatabaseField(foreign = true, columnName = "CHAT_ROOM")
     private ChatRoom chatRoom;
 
@@ -50,6 +49,18 @@ public class ChatRoomSubscription {
      * Constructor for database purposes
      */
     public ChatRoomSubscription(){}
+
+    public int getChatRoomSubscriptionId() {
+        return chatRoomSubscriptionId;
+    }
+
+    public Settings getAccountSetting() {
+        return accountSetting;
+    }
+
+    public ChatRoom getChatRoom() {
+        return chatRoom;
+    }
 
     /**
      * Constructor used in adding, removing or updating a starbounddata.packets.chat room subscription record

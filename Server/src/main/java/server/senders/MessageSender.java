@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -23,13 +23,14 @@ import server.connectedentities.player.account.Settings;
 import server.connectedentities.player.session.Player;
 import server.plugins.PluginPackage;
 import server.server.Connections;
-import starbounddata.chat.ChatReceiveChannel;
-import starbounddata.chat.ChatSendChannel;
 import starbounddata.color.GameColors;
-import server.server.packets.chat.ChatReceivePacket;
-import server.server.packets.chat.ChatSendPacket;
+import starbounddata.packets.chat.ChatReceivePacket;
+import starbounddata.packets.chat.ChatSendPacket;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * StarNub's Message Sender.
@@ -51,11 +52,27 @@ public enum MessageSender {
 
     private final static Object NO_COMMAND_DELIVERY_LOCK = new Object();
     private volatile static Set<String> noCommandDeliveryRegister;
-    private volatile static GameColors gameColors;
+    private volatile static GameColors gameColors = GameColors.getInstance();
 
     {
         setNoCommandDeliveryRegister();
         setGameColors();
+    }
+
+    public static Object getNoCommandDeliveryLock() {
+        return NO_COMMAND_DELIVERY_LOCK;
+    }
+
+    public static Set<String> getNoCommandDeliveryRegister() {
+        return noCommandDeliveryRegister;
+    }
+
+    public static void setNoCommandDeliveryRegister(Set<String> noCommandDeliveryRegister) {
+        MessageSender.noCommandDeliveryRegister = noCommandDeliveryRegister;
+    }
+
+    public static void setGameColors(GameColors gameColors) {
+        MessageSender.gameColors = gameColors;
     }
 
     /**
@@ -73,8 +90,7 @@ public enum MessageSender {
         if (MessageSender.gameColors != null) {
             throw new UnsupportedOperationException("Cannot redefine GameColors");
         }
-        MessageSender.gameColors = new GameColors();
-        gameColors.setColors();
+
     }
 
     @SuppressWarnings("unchecked")
@@ -128,7 +144,7 @@ public enum MessageSender {
         if (playerIdentifier == null) {
             StarNub.getLogger().cInfoPrint(sender, message);
         } else {
-            playerMessage(sender, playerIdentifier, ChatReceiveChannel.UNIVERSE, message);
+            playerMessage(sender, playerIdentifier, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, message);
         }
     }
 
@@ -146,11 +162,11 @@ public enum MessageSender {
      * @param channel          ChatChannel the type of reply (universe, planet, whisper, command)
      * @param message          String the message to be sent to the player
      */
-    public void playerMessage(Object sender, Object playerIdentifier, ChatReceiveChannel channel, String message) {
+    public void playerMessage(Object sender, Object playerIdentifier, ChatReceivePacket.ChatReceiveChannel channel, String message) {
         if (channel == null) {
-            channel = ChatReceiveChannel.UNIVERSE;
+            channel = ChatReceivePacket.ChatReceiveChannel.UNIVERSE;
         }
-        if (channel.equals(ChatReceiveChannel.WHISPER)) {
+        if (channel.equals(ChatReceivePacket.ChatReceiveChannel.WHISPER)) {
             if (playerMessageWhisper(sender, playerIdentifier, message)) {
                 String cSenderReceiver =  cPlayerNameBuild(sender, true, true) + " -> " + cPlayerNameBuild(sender, true, true);
                 StarNub.getLogger().cWhisperPrint(cSenderReceiver, message);
@@ -175,7 +191,7 @@ public enum MessageSender {
      * @param message          String the message to be sent to the player
      */
     public void playerMessage(Object sender, Object playerIdentifier, String message) {
-        playerMessageSender(sender, playerIdentifier, ChatReceiveChannel.UNIVERSE, message);
+        playerMessageSender(sender, playerIdentifier, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, message);
         StarNub.getLogger().cChatPrint(sender, message, playerIdentifier);
     }
 
@@ -193,7 +209,7 @@ public enum MessageSender {
      * @param channel          ChatChannel the type of reply (universe, planet, whisper, command)
      * @param message          String the message to be sent to the player
      */
-    private void playerMessageSender(Object sender, Object playerIdentifier, ChatReceiveChannel channel, String message) {
+    private void playerMessageSender(Object sender, Object playerIdentifier, ChatReceivePacket.ChatReceiveChannel channel, String message) {
         Player playerSession = StarNub.getServer().getConnections().getOnlinePlayerByAnyIdentifier(playerIdentifier);
         if (playerSession == null) {
             playerNotFoundMsg(sender);
@@ -229,13 +245,15 @@ public enum MessageSender {
 
         String msgSenderReceiver =  msgPlayerNameBuilderFinal(playerSender, true, false) + gameColors.getDefaultNameColor() + " -> " + msgPlayerNameBuilderFinal(playerReceiver, true, false);
         StarNub.getPacketSender().playerPacketSender(playerSender, new ChatReceivePacket(
-                ChatReceiveChannel.WHISPER,
+                playerReceiver.getClientCtx(),
+                ChatReceivePacket.ChatReceiveChannel.WHISPER,
                 "",
                 0,
                 msgSenderReceiver,
                 message));
         StarNub.getPacketSender().playerPacketSender(playerReceiver, new ChatReceivePacket(
-                ChatReceiveChannel.WHISPER,
+                playerSender.getClientCtx(),
+                ChatReceivePacket.ChatReceiveChannel.WHISPER,
                 "",
                 0,
                 msgSenderReceiver,
@@ -259,7 +277,7 @@ public enum MessageSender {
     private boolean canWhisperPlayer(Player playerSender, Player playerReceiver){
         Connections con = StarNub.getServer().getConnections();
         if (!con.hasPermission(playerSender, "starnubinternals.starbounddata.packets.starbounddata.packets.server.whisper", true)) {
-            playerMessage("StarNub", playerSender, ChatReceiveChannel.UNIVERSE, "You do not have the permission \"starnub.starbounddata.packets.starbounddata.packets.server.whisper\" you cannot whisper.");
+            playerMessage("StarNub", playerSender, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "You do not have the permission \"starnub.starbounddata.packets.starbounddata.packets.server.whisper\" you cannot whisper.");
             return false;
         }
         if (playerReceiver.getCharacter().getAccount() != null) {
@@ -269,13 +287,13 @@ public enum MessageSender {
                 return false;
             } else if (playerReceiver.getCharacter().getAccount().getAccountSettings().isWhisperBlocking()
                     && !con.hasPermission(playerSender, "starnubinternals.bypass.whisperblock", true)) {
-               playerMessage("StarNub", playerSender, ChatReceiveChannel.UNIVERSE, "This character is not receiving whispers.");
+               playerMessage("StarNub", playerSender, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "This character is not receiving whispers.");
                 return false;
             }
         }
         if (playerSender.getDoNotSendMessageList().contains(playerReceiver.getClientChannel())
                 && !con.hasPermission(playerSender, "starnubinternals.bypass.ignores", true)) {
-            playerMessage("StarNub", playerSender, ChatReceiveChannel.UNIVERSE, "This character does not wish to received messages from you.");
+            playerMessage("StarNub", playerSender, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "This character does not wish to received messages from you.");
             return false;
         }
         return true;
@@ -326,11 +344,11 @@ public enum MessageSender {
         if (success) {
             StarNub.getLogger().cCommandSuccessPrint(playerSession, message);
             if (command == null || !noCommandDeliveryRegister.contains(command)) {
-                playerMessageSender("StarNub", playerSession, ChatReceiveChannel.COMMAND, message);
+                playerMessageSender("StarNub", playerSession, ChatReceivePacket.ChatReceiveChannel.COMMAND, message);
             }
         } else {
             StarNub.getLogger().cCommandFailurePrint(playerSession, message);
-            playerMessageSender("StarNub", playerSession, ChatReceiveChannel.COMMAND, message);
+            playerMessageSender("StarNub", playerSession, ChatReceivePacket.ChatReceiveChannel.COMMAND, message);
         }
     }
 
@@ -378,12 +396,12 @@ public enum MessageSender {
      * @param channel          String for starbound starbounddata.packets.chat channel, acceptable is (planet, universe)
      * @param message          String the message to be sent to the player
      */
-    public void serverChatMessageToServerForPlayer(Object sender, Object playerIdentifier, ChatSendChannel channel, String message) {
+    public void serverChatMessageToServerForPlayer(Object sender, Object playerIdentifier, ChatSendPacket.ChatSendChannel channel, String message) {
         Player playerSession = StarNub.getServer().getConnections().getOnlinePlayerByAnyIdentifier(playerIdentifier);
         if (playerSession == null) {
             playerNotFoundMsg(sender);
         } else {
-            StarNub.getPacketSender().serverPacketSender(playerSession, new ChatSendPacket(channel, message));
+            StarNub.getPacketSender().serverPacketSender(playerSession, new ChatSendPacket(playerSession.getServerCtx(), channel, message));
             StarNub.getLogger().cChatPrint(playerIdentifier, message, "Server");
         }
     }
@@ -457,7 +475,7 @@ public enum MessageSender {
     private void finalServerBroadcast(Object sender, String message, ArrayList<Player> excludedPlayerSessions) {
         StarNub.getPacketSender().playerPacketBroadcast(
                 StarNub.getServer().getConnections().getConnectedPlayers(),
-                playerPacketCraft(sender, ChatReceiveChannel.UNIVERSE, true, message),
+                playerPacketCraft(sender, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, true, message),
                 excludedPlayerSessions);
         StarNub.getLogger().cChatPrint(sender, message, "All Players");
     }
@@ -723,10 +741,10 @@ public enum MessageSender {
      * @param message String the message to be sent to the player
      * @return ChatReceivePacket the starbounddata.packets.chat packet to be sent to player
      */
-    private ChatReceivePacket playerPacketCraft(Object sender, ChatReceiveChannel channel, boolean tags, String message){
-        if (!(sender instanceof Player) && !channel.equals(ChatReceiveChannel.COMMAND)) {
+    private ChatReceivePacket playerPacketCraft(Object sender, ChatReceivePacket.ChatReceiveChannel channel, boolean tags, String message){
+        if (!(sender instanceof Player) && !channel.equals(ChatReceivePacket.ChatReceiveChannel.COMMAND)) {
             message = gameColors.getDefaultServerChatColor() + message;
         }
-        return new ChatReceivePacket(channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message);
+        return new ChatReceivePacket(, channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message);
     }
 }

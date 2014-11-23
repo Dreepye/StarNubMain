@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -20,7 +20,6 @@ package server.database;
 
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
-import lombok.Getter;
 import server.StarNub;
 import server.connectedentities.player.account.*;
 import server.connectedentities.player.achievements.Achievement;
@@ -29,54 +28,181 @@ import server.connectedentities.player.character.CharacterIP;
 import server.connectedentities.player.groups.*;
 import server.connectedentities.player.session.Player;
 import server.connectedentities.player.session.Restrictions;
-import server.server.chat.ChatRoom;
 import server.database.tables.*;
+import chatmanager.chat.ChatRoom;
 
 import java.util.Map;
 
 public enum DatabaseTables {
     INSTANCE;
 
-    @Getter
+
     private ConnectionSource connection;
-    @Getter
     private Accounts accounts;
-    @Getter
     private AccountSettings accountSettings;
-    @Getter
     private AccountPermissions accountPermissions;
-    @Getter
     private Achievements achievements;
-    @Getter
     private Characters characters;
-    @Getter
     private CharacterAchievements characterAchievements;
-    @Getter
     private CharacterIgnores characterIgnores;
-    @Getter
     private CharacterIPLog characterIPLog;
-    @Getter
     private ChatRooms chatRooms;
-    @Getter
     private ChatRoomSubscriptions chatRoomSubscriptions;
-    @Getter
     private Groups groups;
-    @Getter
     private GroupAssignments groupAssignments;
-    @Getter
     private GroupInheritances groupInheritances;
-    @Getter
     private GroupPermissions groupPermissions;
-    @Getter
     private PlayerSessionLog playerSessionLog;
-    @Getter
     private PlayerSessionRestrictions playerSessionRestrictions;
-    @Getter
     private Tags tags;
 
     {
         setConnection();
         setTableWrappers();
+    }
+
+    public ConnectionSource getConnection() {
+        return connection;
+    }
+
+    public void setConnection(ConnectionSource connection) {
+        this.connection = connection;
+    }
+
+    public Accounts getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Accounts accounts) {
+        this.accounts = accounts;
+    }
+
+    public AccountSettings getAccountSettings() {
+        return accountSettings;
+    }
+
+    public void setAccountSettings(AccountSettings accountSettings) {
+        this.accountSettings = accountSettings;
+    }
+
+    public AccountPermissions getAccountPermissions() {
+        return accountPermissions;
+    }
+
+    public void setAccountPermissions(AccountPermissions accountPermissions) {
+        this.accountPermissions = accountPermissions;
+    }
+
+    public Achievements getAchievements() {
+        return achievements;
+    }
+
+    public void setAchievements(Achievements achievements) {
+        this.achievements = achievements;
+    }
+
+    public Characters getCharacters() {
+        return characters;
+    }
+
+    public void setCharacters(Characters characters) {
+        this.characters = characters;
+    }
+
+    public CharacterAchievements getCharacterAchievements() {
+        return characterAchievements;
+    }
+
+    public void setCharacterAchievements(CharacterAchievements characterAchievements) {
+        this.characterAchievements = characterAchievements;
+    }
+
+    public CharacterIgnores getCharacterIgnores() {
+        return characterIgnores;
+    }
+
+    public void setCharacterIgnores(CharacterIgnores characterIgnores) {
+        this.characterIgnores = characterIgnores;
+    }
+
+    public CharacterIPLog getCharacterIPLog() {
+        return characterIPLog;
+    }
+
+    public void setCharacterIPLog(CharacterIPLog characterIPLog) {
+        this.characterIPLog = characterIPLog;
+    }
+
+    public ChatRooms getChatRooms() {
+        return chatRooms;
+    }
+
+    public void setChatRooms(ChatRooms chatRooms) {
+        this.chatRooms = chatRooms;
+    }
+
+    public ChatRoomSubscriptions getChatRoomSubscriptions() {
+        return chatRoomSubscriptions;
+    }
+
+    public void setChatRoomSubscriptions(ChatRoomSubscriptions chatRoomSubscriptions) {
+        this.chatRoomSubscriptions = chatRoomSubscriptions;
+    }
+
+    public Groups getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Groups groups) {
+        this.groups = groups;
+    }
+
+    public GroupAssignments getGroupAssignments() {
+        return groupAssignments;
+    }
+
+    public void setGroupAssignments(GroupAssignments groupAssignments) {
+        this.groupAssignments = groupAssignments;
+    }
+
+    public GroupInheritances getGroupInheritances() {
+        return groupInheritances;
+    }
+
+    public void setGroupInheritances(GroupInheritances groupInheritances) {
+        this.groupInheritances = groupInheritances;
+    }
+
+    public GroupPermissions getGroupPermissions() {
+        return groupPermissions;
+    }
+
+    public void setGroupPermissions(GroupPermissions groupPermissions) {
+        this.groupPermissions = groupPermissions;
+    }
+
+    public PlayerSessionLog getPlayerSessionLog() {
+        return playerSessionLog;
+    }
+
+    public void setPlayerSessionLog(PlayerSessionLog playerSessionLog) {
+        this.playerSessionLog = playerSessionLog;
+    }
+
+    public PlayerSessionRestrictions getPlayerSessionRestrictions() {
+        return playerSessionRestrictions;
+    }
+
+    public void setPlayerSessionRestrictions(PlayerSessionRestrictions playerSessionRestrictions) {
+        this.playerSessionRestrictions = playerSessionRestrictions;
+    }
+
+    public Tags getTags() {
+        return tags;
+    }
+
+    public void setTags(Tags tags) {
+        this.tags = tags;
     }
 
     public boolean setConnection() {

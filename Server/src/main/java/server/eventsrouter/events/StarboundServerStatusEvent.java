@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -36,20 +36,44 @@ public class StarboundServerStatusEvent extends StatusEvent {
     /**
      * boolean representing that the Starbound starbounddata.packets.starbounddata.packets.server process status
      */
-    @Getter
+
     private volatile boolean crashed;
 
     /**
      * boolean representing that the Starbound starbounddata.packets.starbounddata.packets.server is responsive
      */
-    @Getter
+
     private volatile boolean unresponsive;
 
     /**
      * boolean represents if the starbounddata.packets.starbounddata.packets.server is restarting
      */
-    @Getter
+
     private volatile boolean restarting;
+
+    public boolean isCrashed() {
+        return crashed;
+    }
+
+    public void setCrashed(boolean crashed) {
+        this.crashed = crashed;
+    }
+
+    public boolean isUnresponsive() {
+        return unresponsive;
+    }
+
+    public void setUnresponsive(boolean unresponsive) {
+        this.unresponsive = unresponsive;
+    }
+
+    public boolean isRestarting() {
+        return restarting;
+    }
+
+    public void setRestarting(boolean restarting) {
+        this.restarting = restarting;
+    }
 
     /**
      * StarboundServerStatus Constructor

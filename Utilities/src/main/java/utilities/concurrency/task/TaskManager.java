@@ -1,56 +1,41 @@
-package server;
+package utilities.concurrency.task;
 
-import lombok.Getter;
-import server.eventsrouter.events.ThreadEvent;
+import utilities.thread.NamedThreadFactory;
 
-import java.util.Map;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public enum TaskScheduler {
-    INSTANCE;
+//"StarNub - Thread Scheduler : Thread Task"
 
-    @Getter
-    private ScheduledThreadPoolExecutor threadScheduler;
-    @Getter
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList;
+public class TaskManager extends ScheduledThreadPoolExecutor{
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is use to set the ScheduledThreadPoolExecutor and ConcurrentHashMap for scheduling task and tracking them.
-     * <p>
-     *
-     */
-    void setScheduledTask() {
-        Integer taskThreads = (int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
-        this.threadScheduler = new ScheduledThreadPoolExecutor(taskThreads, new NamedThreadFactory("StarNub - Thread Scheduler : Thread Task"));
-        this.taskList = new ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>>();
-    }
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = new ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>>();
 
-    public ScheduledThreadPoolExecutor getThreadScheduler() {
-        return threadScheduler;
+    public TaskManager(int TASK_THREAD_COUNT, String THREAD_NAMING){
+        super(TASK_THREAD_COUNT, new NamedThreadFactory(THREAD_NAMING));
     }
 
     public ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> getTaskList() {
         return taskList;
     }
 
-    public void oneTimeTaskPurge(){
-        for (ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner : taskList.values()){
+    public HashSet<String> oneTimeTaskPurge(){
+        HashSet<String> purgedTask = new HashSet<String>();
+        for (String taskOwner : taskList.keySet()){
             //Clean up empty task owner keys
+            ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner = taskList.get(taskOwner);
             scheduledTaskOwner.values().stream().filter(scheduledTask -> scheduledTask.getScheduledFuture().isDone()).forEach(scheduledTask -> {
-                StarNub.getLogger().cDebPrint(
-                        "StarNub",
-                        "Scheduled Task Complete, purging from Task List: Owner: " + scheduledTask.getTaskOwner() + ", Task Name: " + scheduledTask.getTaskName() + ".");
                 scheduledTaskOwner.remove(scheduledTask.getTaskName());
-                //Clean up empty task owner keys
+                purgedTask.add("Scheduled Task Complete, purging from Task List: Owner: " + scheduledTask.getTaskOwner() + ", Task Name: " + scheduledTask.getTaskName() + ".");
+                if(scheduledTaskOwner.isEmpty()){
+                    taskList.remove(taskOwner);
+                }
             });
         }
+        return purgedTask;
     }
 
     public void purgeBasedOnTaskNameSpecific(String taskOwner, String taskNameExact){
@@ -148,21 +133,21 @@ public enum TaskScheduler {
      */
     private String taskScheduler(String taskOwner, String taskName, Runnable runnable, long initialDelay, long timeDelay, TimeUnit timeUnit, String taskType) {
         if (!taskOwner.equalsIgnoreCase("StarNub")) {
-            taskOwner = StarNub.getPluginManager().resolvePlugin(taskOwner);
+//            taskOwner = StarNub.getPluginManager().resolvePlugin(taskOwner);
             if (taskOwner == null) {
                 return "scheduler-not-scheduled-no-plugin";
             }
         }
         ScheduledFuture<?> scheduledFuture = null;
         if (taskType.equalsIgnoreCase("one")) {
-            scheduledFuture = threadScheduler.schedule(runnable, timeDelay, timeUnit);
-            ThreadEvent.eventSend_Thread_Task_Scheduled_One_Time(taskOwner, scheduledFuture);
+            scheduledFuture = this.schedule(runnable, timeDelay, timeUnit);
+//            ThreadEvent.eventSend_Thread_Task_Scheduled_One_Time(taskOwner, scheduledFuture);
         } else if (taskType.equalsIgnoreCase("fixed-rate")) {
-            scheduledFuture = threadScheduler.scheduleAtFixedRate(runnable, timeDelay, initialDelay, timeUnit);
-            ThreadEvent.eventSend_Thread_Task_Scheduled_Repeating(taskOwner, scheduledFuture);
+            scheduledFuture = this.scheduleAtFixedRate(runnable, timeDelay, initialDelay, timeUnit);
+//            ThreadEvent.eventSend_Thread_Task_Scheduled_Repeating(taskOwner, scheduledFuture);
         } else if (taskType.equalsIgnoreCase("fixed-delay")) {
-            scheduledFuture = threadScheduler.scheduleWithFixedDelay(runnable, timeDelay, initialDelay, timeUnit);
-            ThreadEvent.eventSend_Thread_Task_Scheduled_Repeating(taskOwner, scheduledFuture);
+            scheduledFuture = this.scheduleWithFixedDelay(runnable, timeDelay, initialDelay, timeUnit);
+//            ThreadEvent.eventSend_Thread_Task_Scheduled_Repeating(taskOwner, scheduledFuture);
         }
         if (!taskList.containsKey(taskOwner)) {
             taskList.put(taskOwner, new ConcurrentHashMap<>());

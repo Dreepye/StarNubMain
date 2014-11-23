@@ -11,13 +11,13 @@ import java.nio.file.StandardOpenOption;
 
 public class FileLogWriter {
 
-    @Getter
+
     private volatile FileOutputStream fileWriter;
 
-    @Getter
+
     private volatile OutputStreamWriter outputStream;
 
-    @Getter
+
     private volatile BufferedWriter bufferedWriter;
 
     public FileLogWriter(String filePathString) {

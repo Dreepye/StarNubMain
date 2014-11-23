@@ -2,7 +2,7 @@ package server.eventsrouter;
 
 import server.eventsrouter.handlers.PacketEventHandler;
 import server.eventsrouter.subscriptions.EventSubscription;
-import server.server.packets.Packet;
+import starbounddata.packets.Packet;
 
 import java.util.HashSet;
 

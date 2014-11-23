@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -21,7 +21,6 @@ package server.connectedentities.player.account;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import server.connectedentities.player.character.Character;
 
 @DatabaseTable(tableName = "CHARACTER_IGNORES")
@@ -36,14 +35,14 @@ public class CharacterIgnore {
     /**
      * Represents the starnubId that has ignored players
      */
-    @Getter
+
     @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true,  columnName = "ACCOUNT_SETTING_ID")
     private Settings accountSetting;
 
     /**
      * Represents the characterId that is ignored
      */
-    @Getter
+
     @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true,  columnName = "CHARACTER_ID")
     private server.connectedentities.player.character.Character characterId;
 
@@ -51,6 +50,18 @@ public class CharacterIgnore {
      * Constructor for database purposes
      */
     public CharacterIgnore(){}
+
+    public int getCharacterIgnoresId() {
+        return characterIgnoresId;
+    }
+
+    public Settings getAccountSetting() {
+        return accountSetting;
+    }
+
+    public Character getCharacterId() {
+        return characterId;
+    }
 
     /**
      * Constructor used in adding, removing or updating an accounts ignored character list

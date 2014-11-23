@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,8 +18,6 @@
 
 package server;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.codehome.utilities.files.FileToList;
 import org.joda.time.DateTime;
 import server.database.DatabaseTables;
@@ -28,7 +26,6 @@ import server.eventsrouter.StarNubEventRouter;
 import server.eventsrouter.events.StarNubEventsInternals;
 import server.logger.MultiOutputLogger;
 import server.plugins.PluginManager;
-import server.senders.CommandParser;
 import server.senders.MessageSender;
 import server.senders.PacketSender;
 import server.server.Server;
@@ -40,7 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**TODO - UPDATE
+/**
  * Represents the StarNubs core.
  * <p>
  * This final class will load in all important modules to managing StarNub
@@ -52,42 +49,89 @@ import java.util.Set;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-@NoArgsConstructor
+
 public final class StarNub {
 
     private final static Object INTERNALLY_BANNED_IPS_LOCK = new Object();
-    @Getter
     private static ResourceManager resourceManager = ResourceManager.getInstance();
-    @Getter
     private static Configuration configuration = setConfiguration();
-    @Getter
     private static MultiOutputLogger logger = MultiOutputLogger.getInstance();
-    @Getter
     private static DateAndTimes dateAndTimes = DateAndTimes.getInstance();
-    @Getter
     private static MessageSender messageSender;
-    @Getter
     private static StarNubVersion versionInstance = StarNubVersion.getInstance();
-    @Getter
     private static ServerStats serverStats;
-    @Getter
-    private static CommandParser commandParser;
-    @Getter
     private static PacketSender packetSender;
-    @Getter
     private static DatabaseTables databaseTables;
-    @Getter
     private static Set<InetAddress> internallyBannedIps;
-    @Getter
     private static StarNubEventRouter starNubEventRouter;
-    @Getter
     private static PacketEventRouter packetEventRouter;
-    @Getter
     private static PluginManager pluginManager;
-    @Getter
     private static Server server;
-    @Getter
-    private static Task task;
+    private static Task task;//(int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
+
+    public static ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
+    public static Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public static MultiOutputLogger getLogger() {
+        return logger;
+    }
+
+    public static DateAndTimes getDateAndTimes() {
+        return dateAndTimes;
+    }
+
+    public static MessageSender getMessageSender() {
+        return messageSender;
+    }
+
+    public static StarNubVersion getVersionInstance() {
+        return versionInstance;
+    }
+
+    public static ServerStats getServerStats() {
+        return serverStats;
+    }
+
+    public static CommandParser getCommandParser() {
+        return commandParser;
+    }
+
+    public static PacketSender getPacketSender() {
+        return packetSender;
+    }
+
+    public static DatabaseTables getDatabaseTables() {
+        return databaseTables;
+    }
+
+    public static Set<InetAddress> getInternallyBannedIps() {
+        return internallyBannedIps;
+    }
+
+    public static StarNubEventRouter getStarNubEventRouter() {
+        return starNubEventRouter;
+    }
+
+    public static PacketEventRouter getPacketEventRouter() {
+        return packetEventRouter;
+    }
+
+    public static PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    public static Server getServer() {
+        return server;
+    }
+
+    public static Task getTask() {
+        return task;
+    }
 
     /**
      * Attempts to set the {@link Configuration} .
@@ -165,7 +209,7 @@ public final class StarNub {
         try {
             internallyBannedIps = new FileToList().readFileLinesString("StarNub/Databases/blocked_ips.txt");
         } catch (Exception e) {
-            logger.cErrPrint("StarNub", "Unable to load \"StarNub/Databases/blocked_ips.txt\". Please check your file. If the " +
+            logger.cErrPrint("StarNub", "Unable to load \"StarNub/Databases/blocked_ips.txt\". Please check your utilities.file. If the " +
                     "issue persist, please put a issue in at www.StarNub.org under StarNub.");
             return;
         }

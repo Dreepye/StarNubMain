@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -58,56 +58,56 @@ public class Account {
     /**
      * Represents the accounts unique StarNub ID which is used in other database tables
      */
-    @Getter
+
     @DatabaseField(generatedId = true, columnName = "STARNUB_ID")
     private volatile int starnubId;
 
     /**
      * Represents the account name associated with the client id
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "ACCOUNT_NAME")
     private volatile String accountName;
 
     /**
      * Represents the account password associated with the account id and name
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "PASSWORD")
     private volatile String accountPassword;
 
     /**
      * Represents the account password associated with the account id and name
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "SALT")
     private volatile String accountSalt;
 
     /**
      * This holds the account settings and preferences
      */
-    @Getter
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "SETTINGS_ID")
     private volatile Settings accountSettings;
 
     /**
      * Represents the start time in UTC from when the Player starbounddata.packets.connection was completely excepted
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_LOGIN")
     private volatile DateTime lastLogin;
 
     /**
      * Represents the groups associated to this account
      */
-    @Getter
+
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
     private volatile ForeignCollection<GroupAssignment> groups;
 
     /**
      * Represents the characters associated to this account
      */
-    @Getter
+
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
     private volatile ForeignCollection<server.connectedentities.player.character.Character> characters;
 
@@ -115,42 +115,42 @@ public class Account {
      * This represents whether an account has been disabled or not
      * <p>
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.BOOLEAN, canBeNull = true, columnName = "DISABLED")
     private volatile boolean disbaled;
 
     /**
      * Represents the time the account was disabled
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "DISABLED_DATE")
     private volatile DateTime dateDisabled;
 
     /**
      * This reason the account was disabled
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, canBeNull = true, columnName = "DISABLED_REASON")
     private volatile String disabledReason;
 
     /**
      * Represents the time the account will no longer be disabled
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "DISABLED_EXPIRE_DATE")
     private volatile DateTime dateRestrictionExpires;
 
     /**
      * Represents who disabled the account as a String
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, columnName = "IMPOSER_NAME")
     private volatile String imposerName;
 
     /**
      * Represents who disabled this as a Account
      */
-    @Getter
+
     @DatabaseField(foreign = true, columnName = "IMPOSER_STARNUB_ID")
     private volatile Account imposerAccount;
 
@@ -179,13 +179,69 @@ public class Account {
      * someplugin -|
      *             |- chatness |- chatcolors
      */
-    @Getter
+
     private ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> permissions;
 
     /**
      * Constructor for database purposes
      */
     public Account() {}
+
+    public int getStarnubId() {
+        return starnubId;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public String getAccountPassword() {
+        return accountPassword;
+    }
+
+    public String getAccountSalt() {
+        return accountSalt;
+    }
+
+    public Settings getAccountSettings() {
+        return accountSettings;
+    }
+
+    public DateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public ForeignCollection<Character> getCharacters() {
+        return characters;
+    }
+
+    public boolean isDisbaled() {
+        return disbaled;
+    }
+
+    public DateTime getDateDisabled() {
+        return dateDisabled;
+    }
+
+    public String getDisabledReason() {
+        return disabledReason;
+    }
+
+    public DateTime getDateRestrictionExpires() {
+        return dateRestrictionExpires;
+    }
+
+    public String getImposerName() {
+        return imposerName;
+    }
+
+    public Account getImposerAccount() {
+        return imposerAccount;
+    }
+
+    public ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> getPermissions() {
+        return permissions;
+    }
 
     /**
      * Constructor used in account creation. Once the account is created, the account name cannot be changed.

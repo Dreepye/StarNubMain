@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class StarNubVersion {
 
-    @Getter
+
     private static final StarNubVersion instance = new StarNubVersion();
 
     private StarNubVersion(){}
@@ -40,37 +40,37 @@ public class StarNubVersion {
     /**
      * String of the current phase (alpha, beta, full release)
      */
-    @Getter
+
     private String PHASE;
 
     /**
      * double of the current version (X.X)
      */
-    @Getter
+
     private double VERSION;
 
     /**
      * String of the current phase and version combined
      */
-    @Getter
+
     private String PHASE_VERSION;
 
     /**
      * String of the current phase and version combined
      */
-    @Getter
+
     private ArrayList<String> LANGUAGES;
 
     /**
-     * double the current the file size
+     * double the current the utilities.file size
      */
-    @Getter
+
     private double SIZE_MBS;
 
     /**
      * String of the current information about the release
      */
-    @Getter
+
     private String DESCRIPTION;
 
     {
@@ -85,7 +85,7 @@ public class StarNubVersion {
      * @param VERSION       double of the current version (X.X)
      * @param PHASE_VERSION String of the current phase and version combined
      * @param LANGUAGES     ArrayList of the current support languages
-     * @param SIZE_MBS      double the current the file size
+     * @param SIZE_MBS      double the current the utilities.file size
      * @param DESCRIPTION   String of the current information about the release
      */
     protected void setStarNubVersion(String PHASE, double VERSION, String PHASE_VERSION, ArrayList<String> LANGUAGES, double SIZE_MBS, String DESCRIPTION) {

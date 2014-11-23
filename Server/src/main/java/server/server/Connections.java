@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -47,7 +47,7 @@ import server.eventsrouter.handlers.PacketEventHandler;
 import server.eventsrouter.handlers.StarNubEventHandler;
 import server.logger.MultiOutputLogger;
 import server.senders.MessageSender;
-import server.server.chat.ChatFilter;
+import chatmanager.chat.ChatFilter;
 import starbounddata.chat.ChatSendChannel;
 import server.server.packets.Packet;
 import server.server.packets.connection.ClientConnectPacket;
@@ -75,28 +75,28 @@ import java.util.concurrent.TimeUnit;
 public enum Connections {
     INSTANCE;
 
-    @Getter
+
     private final static Object WHITE_LIST_LOCK = new Object();
-    @Getter
+
     private final static Object OPS_LIST_LOCK = new Object();
-    @Getter
+
     private final static Object CACHED_DATA_LOCK = new Object();
-    @Getter
+
     private static ConcurrentHashMap<ChannelHandlerContext, Long> openSockets;
-    @Getter
+
     private static ConcurrentHashMap<ChannelHandlerContext, PendingPlayer> pendingConnections;
-    @Getter
+
     private static ConcurrentHashMap<ChannelHandlerContext, Player> connectedPlayers;
-    @Getter
+
     private static Set<Object> whitelist;
-    @Getter
+
     private static Set<UUID> opsList;
-    @Getter
+
     private static ConcurrentHashMap<Object, Restrictions> restrictedIPsUUIDs;
-    @Getter
+
 //    private static Set<CachedData> cachedData;
     private volatile static GroupSync groupSync;
-    @Getter
+
     private static PlayerUUIDCacheWrapper alreadyLoggedIn;
 
 
@@ -207,15 +207,15 @@ public enum Connections {
     private void identifierCastError(String castedIdentifierString, String failureList, String brokenIdentifier){
         if (castedIdentifierString.equalsIgnoreCase("uuid")) {
             StarNub.getLogger().cErrPrint("StarNub", "Could not add a uuid \"" + brokenIdentifier + "\" to StarNub's internal "+failureList+"." +
-                    " Please check your file. If the issue persist, please put a issue in at " +
+                    " Please check your utilities.file. If the issue persist, please put a issue in at " +
                     "www.StarNub.org under StarNub.");
         } else if (castedIdentifierString.equalsIgnoreCase("ip")) {
             StarNub.getLogger().cErrPrint("StarNub", "Could not add a IP \"" + brokenIdentifier + "\" to StarNub's internal "+failureList+"." +
-                    " Please check your file. If the issue persist, please put a issue in at " +
+                    " Please check your utilities.file. If the issue persist, please put a issue in at " +
                     "www.StarNub.org under StarNub.");
         } else if (castedIdentifierString.equalsIgnoreCase("starnubip")) {
             StarNub.getLogger().cErrPrint("StarNub", "\"" + brokenIdentifier + "\" does not represent a StarNub ID cannot at its uuid or IPs to the StarNub's internal "+failureList+"." +
-                    " Please check your file. If the issue persist, please put a issue in at www.StarNub.org under StarNub.");
+                    " Please check your utilities.file. If the issue persist, please put a issue in at www.StarNub.org under StarNub.");
         }
     }
 
@@ -341,7 +341,7 @@ public enum Connections {
         try {
             diskWhitelist = new FileToList().readFileLinesString("StarNub/whitelist.txt");
         } catch (Exception e) {
-            StarNub.getLogger().cErrPrint("StarNub", "Unable to load \"StarNub/whitelist.txt\". Please check your file. If the " +
+            StarNub.getLogger().cErrPrint("StarNub", "Unable to load \"StarNub/whitelist.txt\". Please check your utilities.file. If the " +
                     "issue persist, please put a issue in at www.StarNub.org under StarNub.");
             return;
         }
@@ -498,7 +498,7 @@ public enum Connections {
         try {
             diskOpslist = new FileToList().readFileLinesUUID("StarNub/ops.txt");
         } catch (Exception e) {
-            StarNub.getLogger().cErrPrint("StarNub", "Unable to load \"StarNub/ops.txt\". Please check your file. If the " +
+            StarNub.getLogger().cErrPrint("StarNub", "Unable to load \"StarNub/ops.txt\". Please check your utilities.file. If the " +
                     "issue persist, please put a issue in at www.StarNub.org under StarNub.");
             return;
         }

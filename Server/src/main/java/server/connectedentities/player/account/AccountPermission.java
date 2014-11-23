@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -21,7 +21,6 @@ package server.connectedentities.player.account;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 
 @DatabaseTable(tableName = "ACCOUNT_PERMISSIONS")
 public class AccountPermission {
@@ -35,14 +34,14 @@ public class AccountPermission {
     /**
      * Represents a starnubId that the permission is attached to
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.INTEGER, uniqueCombo = true, columnName = "STARNUB_ID")
     private int starnubId;
 
     /**
      * Represents a permission which is assigned to the starnubdId
      */
-    @Getter
+
     @DatabaseField(dataType = DataType.STRING, uniqueCombo = true, columnName = "PERMISSION")
     private String permission;
 
@@ -50,6 +49,18 @@ public class AccountPermission {
      * Constructor for database purposes
      */
     public AccountPermission(){}
+
+    public int getPermissionId() {
+        return permissionId;
+    }
+
+    public int getStarnubId() {
+        return starnubId;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
 
     /**
      * Constructor used in adding, removing or updating a permission for an account

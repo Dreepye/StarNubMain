@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,7 +18,6 @@
 
 package server;
 
-import lombok.Getter;
 import org.codehome.utilities.directories.DirectoryCheckCreate;
 import org.codehome.utilities.files.JarResourceToDisk;
 import org.codehome.utilities.files.YamlLoader;
@@ -29,15 +28,18 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Enum Singleton representing StarNub's resource manager.
+ * Represents StarNubs ResourceManager singleton
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 public class ResourceManager {
 
-    @Getter
     private static final ResourceManager instance = new ResourceManager();
+
+    public static ResourceManager getInstance() {
+        return instance;
+    }
 
     private ResourceManager(){
         directoryCheck();
@@ -80,7 +82,7 @@ public class ResourceManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method will extract resources from StarNub if they do not exist on
      * disk. If a resource cannot be extracted the program may not work correctly.
@@ -110,17 +112,17 @@ public class ResourceManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method will create a file in the directory that you want.
+     * Uses: This method will create a utilities.file in the directory that you want.
      * <p>
      */
-    private boolean fileCreate(File file){
+    public boolean fileCreate(File file){
         if (!file.exists()) {
             try {
                return file.createNewFile();
             } catch (IOException e) {
-                System.err.println("StarNub was unable to create a file used in the program. File: \"" + file.toString() + "\".");
+                System.err.println("StarNub was unable to create a utilities.file used in the program. File: \"" + file.toString() + "\".");
             }
         }
         return false;
@@ -136,7 +138,7 @@ public class ResourceManager {
      * extracted the program may not work correctly.
      * <p>
      */
-    private void fileExtraction (String resourcePath, String diskFilePath, boolean overwriteFile){
+    public void fileExtraction (String resourcePath, String diskFilePath, boolean overwriteFile){
         JarResourceToDisk fileExtractor = new JarResourceToDisk();
         try {
             fileExtractor.fileUnpack(resourcePath, diskFilePath, overwriteFile);

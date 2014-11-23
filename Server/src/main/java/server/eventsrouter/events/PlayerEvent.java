@@ -1,17 +1,22 @@
 package server.eventsrouter.events;
 
-import lombok.Getter;
 import server.StarNub;
 import server.connectedentities.player.session.PendingPlayer;
 import server.connectedentities.player.session.Player;
 
 public class PlayerEvent extends StarNubEvent<String> {
 
-    @Getter
-    private final Player PLAYER_SESSION;
 
-    @Getter
+    private final Player PLAYER_SESSION;
     private final Object EVENT_DATA_OBJECT;
+
+    public Player getPLAYER_SESSION() {
+        return PLAYER_SESSION;
+    }
+
+    public Object getEVENT_DATA_OBJECT() {
+        return EVENT_DATA_OBJECT;
+    }
 
     /**
      *

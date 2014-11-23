@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -37,7 +37,7 @@ class ProcessManagement {
     protected volatile static Process sbProcess;
 
     /**
-     * This method will return a file path based on the OS Version and Bit
+     * This method will return a utilities.file path based on the OS Version and Bit
      * Version.
      *
      * @return A Process that represents the Starbound Server Sub process of this

@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,8 +18,6 @@
 
 package server.plugins;
 
-import lombok.Getter;
-
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -33,17 +31,17 @@ import java.util.Map;
  */
 class UnloadedPlugin {
 
-    @Getter
+
     private final String PLUGIN_NAME;
-    @Getter
+
     private final double PLUGIN_VERSION;
-    @Getter
+
     private final URL PLUGIN_URL;
-    @Getter
+
     private final File PLUGIN_FILE;
-    @Getter
+
     private final URLClassLoader PLUGIN_URL_CLASS_LOADER;
-    @Getter
+
     private final Map<String, Object> PLUGIN_PLUGIN_YML;
 
     /**
@@ -61,5 +59,29 @@ class UnloadedPlugin {
         this.PLUGIN_FILE = new File (URLString.substring(URLString.indexOf("StarNub")));
         this.PLUGIN_URL_CLASS_LOADER = PLUGIN_URL_CLASS_LOADER;
         this.PLUGIN_PLUGIN_YML = PLUGIN_PLUGIN_YML;
+    }
+
+    public String getPLUGIN_NAME() {
+        return PLUGIN_NAME;
+    }
+
+    public double getPLUGIN_VERSION() {
+        return PLUGIN_VERSION;
+    }
+
+    public URL getPLUGIN_URL() {
+        return PLUGIN_URL;
+    }
+
+    public File getPLUGIN_FILE() {
+        return PLUGIN_FILE;
+    }
+
+    public URLClassLoader getPLUGIN_URL_CLASS_LOADER() {
+        return PLUGIN_URL_CLASS_LOADER;
+    }
+
+    public Map<String, Object> getPLUGIN_PLUGIN_YML() {
+        return PLUGIN_PLUGIN_YML;
     }
 }

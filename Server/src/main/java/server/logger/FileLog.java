@@ -9,16 +9,16 @@ import server.StarNub;
 
 public class FileLog {
 
-    @Getter
+
     private final String FILE_DIRECTORY_STRING;
 
-    @Getter
+
     private volatile String actualFile;
 
-    @Getter
+
     private volatile int fileCount;
 
-    @Getter
+
     private FileLogWriter fileWriter;
 
     public FileLog(String FILE_DIRECTORY_STRING) {

@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This file is part of org.starnub a Java Wrapper for Starbound.
+* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,9 +18,6 @@
 
 package server.eventsrouter.events;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Represents a base Status abstract class to be used
  * for customized status eventsrouter.
@@ -34,14 +31,30 @@ public abstract class StatusEvent extends StarNubEvent<String> {
     /**
      * boolean representing if the object is starting up
      */
-    @Getter @Setter
+
     private volatile boolean startingUp;
 
     /**
      * boolean representing the status
      */
-    @Getter @Setter
+
     private volatile boolean online;
+
+    public boolean isStartingUp() {
+        return startingUp;
+    }
+
+    public void setStartingUp(boolean startingUp) {
+        this.startingUp = startingUp;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 
     /**
      * Basic constructor
