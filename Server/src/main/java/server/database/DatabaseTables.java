@@ -29,7 +29,6 @@ import server.connectedentities.player.groups.*;
 import server.connectedentities.player.session.Player;
 import server.connectedentities.player.session.Restrictions;
 import server.database.tables.*;
-import chatmanager.chat.ChatRoom;
 
 import java.util.Map;
 
@@ -240,7 +239,7 @@ public enum DatabaseTables {
         characterAchievements = new CharacterAchievements(connection, 0, CharacterAchievement.class, Integer.class);
         characterIgnores = new CharacterIgnores(connection, 0, CharacterIgnore.class, Integer.class);
         characterIPLog = new CharacterIPLog(connection, 0, CharacterIP.class, Integer.class);
-        chatRooms = new ChatRooms(connection, 0, ChatRoom.class, Integer.class);
+//        chatRooms = new ChatRooms(connection, 0, ChatRoom.class, Integer.class);
         chatRoomSubscriptions = new ChatRoomSubscriptions(connection, 0, ChatRoomSubscription.class, Integer.class);
         groups = new Groups(connection, 0, Group.class, String.class);
         groupAssignments = new GroupAssignments(connection, 0, GroupAssignment.class, Integer.class);

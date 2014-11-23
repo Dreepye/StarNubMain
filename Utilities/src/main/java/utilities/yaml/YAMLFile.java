@@ -163,7 +163,7 @@ public class YAMLFile {
      * @return boolean returns true if the HashMap containing the file data is empty
      */
     @SuppressWarnings("unchecked")
-    public HashMap<String, Object> loadFromDisk() throws IOException {
+    protected HashMap<String, Object> loadFromDisk() throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(DISK_FILE)) {
             return (HashMap<String, Object>) new Yaml().load(fileInputStream);
         }
@@ -176,7 +176,7 @@ public class YAMLFile {
      * <p>
      */
     @SuppressWarnings("unchecked")
-    public HashMap<String, Object> loadFromDefault() throws Exception {
+    protected HashMap<String, Object> loadFromDefault() throws Exception {
         if (DEFAULT_FILE_PATH instanceof String) {
             try (InputStream resourceAsStream = this.getClass().getResourceAsStream((String) DEFAULT_FILE_PATH)) {
                 return (HashMap<String, Object>) new Yaml().load(resourceAsStream);
@@ -190,6 +190,15 @@ public class YAMLFile {
     }
 
     /**
+     * This method will dump on modification.
+     */
+    protected void dumpOnModification(Map map) throws IOException {
+        if (YAML_DUMPER.isDUMP_ON_MODIFICATION()) {
+            dumpToFile(map);
+        }
+    }
+
+    /**
      * This method will dump(save) a file to disk and return true if the file exist
      * <p>
      *
@@ -200,15 +209,6 @@ public class YAMLFile {
             new Yaml(YAML_DUMPER.getDUMPER_OPTIONS()).dump(map, writer);
         }
         return DISK_FILE.exists();
-    }
-
-    /**
-     * This method will dump on modification.
-     */
-    protected void dumpOnModification(Map map) throws IOException {
-        if (YAML_DUMPER.isDUMP_ON_MODIFICATION()) {
-            dumpToFile(map);
-        }
     }
 
     /**

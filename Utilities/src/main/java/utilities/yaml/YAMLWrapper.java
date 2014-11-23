@@ -18,7 +18,7 @@
 
 package utilities.yaml;
 
-import utilities.exceptions.CollectionDoesNotExistException;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.util.*;
@@ -80,6 +80,10 @@ public class YAMLWrapper extends YAMLFile {
         if (validateOnConstruction) {
             mapVerifyInternally();
         }
+    }
+
+    public HashMap<String, Object> getDATA() {
+        return DATA;
     }
 
     /**
@@ -217,16 +221,39 @@ public class YAMLWrapper extends YAMLFile {
         return objectToVerify;
     }
 
-    public HashMap<String, Object> getDATA() {
-        return DATA;
-    }
-
     /**
      * This will make sure the Map set here is valid
      */
-    public void mapVerifyInternally() throws Exception {
+    protected void mapVerifyInternally() throws Exception {
         DATA = mapVerify(DATA, loadFromDefault());
         super.dumpOnModification(DATA);
+    }
+
+    /**
+     * This method will dump the YAMLWrapper Data Map to file
+     *
+     * @return boolean if the file exist
+     * @throws java.io.IOException
+     */
+    public boolean dumpToFile() throws IOException {
+        return super.dumpToFile(DATA);
+    }
+
+    /**
+     * This method will print the YAMLWrapper Data Map to console
+     */
+    protected void printToConsole() {
+        System.out.println(new Yaml(super.getYAML_DUMPER().getDUMPER_OPTIONS()).dump(DATA));
+    }
+
+    /**
+     * This method will return YAMLWrapper Data Map string
+     * <p>
+     *
+     * @return String representing a YAML String
+     */
+    protected String getYAMLString() {
+        return new Yaml(super.getYAML_DUMPER().getDUMPER_OPTIONS()).dump(DATA);
     }
 
     /**
