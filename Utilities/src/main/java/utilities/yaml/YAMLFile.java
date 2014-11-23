@@ -37,31 +37,31 @@ public class YAMLFile {
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
-     * @param OWNER String owner of this YAMLFile
-     * @param FILE_NAME String file name of the file
-     * @param DEFAULT_FILE_PATH String default path to the file
-     * @param DISK_FILE_PATH String default path to file on the disk
+     * @param OWNER                String owner of this YAMLFile
+     * @param FILE_NAME            String file name of the file
+     * @param DEFAULT_FILE_PATH    String default path to the file
+     * @param DISK_FILE_PATH       String default path to file on the disk
      * @param DUMP_ON_MODIFICATION boolean are we dumping on modification
      * @throws Exception
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH , boolean DUMP_ON_MODIFICATION) throws Exception {
+    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean DUMP_ON_MODIFICATION) throws Exception {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
         this.DISK_FILE_PATH = DISK_FILE_PATH;
         this.DISK_FILE = new File(DISK_FILE_PATH);
-        this.YAML_DUMPER =  new YAMLDumper(null, DUMP_ON_MODIFICATION);
+        this.YAML_DUMPER = new YAMLDumper(null, DUMP_ON_MODIFICATION);
     }
 
     /**
-     * @param OWNER String owner of this YAMLFile
-     * @param FILE_NAME String file name of the file
-     * @param DEFAULT_FILE_PATH String default path to the file
-     * @param DISK_FILE_PATH String default path to file on the disk
-     * @param AUTO_DUMP_INTERVAL int the auto dump interval in minutes
-     * @param DUMP_ON_MODIFICATION boolean are we dumping on modification
+     * @param OWNER                                      String owner of this YAMLFile
+     * @param FILE_NAME                                  String file name of the file
+     * @param DEFAULT_FILE_PATH                          String default path to the file
+     * @param DISK_FILE_PATH                             String default path to file on the disk
+     * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes
+     * @param DUMP_ON_MODIFICATION                       boolean are we dumping on modification
      * @param AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor representing where to submit the auto dump task to
-     * @param map Map representing the map to auto dump
+     * @param map                                        Map representing the map to auto dump
      * @throws Exception
      */
     public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
@@ -108,14 +108,14 @@ public class YAMLFile {
      *
      * @throws Exception if the file cannot be loaded
      */
-    protected HashMap<String, Object> loadOnConstruct()throws Exception{
+    protected HashMap<String, Object> loadOnConstruct() throws Exception {
         HashMap<String, Object> DATA;
         try {
             DATA = loadFromDisk();
-            if (DATA != null){
+            if (DATA != null) {
                 return DATA;
             }
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             /* Silent Catch */
         }
         DATA = loadFromDefault();
@@ -128,41 +128,47 @@ public class YAMLFile {
 
     /**
      * This method will load a YAML file from the file path set when this class was constructed.
-     * <p/>
+     * <p>
+     *
      * @return boolean returns true if the HashMap containing the file data is empty
      */
     @SuppressWarnings("unchecked")
-    public HashMap<String, Object> loadFromDisk() throws FileNotFoundException {
-        return (HashMap<String, Object>) new Yaml().load(new FileInputStream(DISK_FILE));
+    public HashMap<String, Object> loadFromDisk() throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(DISK_FILE)) {
+            return (HashMap<String, Object>) new Yaml().load(fileInputStream);
+        }
     }
 
     /**
      * This method will load a YAML file from the default path set when this class was constructed. Typically
      * this is a resource file inside of a jar or a resource input stream. File paths can include "/" or none for
      * Jar Resources.
-     * <p/>
+     * <p>
      */
     @SuppressWarnings("unchecked")
     public HashMap<String, Object> loadFromDefault() throws Exception {
-            if (DEFAULT_FILE_PATH instanceof String) {
-                String modifiedPath = DEFAULT_FILE_PATH.toString();
-                if (!((String) DEFAULT_FILE_PATH).startsWith("/")){
-                    modifiedPath = "/" + modifiedPath;
-                }
-                return (HashMap<String, Object>) new Yaml().load(this.getClass().getResourceAsStream(modifiedPath));
-            } else if (DEFAULT_FILE_PATH instanceof InputStream){
-                return (HashMap<String, Object>) new Yaml().load((InputStream) DEFAULT_FILE_PATH);
+        if (DEFAULT_FILE_PATH instanceof String) {
+            String modifiedPath = DEFAULT_FILE_PATH.toString();
+            if (!((String) DEFAULT_FILE_PATH).startsWith("/")) {
+                modifiedPath = "/" + modifiedPath;
             }
+            try (InputStream resourceAsStream = this.getClass().getResourceAsStream(modifiedPath)) {
+                return (HashMap<String, Object>) new Yaml().load(resourceAsStream);
+            }
+        } else if (DEFAULT_FILE_PATH instanceof InputStream) {
+            return (HashMap<String, Object>) new Yaml().load((InputStream) DEFAULT_FILE_PATH);
+        }
         return null;
     }
 
     /**
      * This method will dump(save) a file to disk and return true if the file exist
-     * <p/>
+     * <p>
+     *
      * @return boolean returns true if the HashMap containing the file data is empty
      */
-    public boolean dumpToFile (Map map) throws IOException {
-        try(Writer writer = new FileWriter(DISK_FILE_PATH)){
+    public boolean dumpToFile(Map map) throws IOException {
+        try (Writer writer = new FileWriter(DISK_FILE_PATH)) {
             new Yaml(YAML_DUMPER.getDUMPER_OPTIONS()).dump(map, writer);
         }
         return DISK_FILE.exists();
@@ -171,8 +177,8 @@ public class YAMLFile {
     /**
      * This method will dump on modification.
      */
-    protected void dumpOnModification(Map map) throws IOException{
-        if (YAML_DUMPER.isDUMP_ON_MODIFICATION()){
+    protected void dumpOnModification(Map map) throws IOException {
+        if (YAML_DUMPER.isDUMP_ON_MODIFICATION()) {
             dumpToFile(map);
         }
     }
@@ -180,7 +186,7 @@ public class YAMLFile {
     /**
      * This method print this YAMLWrappers YAML string to screen
      */
-    public void printToConsole(Map map){
+    public void printToConsole(Map map) {
         System.out.println(new Yaml(YAML_DUMPER.getDUMPER_OPTIONS()).dump(map));
     }
 
@@ -190,7 +196,7 @@ public class YAMLFile {
      *
      * @return String representing a YAML String
      */
-    public String getYAMLString(Map map){
+    public String getYAMLString(Map map) {
         return new Yaml(YAML_DUMPER.getDUMPER_OPTIONS()).dump(map);
     }
 }

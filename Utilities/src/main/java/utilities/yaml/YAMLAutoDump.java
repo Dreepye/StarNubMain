@@ -32,9 +32,8 @@ public class YAMLAutoDump {
     private final ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR;
 
     /**
-     *
-     * @param AUTO_DUMPER boolean if auto dumping is turned on
-     * @param AUTO_DUMP_INTERVAL int auto bumping in minutes
+     * @param AUTO_DUMPER                    boolean if auto dumping is turned on
+     * @param AUTO_DUMP_INTERVAL             int auto bumping in minutes
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      */
     public YAMLAutoDump(boolean AUTO_DUMPER, int AUTO_DUMP_INTERVAL, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR) {
@@ -55,7 +54,7 @@ public class YAMLAutoDump {
         return SCHEDULED_THREAD_POOL_EXECUTOR;
     }
 
-    public void scheduleAutoDumping(YAMLFile yamlFile, Map map){
+    public void scheduleAutoDumping(YAMLFile yamlFile, Map map) {
         Runnable runnable = () -> {
             try {
                 yamlFile.dumpToFile(map);

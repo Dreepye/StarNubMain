@@ -27,8 +27,7 @@ public class YAMLDumper {
     private final DumperOptions DUMPER_OPTIONS;
 
     /**
-     *
-     * @param AUTO_DUMPER YAMLAutoDump representing the auto dumper class
+     * @param AUTO_DUMPER          YAMLAutoDump representing the auto dumper class
      * @param DUMP_ON_MODIFICATION boolean is dump on modification turned on
      */
     public YAMLDumper(YAMLAutoDump AUTO_DUMPER, boolean DUMP_ON_MODIFICATION) {
