@@ -18,6 +18,8 @@
 
 package utilities.yaml;
 
+import utilities.exceptions.CollectionDoesNotExistException;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -132,7 +134,7 @@ public class YAMLWrapper extends YAMLFile {
     @SuppressWarnings("unchecked")
     private static HashMap<String, Object> mapPurge(HashMap<String, Object> mapToVerify, HashMap<String, Object> defaultMap) {
         HashSet<String> keysToRemove = new HashSet<>();
-        for (Map.Entry <String, Object> entrySet : defaultMap.entrySet()) {
+        for (Map.Entry <String, Object> entrySet : mapToVerify.entrySet()) {
             String s = entrySet.getKey();
             if (!(defaultMap.containsKey(s))) {
                 keysToRemove.add(s);
@@ -510,16 +512,18 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
-    public boolean addToCollection(Object value, String key) throws IOException {
+    public boolean addToCollection(Object value, String key) throws IOException, CollectionDoesNotExistException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
             collection = (Collection) DATA.get(key);
             if (collection != null) {
                 collection.add(value);
+            } else {
+                throw new CollectionDoesNotExistException();
             }
             dumpOnModification(DATA);
         }
-        return collection != null && collection.contains(value);
+        return collection.contains(value);
     }
 
     /**
@@ -531,16 +535,18 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
-    public boolean addToCollection(Object value, String... keys) throws IOException {
+    public boolean addToCollection(Object value, String... keys) throws IOException, CollectionDoesNotExistException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
             collection = (Collection) mapUnwrapper(keys);
             if (collection != null) {
                 collection.add(value);
+            } else {
+                throw new CollectionDoesNotExistException();
             }
             dumpOnModification(DATA);
         }
-        return collection != null && collection.contains(value);
+        return collection.contains(value);
     }
 
     /**
@@ -552,16 +558,18 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
-    public boolean addCollectionToCollection(Collection value, String key) throws IOException {
+    public boolean addCollectionToCollection(Collection value, String key) throws IOException, CollectionDoesNotExistException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
             collection = (Collection) DATA.get(key);
             if (collection != null) {
                 collection.addAll(value);
+            } else {
+                throw new CollectionDoesNotExistException();
             }
             dumpOnModification(DATA);
         }
-        return collection != null && collection.contains(value);
+        return collection.contains(value);
     }
 
     /**
@@ -573,16 +581,154 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
-    public boolean addCollectionToCollection(Collection value, String... keys) throws IOException {
+    public boolean addCollectionToCollection(Collection value, String... keys) throws IOException, CollectionDoesNotExistException {
         Collection collection;
         synchronized (HASHMAP_LOCK_OBJECT) {
             collection = (Collection) mapUnwrapper(keys);
             if (collection != null) {
                 collection.addAll(value);
+            } else {
+                throw new CollectionDoesNotExistException();
             }
             dumpOnModification(DATA);
         }
-        return collection != null && collection.contains(value);
+        return collection.contains(value);
+    }
+
+    /**
+     * This method will add a value to your List or Set and if the collection does not exist, create it
+     *
+     * @param value the Object that you would like to add to your list or set
+     * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
+     * @param key   the key that the list or set belongs to
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    @SuppressWarnings("unchecked")
+    public boolean addToCollection(Object value, boolean hashSet, String key) throws IOException, CollectionDoesNotExistException {
+        Collection collection;
+        synchronized (HASHMAP_LOCK_OBJECT) {
+            collection = (Collection) DATA.get(key);
+            if (collection != null) {
+                collection.add(value);
+            }  else {
+                if (hashSet){
+                    createNestedSet(key);
+                } else {
+                    createNestedList(key);
+                }
+                collection = (Collection) DATA.get(key);
+                if (collection !=null) {
+                    collection.add(value);
+                } else {
+                    throw new CollectionDoesNotExistException();
+                }
+            }
+            dumpOnModification(DATA);
+        }
+        return collection.contains(value);
+    }
+
+    /**
+     * This method will add a value to your nested List or Set and if the collection does not exist, create it
+     *
+     * @param value the Object that you would like to add to your list or set
+     * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
+     * @param keys  the keys that the list or set belongs to
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    @SuppressWarnings("unchecked")
+    public boolean addToCollection(Object value, boolean hashSet, String... keys) throws IOException, CollectionDoesNotExistException {
+        Collection collection;
+        synchronized (HASHMAP_LOCK_OBJECT) {
+            collection = (Collection) mapUnwrapper(keys);
+            if (collection != null) {
+                collection.add(value);
+            }  else {
+                if (hashSet){
+                    createNestedSet(keys);
+                } else {
+                    createNestedList(keys);
+                }
+                collection = (Collection) mapUnwrapper(keys);
+                if (collection !=null) {
+                    collection.add(value);
+                } else {
+                    throw new CollectionDoesNotExistException();
+                }
+            }
+            dumpOnModification(DATA);
+        }
+        return collection.contains(value);
+    }
+
+    /**
+     * This method will add a value to your List or Set and if the collection does not exist, create it
+     *
+     * @param value the Collection of elements that you would like to add to your list or set
+     * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
+     * @param key   the key that the list or set belongs to
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    @SuppressWarnings("unchecked")
+    public boolean addCollectionToCollection(Collection value, boolean hashSet, String key) throws IOException, CollectionDoesNotExistException {
+        Collection collection;
+        synchronized (HASHMAP_LOCK_OBJECT) {
+            collection = (Collection) DATA.get(key);
+            if (collection != null) {
+                collection.addAll(value);
+            }  else {
+                if (hashSet){
+                    createNestedSet(key);
+                } else {
+                    createNestedList(key);
+                }
+                collection = (Collection) DATA.get(key);
+                if (collection !=null) {
+                    collection.addAll(value);
+                } else {
+                    throw new CollectionDoesNotExistException();
+                }
+            }
+            dumpOnModification(DATA);
+        }
+        return collection.contains(value);
+    }
+
+    /**
+     * This method will add a value to your nested List or Set and if the collection does not exist, create it
+     *
+     * @param value the Collection of elements that you would like to add to your list or set
+     * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
+     * @param keys  the keys that the list or set belongs to
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    @SuppressWarnings("unchecked")
+    public boolean addCollectionToCollection(Collection value, boolean hashSet ,String... keys) throws IOException, CollectionDoesNotExistException {
+        Collection collection;
+        synchronized (HASHMAP_LOCK_OBJECT) {
+            collection = (Collection) mapUnwrapper(keys);
+            if (collection != null) {
+                collection.addAll(value);
+            } else {
+                if (hashSet){
+                    createNestedSet(keys);
+                } else {
+                    createNestedList(keys);
+                }
+                collection = (Collection) mapUnwrapper(keys);
+                if (collection !=null) {
+                    collection.addAll(value);
+                } else {
+                    throw new CollectionDoesNotExistException();
+                }
+            }
+            dumpOnModification(DATA);
+        }
+        return collection.contains(value);
     }
 
     /**
@@ -648,6 +794,26 @@ public class YAMLWrapper extends YAMLFile {
     public boolean collectionContains(Object value, String... keys) throws IOException, NullPointerException {
         return ((Collection) mapUnwrapper(keys)).contains(value);
     }
+
+    /**
+     * This will return a value from the base Data Map
+     *
+     * @param key representing the key for the value to be retrieved
+     * @return Object representing if the value exist
+     */
+    public Object getValue(String key){
+        synchronized (HASHMAP_LOCK_OBJECT) {
+            return DATA.get(key);
+        }
+    }
+
+    /**
+     * This will return a nested value from the base Data Map
+     *
+     * @param keys representing the keys for the value to be retrieved
+     * @return Object representing if the value exist
+     */
+    public Object getNestedValue(String... keys){
+        return mapUnwrapper(keys);
+    }
 }
-
-
