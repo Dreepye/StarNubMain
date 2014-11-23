@@ -25,6 +25,9 @@ import server.eventsrouter.events.StarNubEventsInternals;
 
 import java.util.concurrent.TimeUnit;
 
+///TODO
+///RETIRE
+
 public enum Task {
     INSTANCE;
 
@@ -164,13 +167,6 @@ public enum Task {
             @Override
             public void run() {
                 StarNubEventsInternals.eventSend_StarNub_Checks(StarNub.getServerStats().getSnUptime());
-            }
-        }, 30, 30, TimeUnit.SECONDS);
-
-        taskScheduler.scheduleAtFixedRateRepeatingTask("StarNub", "StarNub - StarNub One Time Task Purger", new Runnable() {
-            @Override
-            public void run() {
-                StarNub.getTask().getTaskScheduler().oneTimeTaskPurge();
             }
         }, 30, 30, TimeUnit.SECONDS);
 

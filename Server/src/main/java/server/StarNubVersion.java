@@ -18,7 +18,6 @@
 
 package server;
 
-import lombok.Getter;
 import org.codehome.utilities.files.YamlLoader;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class StarNubVersion {
 
     {
         setVersionInstance();
-        System.out.println(versionBanner());
+//        System.out.println(versionBanner());
     }
     /**
      * These items are generated from versions.yml within
@@ -114,11 +113,11 @@ public class StarNubVersion {
         this.DESCRIPTION = (String) data.get("description");
     }
 
-    public String versionBanner(){
-        return    "\n"
-                + "=======================================================\n"
-                + "                   StarNub " + getPHASE() + "\n"
-                + "                   Version " + getVERSION() + "\n"
-                + "=======================================================\n";
-    }
+//    public String versionBanner(){
+//        return    "\n"
+//                + "=======================================================\n"
+//                + "                   StarNub " + getPHASE() + "\n"
+//                + "                   Version " + getVERSION() + "\n"
+//                + "=======================================================\n";
+//    }
 }

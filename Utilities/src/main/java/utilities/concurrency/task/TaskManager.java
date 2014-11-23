@@ -1,57 +1,83 @@
 package utilities.concurrency.task;
 
-import utilities.thread.NamedThreadFactory;
+import utilities.concurrency.thread.NamedThreadFactory;
 
 import java.util.HashSet;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-//"StarNub - Thread Scheduler : Thread Task"
-
+/**
+ * Represents a TaskManager which will allow scheduling of one time or reoccurring task
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class TaskManager extends ScheduledThreadPoolExecutor{
 
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = new ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> TASK_LIST = new ConcurrentHashMap<>();
 
     public TaskManager(int TASK_THREAD_COUNT, String THREAD_NAMING){
         super(TASK_THREAD_COUNT, new NamedThreadFactory(THREAD_NAMING));
+        this.scheduleWithFixedDelayTask("Utilities", "Utilities - One Time Task Purger", this::oneTimeTaskPurge, 30, 30, TimeUnit.SECONDS);
     }
 
-
-
-    public ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> getTaskList() {
-        return taskList;
+    public ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> getTASK_LIST() {
+        return TASK_LIST;
     }
 
-    public HashSet<String> oneTimeTaskPurge(){
-        HashSet<String> purgedTask = new HashSet<String>();
-        for (String taskOwner : taskList.keySet()){
-            //Clean up empty task owner keys
-            ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner = taskList.get(taskOwner);
+    /**
+     * This will purge all one time task that have been completed
+     */
+    public void oneTimeTaskPurge(){
+        for (String taskOwner : TASK_LIST.keySet()){
+            ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner = TASK_LIST.get(taskOwner);
             scheduledTaskOwner.values().stream().filter(scheduledTask -> scheduledTask.getScheduledFuture().isDone()).forEach(scheduledTask -> {
                 scheduledTaskOwner.remove(scheduledTask.getTaskName());
-                purgedTask.add("Scheduled Task Complete, purging from Task List: Owner: " + scheduledTask.getTaskOwner() + ", Task Name: " + scheduledTask.getTaskName() + ".");
                 if(scheduledTaskOwner.isEmpty()){
-                    taskList.remove(taskOwner);
+                    TASK_LIST.remove(taskOwner);
                 }
             });
         }
-        return purgedTask;
     }
 
-    public void purgeBasedOnTaskNameSpecific(String taskOwner, String taskNameExact){
-        ConcurrentHashMap<String, ScheduledTask> specificTask= taskList.get(taskOwner);
-        specificTask.keySet().stream().filter(taskNameKey -> taskNameKey.equalsIgnoreCase(taskNameExact)).forEach(taskNameKey -> {
-            specificTask.get(taskNameKey).getScheduledFuture().cancel(true);
-            specificTask.remove(taskNameKey);
-        });
+    /**
+     * This will purge task purge task based on the Task Owner and Task Name, exact or contains. This method is case - insensitive
+     *
+     * @param taskOwner String representing the Task Owner
+     * @param taskName String representing the partial or full Task Name to purge, this will purge any task what contains this or matches
+     * @param exactMatch boolean representing if we want to purge on exact match (true) or contains (false)
+     */
+    public void purgeBasedOnTaskName(String taskOwner, String taskName, boolean exactMatch){
+        ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner = TASK_LIST.get(taskOwner);
+        HashSet<String> keysToRemove = new HashSet<>();
+        if (scheduledTaskOwner == null || scheduledTaskOwner.isEmpty()){
+            return;
+        }
+        taskName = taskName.toLowerCase();
+        for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : scheduledTaskOwner.entrySet()){
+            String s = scheduledTaskEntry.getKey().toLowerCase();
+            ScheduledTask st = scheduledTaskEntry.getValue();
+            if (exactMatch){
+                if (s.equals(taskName)){
+                    keysToRemove.add(taskName);
+                    st.getScheduledFuture().cancel(true);
+                }
+            } else {
+                if (s.contains(taskName)){
+                    keysToRemove.add(taskName);
+                    st.getScheduledFuture().cancel(true);
+                }
+            }
+        }
+        keysToRemove.forEach(scheduledTaskOwner::remove);
+        if(scheduledTaskOwner.isEmpty()){
+            TASK_LIST.remove(taskOwner);
+        }
     }
 
-    public void purgeBasedOnTaskNameContains(String taskOwner, String taskNameContains){
-        ConcurrentHashMap<String, ScheduledTask> specificTask= taskList.get(taskOwner);
-        specificTask.keySet().stream().filter(taskNameKey -> taskNameKey.contains(taskNameContains)).forEach(taskNameKey -> {
-            specificTask.get(taskNameKey).getScheduledFuture().cancel(true);
-            specificTask.remove(taskNameKey);
-        });
-    }
 
     /**
      * This represents a higher level method for StarNubs API.
@@ -69,7 +95,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
      * @param timeUnit TimeUnit representing the units of time the time delay is for, see Java API for specifics
      * @return String representing the success message
      */
-    public String scheduleOneTimeTask(String taskOwner, String taskName, Runnable runnable, long timeDelay, TimeUnit timeUnit) {
+    public String scheduleTask(String taskOwner, String taskName, Runnable runnable, long timeDelay, TimeUnit timeUnit) {
         return taskScheduler(taskOwner, taskName, runnable, 0, timeDelay, timeUnit, "one");
     }
 
@@ -90,7 +116,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
      * @param timeUnit TimeUnit representing the units of time the time delay is for, see Java API for specifics
      * @return String representing the success message
      */
-    public String scheduleAtFixedRateRepeatingTask(String taskOwner, String taskName, Runnable runnable, long initialDelay, long timeDelay, TimeUnit timeUnit) {
+    public String scheduleAtFixedRateTask(String taskOwner, String taskName, Runnable runnable, long initialDelay, long timeDelay, TimeUnit timeUnit) {
         return taskScheduler(taskOwner, taskName, runnable, initialDelay, timeDelay, timeUnit, "fixed-rate");
     }
 
@@ -111,7 +137,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
      * @param timeUnit TimeUnit representing the units of time the time delay is for, see Java API for specifics
      * @return String representing the success message
      */
-    public String scheduleWithFixedDelayRepeatingTask(String taskOwner, String taskName, Runnable runnable, long initialDelay, long timeDelay, TimeUnit timeUnit) {
+    public String scheduleWithFixedDelayTask(String taskOwner, String taskName, Runnable runnable, long initialDelay, long timeDelay, TimeUnit timeUnit) {
         return taskScheduler(taskOwner, taskName, runnable, initialDelay, timeDelay, timeUnit, "fixed-delay");
     }
 
@@ -131,27 +157,16 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
      * @return String representing the success message
      */
     private String taskScheduler(String taskOwner, String taskName, Runnable runnable, long initialDelay, long timeDelay, TimeUnit timeUnit, String taskType) {
-        if (!taskOwner.equalsIgnoreCase("StarNub")) {
-//            taskOwner = StarNub.getPluginManager().resolvePlugin(taskOwner);
-            if (taskOwner == null) {
-                return "scheduler-not-scheduled-no-plugin";
-            }
-        }
         ScheduledFuture<?> scheduledFuture = null;
         if (taskType.equalsIgnoreCase("one")) {
             scheduledFuture = this.schedule(runnable, timeDelay, timeUnit);
-//            ThreadEvent.eventSend_Thread_Task_Scheduled_One_Time(taskOwner, scheduledFuture);
         } else if (taskType.equalsIgnoreCase("fixed-rate")) {
             scheduledFuture = this.scheduleAtFixedRate(runnable, timeDelay, initialDelay, timeUnit);
-//            ThreadEvent.eventSend_Thread_Task_Scheduled_Repeating(taskOwner, scheduledFuture);
         } else if (taskType.equalsIgnoreCase("fixed-delay")) {
             scheduledFuture = this.scheduleWithFixedDelay(runnable, timeDelay, initialDelay, timeUnit);
-//            ThreadEvent.eventSend_Thread_Task_Scheduled_Repeating(taskOwner, scheduledFuture);
         }
-        if (!taskList.containsKey(taskOwner)) {
-            taskList.put(taskOwner, new ConcurrentHashMap<>());
-        }
-        ConcurrentHashMap<String, ScheduledTask> stg = taskList.get(taskOwner);
+        insertTaskOwner(taskOwner);
+        ConcurrentHashMap<String, ScheduledTask> stg = TASK_LIST.get(taskOwner);
         int inc = 0;
         String taskNameOriginal = taskName + " - ";
         do  {
@@ -163,9 +178,21 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
             inc++;
         } while (stg.containsKey(taskName));
         String scheduled = "scheduler-not-scheduled-unknown";
-        if ((taskList.get(taskOwner).get(taskName).getScheduledFuture() != null)) {
+        if ((TASK_LIST.get(taskOwner).get(taskName).getScheduledFuture() != null)) {
             scheduled = "scheduler-scheduled";
         }
         return scheduled;
+    }
+
+    /**
+     * This method will check to see if the Task Owner exist, and if not insert them into the Task List
+     *
+     * @param taskOwner String the Task Owner to check or insert
+     */
+    private void insertTaskOwner(String taskOwner){
+        taskOwner = taskOwner.toLowerCase();
+        if (!TASK_LIST.containsKey(taskOwner)){
+            TASK_LIST.put(taskOwner, new ConcurrentHashMap<>());
+        }
     }
 }

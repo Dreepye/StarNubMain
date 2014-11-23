@@ -23,6 +23,10 @@ import org.joda.time.DateTime;
 /**
  * This will turn into a database log with time stamps and simple querying
  */
+
+
+///TODO
+///RETIRE
 public enum ServerStats {
     INSTANCE;
 

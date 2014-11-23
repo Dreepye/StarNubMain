@@ -29,6 +29,7 @@ import server.plugins.PluginManager;
 import server.senders.MessageSender;
 import server.senders.PacketSender;
 import server.server.Server;
+import utilities.concurrency.task.TaskManager;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -67,7 +68,7 @@ public final class StarNub {
     private static PacketEventRouter packetEventRouter;
     private static PluginManager pluginManager;
     private static Server server;
-    private static Task task;//(int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
+    private static TaskManager taskManager;//(int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
 
     public static ResourceManager getResourceManager() {
         return resourceManager;
@@ -95,10 +96,6 @@ public final class StarNub {
 
     public static ServerStats getServerStats() {
         return serverStats;
-    }
-
-    public static CommandParser getCommandParser() {
-        return commandParser;
     }
 
     public static PacketSender getPacketSender() {

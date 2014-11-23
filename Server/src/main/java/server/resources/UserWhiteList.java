@@ -16,30 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package server.cache.objects;
+package server.resources;
 
-import cache.objects.TimeCache;
-import io.netty.channel.Channel;
-
-/**
- * Represents a Channel Cache. This cache can be used in any Cache Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class ChannelCache extends TimeCache {
-
-    private volatile Channel channel;
-
-    public ChannelCache(Channel channel) {
-        this.channel = channel;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
+public class UserWhiteList {
 }

@@ -16,7 +16,30 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package server.cache.objects;
+
+
+import cache.objects.TimeCache;
+
 /**
- * utilities.thread is the package containing Thread Classes
+ * Represents a ChannelHandlerContext Cache. This cache can be used in any Cache Wrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
  */
-package utilities.thread;
+public class ChannelHandlerContextCache extends TimeCache {
+
+    private volatile io.netty.channel.ChannelHandlerContext ctx;
+
+    public ChannelHandlerContextCache(io.netty.channel.ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public io.netty.channel.ChannelHandlerContext getCtx() {
+        return ctx;
+    }
+
+    public void setCtx(io.netty.channel.ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
+}

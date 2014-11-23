@@ -42,6 +42,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
+
+///TODO
+///RETIRE
+
 public final class Configuration {
 
     private final String configType;

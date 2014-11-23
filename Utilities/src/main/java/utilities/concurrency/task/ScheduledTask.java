@@ -38,7 +38,3 @@ public class ScheduledTask {
         return scheduledFuture;
     }
 }
-
-
-
-//Make schedualed future

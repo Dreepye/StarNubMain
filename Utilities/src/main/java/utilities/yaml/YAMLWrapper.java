@@ -230,6 +230,17 @@ public class YAMLWrapper extends YAMLFile {
     }
 
     /**
+     * This method will reload a YAML file from the file path set when this class was constructed.
+     * <p>
+     *
+     */
+    @SuppressWarnings("unchecked")
+    public void reloadFromDisk() throws Exception {
+        DATA.putAll(mapVerify(super.loadFromDisk(), loadFromDefault()));
+        super.dumpOnModification(DATA);
+    }
+
+    /**
      * This method will dump the YAMLWrapper Data Map to file
      *
      * @return boolean if the file exist

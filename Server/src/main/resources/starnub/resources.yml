@@ -1,16 +1,16 @@
 {
 internally_blocked_ips: {file: ['internally_blocked_ips.yml', 'StarNub/Databases/'], map: {ips: !!set {0.0.0.0, 0.0.0.1}}},
 ops: {file: ['ops.yml', 'StarNub/'], map: {uuids: !!set {"091c4675-7217-34d6-b06e-09f43a0ee7ce", "1f1f8584-0b7d-3189-8ddc-2cbc1dc3583b"}}},
-user_whitelist: {file: ['user_whitelist.yml', 'StarNub/'], map: {white_list_uuid_ip: !!set {"0.0.0.1", "1f1f8584-0b7d-3189-8ddc-2cbc1dc3583b"}}}
+user_whitelist: {file: ['user_whitelist.yml', 'StarNub/'], map: {white_list_uuid_ip: !!set {"0.0.0.1", "1f1f8584-0b7d-3189-8ddc-2cbc1dc3583b"}}},
+illegal_nick_names: {file: ['illegal_nick_names.yml', 'StarNub/'], map: {illegal_nick_names: !!set {"starnub", "server", "starbound", "admin", "moderator", "staff", "administrator", "owner", "moderator"}}}
 }
 
 
 
-blank_files: ['StarNub/Databases/blocked_ips.txt','StarNub/illegal_nick_names.txt', 'StarNub/whitelist.txt','StarNub/chat_filter.txt', 'StarNub/ops.txt']
 
 non_blank_files: {
-starnub/starnub.fileextracts/groups.yml: StarNub/groups.yml,
-
+starnub/fileextracts/groups.yml: StarNub/groups.yml,
+}
 
 #fileExtractor.fileUnpack("starnub/jars/starnubessentials-1.0.jar", "StarNub/Plugins/starnubessentials-1.0.jar", true);
 #fileExtractor.fileUnpack("starnub/jars/starnubcommandsplugin-1.0.jar", "StarNub/Plugins/starnubcommandsplugin-1.0.jar", true);
