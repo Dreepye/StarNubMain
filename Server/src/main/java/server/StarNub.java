@@ -26,10 +26,14 @@ import server.eventsrouter.StarNubEventRouter;
 import server.eventsrouter.events.StarNubEventsInternals;
 import server.logger.MultiOutputLogger;
 import server.plugins.PluginManager;
+import server.resources.BannedIPs;
+import server.resources.Configuration;
+import server.resources.ResourceManager;
 import server.senders.MessageSender;
 import server.senders.PacketSender;
 import server.server.Server;
 import utilities.concurrency.task.TaskManager;
+import utilities.yaml.YAMLWrapper;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -53,17 +57,19 @@ import java.util.Set;
 
 public final class StarNub {
 
-    private final static Object INTERNALLY_BANNED_IPS_LOCK = new Object();
     private static ResourceManager resourceManager = ResourceManager.getInstance();
-    private static Configuration configuration = setConfiguration();
+    private static Configuration configuration = new Configuration(ResourceManager.getStarnubResources());
+
+
+
     private static MultiOutputLogger logger = MultiOutputLogger.getInstance();
-    private static DateAndTimes dateAndTimes = DateAndTimes.getInstance();
+//    private static DateAndTimes dateAndTimes = DateAndTimes.getInstance();
     private static MessageSender messageSender;
-    private static StarNubVersion versionInstance = StarNubVersion.getInstance();
+//    private static StarNubVersion versionInstance = StarNubVersion.getInstance();
     private static ServerStats serverStats;
     private static PacketSender packetSender;
     private static DatabaseTables databaseTables;
-    private static Set<InetAddress> internallyBannedIps;
+    private static BannedIPs internallyBannedIps = new BannedIPs(ResourceManager.getStarnubResources());
     private static StarNubEventRouter starNubEventRouter;
     private static PacketEventRouter packetEventRouter;
     private static PluginManager pluginManager;
@@ -134,8 +140,9 @@ public final class StarNub {
      * Attempts to set the {@link Configuration} .
      * <p>
      * This cannot be done if the Configuration is already set.
+     * @param starnubResources
      */
-    private static Configuration setConfiguration() {
+    private static Configuration setConfiguration(YAMLWrapper starnubResources) {
         if (StarNub.configuration != null) {
             throw new UnsupportedOperationException("Cannot redefine StarNub Configuration");
         }
@@ -324,7 +331,7 @@ public final class StarNub {
         DateTime starnubStarTime = DateTime.now();
         Thread.currentThread().setName("StarNub - Main");
         setResourceManager();
-        setConfiguration();
+        setConfiguration(server.resources.ResourceManager.getStarnubResources());
         setDateAndTimes();
         setMessageSender();
         setLogger();

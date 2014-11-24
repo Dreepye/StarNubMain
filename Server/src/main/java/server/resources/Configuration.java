@@ -20,19 +20,19 @@ package server.resources;
 
 import utilities.yaml.YAMLWrapper;
 
-public class ServerStats extends YAMLWrapper{
+public class Configuration extends YAMLWrapper{
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
      * @param starnubResources YAMLWrapper containing starnub resources
      */
-    public ServerStats(YAMLWrapper starnubResources) {
+    public Configuration(YAMLWrapper starnubResources) {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "server_stats", "file"),
+                (String) starnubResources.getListNestedValue(0, "default_configuration", "file"),
                 "resources",
-                (String) starnubResources.getListNestedValue(1, "server_stats", "file"),
+                (String) starnubResources.getListNestedValue(1, "default_configuration", "file"),
                 false,
                 true,
                 true,

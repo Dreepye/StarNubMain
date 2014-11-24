@@ -39,11 +39,11 @@ public class YAMLFile {
      * @param OWNER                String owner of this YAMLFile
      * @param FILE_NAME            String file name of the file
      * @param DEFAULT_FILE_PATH    Object default path to the file (String, InputString, Map)
+     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
      * @param DISK_FILE_PATH       String default path to file on the disk
      * @param DUMP_ON_MODIFICATION boolean are we dumping on modification
-     * @throws Exception
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION) throws Exception {
+    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION) {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         if (DEFAULT_FILE_PATH instanceof String) {
@@ -61,13 +61,14 @@ public class YAMLFile {
      * @param FILE_NAME                                  String file name of the file
      * @param DEFAULT_FILE_PATH                          Object default path to the file (String, InputString, Map)
      * @param DISK_FILE_PATH                             String default path to file on the disk
+     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
      * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes
      * @param DUMP_ON_MODIFICATION                       boolean are we dumping on modification
      * @param AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor representing where to submit the auto dump task to
      * @param map                                        Map representing the map to auto dump
      * @throws Exception
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
+    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         if (DEFAULT_FILE_PATH instanceof String) {

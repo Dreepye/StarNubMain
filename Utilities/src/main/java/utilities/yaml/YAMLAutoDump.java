@@ -63,7 +63,7 @@ public class YAMLAutoDump {
             }
         };
         if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-            ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayRepeatingTask(yamlFile.getOWNER(), "YAML Wrapper - Auto Dumper - File: " + yamlFile.getFILE_NAME(), runnable, 1, AUTO_DUMP_INTERVAL, TimeUnit.MINUTES);
+            ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayTask(yamlFile.getOWNER(), "YAML Wrapper - Auto Dumper - File: " + yamlFile.getFILE_NAME(), runnable, 1, AUTO_DUMP_INTERVAL, TimeUnit.MINUTES);
         } else {
             SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, 1, AUTO_DUMP_INTERVAL, TimeUnit.MINUTES);
         }

@@ -18,5 +18,61 @@
 
 package server.resources;
 
-public class BannedIPs {
+import utilities.exceptions.CollectionDoesNotExistException;
+import utilities.yaml.YAMLWrapper;
+
+import java.io.IOException;
+
+public class BannedIPs extends YAMLWrapper {
+
+    /**
+     * This will construct a YAML file, YAML dumper, YAML auto dumper
+     *
+     * @param starnubResources YAMLWrapper containing starnub resources
+     */
+    public BannedIPs(YAMLWrapper starnubResources) {
+        super(
+                "StarNub",
+                (String) starnubResources.getListNestedValue(0, "internally_blocked_ips", "file"),
+                "resources",
+                (String) starnubResources.getListNestedValue(1, "internally_blocked_ips", "file"),
+                false,
+                true,
+                true,
+                true
+        );
+    }
+
+    /**
+     * This method will add a value to your internally blocked ips
+     *
+     * @param value the Object that you would like to add to your list or set
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    public boolean addToBannedIPs(Object value) throws IOException, CollectionDoesNotExistException {
+        return super.addToCollection(value, "ips");
+    }
+
+    /**
+     * This method will remove a value to your internally blocked ips
+     *
+     * @param value the Object that you would like to remove to your list or set
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    public boolean removeFromBannedIPs(Object value) throws IOException {
+        return super.removeFromCollection(value, "ips");
+    }
+
+    /**
+     * This method will check to see if a  your internally blocked ips has a specific value
+     *
+     * @param value Object to check the list or set for
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    public boolean bannedIPsContains(Object value) throws IOException, NullPointerException {
+        return super.collectionContains(value, "ips");
+    }
 }

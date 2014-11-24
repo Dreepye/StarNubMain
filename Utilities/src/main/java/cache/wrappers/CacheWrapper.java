@@ -252,7 +252,7 @@ public abstract class CacheWrapper<E1> {
                 }
             };
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-                ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayRepeatingTask(CACHE_OWNER, String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME), runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
+                ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayTask(CACHE_OWNER, String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME), runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }
@@ -277,7 +277,7 @@ public abstract class CacheWrapper<E1> {
                 }
             };
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-                ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayRepeatingTask(CACHE_OWNER, String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME), runnable, CACHE_PURGE_TAKE_TIME, CACHE_PURGE_TAKE_TIME, TIME_UNIT);
+                ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayTask(CACHE_OWNER, String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME), runnable, CACHE_PURGE_TAKE_TIME, CACHE_PURGE_TAKE_TIME, TIME_UNIT);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }

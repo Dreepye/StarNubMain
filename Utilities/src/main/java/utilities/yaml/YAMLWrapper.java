@@ -46,18 +46,22 @@ public class YAMLWrapper extends YAMLFile {
      * @param FILE_NAME              String file name of the file
      * @param DEFAULT_FILE_PATH      String default path to the file
      * @param DISK_FILE_PATH         String default path to file on the disk
+     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
      * @param DUMP_ON_MODIFICATION   boolean are we dumping on modification
      * @param loadOnConstruct        boolean load the file on construction of this wrapper
      * @param validateOnConstruction boolean validate the Map against the Default Map on construction
-     * @throws Exception
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction) throws Exception {
+    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction) {
         super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, DUMP_ON_MODIFICATION);
-        if (loadOnConstruct) {
-            DATA.putAll(loadOnConstruct());
-        }
-        if (validateOnConstruction) {
-            mapVerifyInternally();
+        try {
+            if (loadOnConstruct) {
+                DATA.putAll(loadOnConstruct());
+            }
+            if (validateOnConstruction) {
+                mapVerifyInternally();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -66,21 +70,25 @@ public class YAMLWrapper extends YAMLFile {
      * @param FILE_NAME                                  String file name of the file
      * @param DEFAULT_FILE_PATH                          String default path to the file
      * @param DISK_FILE_PATH                             String default path to file on the disk
+     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
      * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes
      * @param DUMP_ON_MODIFICATION                       boolean are we dumping on modification
      * @param loadOnConstruct                            boolean load the file on construction of this wrapper
      * @param validateOnConstruction                     boolean validate the Map against the Default Map on construction
      * @param AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor representing where to submit the auto dump task to
      * @param map                                        Map representing the map to auto dump
-     * @throws Exception
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) throws Exception {
+    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) {
         super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, AUTO_DUMP_INTERVAL, DUMP_ON_MODIFICATION, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, map);
-        if (loadOnConstruct) {
-            DATA.putAll(loadOnConstruct());
-        }
-        if (validateOnConstruction) {
-            mapVerifyInternally();
+        try {
+            if (loadOnConstruct) {
+                DATA.putAll(loadOnConstruct());
+            }
+            if (validateOnConstruction) {
+                mapVerifyInternally();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -462,6 +470,26 @@ public class YAMLWrapper extends YAMLFile {
     }
 
     /**
+     * This will return a value from the base Data Map
+     *
+     * @param key representing the key for the value to be retrieved
+     * @return Object representing if the value exist
+     */
+    public Object getValue(String key){
+        return DATA.get(key);
+    }
+
+    /**
+     * This will return a nested value from the base Data Map
+     *
+     * @param keys representing the keys for the value to be retrieved
+     * @return Object representing if the value exist
+     */
+    public Object getNestedValue(String... keys){
+        return mapUnwrapper(keys);
+    }
+
+    /**
      * This method will unwrap a nested value and return it
      *
      * @param keys String... representing a list of the keys to retrieve an Object from
@@ -828,22 +856,22 @@ public class YAMLWrapper extends YAMLFile {
     }
 
     /**
-     * This will return a value from the base Data Map
+     * This will return a value from a List at the specific index from the base Data Map
      *
      * @param key representing the key for the value to be retrieved
      * @return Object representing if the value exist
      */
-    public Object getValue(String key){
-        return DATA.get(key);
+    public Object getListValue(int index, String key){
+        return ((List) DATA.get(key)).get(index);
     }
 
     /**
-     * This will return a nested value from the base Data Map
+     * This will return a value from a List at the specific index from the base Data Map
      *
      * @param keys representing the keys for the value to be retrieved
      * @return Object representing if the value exist
      */
-    public Object getNestedValue(String... keys){
-        return mapUnwrapper(keys);
+    public Object getListNestedValue(int index, String... keys){
+        return ((List) mapUnwrapper(keys)).get(index);
     }
 }
