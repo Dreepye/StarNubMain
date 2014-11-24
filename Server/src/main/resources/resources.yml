@@ -21,7 +21,29 @@ illegal_names: {
 
 server_stats: {
     file: ['server_stats.yml', 'StarNub/'],
-    map: {}},
+    map: {
+        "stats": {
+        "private volatile int todaysDay;
+        /* Time Trackers */
+        private volatile static DateTime starnubOnlineTime; /* Java time stamp in milliseconds */
+        private volatile static DateTime starboundOnlineTime; /* Divide by /1000 for Unix time stamp */
+        private volatile static long lastAutoRestart;
+        /* For Ever Tracker */
+        private volatile static int starboundAutoRestarts = 0;
+        private volatile static int starboundCrashes = 0;
+        private volatile static int starboundUnresponsive = 0;
+        /* Since Wrapper Start */
+        private volatile static int sbAutoRestartsWrap = 0;
+        private volatile static int sbCrashesWrap = 0;
+        private volatile static int sbUnresponsiveWrap = 0;
+        /* Since SB Last Auto Restart */
+        private volatile static int sbCrashesTemp = 0;
+        private volatile static int sbUnresponsiveTemp = 0;",
+        }
+    }},
+
+
+
 
 ###################### START DEFAULT CONFIGURATION ######################
 default_configuration: {

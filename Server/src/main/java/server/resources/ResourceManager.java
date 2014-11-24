@@ -22,7 +22,7 @@ import org.codehome.utilities.directories.DirectoryCheckCreate;
 import utilities.yaml.YAMLWrapper;
 
 /**
- * Represents StarNubs ResourceManager singleton
+ * Represents StarNubs ResourceManager Singleton
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -73,9 +73,9 @@ public class ResourceManager {
                 "Databases");
         for (String directory : directories.getResults().keySet()) {
             if (directories.getResults().get(directory)) {
-                System.out.println("Directory "+directory+" exist or was successfully created.");
+                System.out.println("Directory " + directory + " exist or was successfully created.");
             } else {
-                System.err.println("ERROR CREATING DIRECTORY \""+directory+"\" PLEASE CHECK FILE PERMISSIONS. " +
+                System.err.println("ERROR CREATING DIRECTORY \"" + directory + "\" PLEASE CHECK FILE PERMISSIONS. " +
                         "VISIT \"WWW.STARNUB.ORG\" FOR FURTHER HELP... EXITING STARNUB.");
                 System.exit(0);
             }

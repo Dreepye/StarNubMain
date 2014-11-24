@@ -20,7 +20,13 @@ package server.resources;
 
 import utilities.yaml.YAMLWrapper;
 
-public class ServerStats extends YAMLWrapper{
+/**
+ * Represents StarNubs ServerStats instance extending YAMLWrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class ServerStats extends YAMLWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper

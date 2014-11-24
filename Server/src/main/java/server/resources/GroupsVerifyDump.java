@@ -20,6 +20,12 @@ package server.resources;
 
 import utilities.yaml.YAMLWrapper;
 
+/**
+ * Represents StarNubs GroupsVerifyDump instance extending YAMLWrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class GroupsVerifyDump extends YAMLWrapper {
 
     /**

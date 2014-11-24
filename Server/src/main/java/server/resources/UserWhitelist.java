@@ -23,7 +23,13 @@ import utilities.yaml.YAMLWrapper;
 
 import java.io.IOException;
 
-public class UserWhitelist extends YAMLWrapper  {
+/**
+ * Represents StarNubs User Whitelist instance extending YAMLWrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class UserWhitelist extends YAMLWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper

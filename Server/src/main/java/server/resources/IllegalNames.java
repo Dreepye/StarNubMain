@@ -23,6 +23,12 @@ import utilities.yaml.YAMLWrapper;
 
 import java.io.IOException;
 
+/**
+ * Represents StarNubs IllegalNames instance extending YAMLWrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class IllegalNames extends YAMLWrapper {
 
     /**

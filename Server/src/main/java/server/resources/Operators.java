@@ -23,7 +23,13 @@ import utilities.yaml.YAMLWrapper;
 
 import java.io.IOException;
 
-public class Operators extends YAMLWrapper  {
+/**
+ * Represents StarNubs Operators instance extending YAMLWrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class Operators extends YAMLWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
