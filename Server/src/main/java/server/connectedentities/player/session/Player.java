@@ -419,6 +419,20 @@ public class Player extends Sender {
     public void removeFromIgnoreList(){
 
     }
+    
+    public void sendChatMessage(String sender, ChatReceivePacket.ChatReceiveChannel channel, String message){
+        new ChatReceivePacket(clientCTX, channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message).routeToDestination();;
+    }
+    
+    public void sendServerChatMessage(ChatSendPacket.ChatSendChannel channel, String message){
+        new ChatSendPacket(serverCtx, channel, message).routeToDestination();
+    }
+    
+    
+    
+    
+    
+    
 }
 
 
