@@ -17,6 +17,6 @@
  */
 
 /**
- * cache.wrappers is the package containing the basic Cache Wrappers
+ * utilities.os is the package containing operating system classes
  */
-package cache.wrappers;
+package utilities.os;

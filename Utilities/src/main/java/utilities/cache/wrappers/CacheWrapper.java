@@ -16,11 +16,11 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package cache.wrappers;
+package utilities.cache.wrappers;
 
 
 
-import cache.objects.TimeCache;
+import utilities.cache.objects.TimeCache;
 import utilities.concurrency.task.TaskManager;
 import utilities.exceptions.CacheWrapperOperationException;
 
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents Abstract CacheWrapper that can be transformed to accept any type of key and be used with any
- * specific types of cache found in (@link server.cache.objects}.
+ * specific types of utilities.cache found in (@link server.utilities.cache.objects}.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -50,12 +50,12 @@ public abstract class CacheWrapper<E1> {
     /**
      * Basic constructor. RECOMMENDED.
      *
-     * @param CACHE_OWNER       String representing the owner of this cache, should be set to the plugins exact name
-     * @param CACHE_NAME        String representing the name for this specific cache implementation, to be used to task thread purging
-     * @param AUTO_CACHE_PURGER boolean you must create a auto cache purger implementation if once that you need does
+     * @param CACHE_OWNER       String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_NAME        String representing the name for this specific utilities.cache implementation, to be used to task thread purging
+     * @param AUTO_CACHE_PURGER boolean you must create a auto utilities.cache purger implementation if once that you need does
      *                          not exist already, if you will not be using this which is not recommended, use null in its place.
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
-     * @param expectedElements  int representing the max number of elements that will be in the cache at one time
+     * @param expectedElements  int representing the max number of elements that will be in the utilities.cache at one time
      * @param expectedThreads   int representing the max number of threads you expect to be accessing the elements at one time
      */
     public CacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean AUTO_CACHE_PURGER, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads) {
@@ -76,15 +76,15 @@ public abstract class CacheWrapper<E1> {
     /**
      * Time specific constructor. RECOMMENDED.
      *
-     * @param CACHE_OWNER           String representing the owner of this cache, should be set to the plugins exact name
-     * @param CACHE_NAME            String representing the name for this specific cache implementation, to be used to task thread purging
-     * @param AUTO_CACHE_PURGER     boolean you must create a auto cache purger implementation if once that you need does
+     * @param CACHE_OWNER           String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_NAME            String representing the name for this specific utilities.cache implementation, to be used to task thread purging
+     * @param AUTO_CACHE_PURGER     boolean you must create a auto utilities.cache purger implementation if once that you need does
      *                              not exist already, if you will not be using this which is not recommended, use null in its place.
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      * @param TIME_UNIT             TimeUnit representing the time units to set the auto prune and purge to set 0 for off (Not recommended)
-     * @param CACHE_PRUNE_TASK_TIME int representing the time units to to automatically remove cache of this age at the set interval of this time unit
-     * @param CACHE_PURGE_TAKE_TIME int representing the time to purge all cache entirely
-     * @param expectedElements  int representing the max number of elements that will be in the cache at one time
+     * @param CACHE_PRUNE_TASK_TIME int representing the time units to to automatically remove utilities.cache of this age at the set interval of this time unit
+     * @param CACHE_PURGE_TAKE_TIME int representing the time to purge all utilities.cache entirely
+     * @param expectedElements  int representing the max number of elements that will be in the utilities.cache at one time
      * @param expectedThreads   int representing the max number of threads you expect to be accessing the elements at one time
      */
     public CacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean AUTO_CACHE_PURGER, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads, TimeUnit TIME_UNIT, int CACHE_PRUNE_TASK_TIME, int CACHE_PURGE_TAKE_TIME) {
@@ -140,12 +140,12 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will add a cache item to the cache. Cache that is added must represent a TimeCache
+     * Uses: This will add a utilities.cache item to the utilities.cache. Cache that is added must represent a TimeCache
      * class.
      * <p/>
      *
      * @param key           E1 representing a contactable key
-     * @param timeCache TimeCache representing a cache object
+     * @param timeCache TimeCache representing a utilities.cache object
      */
     public void addCache(E1 key, TimeCache timeCache) throws CacheWrapperOperationException {
         try {
@@ -160,7 +160,7 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will remove a key and its value you from cache
+     * Uses: This will remove a key and its value you from utilities.cache
      * <p/>
      *
      * @param key E1 representing a contactable key
@@ -178,11 +178,11 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will replace a cache object if the key exist, and if not it will add the item to cache
+     * Uses: This will replace a utilities.cache object if the key exist, and if not it will add the item to utilities.cache
      * <p/>
      *
      * @param key           E1 representing a contactable key
-     * @param timeCache TimeCache representing a cache object
+     * @param timeCache TimeCache representing a utilities.cache object
      */
     public void replaceCache(E1 key, TimeCache timeCache) throws CacheWrapperOperationException {
         try {
@@ -197,11 +197,11 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will get a cache object associated to the key supplied
+     * Uses: This will get a utilities.cache object associated to the key supplied
      * <p/>
      *
      * @param key E1 representing a contactable key
-     * @return TimeCache representing the cache object
+     * @return TimeCache representing the utilities.cache object
      */
     public TimeCache getCache(E1 key) throws CacheWrapperOperationException {
         try {
@@ -217,11 +217,11 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will look through the cache to see if it past the time given. If so it will remove the cache and add the key
+     * Uses: This will look through the utilities.cache to see if it past the time given. If so it will remove the utilities.cache and add the key
      * to a HasSet to be returned to the caller.
      * <p/>
      *
-     * @param pastTime long time that is to be checked in the cache for it being past the time
+     * @param pastTime long time that is to be checked in the utilities.cache for it being past the time
      * @return HashSet containing all of the removed keys
      */
     public HashSet<E1> bulkCacheRemove(long pastTime) {
@@ -239,7 +239,7 @@ public abstract class CacheWrapper<E1> {
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will submit a task to StarNub to at a fixed rate schedule a prune task based on the time supplied.
-     * It will remove cache older then the prune time when the prune triggers.
+     * It will remove utilities.cache older then the prune time when the prune triggers.
      * <p/>
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      */
@@ -264,7 +264,7 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will submit a task to StarNub to at a fixed rate schedule a purge task which will completely clear the cache
+     * Uses: This will submit a task to StarNub to at a fixed rate schedule a purge task which will completely clear the utilities.cache
      * <p/>
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      */
@@ -290,7 +290,7 @@ public abstract class CacheWrapper<E1> {
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will execute the registerEvents() method which will register any event listeners with starnub which
-     * will enable auto cache removal based on the event and the implementers event method(s).
+     * will enable auto utilities.cache removal based on the event and the implementers event method(s).
      * <p/>
      */
     public void startEventListener() {

@@ -25,6 +25,12 @@ import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents a YAMLAutoDump this will schedule a task for auto dumping the file
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
 public class YAMLAutoDump {
 
     private final boolean AUTO_DUMPER;

@@ -24,6 +24,13 @@ import java.io.*;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+/**
+ * Represents a YAMLFile. This provides methods for creating, accessing, dumping
+ * file data.
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
 public class YAMLFile {
 
     private final String OWNER;

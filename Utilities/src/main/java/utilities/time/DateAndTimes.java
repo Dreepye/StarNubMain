@@ -16,7 +16,8 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package server;
+package utilities.time;
+
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -26,25 +27,35 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 /**
- * Represents StarNubs Date and Time enum singleton.
- * <p>
- * This method will provide date and time calculation and formatting
- * <p>
+ * Represents DataAndTimes instance. This will provide formatting support and time calculations
+ *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 public class DateAndTimes {
 
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
     private static final DateAndTimes instance = new DateAndTimes();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
     private DateAndTimes(){}
+
+    /**
+     *
+     * @return DateAndTimes Singleton Instance
+     */
     public static DateAndTimes getInstance() {
         return instance;
     }
 
     /**
-     * Returns the current time in a formatted String
+     * Returns a String formatted date, Examples "MMMM dd, yyyy",  "MMMM dd, yyyy '@' HH:mm '- Server Time'", [HH:mm:ss]
      * <p>
-     * See for formating: http://joda-time.sourceforge.net/apidocs/index.html?org/joda/time/format/DateTimeFormatter.html
+     * @see <a href="http://www.joda.org/joda-time/key_format.html">Joda Time Formatting</a>
      * <p>
      * @param format String representing the format
      * @return String with the current time formatted
@@ -54,8 +65,10 @@ public class DateAndTimes {
     }
 
     /**
-     * Returns a String formatted date.
-     *
+     * Returns a String formatted date, Examples "MMMM dd, yyyy",  "MMMM dd, yyyy '@' HH:mm '- Server Time'", [HH:mm:ss]
+     * <p>
+     * @see <a href="http://www.joda.org/joda-time/key_format.html">Joda Time Formatting</a>
+     * <p>
      * @param format String representing the format
      * @param dateTime DateTime representing the time
      * @return String with the future time
@@ -76,6 +89,20 @@ public class DateAndTimes {
         return new Period(dateTime1, dateTime2);
     }
 
+    /**
+     *
+     * This will calculate out and return a String the length of a period in easy to read format: Y
+     *
+     * @param duration
+     * @param yearsSeparatorFormat
+     * @param monthsSeparatorFormat
+     * @param weeksSeparatorFormat
+     * @param daysSeparatorFormat
+     * @param hoursSeparatorFormat
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormattedFromMilliseconds(long duration, String yearsSeparatorFormat, String monthsSeparatorFormat, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
         Period period = new Period(duration);
         if (period.getYears() > 0) {
@@ -97,6 +124,12 @@ public class DateAndTimes {
         }
     }
 
+    /**
+     *
+     * @param period
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -110,6 +143,13 @@ public class DateAndTimes {
 
     }
 
+    /**
+     *
+     * @param period
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String minutesSeparatorFormat, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -122,6 +162,15 @@ public class DateAndTimes {
                 .toFormatter();
         return Formatter.print(period);
     }
+
+    /**
+     *
+     * @param period
+     * @param hoursSeparatorFormat
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -136,6 +185,15 @@ public class DateAndTimes {
         return Formatter.print(period);
     }
 
+    /**
+     *
+     * @param period
+     * @param daysSeparatorFormat
+     * @param hoursSeparatorFormat
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -151,6 +209,16 @@ public class DateAndTimes {
         return Formatter.print(period);
     }
 
+    /**
+     *
+     * @param period
+     * @param weeksSeparatorFormat
+     * @param daysSeparatorFormat
+     * @param hoursSeparatorFormat
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -167,6 +235,17 @@ public class DateAndTimes {
         return Formatter.print(period);
     }
 
+    /**
+     *
+     * @param period
+     * @param monthsSeparatorFormat
+     * @param weeksSeparatorFormat
+     * @param daysSeparatorFormat
+     * @param hoursSeparatorFormat
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String monthsSeparatorFormat, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -184,6 +263,18 @@ public class DateAndTimes {
         return Formatter.print(period);
     }
 
+    /**
+     *
+     * @param period
+     * @param yearsSeparatorFormat
+     * @param monthsSeparatorFormat
+     * @param weeksSeparatorFormat
+     * @param daysSeparatorFormat
+     * @param hoursSeparatorFormat
+     * @param minutesSeparatorFormat
+     * @param secondsSeparatorFormat
+     * @return
+     */
     public String getPeriodFormat(Period period, String yearsSeparatorFormat, String monthsSeparatorFormat, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
         if (secondsSeparatorFormat == null) {
             secondsSeparatorFormat = "-";
@@ -202,22 +293,57 @@ public class DateAndTimes {
         return Formatter.print(period);
     }
 
+    /**
+     *
+     * @param minutes
+     * @return
+     */
     public DateTime getFutureDateTime(int minutes){
         return new DateTime().plusMinutes(minutes);
     }
 
+    /**
+     *
+     * @param hours
+     * @param minutes
+     * @return
+     */
     public DateTime getFutureDateTime(int hours, int minutes){
         return new DateTime().plusHours(hours).plusMinutes(minutes);
     }
 
+    /**
+     *
+     * @param days
+     * @param hours
+     * @param minutes
+     * @return
+     */
     public DateTime getFutureDateTime(int days, int hours, int minutes){
         return new DateTime().plusDays(days).plusHours(hours).plusMinutes(minutes);
     }
 
+    /**
+     *
+     * @param months
+     * @param days
+     * @param hours
+     * @param minutes
+     * @return
+     */
     public DateTime getFutureDateTime(int months, int days, int hours, int minutes){
         return new DateTime().plusMonths(months).plusDays(days).plusHours(hours).plusMinutes(minutes);
     }
 
+    /**
+     *
+     * @param years
+     * @param months
+     * @param days
+     * @param hours
+     * @param minutes
+     * @return
+     */
     public DateTime getFutureDateTime(int years, int months, int days, int hours, int minutes){
         return new DateTime().plusYears(years).plusMonths(months).plusDays(days).plusHours(hours).plusMinutes(minutes);
     }

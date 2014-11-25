@@ -16,7 +16,37 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package utilities.os;
+
+import utilities.os.linux.LinuxBitVersion;
+
 /**
- * cache is the package containing all of the basic cache wrappers and objects
+ * Represents a OperatingSystem this will represent some OS
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
  */
-package cache;
+public class OperatingSystem {
+
+    private final String OPERATING_SYSTEM;
+    private final BitVersion BIT_VERSION;
+
+    public OperatingSystem() {
+        String systemOS = System.getProperty("os.name");
+        if (systemOS.startsWith("Windows")){
+            this.OPERATING_SYSTEM = "Windows";
+            BIT_VERSION = null;
+        } else {
+            this.OPERATING_SYSTEM = "Linux";
+            BIT_VERSION = new LinuxBitVersion();
+        }
+    }
+
+    public String getOPERATING_SYSTEM() {
+        return OPERATING_SYSTEM;
+    }
+
+    public BitVersion getBIT_VERSION() {
+        return BIT_VERSION;
+    }
+}

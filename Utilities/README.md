@@ -15,7 +15,10 @@ Current Utility Functions
 	- CacheWrapper - Holds Cache Objects that extend TimeCache from this library
 	- BooleanCache - Holds the System Time and a boolean value
 	- StringCache - Holds the System Time and a String value
-	- TimeCache - Simple cache that holds the System Time from when it was constructed
+	- TimeCache - Simple utilities.cache that holds the System Time from when it was constructed
+
+- Date and Times:
+	- DateAndTimes - Simple Date formatter and time calculator
 
 - Threading:
 	- NamedThreadFactory: This creates a named thread factory that names Threads as such (Name + " - " + increment)
@@ -50,3 +53,7 @@ References
 	- [YAML Ain't Markup Language](Netty.io)
 	- [Snake YAML for Java](https://code.google.com/p/snakeyaml/)
 	- [Online YAML Parser - Verify Your YAML!](http://yaml-online-parser.appspot.com/)
+
+- Joda Time:
+	- [Joda Time Library](http://www.joda.org/joda-time/)
+	- [Joda Time Format Reference](http://www.joda.org/joda-time/key_format.html)

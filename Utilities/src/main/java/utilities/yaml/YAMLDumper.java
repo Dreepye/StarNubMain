@@ -20,6 +20,14 @@ package utilities.yaml;
 
 import org.yaml.snakeyaml.DumperOptions;
 
+
+/**
+ * Represents a YAMLDumper this will be used to set dumping options and
+ * auto dumper for files
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
 public class YAMLDumper {
 
     private final YAMLAutoDump AUTO_DUMPER;

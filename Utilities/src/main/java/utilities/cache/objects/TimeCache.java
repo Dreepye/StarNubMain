@@ -16,10 +16,10 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cache.objects;
+package utilities.cache.objects;
 
 /**
- * Represents a Time Cache. This cache can be used in any Cache Wrapper. Other cache must extend this to work with CacheWrapper classes
+ * Represents a Time Cache. This utilities.cache can be used in any Cache Wrapper. Other utilities.cache must extend this to work with CacheWrapper classes
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -59,7 +59,7 @@ public class TimeCache {
      * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: Sets the cacheTime for this Cache to the current system time and returns the previous time in cache
+     * Uses: Sets the cacheTime for this Cache to the current system time and returns the previous time in utilities.cache
      * <p/>
      *
      * @return long representing the cacheTime that was just replaced

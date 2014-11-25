@@ -16,27 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cache.objects;
-
 /**
- * Represents a String Cache. This cache can be used in any Cache Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * utilities.os.linux is the package containing linux operating system classes
  */
-public class StringCache extends TimeCache {
-
-    private volatile String string;
-
-    public StringCache(String string) {
-        this.string = string;
-    }
-
-    public String getString() {
-        return string;
-    }
-
-    public void setString(String string) {
-        this.string = string;
-    }
-}
+package utilities.os.linux;
