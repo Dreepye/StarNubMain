@@ -37,7 +37,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class YAMLWrapper extends YAMLFile {
 
     private final Object LOCK_OBJECT = new Object();
-    private ConcurrentHashMap<String, Object> DATA = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> DATA = new ConcurrentHashMap<>();
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper

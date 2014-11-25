@@ -11,6 +11,9 @@ Requirements
 
 Current Utility Functions
 ============
+- Bytes:
+	- BytesInteger - Converts Integers to and from byte[]'s
+
 - Cache:
 	- CacheWrapper - Holds Cache Objects that extend TimeCache from this library
 	- BooleanCache - Holds the System Time and a boolean value
@@ -20,8 +23,14 @@ Current Utility Functions
 - Date and Times:
 	- DateAndTimes - Simple Date formatter and time calculator
 
+- Operating System:
+	- OperatingSystem - contains the operating system type (windows or linux)
+	- BitVersion - is an abstract class that belongs to Operating System
+		- LinuxBitVersion - contains methods to obtain linux bit versions
+
 - Threading:
-	- NamedThreadFactory: This creates a named thread factory that names Threads as such (Name + " - " + increment)
+	- NamedThreadFactory - This creates a named thread factory that names Threads as such (Name + " - " + increment)
+	- ThreadSleep - Provides methods for you to sleep a thread in seconds or milliseconds
 
 - YAML:  **Note**: "!!sets", are unable to be checked in a YAML parser and look like key, value mappings but, are not actually (k,v).
 	- YAMLWrapper - This wraps a Map called Data that represents the YAML File from disk, and has methods to add, remove, check, get values and even collections methods

@@ -16,37 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.os;
-
-import utilities.os.linux.LinuxBitVersion;
-
 /**
- * Represents a OperatingSystem this will represent some OS
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * utilities.bytes is the package containing Byte[] related classes
  */
-public class OperatingSystem {
-
-    protected final String OPERATING_SYSTEM;
-    protected final BitVersion BIT_VERSION;
-
-    public OperatingSystem() {
-        String systemOS = System.getProperty("os.name");
-        if (systemOS.startsWith("Windows")){
-            this.OPERATING_SYSTEM = "Windows";
-            BIT_VERSION = null;
-        } else {
-            this.OPERATING_SYSTEM = "Linux";
-            BIT_VERSION = new LinuxBitVersion();
-        }
-    }
-
-    public String getOPERATING_SYSTEM() {
-        return OPERATING_SYSTEM;
-    }
-
-    public BitVersion getBIT_VERSION() {
-        return BIT_VERSION;
-    }
-}
+package utilities.bytes;

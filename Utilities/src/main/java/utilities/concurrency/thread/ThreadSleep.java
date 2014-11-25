@@ -16,37 +16,42 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.os;
-
-import utilities.os.linux.LinuxBitVersion;
+package utilities.concurrency.thread;
 
 /**
- * Represents a OperatingSystem this will represent some OS
+ * Represents a ThreadSleep, this class provides static methods for sleeping a thread
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
-public class OperatingSystem {
+public class ThreadSleep {
 
-    protected final String OPERATING_SYSTEM;
-    protected final BitVersion BIT_VERSION;
+    public ThreadSleep() {}
 
-    public OperatingSystem() {
-        String systemOS = System.getProperty("os.name");
-        if (systemOS.startsWith("Windows")){
-            this.OPERATING_SYSTEM = "Windows";
-            BIT_VERSION = null;
-        } else {
-            this.OPERATING_SYSTEM = "Linux";
-            BIT_VERSION = new LinuxBitVersion();
+    /**
+     * This will sleep a thread for seconds
+     *
+     * @param timer int the number of seconds to sleep this thread
+     */
+    public static void timerSeconds(int timer) {
+        try {
+            Thread.sleep(timer * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public String getOPERATING_SYSTEM() {
-        return OPERATING_SYSTEM;
+    /**
+     * This will sleep a thread for milliseconds
+     *
+     * @param timer int the number of milliseconds to sleep this thread
+     */
+    public static void timerMiliseconds(int timer) {
+        try {
+            Thread.sleep(timer);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public BitVersion getBIT_VERSION() {
-        return BIT_VERSION;
-    }
 }
