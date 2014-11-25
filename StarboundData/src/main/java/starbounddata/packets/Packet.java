@@ -19,7 +19,15 @@
 package starbounddata.packets;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.HashSet;
+
+import static starbounddata.packets.StarboundBufferWriter.writeByte;
+import static starbounddata.packets.StarboundBufferWriter.writeByteArray;
+import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
+import static utilities.compression.Zlib.compress;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -62,13 +70,15 @@ public abstract class Packet {
         return recycle;
     }
 
-    public void setRecycle(boolean recycle) {
-        this.recycle = recycle;
+    public void recycle() {
+        this.recycle = true;
+    }
+
+    public void resetRecycle() {
+        this.recycle = false;
     }
 
     /**
-     * This represents a lower level method for StarNubs API.
-     * <p/>
      * Recommended: For internal StarNub usage.
      * <p/>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
@@ -79,8 +89,6 @@ public abstract class Packet {
     public abstract void read(ByteBuf in);
 
     /**
-     * This represents a lower level method for StarNubs API.
-     * <p/>
      * Recommended: For internal StarNub usage.
      * <p/>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
@@ -89,4 +97,57 @@ public abstract class Packet {
      * @param out ByteBuf representing the space to write out the packet reason
      */
     public abstract void write(ByteBuf out);
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     */
+    public void routeToDestination(){
+        DESTINATION_CTX.writeAndFlush(packetToMessageEncoder(this), DESTINATION_CTX.voidPromise());
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people
+     *
+     * @param sendList HashSet of ChannelHandlerContext to this packet to
+     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
+     */
+    public void routeToGroup(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
+        if (ignoredList != null) {
+            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise()));
+        } else {
+            for (ChannelHandlerContext ctx : sendList){
+                ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise());
+            }
+        }
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p/>
+     * @param packet Packet representing the packet to encode
+     * @return ByteBuf representing the ByteBuf to write to socket
+     */
+    private static ByteBuf packetToMessageEncoder(Packet packet) {
+        ByteBuf msgOut = PooledByteBufAllocator.DEFAULT.directBuffer();
+        packet.write(msgOut);
+        int payloadLengthOut = msgOut.readableBytes();
+        byte[] dataOut;
+        if (payloadLengthOut > 100) {
+            dataOut = compress(msgOut.readBytes(payloadLengthOut).array());
+            payloadLengthOut = -dataOut.length;
+        } else {
+            dataOut = msgOut.readBytes(payloadLengthOut).array();
+        }
+        msgOut.clear();
+        writeByte(msgOut, packet.getPACKET_ID());
+        writeSignedVLQNoObject(msgOut, payloadLengthOut);
+        writeByteArray(msgOut, dataOut);
+        return msgOut;
+    }
 }

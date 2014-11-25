@@ -222,6 +222,58 @@ public class VLQ {
         return payloadLength;
     }
 
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will read a s{@link starbounddata.variants.VLQ} from a byte[]
+     * <p/>
+     * Notes: This will not create a VLQ object and should be used
+     * <p/>
+     *
+     * @param in byte[] representing the bytes to be read for a reason length from a signed vlq
+     * @return int representing the reason length
+     */
+    public static int readSignedFromBufferNoObject(byte[] in) {
+        int payloadLength = readUnsignedFromBufferNoObject(in);
+        if ((payloadLength & 1) == 0x00) {
+            payloadLength = payloadLength >> 1;
+        } else {
+            payloadLength = -((payloadLength >> 1) + 1);
+        }
+        return payloadLength;
+    }
+
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p/>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will read a u{@link starbounddata.variants.VLQ} from a byte[]
+     * <p/>
+     * Notes: This will not create a VLQ object and should be used
+     * <p/>
+     *
+     * @param in byte[] representing the bytes to be read for a reason length from a vlq
+     * @return int representing the reason length
+     */
+    public static int readUnsignedFromBufferNoObject(byte[] in) {
+        int vlqLength = 0;
+        int payloadLength = 0;
+        int index = 1;
+        while (vlqLength <= 10) {
+            int tmpByte = in[index];
+            payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);
+            vlqLength++;
+            index++;
+            if ((tmpByte & 0x80) == 0) {
+                break;
+            }
+        }
+        return payloadLength;
+    }
+
 
     /**
      * This represents a higher level method for StarNubs API.

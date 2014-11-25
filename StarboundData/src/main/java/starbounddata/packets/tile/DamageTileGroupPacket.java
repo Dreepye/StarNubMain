@@ -105,7 +105,7 @@ public class DamageTileGroupPacket extends Packet {
             this.sourcePosition = new Vec2F(in);
             this.tileDamage = new TileDamage(in);
         } catch (ArrayIndexOutOfBoundsException e){
-            super.setRecycle(true);
+            super.recycle(true);
             in.skipBytes(in.readableBytes());
         }
     }
