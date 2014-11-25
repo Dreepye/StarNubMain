@@ -106,7 +106,7 @@ public enum Task {
         taskScheduler.scheduleAtFixedRateRepeatingTask("StarNub", "StarNub - Connected Players Check", new Runnable() {
             @Override
             public void run() {
-                StarNub.getServer().getConnections().connectedPlayerLostConnectionCheck();
+                StarNub.getServer().getConnectionss().connectedPlayerLostConnectionCheck();
             }
         }, 5, 5, TimeUnit.SECONDS);
 
@@ -129,21 +129,21 @@ public enum Task {
         taskScheduler.scheduleAtFixedRateRepeatingTask("StarNub", "StarNub - Open Socket Purge", new Runnable() {
             @Override
             public void run() {
-                StarNub.getServer().getConnections().openSocketPurge();
+                StarNub.getServer().getConnectionss().openSocketPurge();
             }
         }, 30, 30, TimeUnit.SECONDS);
 
         taskScheduler.scheduleAtFixedRateRepeatingTask("StarNub", "StarNub - Pending Connections Purge", new Runnable() {
             @Override
             public void run() {
-                StarNub.getServer().getConnections().pendingConnectionPurge();
+                StarNub.getServer().getConnectionss().pendingConnectionPurge();
             }
         }, 30, 30, TimeUnit.SECONDS);
 
         taskScheduler.scheduleAtFixedRateRepeatingTask("StarNub", "StarNub - Player Played Time Update", new Runnable() {
             @Override
             public void run() {
-                StarNub.getServer().getConnections().connectedPlayerPlayedTimeUpdate();
+                StarNub.getServer().getConnectionss().connectedPlayerPlayedTimeUpdate();
             }
         }, 30, 30, TimeUnit.SECONDS);
 
@@ -157,8 +157,8 @@ public enum Task {
         taskScheduler.scheduleAtFixedRateRepeatingTask("StarNub", "StarNub - Starbound Server Query", new Runnable() {
             @Override
             public void run() {
-                if (!StarNub.getServer().getStarboundManager().getStarboundStatus().isRestarting()) {
-                    StarNub.getServer().getStarboundManager().statusQuery();
+                if (!StarNub.getServer().getOLDStarboundManager().getStarboundStatus().isRestarting()) {
+                    StarNub.getServer().getOLDStarboundManager().statusQuery();
                 }
             }
         }, 30, 30, TimeUnit.SECONDS);
@@ -185,7 +185,7 @@ public enum Task {
 
     private void debugMessages() {
         StarNub.getLogger().cDebPrint("StarNub", StarNub.getServer().getServerChat().getChatRoomPlayersListAllRooms("StarNub"));
-        StarNub.getLogger().cDebPrint("StarNub", StarNub.getServer().getConnections().getOnlinePlayersNameList("StarNub", true, true));
+        StarNub.getLogger().cDebPrint("StarNub", StarNub.getServer().getConnectionss().getOnlinePlayersNameList("StarNub", true, true));
     }
 
     public void shutdown() {

@@ -25,8 +25,8 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
-import server.connectedentities.player.groups.Group;
-import server.connectedentities.player.groups.GroupInheritance;
+import server.connections.player.groups.Group;
+import server.connections.player.groups.GroupInheritance;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;

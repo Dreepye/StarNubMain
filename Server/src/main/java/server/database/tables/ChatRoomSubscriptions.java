@@ -24,8 +24,8 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
-import server.connectedentities.player.account.ChatRoomSubscription;
-import server.connectedentities.player.account.Settings;
+import server.connections.player.account.ChatRoomSubscription;
+import server.connections.player.account.Settings;
 import server.database.TableWrapper;
 import chatmanager.chat.ChatRoom;
 

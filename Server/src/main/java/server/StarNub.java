@@ -18,7 +18,6 @@
 
 package server;
 
-import org.codehome.utilities.files.FileToList;
 import org.joda.time.DateTime;
 import server.database.DatabaseTables;
 import server.eventsrouter.PacketEventRouter;
@@ -29,18 +28,11 @@ import server.plugins.PluginManager;
 import server.resources.BannedIPs;
 import server.resources.Configuration;
 import server.resources.ResourceManager;
-import server.senders.MessageSender;
-import server.senders.PacketSender;
+import server.senders.NameBuilder;
+
 import server.server.Server;
 import utilities.concurrency.task.TaskManager;
-import utilities.yaml.YAMLWrapper;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import utilities.time.DateAndTimes;
 
 /**
  * Represents the StarNubs core.
@@ -57,81 +49,65 @@ import java.util.Set;
 
 public final class StarNub {
 
-    private static ResourceManager resourceManager = ResourceManager.getInstance();
-    private static Configuration configuration = new Configuration(ResourceManager.getStarnubResources());
+    private static final ResourceManager resourceManager = ResourceManager.getInstance();
+    private static final Configuration configuration = new Configuration(ResourceManager.getStarnubResources());
+    private static final DateAndTimes dateAndTimes = DateAndTimes.getInstance();
+    private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
+    private static final StarNubVersion versionInstance = StarNubVersion.getInstance(ResourceManager.getStarnubResources());
+    private static final Connections connections = Connections.getInstance();
+
+    private static final DatabaseTables databaseTables;
+    private static final StarNubEventRouter starNubEventRouter;
+    private static final PacketEventRouter packetEventRouter;
+    private static final PluginManager pluginManager;
+    private static final Server server;
+    private static final TaskManager taskManager;//(int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
 
 
+    public static ResourceManager getResourceManager() {
+        return resourceManager;
+    }
 
-    private static MultiOutputLogger logger = MultiOutputLogger.getInstance();
-//    private static DateAndTimes dateAndTimes = DateAndTimes.getInstance();
-    private static MessageSender messageSender;
-//    private static StarNubVersion versionInstance = StarNubVersion.getInstance();
-    private static PacketSender packetSender;
-    private static DatabaseTables databaseTables;
-    private static BannedIPs internallyBannedIps = new BannedIPs(ResourceManager.getStarnubResources());
-    private static StarNubEventRouter starNubEventRouter;
-    private static PacketEventRouter packetEventRouter;
-    private static PluginManager pluginManager;
-    private static Server server;
-    private static TaskManager taskManager;//(int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
+    public static Configuration getConfiguration() {
+        return configuration;
+    }
 
+    public static DateAndTimes getDateAndTimes() {
+        return dateAndTimes;
+    }
 
-    /**
-     * References the messageSender variable to the {@link server.senders.MessageSender} Enum singleton.
-     */
-    private static void setMessageSender() {
-        StarNub.messageSender = MessageSender.INSTANCE;
+    public static MultiOutputLogger getLogger() {
+        return logger;
+    }
+
+    public static StarNubVersion getVersionInstance() {
+        return versionInstance;
     }
 
 
-    /**
-     * References the packetSender variable to the {@link server.senders.PacketSender} Enum singleton.
-     */
-    private static void setPacketSender() {
-        StarNub.packetSender = PacketSender.INSTANCE;
-    }
-
-    /**
-     * References the database variable to the {@link server.database.DatabaseTables} Enum singleton.
-     */
-    private static void setDatabase() {
-        StarNub.databaseTables = DatabaseTables.INSTANCE;
+    public static DatabaseTables getDatabaseTables() {
+        return databaseTables;
     }
 
 
-
-    private static void setStarNubEventRouter(){
-        StarNub.starNubEventRouter = new StarNubEventRouter();
+    public static StarNubEventRouter getStarNubEventRouter() {
+        return starNubEventRouter;
     }
 
-    /**
-     * References the packetEventRouter variable to the {@link org.starnub.eventsrouter} Enum singleton.
-     */
-    private static void setPacketEventRouter() {
-        StarNub.packetEventRouter = new PacketEventRouter();
+    public static PacketEventRouter getPacketEventRouter() {
+        return packetEventRouter;
     }
 
-    /**
-     * References the pluginManager variable to the {@link server.plugins.PluginManager} Enum singleton.
-     */
-    private static void setPluginManager() {
-        StarNub.pluginManager = PluginManager.INSTANCE;
-        pluginManager.initializePluginManager();
-        pluginManager.initialStartup();
+    public static PluginManager getPluginManager() {
+        return pluginManager;
     }
 
-    /**
-     * References the starbounddata.packets.starbounddata.packets.server variable to the {@link server.server.Server} Enum singleton.
-     */
-    private static void setServer() {
-        server = Server.INSTANCE;
+    public static Server getServer() {
+        return server;
     }
 
-    /**
-     * References the task variable to the {@link Task} Enum singleton.
-     */
-    private static void setTask() {
-        StarNub.task = Task.INSTANCE;
+    public static TaskManager getTaskManager() {
+        return taskManager;
     }
 
     public static void main(String[] args) {
@@ -142,31 +118,18 @@ public final class StarNub {
      * This method will set the various singletons.
      */
     private static void start () {
+        /* This Resource detector is for debugging only */
 //        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
 
+        /* Setting Temporary Time - Measuring StarNub Start Up Time */
         DateTime starnubStarTime = DateTime.now();
+        /* Identify the main thread as StarNub - Main for debugging and OS Task List Identification */
         Thread.currentThread().setName("StarNub - Main");
-        setResourceManager();
-        setConfiguration(server.resources.ResourceManager.getStarnubResources());
-        setDateAndTimes();
-        setMessageSender();
-        setLogger();
-        setStarNubEventRouter();
-        setPacketEventRouter();
-        setTask();
+
         logger.eventListenerRegistration(); /*  */
         starNubEventRouter.startEventRouter();
-        setVersionInstance();
-        setServerStats();
-        serverStats.setSnOnlineTime(starnubStarTime);
-        setCommandSender();
-        setPacketSender();
-        setDatabase();
-        setInternallyBannedIps();
-        setPluginManager();
-        setServer();
+
         StarNubEventsInternals.eventSend_StarNub_Startup_Complete(DateTime.now().getMillis() - starnubStarTime.getMillis());
-        task.start();
     }
 
 

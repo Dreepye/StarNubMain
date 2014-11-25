@@ -3,6 +3,14 @@
 #fileExtractor.fileUnpack("starnub/jars/starboundcommandsplugin-1.0.jar", "StarNub/Plugins/starboundcommandsplugin-1.0.jar", true);
 
 {
+starnub_version: {
+    file: ['starnub_version.yml', 'Starnub/'],
+    map:{phase: beta,
+         version: 1.0,
+         languages: [english],
+         size: 12.50,
+             }},
+
 internally_blocked_ips: {
     file: ['internally_blocked_ips.yml', 'StarNub/Databases/'],
     map: {ips: !!set {0.0.0.0, 0.0.0.1}}},
@@ -53,6 +61,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
     "language": "english",
     "starnub_port": 21025,
     "starbound_port": 21024,
+    "packet_decode": true,
     "whitelisted": false,
     "log_size": 5120.0,
     "log_character_names": false,
@@ -270,6 +279,3 @@ default_groups_configuration: {
 ###################### END DEFAULT GROUPS ######################
 
 } ### FILE MAP TERMINATOR
-
-
-

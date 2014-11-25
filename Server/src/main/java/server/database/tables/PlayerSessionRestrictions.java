@@ -19,7 +19,7 @@
 package server.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
-import server.connectedentities.player.session.Restrictions;
+import server.connections.player.session.Restrictions;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;

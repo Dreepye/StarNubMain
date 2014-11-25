@@ -19,7 +19,7 @@
 package server.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
-import server.connectedentities.player.achievements.CharacterAchievement;
+import server.connections.player.achievements.CharacterAchievement;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;

@@ -26,7 +26,7 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
-import server.connectedentities.player.character.Character;
+import server.connections.player.character.Character;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -42,7 +42,7 @@ import java.util.UUID;
  */
 public class Characters extends TableWrapper<Character, Integer> {
 
-    public Characters(Class<server.connectedentities.player.character.Character> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public Characters(Class<server.connections.player.character.Character> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(typeParameterDBClass, typeParameterIDClass);
     }
 

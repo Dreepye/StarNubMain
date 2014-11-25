@@ -34,7 +34,8 @@ import server.eventsrouter.internaldebugging.PacketDebugger;
 import chatmanager.chat.ServerChat;
 //import org.starnub.starbounddata.packets.starbounddata.packets.server.starbounddata.packets.KnownPackets;
 import server.server.packets.server.ProtocolVersionPacket;
-import server.server.starbound.StarboundManager;
+import server.server.starbound.OLDStarboundManager;
+import starbounddata.color.GameColors;
 
 import java.io.*;
 import java.util.Map;
@@ -44,7 +45,7 @@ import java.util.concurrent.Executors;
  * Represents the Starbound Server core.
  * <p>
  * This enum singleton holds and runs all things important
- * to Starbound and connected players.
+ * to Starbound and connect players.
  * <p>
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
@@ -57,7 +58,7 @@ public enum Server {
 
     private Thread udpProxyServer;
 
-    private StarboundManager starboundManager;
+    private OLDStarboundManager OLDStarboundManager;
 
     private PacketDebugger packetDebugger;
 
@@ -65,12 +66,40 @@ public enum Server {
 
     private NioEventLoopGroup starboundQueryGroup;
 
-    private Connections connections;
-
     private ServerChat serverChat;
 
-    {
-        start();
+    private static final GameColors gameColors = GameColors.getInstance();
+
+    public TCPProxyServer getTcpProxyServer() {
+        return tcpProxyServer;
+    }
+
+    public Thread getUdpProxyServer() {
+        return udpProxyServer;
+    }
+
+    public OLDStarboundManager getOLDStarboundManager() {
+        return OLDStarboundManager;
+    }
+
+    public PacketDebugger getPacketDebugger() {
+        return packetDebugger;
+    }
+
+    public ProtocolVersionPacket getProtocolVersionPacket() {
+        return protocolVersionPacket;
+    }
+
+    public NioEventLoopGroup getStarboundQueryGroup() {
+        return starboundQueryGroup;
+    }
+
+    public Connectionss getConnectionss() {
+        return connectionss;
+    }
+
+    public ServerChat getServerChat() {
+        return serverChat;
     }
 
     /**
@@ -98,14 +127,14 @@ public enum Server {
     }
 
     /**
-     * References the starboundManager variable to the {@link server.server.starbound.StarboundManager} Enum singleton.
+     * References the starboundManager variable to the {@link server.server.starbound.OLDStarboundManager} Enum singleton.
      */
     private void setStarboundManager() {
-        starboundManager = StarboundManager.INSTANCE;
+        OLDStarboundManager = OLDStarboundManager.INSTANCE;
     }
 
     /**
-     * References the starboundManager variable to the {@link server.server.starbound.StarboundManager} Enum singleton.
+     * References the starboundManager variable to the {@link server.server.starbound.OLDStarboundManager} Enum singleton.
      */
     private void setPacketDebugger() {
         packetDebugger = PacketDebugger.INSTANCE;
@@ -144,10 +173,10 @@ public enum Server {
     }
 
     /**
-     * References the starboundManager variable to the {@link Connections} Enum singleton.
+     * References the starboundManager variable to the {@link Connectionss} Enum singleton.
      */
     private void setConnections() {
-        connections = Connections.INSTANCE;
+        connectionss = Connectionss.INSTANCE;
     }
 
     /**
@@ -159,8 +188,8 @@ public enum Server {
 
     public void start() {
         setStarboundManager();
-        starboundManager.setStarboundStatus();
-        starboundManager.setStarboundQueryTask();
+        OLDStarboundManager.setStarboundStatus();
+        OLDStarboundManager.setStarboundQueryTask();
 
         configStarboundConfiguration();
 
@@ -176,7 +205,7 @@ public enum Server {
         packetDebugger.setPacketDebugging();
 
         setConnections();
-        connections.setConnectionsData();
+        connectionss.setConnectionsData();
 
         setNetworkThreading();
 
@@ -199,7 +228,7 @@ public enum Server {
         while (!sbConfig.exists()) {
             configExist =  false;
             if(firstLoop) {
-                starboundManager.configGeneratorStart();
+                OLDStarboundManager.configGeneratorStart();
                 StarNub.getLogger().cFatPrint("StarNub", "COULD NOT FIND STARBOUND.CONFIG. " +
                         "PLEASE WAIT WHILE WE GENERATE A STARBOUND CONFIGURATION. STARTING A STARBOUND INSTANCE.");
                 StarNub.getLogger().cInfoPrint("StarNub", "Please wait while we generate a starbound.config");
@@ -213,7 +242,7 @@ public enum Server {
 
         if (!configExist) {
             StarNub.getLogger().cInfoPrint("StarNub", "Starbound configuration has been generated, shutting starbounddata.packets.starbounddata.packets.server down.");
-            starboundManager.configGeneratorStop();
+            OLDStarboundManager.configGeneratorStop();
         }
 
         if (!sbConfigBackup.exists()) {
@@ -293,13 +322,13 @@ public enum Server {
 
     public void restartStarbound(boolean reconfigureStarbound){
         StarboundServerStatusEvent.eventSend_Starbound_Server_Status_Restarting();
-        connections.disconnectAllPlayers();
+        connectionss.disconnectAllPlayers();
         new ThreadSleep().timerSeconds(60);
-        starboundManager.shutdown(true);
+        OLDStarboundManager.shutdown(true);
         if (reconfigureStarbound) {
             configStarboundConfiguration();
         }
-        starboundManager.startUp();
+        OLDStarboundManager.startUp();
     }
 }
 

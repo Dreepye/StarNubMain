@@ -24,8 +24,8 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
-import server.connectedentities.player.account.CharacterIgnore;
-import server.connectedentities.player.account.Settings;
+import server.connections.player.account.CharacterIgnore;
+import server.connections.player.account.Settings;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -51,7 +51,7 @@ public class CharacterIgnores extends TableWrapper<CharacterIgnore, Integer> {
 
     }
 
-    public CharacterIgnore getIgnoredCharacter(Settings settings, server.connectedentities.player.character.Character character) {
+    public CharacterIgnore getIgnoredCharacter(Settings settings, server.connections.player.character.Character character) {
         CharacterIgnore characterIgnore = null;
         try {
             QueryBuilder<CharacterIgnore, Integer> queryBuilder =

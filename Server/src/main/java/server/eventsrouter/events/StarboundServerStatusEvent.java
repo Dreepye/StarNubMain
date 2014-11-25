@@ -34,7 +34,7 @@ import server.StarNub;
 public class StarboundServerStatusEvent extends StatusEvent {
 
     /**
-     * boolean representing that the Starbound starbounddata.packets.starbounddata.packets.server process status
+     * boolean representing that the Starbound starbounddata.packets.starbounddata.packets.server process connectionstatus
      */
 
     private volatile boolean crashed;
@@ -107,7 +107,7 @@ public class StarboundServerStatusEvent extends StatusEvent {
      */
     public static void eventSend_Starbound_Server_Status_Crashed() {
         StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Crashed", true, false, false, false, false));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(true, false, false, false, false);
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(true, false, false, false, false);
     }
 
     /**
@@ -115,7 +115,7 @@ public class StarboundServerStatusEvent extends StatusEvent {
      */
     public static void eventSend_Starbound_Server_Status_Unresponsive() {
         StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Unresponsive", false, true, false, false, false));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(false, true, false, false, false);
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(false, true, false, false, false);
     }
 
     /**
@@ -123,7 +123,7 @@ public class StarboundServerStatusEvent extends StatusEvent {
      */
     public static void eventSend_Starbound_Server_Status_StartingUp() {
         StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Starting_Up", false, false, true, false, false));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(false, false, true, false, false);
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(false, false, true, false, false);
     }
 
     /**
@@ -138,7 +138,7 @@ public class StarboundServerStatusEvent extends StatusEvent {
      */
     public static void eventSend_Starbound_Server_Status_Online() {
         StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Online", false, false, false, true, false));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(false, false, false, true, false);
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(false, false, false, true, false);
         StarNub.getServerStats().setSbOnlineTime(DateTime.now());
     }
 
@@ -154,23 +154,23 @@ public class StarboundServerStatusEvent extends StatusEvent {
      */
     public static void eventSend_Starbound_Server_Status_Restarting() {
         StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Restarting", false, false, false, true, true));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(false, false, false, true, true);
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(false, false, false, true, true);
     }
 
     /**
      * Sent when the starbounddata.packets.starbounddata.packets.server was signaled to shutdown
      */
     public static void eventSend_Starbound_Server_Status_ShuttingDown() {
-        StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Shutting_Down", false, false, false, true, StarNub.getServer().getStarboundManager().getStarboundStatus().restarting));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(false, false, false, true, false);
+        StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Shutting_Down", false, false, false, true, StarNub.getServer().getOLDStarboundManager().getStarboundStatus().restarting));
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(false, false, false, true, false);
     }
 
     /**
      * Sent when the starbounddata.packets.starbounddata.packets.server has shutdown
      */
     public static void eventSend_Starbound_Server_Status_Shutdown() {
-        StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Shutdown", false, false, false, false, StarNub.getServer().getStarboundManager().getStarboundStatus().restarting));
-        StarNub.getServer().getStarboundManager().getStarboundStatus().updateStatus(false, false, false, false, false);
+        StarNub.getStarNubEventRouter().notify(new StarboundServerStatusEvent("Starbound_Server_Status_Shutdown", false, false, false, false, StarNub.getServer().getOLDStarboundManager().getStarboundStatus().restarting));
+        StarNub.getServer().getOLDStarboundManager().getStarboundStatus().updateStatus(false, false, false, false, false);
     }
 
     /**

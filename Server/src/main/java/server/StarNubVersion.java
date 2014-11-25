@@ -18,106 +18,107 @@
 
 package server;
 
-import org.codehome.utilities.files.YamlLoader;
+import utilities.yaml.YAMLWrapper;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
- * Represents this StarNub's version information. This class is a singleton.
+ * Represents StarNubsVersion instance
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 public class StarNubVersion {
 
-
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
     private static final StarNubVersion instance = new StarNubVersion();
 
-    private StarNubVersion(){}
+    private static String PHASE;
+    private static double VERSION;
+    private static String PHASE_VERSION;
+    private static ArrayList<String> LANGUAGES;
+    private static double SIZE_MBS;
+    private static String DESCRIPTION;
 
     /**
-     * String of the current phase (alpha, beta, full release)
+     * This constructor is private - Singleton Pattern
      */
-
-    private String PHASE;
-
-    /**
-     * double of the current version (X.X)
-     */
-
-    private double VERSION;
-
-    /**
-     * String of the current phase and version combined
-     */
-
-    private String PHASE_VERSION;
-
-    /**
-     * String of the current phase and version combined
-     */
-
-    private ArrayList<String> LANGUAGES;
-
-    /**
-     * double the current the utilities.file size
-     */
-
-    private double SIZE_MBS;
-
-    /**
-     * String of the current information about the release
-     */
-
-    private String DESCRIPTION;
-
-    {
-        setVersionInstance();
-//        System.out.println(versionBanner());
+    private StarNubVersion() {
     }
+
     /**
-     * These items are generated from versions.yml within
-     * the classpath / or resources folder.
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This will set and get StarNubVersion Singleton instance
      *
-     * @param PHASE         String of the current phase (alpha, beta, full release)
-     * @param VERSION       double of the current version (X.X)
-     * @param PHASE_VERSION String of the current phase and version combined
-     * @param LANGUAGES     ArrayList of the current support languages
-     * @param SIZE_MBS      double the current the utilities.file size
-     * @param DESCRIPTION   String of the current information about the release
-     */
-    protected void setStarNubVersion(String PHASE, double VERSION, String PHASE_VERSION, ArrayList<String> LANGUAGES, double SIZE_MBS, String DESCRIPTION) {
-        this.PHASE = PHASE;
-        this.VERSION = VERSION;
-        this.PHASE_VERSION = PHASE_VERSION;
-        this.LANGUAGES = LANGUAGES;
-        this.SIZE_MBS = SIZE_MBS;
-        this.DESCRIPTION = DESCRIPTION;
-    }
-
-    /**
-     * This method will set the StarNubVersion
-     * variables. These items are generated from
-     * versions.yml within the classpath / or
-     * resources folder.
+     * @param starnubResources YAMLWrapper containing the resources
+     * @return StarNubVersion Singleton Instance
      */
     @SuppressWarnings("unchecked")
-    protected synchronized void setVersionInstance() {
-        Map<String, Object> data = new YamlLoader().resourceYamlLoader("servers/version.yml");
-        this.PHASE = (String) data.get("phase");
-        this.VERSION = (double) data.get("version");
-        this.PHASE_VERSION = PHASE + "-" + Double.toString(VERSION);
-        this.LANGUAGES = (ArrayList<String>) data.get("languages");
-        this.SIZE_MBS = (double) data.get("size");
-        this.DESCRIPTION = (String) data.get("description");
+    public static StarNubVersion getInstance(YAMLWrapper starnubResources) {
+        if (PHASE == null) {
+            YAMLWrapper starnubVersion = new YAMLWrapper(
+                    "StarNub",
+                    (String) starnubResources.getListNestedValue(0, "starnub_version", "file"),
+                    "resources",
+                    (String) starnubResources.getListNestedValue(1, "starnub_version", "file"),
+                    false,
+                    false,
+                    true,
+                    false
+            );
+            PHASE = (String) starnubVersion.getValue("phase");
+            VERSION = (double) starnubVersion.getValue("version");
+            PHASE_VERSION = PHASE + "-" + Double.toString(VERSION);
+            LANGUAGES = (ArrayList<String>) starnubVersion.getValue("languages");
+            SIZE_MBS = (double) starnubVersion.getValue("size");
+            DESCRIPTION = (String) starnubVersion.getValue("description");
+        }
+        return instance;
     }
 
-//    public String versionBanner(){
-//        return    "\n"
-//                + "=======================================================\n"
-//                + "                   StarNub " + getPHASE() + "\n"
-//                + "                   Version " + getVERSION() + "\n"
-//                + "=======================================================\n";
-//    }
+    public static StarNubVersion getInstance() {
+        return instance;
+    }
+
+    public static String getPHASE() {
+        return PHASE;
+    }
+
+    public static double getVERSION() {
+        return VERSION;
+    }
+
+    public static String getPhaseVersion() {
+        return PHASE_VERSION;
+    }
+
+    public static ArrayList<String> getLANGUAGES() {
+        return LANGUAGES;
+    }
+
+    public static double getSizeMbs() {
+        return SIZE_MBS;
+    }
+
+    public static String getDESCRIPTION() {
+        return DESCRIPTION;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will return a String Banner with the StarNub Phase and Version
+     *
+     * @return
+     */
+    public String versionBanner() {
+        return "\n"
+                + "=======================================================\n"
+                + "                   StarNub " + PHASE + "\n"
+                + "                   Version " + VERSION + "\n"
+                + "=======================================================\n";
+    }
 }

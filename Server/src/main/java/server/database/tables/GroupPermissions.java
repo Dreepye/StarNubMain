@@ -24,8 +24,8 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
-import server.connectedentities.player.groups.Group;
-import server.connectedentities.player.groups.GroupPermission;
+import server.connections.player.groups.Group;
+import server.connections.player.groups.GroupPermission;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -70,7 +70,7 @@ public class GroupPermissions extends TableWrapper<GroupPermission, Integer> {
         return groupAssignment;
     }
 
-    public List<GroupPermission> getGroupPermissions(server.connectedentities.player.character.Character groupId){
+    public List<GroupPermission> getGroupPermissions(server.connections.player.character.Character groupId){
         try {
             return getTableDao().queryBuilder().where()
                     .eq("GROUP", groupId)

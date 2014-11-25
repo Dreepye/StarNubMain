@@ -1,8 +1,8 @@
 package server.eventsrouter.events;
 
 import server.StarNub;
-import server.connectedentities.player.session.PendingPlayer;
-import server.connectedentities.player.session.Player;
+import server.connections.player.session.PendingPlayer;
+import server.connections.player.session.Player;
 
 public class PlayerEvent extends StarNubEvent<String> {
 

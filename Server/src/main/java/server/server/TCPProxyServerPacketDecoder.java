@@ -145,7 +145,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                     if (!packet.isRecycle()) {
                         StarNub.getPacketSender().destinationPacketRouter(packet);
                     } else {
-                        packet.setRecycle(false);
+                        packet.recycle(false);
                     }
                 } else {
                     destinationCTX.writeAndFlush(in.readSlice(1 + vlqLength + payloadLength).retain(), destinationCTX.voidPromise());
@@ -272,7 +272,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private void closeConnection(ChannelHandlerContext ctx){
         try {
-            StarNub.getServer().getConnections().playerDisconnectPurposely(ctx, "Disconnected");
+            StarNub.getServer().getConnectionss().playerDisconnectPurposely(ctx, "Disconnected");
             ctx.channel().close();
             ctx.channel().eventLoop().shutdownGracefully();
         } catch (NullPointerException e){

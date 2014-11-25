@@ -59,6 +59,10 @@ public class MultiOutputLogger {
         this.dayOfMonth = new DateTime().getDayOfMonth();
     }
 
+    public static MultiOutputLogger getInstance() {
+        return instance;
+    }
+
     /**
      * This represents a lower level method for StarNubs API.
      * <p>

@@ -23,7 +23,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
 import server.database.TableWrapper;
-import server.connectedentities.player.character.*;
+import server.connections.player.character.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -120,7 +120,7 @@ public class CharacterIPLog extends TableWrapper<CharacterIP, Integer> {
         return associatedIps;
     }
 
-    public List<CharacterIP> getCharactersAssociatedIPList(server.connectedentities.player.character.Character character){
+    public List<CharacterIP> getCharactersAssociatedIPList(server.connections.player.character.Character character){
         try {
             return getTableDao().queryBuilder().where()
                     .eq("CHARACTER_ID", character)

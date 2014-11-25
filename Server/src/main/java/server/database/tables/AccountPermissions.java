@@ -24,7 +24,7 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import server.StarNub;
-import server.connectedentities.player.account.AccountPermission;
+import server.connections.player.account.AccountPermission;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;

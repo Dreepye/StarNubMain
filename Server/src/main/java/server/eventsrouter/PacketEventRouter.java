@@ -27,7 +27,7 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>> {
                 packet = packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
                 try {
                     if (packet.isRecycle()) {
-                        packet.setRecycle(false);
+                        packet.recycle(false);
                         return packet;
                     }
                 } catch (NullPointerException e){

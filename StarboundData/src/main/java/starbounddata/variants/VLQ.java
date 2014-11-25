@@ -261,12 +261,10 @@ public class VLQ {
     public static int readUnsignedFromBufferNoObject(byte[] in) {
         int vlqLength = 0;
         int payloadLength = 0;
-        int index = 1;
         while (vlqLength <= 10) {
-            int tmpByte = in[index];
+            int tmpByte = in[vlqLength];
             payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);
             vlqLength++;
-            index++;
             if ((tmpByte & 0x80) == 0) {
                 break;
             }

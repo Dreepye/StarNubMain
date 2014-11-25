@@ -27,7 +27,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.codehome.utilities.crypto.PasswordHash;
 import server.StarNub;
-import server.connectedentities.player.account.Account;
+import server.connections.player.account.Account;
 import server.database.TableWrapper;
 
 import java.sql.SQLException;

@@ -20,7 +20,7 @@ package server.eventsrouter.events;
 
 /**
  * Represents a base Status abstract class to be used
- * for customized status eventsrouter.
+ * for customized connectionstatus eventsrouter.
  * <p>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -35,7 +35,7 @@ public abstract class StatusEvent extends StarNubEvent<String> {
     private volatile boolean startingUp;
 
     /**
-     * boolean representing the status
+     * boolean representing the connectionstatus
      */
 
     private volatile boolean online;
