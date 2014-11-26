@@ -18,7 +18,6 @@
 
 package starboundmanager;
 
-import server.StarNub;
 import utilities.os.OperatingSystem;
 
 /**
@@ -36,17 +35,14 @@ public class StarboundServerExe extends OperatingSystem {
         super();
         String starting = "Starting the Starbound Server. ";
         if (OPERATING_SYSTEM.contains("Windows")) {
-            StarNub.getLogger().cInfoPrint("StarNub", starting + "Using Win32 Starbound_Server.exe.");
             filePath = "win32/starbound_server.exe";
         } else {
             switch (super.BIT_VERSION.getBIT_VERSION()) {
                 case 32: {
-                    StarNub.getLogger().cInfoPrint("StarNub", starting + "Using Linux32 Starbound_Server.");
                     filePath = "./linux32/starbound_server";
                     break;
                 }
                 case 64: {
-                    StarNub.getLogger().cInfoPrint("StarNub", starting + "Using Linux64 Starbound_Server.");
                     filePath = "./linux64/starbound_server";
                     break;
                 }

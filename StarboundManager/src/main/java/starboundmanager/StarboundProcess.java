@@ -18,25 +18,25 @@
 
 package starboundmanager;
 
-import server.StarNub;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class StarboundProcess implements Runnable {
 
-    protected Process process;
+    protected final Process PROCESS;
+    boolean final PRINT_MESSAGE;
+    boolean final EVENT_MESSAGE;
 
     public StarboundProcess(String filePath) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder(filePath);
         processBuilder.redirectErrorStream(true);
-        process = processBuilder.start();
+        PROCESS = processBuilder.start();
         new Thread(this, "StarNub - Starbound - Standard Out_Error Stream").start();
     }
 
     public Process getProcess() {
-        return process;
+        return PROCESS;
     }
 
     /**
@@ -45,13 +45,14 @@ public class StarboundProcess implements Runnable {
      */
     public void run() {
         boolean printMessage = !(boolean) StarNub.getConfiguration().getNestedValue("packet_decode", "starnub settings");
-        InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+        InputStreamReader inputStreamReader = new InputStreamReader(PROCESS.getInputStream());
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         String line = null;
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 /* For debugging */
-                if (printMessage) {
+                if (PRINT_MESSAGE) {
+                    if ()
 //					System.out.println(line);
                     //TODO Management System - Player List, Banning, Kicking
                 }

@@ -21,7 +21,7 @@ package starboundmanager.status;
 public interface StarboundStatus {
 
     public String start();
-    public String isAlive();
-    public String isResponsive();
+    public boolean isAlive();
+    public boolean isResponsive();
     public String stop();
 }

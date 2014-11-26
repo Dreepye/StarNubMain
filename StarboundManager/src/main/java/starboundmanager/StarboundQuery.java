@@ -19,8 +19,6 @@
 package starboundmanager;
 
 import utilities.bytes.BytesInteger;
-import utilities.concurrency.thread.ThreadSleep;
-
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,29 +26,23 @@ import java.net.Socket;
 
 public class StarboundQuery {
 
-    private final int STARBOUND_VERSION;
-
-    public StarboundQuery() throws IOException {
-        Socket socket = new Socket("127.0.0.1", 21024);
-        socket.setSoTimeout(1000);
-        InputStream in = socket.getInputStream();
-        boolean reading = true;
-        int dataTries = 0;
-        byte[] bytes = new byte[10];
-        while (reading || dataTries < 20) {
-            in.read(bytes);
-            if(in.available() == 0){
-                reading = false;
+    public static int query(String address, int port, int timeout) throws IOException {
+        Socket socket = new Socket(address, port);
+        socket.setSoTimeout(timeout);
+        byte[] bytes;
+        try (InputStream in = socket.getInputStream()) {
+            boolean reading = true;
+            bytes = new byte[10];
+            while (reading) {
+                in.read(bytes);
+                if (in.available() == 0) {
+                    reading = false;
+                }
             }
-            ThreadSleep.timerSeconds(1);
-            dataTries++;
+        } finally {
+            socket.close();
         }
-        in.close();
-        socket.close();
-//        if (dataTries == 20){
-//
-//        }
-        STARBOUND_VERSION = BytesInteger.getInt(bytes, 2);
+        return BytesInteger.getInt(bytes, 2);
     }
 }
 

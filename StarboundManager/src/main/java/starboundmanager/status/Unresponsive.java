@@ -18,44 +18,33 @@
 
 package starboundmanager.status;
 
-
 import starboundmanager.StarboundManagement;
 
-/**
- * Represents StarNubs Connected Status
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class Stopped implements StarboundStatus{
+public class Unresponsive implements StarboundStatus {
 
     StarboundManagement starboundManagement;
 
-    public Stopped(StarboundManagement starboundManagement) {
+    public Unresponsive(StarboundManagement starboundManagement) {
         this.starboundManagement = starboundManagement;
     }
 
     @Override
     public String start() {
-
+        return null;
     }
 
     @Override
     public String isAlive() {
-        String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
+        return null;
     }
 
     @Override
     public String isResponsive() {
-        String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
+        return null;
     }
 
     @Override
     public String stop() {
-        String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
-
+        return null;
     }
 }

@@ -18,8 +18,8 @@
 
 package starboundmanager.status;
 
-import server.StarNub;
-import server.server.starbound.StarboundManagement;
+
+import starboundmanager.StarboundManagement;
 
 /**
  * Represents StarNubs Disconnected Status

@@ -18,7 +18,12 @@
 
 package starboundmanager;
 
-import server.server.starbound.status.*;
+import starboundmanager.status.*;
+import utilities.concurrency.thread.ThreadSleep;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 
 /**
  * Represents ProcessManagement this will get a file path for which starbound_server.exe
@@ -32,25 +37,21 @@ public class StarboundManagement extends StarboundServerExe {
     private StarboundStatus stopped;
     private StarboundStatus starting;
     private StarboundStatus running;
+    private StarboundStatus unresponsive;
     private StarboundStatus shuttingDown;
 
     private volatile StarboundStatus status;
     protected static StarboundProcess starboundProcess;
     private int serverVersion;
-    private int unresponsive;
 
     private StarboundManagement() {
         super();
         stopped = new Stopped(this);
         starting = new Starting(this);
         running = new Running(this);
+        unresponsive = new Unresponsive(this);
         shuttingDown = new Stopping(this);
         status = stopped;
-        unresponsive = 0;
-    }
-
-    protected StarboundProcess getProcess() {
-        return starboundProcess;
     }
 
     public StarboundStatus getStopped() {
@@ -73,12 +74,12 @@ public class StarboundManagement extends StarboundServerExe {
         return status;
     }
 
-    public static StarboundProcess getStarboundProcess() {
+    public static starboundmanager.StarboundProcess getStarboundProcess() {
         return starboundProcess;
     }
 
-    public int getUnresponsive() {
-        return unresponsive;
+    public int getServerVersion() {
+        return serverVersion;
     }
 
     public void start(){
@@ -89,7 +90,7 @@ public class StarboundManagement extends StarboundServerExe {
         status.isAlive();
     }
 
-    public void isResponsive(){
+    public void isResponsive(String ipAddress, int port, int queryAttempts){
         status.isResponsive();
     }
 
@@ -116,5 +117,32 @@ public class StarboundManagement extends StarboundServerExe {
         //Increment for each responsive
         //Task will check process then Query will be a task every 30 seconds
         //Responsive will set responsive variable to 0
+    }
+
+    private boolean query(String ipAddress, int port, int timeout, int queryAttempts) {
+        int unresponsiveCount = 0;
+        while (unresponsiveCount < queryAttempts) {
+            try {
+                int version = StarboundQuery.query(ipAddress, port, timeout);
+                if (version > 0) {
+                    if (serverVersion == 0) {
+                        serverVersion = version;
+                    }
+                    return true;
+                }
+            } catch (IOException e) {
+                if (e instanceof ConnectException) {
+                    System.out.println("Connection Refused");
+                    ThreadSleep.timerSeconds(10);
+                } else if (e instanceof SocketTimeoutException) {
+                    System.out.println("Socket Timed Out");
+                } else {
+                    e.printStackTrace();
+                    ThreadSleep.timerSeconds(10);
+                }
+                unresponsiveCount++;
+            }
+        }
+        return false;
     }
 }
