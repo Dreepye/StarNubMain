@@ -16,6 +16,7 @@
         <module>Utilities</module>
         <module>CentralServer</module>
         <module>Proxy</module>
+        <module>StarboundManager</module>
     </modules>
 
 <build>
