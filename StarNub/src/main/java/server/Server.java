@@ -1,4 +1,4 @@
-package server.server;
+package server;
 
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
@@ -33,6 +33,9 @@ import server.eventsrouter.events.StarboundServerStatusEvent;
 import server.eventsrouter.internaldebugging.PacketDebugger;
 import chatmanager.chat.ServerChat;
 //import org.starnub.starbounddata.packets.starbounddata.packets.server.starbounddata.packets.KnownPackets;
+import server.server.Connectionss;
+import server.server.TCPProxyServer;
+import server.server.UDPProxyServer;
 import server.server.packets.server.ProtocolVersionPacket;
 import server.server.starbound.OLDStarboundManager;
 import starbounddata.color.GameColors;
@@ -115,7 +118,7 @@ public enum Server {
     }
 
     /**
-     * Attempts to set the {@link UDPProxyServer} singleton.
+     * Attempts to set the {@link server.server.UDPProxyServer} singleton.
      * <p>
      * This cannot be done if the Thread is already set.
      */

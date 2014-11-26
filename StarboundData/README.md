@@ -2,7 +2,8 @@
 This library is use to read Starbound Data and Packet types from Netty.io's ByteBuf class.
 
 Authors: Underbalanced
-Contributes:
+
+Contributors:
 
 NOTE: This code has been refined and is ready for public consumption
 

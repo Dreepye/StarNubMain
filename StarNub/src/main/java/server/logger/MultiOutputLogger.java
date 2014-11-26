@@ -1,11 +1,10 @@
 package server.logger;
 
-import lombok.Getter;
 import org.joda.time.DateTime;
 import server.StarNub;
 import server.eventsrouter.events.LogEvent;
 import server.eventsrouter.events.StarNubEvent;
-import server.eventsrouter.handlers.StarNubEventHandler;
+import server.eventsrouter.StarNubEventHandler;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package utilities.events;
 
-public class EventSubscription<T>{
+public abstract class EventSubscription<T>{
 
     private final String SUBSCRIBER_NAME;
     private final EventHandler<T> EVENT_HANDLER;
@@ -17,5 +17,10 @@ public class EventSubscription<T>{
         this.SUBSCRIBER_NAME = SUBSCRIBER_NAME;
         this.EVENT_HANDLER = EVENT_HANDLER;
     }
+
+    public abstract void submitRegistration();
+
+    public abstract void removeRegistration();
+
 }
 

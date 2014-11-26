@@ -29,7 +29,7 @@ import org.codehome.utilities.files.YamlLoader;
 import org.reflections.Reflections;
 import server.StarNub;
 import server.eventsrouter.events.StarNubEventsInternals;
-import server.eventsrouter.handlers.PacketEventHandler;
+import server.eventsrouter.PacketEventHandler;
 import server.eventsrouter.subscriptions.EventSubscription;
 import starbounddata.packets.Packet;
 

@@ -14,8 +14,7 @@ public abstract class EventRouter<T1, T2, T3> {
     }
 
     @SuppressWarnings("unchecked")
-    public void registerEventSubscription(String pluginName, T1 eventKey, EventHandler eventHandler){
-            EventSubscription eventSubscription = new EventSubscription(pluginName, eventHandler);
+    public void registerEventSubscription(T1 eventKey, EventSubscription eventSubscription){
             if (!EVENT_SUBSCRIPTION_MAP.containsKey(eventKey)){
                 EVENT_SUBSCRIPTION_MAP.put(eventKey, new HashSet<>());
             }

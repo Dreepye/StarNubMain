@@ -30,7 +30,7 @@ import server.resources.Configuration;
 import server.resources.ResourceManager;
 import server.senders.NameBuilder;
 
-import server.server.Server;
+import server.Server;
 import utilities.concurrency.task.TaskManager;
 import utilities.time.DateAndTimes;
 

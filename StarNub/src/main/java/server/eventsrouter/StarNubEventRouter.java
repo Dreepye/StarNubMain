@@ -3,7 +3,6 @@ package server.eventsrouter;
 import lombok.Setter;
 import server.StarNub;
 import server.eventsrouter.events.StarNubEvent;
-import server.eventsrouter.handlers.StarNubEventHandler;
 import server.eventsrouter.subscriptions.EventSubscription;
 import server.plugins.runnable.StarNubRunnable;
 
@@ -12,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class StarNubEventRouter extends EventRouter<String> {
+public class StarNubEventRouter extends EventRouter<String, StarNubEvent<String>, Boolean> {
 
     private final Object HASHSET_LOCK_OBJECT_2 = new Object();
     private volatile int maxThreadCount;
@@ -103,12 +102,18 @@ public class StarNubEventRouter extends EventRouter<String> {
         return true;
     }
 
-    public void notify(StarNubEvent<String> starNubEvent){
-        starNubEventsQue.add(starNubEvent);
+    public Boolean eventNotify(StarNubEvent<String> starNubEvent){
+        return starNubEventsQue.add(starNubEvent);
     }
 
+    @Override
+    public StarNubEvent<String> handleEvent(StarNubEvent<String> event) {
+        return null;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
-    public void handleStarNubEvent(){
+    public void handleEvent(){
         try {
             StarNubEvent<String> starNubEvent = starNubEventsQue.take();
             String eventKey = starNubEvent.getEVENT_KEY();

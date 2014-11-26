@@ -1,7 +1,9 @@
 #Utilities Library
 This library is house common code used for generic functionality
+
 Authors: Underbalanced
-Contributes:
+
+Contributors:
 
 NOTE: This code has been refined and is ready for public consumption
 

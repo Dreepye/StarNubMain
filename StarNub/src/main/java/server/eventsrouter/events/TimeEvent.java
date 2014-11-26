@@ -2,7 +2,6 @@ package server.eventsrouter.events;
 
 public class TimeEvent extends StarNubEvent<String> {
 
-
     private final long TIME;
 
     public TimeEvent(String EVENT_KEY, long TIME) {

@@ -2,7 +2,8 @@
 This library is use to manage Starbound directory, files and process.
 
 Authors: Underbalanced
-Contributes:
+
+Contributors:
 
 NOTE: This code has been refined and is ready for public consumption
 

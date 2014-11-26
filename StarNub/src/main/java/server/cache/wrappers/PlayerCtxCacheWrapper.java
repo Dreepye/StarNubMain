@@ -22,7 +22,7 @@ import io.netty.channel.ChannelHandlerContext;
 import server.StarNub;
 import server.eventsrouter.events.PlayerEvent;
 import server.eventsrouter.events.StarNubEvent;
-import server.eventsrouter.handlers.StarNubEventHandler;
+import server.eventsrouter.StarNubEventHandler;
 
 import java.util.concurrent.TimeUnit;
 

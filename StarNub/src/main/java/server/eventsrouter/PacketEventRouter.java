@@ -1,24 +1,24 @@
 package server.eventsrouter;
 
-import server.eventsrouter.handlers.PacketEventHandler;
 import server.eventsrouter.subscriptions.EventSubscription;
 import starbounddata.packets.Packet;
 
 import java.util.HashSet;
 
-public class PacketEventRouter extends EventRouter<Class<? extends Packet>> {
-
-    private final Object HASHMAP_LOCK_OBJECT = new Object();
-    private final Object HASHSET_LOCK_OBJECT = new Object();
+public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Packet, Packet> {
 
     public PacketEventRouter(){
         super();
     }
 
+    @Override
+    public Packet eventNotify(Packet packet) {
+        return handleEvent(packet);
+    }
 
-
+    @Override
     @SuppressWarnings("unchecked")
-    public Packet handlePacket(Packet packet){
+    public Packet handleEvent(Packet packet){
         HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
         if (eventSubscriptions == null){
             return packet;
@@ -27,7 +27,7 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>> {
                 packet = packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
                 try {
                     if (packet.isRecycle()) {
-                        packet.recycle(false);
+                        packet.recycle();
                         return packet;
                     }
                 } catch (NullPointerException e){

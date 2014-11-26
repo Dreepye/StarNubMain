@@ -1,3 +1,5 @@
+OUTDATED - Update coming soon
+
 
 -Incomplete as of 19 August 2014
 
@@ -8,6 +10,8 @@ Wiki - https://github.com/StarNub/StarNub/wiki
 API - http://docs.starnub.org/StarNubApi/
 
 Authors: Underbalanced
+
+Contributors:
 
 NOTE: This code is not final and will be modified for efficiency and clean up.
 
