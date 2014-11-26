@@ -31,10 +31,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents Abstract CacheWrapper that can be transformed to accept any type of key and be used with any
- * specific types of utilities.cache found in (@link server.utilities.cache.objects}.
+ * specific types of utilities.cache found in (@link starnub.utilities.cache.objects}.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public abstract class CacheWrapper<E1> {
 

@@ -1,7 +1,13 @@
 package utilities.events;
 
-public abstract class EventHandler<T1> {
+/**
+ * Represents a EventHandler to be used with an {@link utilities.events.EventSubscription} and
+ * {@link utilities.events.EventRouter}
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
+public abstract class EventHandler<T> {
 
-    public abstract T1 onEvent(T1 eventData);
-
+    public abstract T onEvent(T eventData);
 }

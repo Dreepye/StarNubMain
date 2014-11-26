@@ -22,7 +22,7 @@ package utilities.cache.objects;
  * Represents a Time Cache. This utilities.cache can be used in any Cache Wrapper. Other utilities.cache must extend this to work with CacheWrapper classes
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class TimeCache {
 

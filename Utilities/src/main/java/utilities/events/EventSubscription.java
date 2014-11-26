@@ -1,5 +1,12 @@
 package utilities.events;
 
+/**
+ * Represents a EventSubscription to be used with an {@link utilities.events.EventHandler} and
+ * {@link utilities.events.EventRouter}
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
 public abstract class EventSubscription<T>{
 
     private final String SUBSCRIBER_NAME;
@@ -18,8 +25,14 @@ public abstract class EventSubscription<T>{
         this.EVENT_HANDLER = EVENT_HANDLER;
     }
 
+    /**
+     * You must implement this method as each {@link utilities.events.EventRouter} may be different
+     */
     public abstract void submitRegistration();
 
+    /**
+     * You must implement this method as each {@link utilities.events.EventRouter} may be different
+     */
     public abstract void removeRegistration();
 
 }

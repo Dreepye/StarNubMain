@@ -22,7 +22,7 @@ package utilities.os;
  * Represents a Abstract BitVersion of a OS
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 beta
+ * @since 1.0
  */
 public abstract class BitVersion {
 

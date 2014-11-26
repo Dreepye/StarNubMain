@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * specific NAME.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class NamedThreadFactory implements ThreadFactory {
 

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * Represents a TaskManager which will allow scheduling of one time or reoccurring task
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class TaskManager extends ScheduledThreadPoolExecutor{
 

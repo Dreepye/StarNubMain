@@ -29,6 +29,12 @@ Current Utility Functions
 	- EventHandler -  Abstract class that provides a means for onEvent(); handling and self subscription
 	- EventRouter - Provides methods for registering EventSubscription, tracking them, notifying for event ques and handlerEvent(); for handling events
 	- EventSubscription - Holds the subscribers name as well as the event handler
+	- Event Types:
+		- Event - Abstract event that holds an event key and event data
+		- IntegerEvent - String event key and Integer event data
+		- LongEvent - String event key and Long event data
+		- ObjectEvent - String event key and Object event data
+		- StringEvent - String event key and String event data
 
 - Operating System:
 	- OperatingSystem - contains the operating system type (windows or linux)

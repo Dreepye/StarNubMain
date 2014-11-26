@@ -30,7 +30,7 @@ import org.joda.time.format.PeriodFormatterBuilder;
  * Represents DataAndTimes instance. This will provide formatting support and time calculations
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class DateAndTimes {
 

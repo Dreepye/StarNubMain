@@ -22,7 +22,7 @@ package utilities.concurrency.thread;
  * Represents a ThreadSleep, this class provides static methods for sleeping a thread
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class ThreadSleep {
 

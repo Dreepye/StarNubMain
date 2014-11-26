@@ -22,7 +22,7 @@ package utilities.exceptions;
  * Represents a CollectionDoesNotExistException, this is used in the Cache Wrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class CacheWrapperOperationException extends Exception{
 

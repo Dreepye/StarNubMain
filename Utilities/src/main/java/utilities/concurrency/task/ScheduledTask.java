@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledFuture;
  * Represents a ScheduledTask which is to be used with the {@link TaskManager}
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class ScheduledTask {
 

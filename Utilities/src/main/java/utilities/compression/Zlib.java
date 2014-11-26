@@ -28,7 +28,7 @@ import java.util.zip.Inflater;
  * Represents a Zlib Compress and Decompress
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
 public class Zlib {
 
