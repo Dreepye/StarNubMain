@@ -23,6 +23,11 @@ Current Utility Functions
 - Date and Times:
 	- DateAndTimes - Simple Date formatter and time calculator
 
+- Events:
+	- EventHandler -  Abstract class that provides a means for onEvent(); handling and self subscription
+	- EventRouter - Provides methods for registering EventSubscription, tracking them, notifying for event ques and handlerEvent(); for handling events
+	- EventSubscription - Holds the subscribers name as well as the event handler
+
 - Operating System:
 	- OperatingSystem - contains the operating system type (windows or linux)
 	- BitVersion - is an abstract class that belongs to Operating System
