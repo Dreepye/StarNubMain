@@ -44,14 +44,13 @@ public class StarboundProcess implements Runnable {
      * <p>
      * Uses: This will build a new Starbound Process
      *
-     * @param filePath String representing the file path for the Starbound Exe
      * @param STARBOUND_MANAGEMENT StarboundManagement representing the reference so that we can use the event router
      * @param STREAM_EVENT_MESSAGE boolean representing if we print event messages to the event handler from the Starbound_Server.exe output stream
      * @param STREAM_CONSOLE_PRINT boolean representing if we should print console messages from the Starbound_Server.exe output stream
      * @throws IOException an exception if we cannot build the process
      */
-    public StarboundProcess(String filePath, StarboundManagement STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder(filePath);
+    StarboundProcess(StarboundManagement STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder(STARBOUND_MANAGEMENT.getFilePath());
         processBuilder.redirectErrorStream(true);
         this.STREAM_EVENT_MESSAGE = STREAM_EVENT_MESSAGE && STARBOUND_MANAGEMENT.EVENT_ROUTER !=null;
         this.STREAM_CONSOLE_PRINT = STREAM_CONSOLE_PRINT;
@@ -60,7 +59,7 @@ public class StarboundProcess implements Runnable {
         new Thread(this, "StarNub - Starbound - Standard Out_Standard Error Stream").start();
     }
 
-    public Process getProcess() {
+    protected Process getProcess() {
         return PROCESS;
     }
 
@@ -98,7 +97,6 @@ public class StarboundProcess implements Runnable {
                 if (STREAM_CONSOLE_PRINT) {
                     System.out.println(line);
                 }
-                //TODO Management System - Player List, Banning, Kicking Plugin
             }
         } catch (IOException e) {
             STARBOUND_MANAGEMENT.printOrEvent("StarNub_Log_Error", "Error printing Starbound Input Stream.");

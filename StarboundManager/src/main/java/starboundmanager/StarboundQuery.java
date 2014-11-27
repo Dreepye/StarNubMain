@@ -24,15 +24,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
+/**
+ * Represents StarNubs Query Class
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class StarboundQuery {
 
-    public static int query(String address, int port, int timeout) throws IOException {
-        Socket socket = new Socket(address, port);
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This method will query the address and port with a specific socket time out.
+     * It will return the Starbound version number
+     *
+     * @param ipAddress String representing the address to TCP Query
+     * @param port int representing the port to query
+     * @param timeout int representing the timeout in seconds
+     * @return int representing the starbound version number
+     * @throws IOException various exceptions can be thrown (SocketTimeOut, ConnectionRefused, Ect...)
+     */
+    public static int query(String ipAddress, int port, int timeout) throws IOException {
+        Socket socket = new Socket(ipAddress, port);
         socket.setSoTimeout(timeout);
         byte[] bytes;
         try (InputStream in = socket.getInputStream()) {
             boolean reading = true;
-            bytes = new byte[10];
+            bytes = new byte[6];
             while (reading) {
                 in.read(bytes);
                 if (in.available() == 0) {
