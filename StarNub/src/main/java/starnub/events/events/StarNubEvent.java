@@ -16,41 +16,15 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnub.connections.states.connectionstatus;
+package starnub.events.events;
 
-import starnub.connections.Connection;
+import starnub.StarNub;
+import utilities.events.types.Event;
 
-/**
- * Represents StarNubs InitializingConnection Status
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class InitializingConnection implements Status {
+public class StarNubEvent extends Event<String>{
 
-    Connection connection;
-
-    public InitializingConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
-    public void initializeConnection() {
-
-    }
-
-    @Override
-    public void pendingConnection() {
-
-    }
-
-    @Override
-    public void connect() {
-
-    }
-
-    @Override
-    public void disconnect() {
-
+    public StarNubEvent(String EVENT_KEY, Object EVENT_DATA) {
+        super(EVENT_KEY, EVENT_DATA);
+        StarNub.getStarNubEventRouter().eventNotify(this);
     }
 }

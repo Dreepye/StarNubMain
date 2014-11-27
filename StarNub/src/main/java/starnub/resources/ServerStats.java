@@ -18,7 +18,7 @@
 
 package starnub.resources;
 
-import utilities.yaml.YAMLWrapper;
+import utilities.file.yaml.YAMLWrapper;
 
 /**
  * Represents StarNubs ServerStats instance extending YAMLWrapper

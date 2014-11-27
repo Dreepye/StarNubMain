@@ -19,14 +19,28 @@
 package utilities.connectivity.connection;
 
 /**
- * Represents StarNubs Connection Status interface
+ * Represents StarNubs ConnectionStatus interface
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public interface ConnectionStatus {
 
-    public boolean connect();
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will see if the connection is still alive
+     *
+     * @return boolean representing if the connection is alive
+     */
     public boolean isConnected();
+
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will attempt to disconnect this connection
+     *
+     * @return boolean representing if the disconnection was successful
+     */
     public boolean disconnect();
 }

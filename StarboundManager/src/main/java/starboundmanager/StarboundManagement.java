@@ -35,11 +35,11 @@ import java.util.Map;
  */
 public class StarboundManagement extends StarboundServerExe {
 
-    private final StarboundStatus stopped;
-    private final StarboundStatus starting;
-    private final StarboundStatus running;
-    private final StarboundStatus unresponsive;
-    private final StarboundStatus stopping;
+    private final StarboundStatus STOPPED;
+    private final StarboundStatus STARTING;
+    private final StarboundStatus RUNNING;
+    private final StarboundStatus UNRESPONSIVE;
+    private final StarboundStatus STOPPING;
 
     protected volatile StarboundStatus status;
     protected StarboundProcess starboundProcess;
@@ -59,69 +59,69 @@ public class StarboundManagement extends StarboundServerExe {
      */
     private StarboundManagement(EventRouter EVENT_ROUTER) {
         super();
-        this.stopped = new Stopped(this);
-        this.starting = new Starting(this);
-        this.running = new Running(this);
-        this.unresponsive = new Unresponsive(this);
-        this.stopping = new Stopping(this);
+        this.STOPPED = new Stopped(this);
+        this.STARTING = new Starting(this);
+        this.RUNNING = new Running(this);
+        this.UNRESPONSIVE = new Unresponsive(this);
+        this.STOPPING = new Stopping(this);
         this.EVENT_ROUTER = EVENT_ROUTER;
         this.EVENT_MESSAGE = EVENT_ROUTER != null;
-        this.status = stopped;
+        this.status = STOPPED;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will return the Stopped Status
      *
      * @return StarboundStatus
      */
-    protected StarboundStatus getStopped() {
-        return stopped;
+    protected StarboundStatus getSTOPPED() {
+        return STOPPED;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will return the Starting Status
      *
      * @return StarboundStatus
      */
-    protected StarboundStatus getStarting() {
-        return starting;
+    protected StarboundStatus getSTARTING() {
+        return STARTING;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will return the Running Status
      *
      * @return StarboundStatus
      */
-    protected StarboundStatus getRunning() {
-        return running;
+    protected StarboundStatus getRUNNING() {
+        return RUNNING;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will return the Stopping Status
      *
      * @return StarboundStatus
      */
-    protected StarboundStatus getStopping() {
-        return stopping;
+    protected StarboundStatus getSTOPPING() {
+        return STOPPING;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will return the Unresponsive Status
      *
      * @return StarboundStatus
      */
-    protected StarboundStatus getUnresponsive() {
-        return unresponsive;
+    protected StarboundStatus getUNRESPONSIVE() {
+        return UNRESPONSIVE;
     }
 
     /**
@@ -137,7 +137,7 @@ public class StarboundManagement extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal.
      * <p>
      * Uses: This will set the Starbound Server status
      *
@@ -159,7 +159,7 @@ public class StarboundManagement extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will set the Starbound Server version
      *
@@ -205,7 +205,7 @@ public class StarboundManagement extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will set the Starbound Server version
      *
@@ -265,7 +265,7 @@ public class StarboundManagement extends StarboundServerExe {
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the server stopped and started successfully
+     * @return boolean representing if the server STOPPED and started successfully
      */
     public boolean restart(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT){
         printOrEvent("Starbound_Status_Restarting", this);
@@ -277,7 +277,7 @@ public class StarboundManagement extends StarboundServerExe {
      * <p>
      * Uses: This will attempt to stop the Starbound process, but depending on the current status may or may not work
      *
-     * @return boolean representing if the server is stopped
+     * @return boolean representing if the server is STOPPED
      */
     public boolean stop(){
         return status.stop();
@@ -317,7 +317,7 @@ public class StarboundManagement extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will either print to console or send events
      *
@@ -328,7 +328,6 @@ public class StarboundManagement extends StarboundServerExe {
     protected void printOrEvent(String eventKey, Object eventData){
         if (EVENT_MESSAGE) {
             EVENT_ROUTER.eventNotify(new ObjectEvent(eventKey, eventData));
-            //TODO Management System - Player List, Banning, Kicking Plugin
         } else {
             System.out.println(eventKey + ": " +eventData);
         }

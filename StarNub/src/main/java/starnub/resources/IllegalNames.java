@@ -19,7 +19,7 @@
 package starnub.resources;
 
 import utilities.exceptions.CollectionDoesNotExistException;
-import utilities.yaml.YAMLWrapper;
+import utilities.file.yaml.YAMLWrapper;
 
 import java.io.IOException;
 

@@ -1,6 +1,8 @@
 package utilities.connectivity.connection;
 
 import io.netty.channel.ChannelHandlerContext;
+import utilities.events.EventRouter;
+import utilities.events.types.ObjectEvent;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -21,16 +23,21 @@ public abstract class Connection {
     private final ChannelHandlerContext CLIENT_CTX;
     private final long CONNECTION_START_TIME;
 
-    public Connection(ChannelHandlerContext CLIENT_CTX) {
+    protected final EventRouter EVENT_ROUTER;
+    protected final boolean EVENT_MESSAGE;
+
+    public Connection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX) {
         DISCONNECTED = new Disconnected(this);
         PENDING = new Pending(this);
         CONNECTED = new Connected(this);
-        connectionStatus = PENDING;
         this.CLIENT_CTX = CLIENT_CTX;
+        this.EVENT_ROUTER = EVENT_ROUTER;
+        this.EVENT_MESSAGE = EVENT_ROUTER != null;
         this.CONNECTION_START_TIME = System.currentTimeMillis();
+        this.connectionStatus = PENDING;
     }
 
-    public ConnectionStatus getPENDING() {
+    protected ConnectionStatus getPENDING() {
         return PENDING;
     }
 
@@ -52,10 +59,6 @@ public abstract class Connection {
 
     public long getCONNECTION_START_TIME() {
         return CONNECTION_START_TIME;
-    }
-
-    public boolean connect() {
-        return connectionStatus.connect();
     }
 
     public boolean isConnected() {
@@ -82,6 +85,22 @@ public abstract class Connection {
         return ((InetSocketAddress) CLIENT_CTX.channel().remoteAddress()).getHostString();
     }
 
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will either print to console or send events
+     *
+     * @param eventKey String representing the event key or console leading name
+     * @param eventData Object representing the data
+     */
+    @SuppressWarnings("unchecked")
+    protected void printOrEvent(String eventKey, Object eventData){
+        if (EVENT_MESSAGE) {
+            EVENT_ROUTER.eventNotify(new ObjectEvent(eventKey, eventData));
+        } else {
+            System.out.println(eventKey + ": " +eventData);
+        }
+    }
 }
 
 

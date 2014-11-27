@@ -43,7 +43,7 @@ public class StarboundConfiguration {
     private final File STARBOUND_CONFIGURATION_FILE_BACKUP;
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will return the Starbound Status and can be casted into (Running, Starting, Stopped, Stopping, Unresponsive) and used
      * as a per status bases

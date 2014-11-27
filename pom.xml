@@ -51,12 +51,6 @@
                         <goal>shade</goal>
                     </goals>
                     <configuration>
-                        <relocations>
-                            <relocation>
-                                <pattern>org.projectlombok</pattern>
-                                <shadedPattern>org.projectlombok</shadedPattern>
-                            </relocation>
-                        </relocations>
                     </configuration>
                 </execution>
             </executions>

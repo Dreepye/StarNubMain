@@ -33,7 +33,7 @@ public abstract class StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to start the Starbound process, but depending on the current status may or may not work
      *
@@ -46,7 +46,7 @@ public abstract class StarboundStatus {
     public abstract boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT);
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive
      *
@@ -55,7 +55,7 @@ public abstract class StarboundStatus {
     public abstract boolean isAlive();
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound server is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes.
@@ -68,7 +68,7 @@ public abstract class StarboundStatus {
     public abstract boolean isResponsive(String ipAddress, int port, int queryAttempts);
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to stop the Starbound process, but depending on the current status may or may not work
      *
@@ -77,7 +77,7 @@ public abstract class StarboundStatus {
     public abstract boolean stop();
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt will query the Starbound server every 5 seconds until it is started, It will check up to 48 times which is 4 minutes
      *
@@ -92,7 +92,7 @@ public abstract class StarboundStatus {
 
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound server is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes
@@ -115,7 +115,7 @@ public abstract class StarboundStatus {
 
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound server is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes

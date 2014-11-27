@@ -25,19 +25,21 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.ReplayingDecoder;
-import org.codehome.utilities.files.YamlLoader;
 import org.reflections.Reflections;
+import starbounddata.packets.Packet;
+import starbounddata.packets.misc.PassThroughPacket;
+import starnub.Server;
 import starnub.StarNub;
 import starnub.events.events.EventsInternals;
 import starnub.events.packet.PacketEventHandler;
-import starnub.events.subscriptions.EventSubscription;
-import starbounddata.packets.Packet;
+import starnub.events.packet.PacketEventSubscription;
+import utilities.events.EventSubscription;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.*;
 
-import static org.codehome.utilities.files.compression.Zlib.decompress;
+import static utilities.compression.Zlib.decompress;
 
 /**
  * Represents the starbounddata.packets.Packet Decoder for StarNub Client and Server Connections.
@@ -122,8 +124,8 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 checkpoint(DecoderState.READ_PAYLOAD);
             }
             case READ_PAYLOAD: {
-                HashSet<EventSubscription> hashSet = StarNub.getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
-                /* Handle starbounddata.packets.Packet if there is an event handler for it, else do not create objects */
+                HashSet<EventSubscription> hashSet = Server.getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
+                /* Handle Packet if there is an event handler for it, else do not create objects */
                 if (hashSet != null) {
                     in.skipBytes(1+vlqLength);
                     try {
@@ -135,22 +137,22 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                     } catch (ArrayIndexOutOfBoundsException e){
                         return;
                     }
-                    for (EventSubscription<PacketEventHandler> packetEventSubscription : hashSet) {
+                    for (EventSubscription<Packet> packetEventSubscription : hashSet) {
                         if (packet.isRecycle()) {
                             break;
                         }
                         packet = packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
                     }
-                    /* Write starbounddata.packets.Packet Out, if not recycling */
+                    /* Write Packet Out, if not recycling */
                     if (!packet.isRecycle()) {
-                        StarNub.getPacketSender().destinationPacketRouter(packet);
+                        packet.routeToDestination();
                     } else {
-                        packet.recycle(false);
+                        packet.resetRecycle();
                     }
                 } else {
                     destinationCTX.writeAndFlush(in.readSlice(1 + vlqLength + payloadLength).retain(), destinationCTX.voidPromise());
                 }
-                packetPool.put(packet.getPacketId(), packet);
+                packetPool.put(packet.getPACKET_ID(), packet);
                 checkpoint(DecoderState.READ_PACKET_ID);
                 break;
             }

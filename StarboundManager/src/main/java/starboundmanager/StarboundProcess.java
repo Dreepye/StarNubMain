@@ -40,7 +40,7 @@ public class StarboundProcess implements Runnable {
     protected boolean STREAM_CONSOLE_PRINT;
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will build a new Starbound Process
      *

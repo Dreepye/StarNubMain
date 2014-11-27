@@ -1,7 +1,7 @@
 package starnub.events.events;
 
 import starnub.StarNub;
-import starnub.connections.Connection;
+import utilities.connectivity.connection.Connection;
 import utilities.events.types.Event;
 
 public class NonPlayerEvent extends Event<String> {

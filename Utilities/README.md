@@ -28,7 +28,6 @@ Current Utility Functions
 	- ConnectionStatus - Represents a abstract class
 		- Connected - Extends ConnectionStatus
 		- Disconnected - Extends ConnectionStatus
-		- Initializing - Extends ConnectionStatus
 		- Pending - Extends ConnectionStatus
 
 - Date and Times:

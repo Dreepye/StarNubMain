@@ -26,22 +26,36 @@ package utilities.connectivity.connection;
  */
 public class Pending implements ConnectionStatus {
 
-    Connection connection;
+    private final Connection CONNECTION;
 
-    public Pending(Connection connection) {
-        this.connection = connection;
+    public Pending(Connection CONNECTION) {
+        this.CONNECTION = CONNECTION;
     }
 
-    @Override
-    public boolean connect() {
-        return false;
-    }
-
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will check to see if the connection is alive
+     *
+     * @return boolean representing if the connection is alive
+     */
     @Override
     public boolean isConnected() {
-        return false;
+        if (CONNECTION instanceof ProxyConnection){
+            ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
+            return proxyConnection.getCLIENT_CTX().channel().isActive() && proxyConnection.getSERVER_CTX().channel().isActive();
+        } else {
+            return CONNECTION.getCLIENT_CTX().channel().isActive();
+        }
     }
 
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will not work if the connection is disconnected
+     *
+     * @return boolean representing if the disconnect was successful
+     */
     @Override
     public boolean disconnect() {
         return false;

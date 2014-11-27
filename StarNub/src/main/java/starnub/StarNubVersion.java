@@ -18,7 +18,7 @@
 
 package starnub;
 
-import utilities.yaml.YAMLWrapper;
+import utilities.file.yaml.YAMLWrapper;
 
 import java.util.ArrayList;
 

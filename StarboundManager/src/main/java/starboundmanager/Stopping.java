@@ -34,7 +34,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will not work while the server is stopping
      *
@@ -51,7 +51,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -64,7 +64,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This cannot be used while the server is stopping
      *
@@ -80,7 +80,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to stop the Starbound process and transition it to unresponsive if we were unable to stop it
      * or stopped if the process was stopped
@@ -98,11 +98,11 @@ public class Stopping extends StarboundStatus {
         }
         if (isAlive()){
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown_Fatal_Process", STARBOUND_MANAGEMENT);
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUnresponsive());
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
             return false;
         } else {
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown", STARBOUND_MANAGEMENT);
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
             return true;
         }
     }

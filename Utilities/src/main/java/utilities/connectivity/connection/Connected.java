@@ -26,25 +26,44 @@ package utilities.connectivity.connection;
  */
 public class Connected implements ConnectionStatus {
 
-    Connection connection;
+    private final Connection CONNECTION;
 
-    public Connected(Connection connection) {
-        this.connection = connection;
+    public Connected(Connection CONNECTION) {
+        this.CONNECTION = CONNECTION;
     }
 
-
-    @Override
-    public boolean connect() {
-        return false;
-    }
-
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will see if the connection is still alive
+     *
+     * @return boolean representing if the connection is alive
+     */
     @Override
     public boolean isConnected() {
-        return false;
+        if (CONNECTION instanceof ProxyConnection){
+            ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
+            return proxyConnection.getCLIENT_CTX().channel().isActive() && proxyConnection.getSERVER_CTX().channel().isActive();
+        } else {
+            return CONNECTION.getCLIENT_CTX().channel().isActive();
+        }
     }
 
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will attempt to disconnect this connection
+     *
+     * @return boolean representing if the disconnection was successful
+     */
     @Override
     public boolean disconnect() {
-        return false;
+        boolean disconnected = false;
+        CONNECTION.getCLIENT_CTX().close(CONNECTION.getCLIENT_CTX().voidPromise());
+        if (CONNECTION instanceof ProxyConnection){
+            ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
+            proxyConnection.getSERVER_CTX().close(proxyConnection.getSERVER_CTX().voidPromise());
+        }
+        return isConnected();
     }
 }

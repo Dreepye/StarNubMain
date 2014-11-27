@@ -34,7 +34,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will not work unless the server is stopped and is called from that method, if starting this will return true
      * this will transition the state to running or stopped
@@ -57,10 +57,10 @@ public class Starting extends StarboundStatus {
             }
             boolean running = startUpListener(ipAddress, port);
             if (running) {
-                STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getRunning());
+                STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getRUNNING());
                 return true;
             } else {
-                STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+                STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
                 return false;
             }
         }
@@ -68,7 +68,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -84,13 +84,13 @@ public class Starting extends StarboundStatus {
         }
         if (!isAlive){
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
         }
         return isAlive;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This cannot be used while the server is starting
      *
@@ -106,7 +106,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This cannot be used when the server is stopped
      *

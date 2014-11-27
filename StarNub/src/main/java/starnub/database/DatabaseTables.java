@@ -30,11 +30,34 @@ import starnub.connections.player.session.Player;
 import starnub.connections.player.session.Restrictions;
 import starnub.database.tables.*;
 
-import java.util.Map;
+/**
+ * Represents StarNubs Database Tables
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class DatabaseTables {
 
-public enum DatabaseTables {
-    INSTANCE;
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final DatabaseTables instance = new DatabaseTables();
 
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private DatabaseTables(){
+        setConnection();
+        setTableWrappers();
+    }
+
+    /**
+     *
+     * @return DateAndTimes Singleton Instance
+     */
+    public static DatabaseTables getInstance() {
+        return instance;
+    }
 
     private ConnectionSource connection;
     private Accounts accounts;
@@ -56,8 +79,7 @@ public enum DatabaseTables {
     private Tags tags;
 
     {
-        setConnection();
-        setTableWrappers();
+
     }
 
     public ConnectionSource getConnection() {
@@ -206,7 +228,7 @@ public enum DatabaseTables {
 
     public boolean setConnection() {
         String connectionString = "jdbc:";
-        String databaseType = ((String) ((Map) StarNub.getConfiguration().getConfiguration().get("database")).get("type")).toLowerCase();
+        String databaseType = (((String) (StarNub.getConfiguration().getNestedValue("type", "database"))).toLowerCase());
         if (databaseType.equals("sqlite")) {
             try {
                 connectionString = connectionString+databaseType+":StarNub/Databases/StarNub.db";
@@ -217,9 +239,9 @@ public enum DatabaseTables {
             return true;
         } else if (databaseType.equals("mysql")) {
             try {
-                String databaseUsername = ((String) ((Map) StarNub.getConfiguration().getConfiguration().get("database")).get("mysql_user"));
-                String databasePassword = ((String) ((Map) StarNub.getConfiguration().getConfiguration().get("database")).get("mysql_pass"));
-                String databaseUrl = ((String) ((Map) StarNub.getConfiguration().getConfiguration().get("database")).get("mysql_url"));
+                String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("database", "mysql_user")));
+                String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("database", "mysql_pass")));
+                String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("database", "mysql_url")));
                 connectionString = connectionString+databaseType+"://"+databaseUrl;
                 connection = new JdbcPooledConnectionSource(connectionString, databaseUsername, databasePassword);
             } catch (Exception e) {

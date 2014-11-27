@@ -32,7 +32,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to start the Starbound process and transition the state to starting
      *
@@ -44,12 +44,12 @@ public class Stopped extends StarboundStatus{
      */
     @Override
     public boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) {
-        STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStarting());
+        STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTARTING());
         return STARBOUND_MANAGEMENT.getStatus().start(ipAddress, port, STREAM_EVENT_MESSAGE, STREAM_CONSOLE_PRINT);
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -62,7 +62,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This cannot be used while the server is stopped
      *
@@ -78,7 +78,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This cannot be used with the server is stopped
      *

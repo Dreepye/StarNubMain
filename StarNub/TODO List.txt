@@ -15,8 +15,15 @@ Change Log:
         defaultServerChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("server_message_color"));
         bracketColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("groups")).get("bracket_color"));
 
+        jsonObject.put("gamePort", ((Map)StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("starbound_port"));
+        jsonObject.put("serverName", ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub info")).get("server_name"));
+        jsonObject.put("maxPlayers", (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit") +
+                (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit_reserved") +
+                2);
 
 
+
+                //TODO Management System - Player List, Banning, Kicking Plugin
 // If modified then cmposite else direct
 
 So here are my plans – this will be my last update of StarNub for a while 

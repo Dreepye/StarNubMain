@@ -20,6 +20,7 @@ package utilities.connectivity.connection;
 
 
 import io.netty.channel.ChannelHandlerContext;
+import utilities.events.EventRouter;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -34,8 +35,8 @@ public class ProxyConnection extends Connection {
 
     private final ChannelHandlerContext SERVER_CTX;
 
-    public ProxyConnection(ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
-        super(CLIENT_CTX);
+    public ProxyConnection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
+        super(EVENT_ROUTER, CLIENT_CTX);
         this.SERVER_CTX = SERVER_CTX;
     }
 

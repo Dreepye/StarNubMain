@@ -1,5 +1,5 @@
 #Starbound Manager
-This library is use to manage Starbound directory, files and process.
+This library is use to manage the Starbound directory, files and process.
 
 Authors: Underbalanced
 

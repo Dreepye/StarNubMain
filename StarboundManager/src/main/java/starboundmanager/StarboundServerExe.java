@@ -51,7 +51,7 @@ public class StarboundServerExe extends OperatingSystem {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This method will return a file path based on the OS Version and Bit
      * Version.

@@ -25,7 +25,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will not work while the server is in an unresponsive state
      *
@@ -42,7 +42,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -55,7 +55,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This cannot be used while the server is unresponsive
      *
@@ -71,7 +71,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to stopped and enable you to use the start method in the stopped status
      *
@@ -80,7 +80,7 @@ public class Unresponsive extends StarboundStatus {
     @Override
     public boolean stop() {
         STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Stopping", STARBOUND_MANAGEMENT);
-        STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+        STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
         return true;
     }
 }

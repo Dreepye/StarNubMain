@@ -26,22 +26,31 @@ package utilities.connectivity.connection;
  */
 public class Disconnected implements ConnectionStatus {
 
-    Connection connection;
+    private final Connection CONNECTION;
 
-    public Disconnected(Connection connection) {
-        this.connection = connection;
+    public Disconnected(Connection CONNECTION) {
+        this.CONNECTION = CONNECTION;
     }
 
-    @Override
-    public boolean connect() {
-        return false;
-    }
-
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will not work if the connection is disconnected
+     *
+     * @return boolean representing if the connection is alive
+     */
     @Override
     public boolean isConnected() {
         return false;
     }
 
+    /**
+     * Recommended: For internal use.
+     * <p>
+     * Uses: This will not work if the connection is disconnected
+     *
+     * @return boolean representing if the disconnection was successful
+     */
     @Override
     public boolean disconnect() {
         return false;

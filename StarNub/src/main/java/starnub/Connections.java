@@ -26,6 +26,14 @@ public class Connections {
      */
     private static final Connections instance = new Connections();
 
+
+    //Pending Player Connection if on port XX, pending map
+    //
+
+
+
+
+
     private static final BannedIPs internallyBannedIps = new BannedIPs(ResourceManager.getStarnubResources());
 
 

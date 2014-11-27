@@ -32,7 +32,7 @@ public class Running extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will not work because the server is already running
      *
@@ -49,7 +49,7 @@ public class Running extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive
      *
@@ -65,13 +65,13 @@ public class Running extends StarboundStatus {
         }
         if (!isAlive){
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
         }
         return isAlive;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to see if the Starbound server is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes. This will transition the state to unresponsive
@@ -91,13 +91,13 @@ public class Running extends StarboundStatus {
             /* Silent Catch */
         }
         if (!isResponsive){
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUnresponsive());
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
         }
         return isResponsive;
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For internal use.
      * <p>
      * Uses: This will attempt to stop the Starbound process by transition the status to stopping and then calling the stop method of the stopping
      * status
@@ -107,7 +107,7 @@ public class Running extends StarboundStatus {
     @Override
     public boolean stop() {
         STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutting_Down", STARBOUND_MANAGEMENT);
-        STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopping());
+        STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPING());
         return STARBOUND_MANAGEMENT.getStatus().stop();
     }
 }

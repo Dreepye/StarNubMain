@@ -18,16 +18,18 @@
 
 package starnub;
 
+import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
+import starboundmanager.StarboundManagement;
 import starnub.database.DatabaseTables;
+import starnub.events.events.EventsInternals;
+import starnub.events.events.StarNubEvent;
 import starnub.events.packet.PacketEventRouter;
 import starnub.events.starnub.StarNubEventRouter;
-import starnub.events.events.EventsInternals;
 import starnub.logger.MultiOutputLogger;
 import starnub.plugins.PluginManager;
 import starnub.resources.Configuration;
 import starnub.resources.ResourceManager;
-
 import utilities.concurrency.task.TaskManager;
 import utilities.time.DateAndTimes;
 
@@ -49,16 +51,15 @@ public final class StarNub {
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = new Configuration(ResourceManager.getStarnubResources());
     private static final DateAndTimes dateAndTimes = DateAndTimes.getInstance();
+    private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("scheduled_task_thread_count", "resources"), "StarNub - Scheduled Task");
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance(ResourceManager.getStarnubResources());
     private static final Connections connections = Connections.getInstance();
-
-    private static final DatabaseTables databaseTables;
-    private static final StarNubEventRouter starNubEventRouter;
-    private static final PacketEventRouter packetEventRouter;
+    private static final DatabaseTables databaseTables = DatabaseTables.getInstance();
+    private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final PluginManager pluginManager;
     private static final Server server;
-    private static final TaskManager taskManager;//(int) ((Map)StarNub.getConfiguration().getConfiguration().get("resources")).get("scheduled_task_thread_count");
+
 
 
     public static ResourceManager getResourceManager() {
@@ -81,18 +82,12 @@ public final class StarNub {
         return versionInstance;
     }
 
-
     public static DatabaseTables getDatabaseTables() {
         return databaseTables;
     }
 
-
     public static StarNubEventRouter getStarNubEventRouter() {
         return starNubEventRouter;
-    }
-
-    public static PacketEventRouter getPacketEventRouter() {
-        return packetEventRouter;
     }
 
     public static PluginManager getPluginManager() {
@@ -125,8 +120,7 @@ public final class StarNub {
 
         logger.eventListenerRegistration(); /*  */
         starNubEventRouter.startEventRouter();
-
-        EventsInternals.eventSend_StarNub_Startup_Complete(DateTime.now().getMillis() - starnubStarTime.getMillis());
+        new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
     }
 
 

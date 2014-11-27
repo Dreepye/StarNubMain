@@ -19,7 +19,7 @@
 package starnub.resources;
 
 import org.codehome.utilities.directories.DirectoryCheckCreate;
-import utilities.yaml.YAMLWrapper;
+import utilities.file.yaml.YAMLWrapper;
 
 /**
  * Represents StarNubs ResourceManager Singleton

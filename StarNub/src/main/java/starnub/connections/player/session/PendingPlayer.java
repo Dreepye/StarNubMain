@@ -19,7 +19,7 @@
 package starnub.connections.player.session;
 
 import io.netty.channel.ChannelHandlerContext;
-import starnub.connections.Connection;
+import utilities.connectivity.connection.Connection;
 
 import java.net.InetAddress;
 
