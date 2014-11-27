@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.yaml;
+package utilities.file.yaml;
 
 import org.yaml.snakeyaml.Yaml;
 
