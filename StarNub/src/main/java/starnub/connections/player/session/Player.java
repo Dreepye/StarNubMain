@@ -32,6 +32,8 @@ import starbounddata.packets.chat.ChatReceivePacket;
 import starbounddata.packets.chat.ChatSendPacket;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -157,7 +159,7 @@ public class Player extends ProxyConnection {
         return character;
     }
 
-    public Restrictions getRestrictions() {
+    public Restrictions getRestrictions() {//INTEGRATE HERE and NOT in CONNECTIONS
         return restrictions;
     }
 
@@ -192,26 +194,34 @@ public class Player extends ProxyConnection {
     /**
      * This constructor is used to set the player session data up, otherwise the data cannot be set
      *
-     * @param senderCTX ChannelHandlerContext representing the client side of the starbounddata.packets.connection (Socket)
-     * @param destinationCTX ChannelHandlerContext representing the starbounddata.packets.starbounddata.packets.starnub side of the starbounddata.packets.connection (Socket)
-     * @param connectingIp InetAddress IP address of the client
      * @param character PlayerCharacter the character that is being used in this player session
      * @param restrictions PlayerRestrictions if any that mark this player with (Banned, Muted, Command Blocked...See the class for details)
      * @param account Integer representing a StarNub account id
-     * @param isOp boolean representing if the player is OP or not
      */
-    public Player(ChannelHandlerContext senderCTX, ChannelHandlerContext destinationCTX, InetAddress connectingIp, Character character, Restrictions restrictions, int account, boolean isOp) {
-        super(ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX);
+    public Player(ProxyConnection proxyConnection, Character character, Restrictions restrictions, int account) {
+        super(StarNub.getStarNubEventRouter(), proxyConnection.getCLIENT_CTX(), proxyConnection.getSERVER_CTX());
         this.startTimeUtc = DateTime.now();
-        this.sessionIpString = StringUtils.remove(sessionIp.toString(), "/");
+        this.sessionIpString = StringUtils.remove(proxyConnection.getClientIP().toString(), "/");
         this.character = character;
-        this.restrictions = restrictions;
+        this.restrictions = get; //Use restriction cache from connection class
+
         this.account = account;
-        this.gameName = character.getName();
+        this.gameName = character.getName(); //Internal self cleaning
         this.nickName = character.getName();
-        this.cleanNickName = character.getCleanName();
-        this.isOp = isOp;
+        this.cleanNickName = character.getCleanName(); //Internal self cleaning
+        this.isOp = isOp; /// Set internally
     }
+
+    @Override
+    public void addConnection() {
+
+    }
+
+    @Override
+    public void removeConnection() {
+
+    }
+
 
     /**
      *
@@ -269,26 +279,6 @@ public class Player extends ProxyConnection {
         this.cleanNickName = cleanNickName;
     }
 
-    /**
-     *
-     * @param lastMessage String that you want to set as the last message
-     */
-    public void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
-    /**
-     *
-     * @param lastMessageTime long sets the time that we received a starbounddata.packets.chat message from the player session
-     */
-    public void setLastMessageTime(long lastMessageTime) {
-        this.lastMessageTime = lastMessageTime;
-    }
-
-    public void setLastCommandTime(long lastCommandTime) {
-        this.lastCommandTime = lastCommandTime;
-    }
-
     public void setOp(boolean isOp) {
         this.isOp = isOp;
     }
@@ -329,19 +319,6 @@ public class Player extends ProxyConnection {
     }
 
 
-    /**
-     * This method is called whenever the observed object is changed. An
-     * application calls an <tt>Observable</tt> object's
-     * <code>notifyObservers</code> method to have all the object's
-     * observers notified of the change.
-     *
-     * @param o   the observable object.
-     * @param arg an argument passed to the <code>notifyObservers</code>
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-
-    }
 }
 
 

@@ -28,7 +28,6 @@ Current Utility Functions
 	- ConnectionStatus - Represents a abstract class
 		- Connected - Extends ConnectionStatus
 		- Disconnected - Extends ConnectionStatus
-		- Pending - Extends ConnectionStatus
 
 - Date and Times:
 	- DateAndTimes - Simple Date formatter and time calculator

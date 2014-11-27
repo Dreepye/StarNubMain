@@ -16,28 +16,22 @@ public class EventsInternals extends StringEvent {
         new StarNubEvent("StarNub_Checks", eventData);
     }
 
-    public static void eventSend_StarNub_Socket_Connection_Attempt_Client (Object eventData) {
-        new StarNubEvent("StarNub_Socket_Connection_Attempt_Client", eventData);
-    }
 
     public static void eventSend_StarNub_Socket_Connection_Attempt_IP_Blocked_Spam_Client (Object eventData) {
         new StarNubEvent("StarNub_Socket_Connection_Attempt_IP_Blocked_Spam_Client", eventData);
     }
 
     public static void eventSend_StarNub_Socket_Connection_Success_Client (Object eventData) {
-        new StarNubEvent("StarNub_Socket_Connection_Success_Client", eventData);
+
     }
 
     public static void eventSend_StarNub_Socket_Connection_Failed_Blocked_IP_Client (Object eventData) {
-        new StarNubEvent("StarNub_Socket_Connection_Failed_Blocked_IP_Client", eventData);
+
     }
 
-    public static void eventSend_StarNub_Socket_Connection_Attempt_Server (Object eventData) {
-        new StarNubEvent("StarNub_Socket_Connection_Attempt_Server", eventData);
-    }
 
     public static void eventSend_StarNub_Socket_Connection_Success_Server (Object eventData) {
-        new StarNubEvent("StarNub_Socket_Connection_Success_Server", eventData);
+
     }
 
 }

@@ -17,7 +17,9 @@ package starnub;/*
  */
 
 import starnub.resources.BannedIPs;
-import starnub.resources.ResourceManager;
+import starnub.resources.internalmaps.ConnectedPlayers;
+import starnub.resources.internalmaps.OpenConnections;
+import starnub.resources.internalmaps.OpenSockets;
 
 public class Connections {
 
@@ -25,21 +27,6 @@ public class Connections {
      * Represents the only instance of this class - Singleton Pattern
      */
     private static final Connections instance = new Connections();
-
-
-    //Pending Player Connection if on port XX, pending map
-    //
-
-
-
-
-
-    private static final BannedIPs internallyBannedIps = new BannedIPs(ResourceManager.getStarnubResources());
-
-
-
-
-
 
     /**
      * This constructor is private - Singleton Pattern
@@ -56,6 +43,54 @@ public class Connections {
     public static Connections getInstance() {
         return instance;
     }
+
+    private static final BannedIPs INTERNALLY_BLOCKED_IPS = new BannedIPs(StarNub.getResourceManager().getStarnubResources());
+
+    private final OpenSockets OPEN_SOCKETS = new OpenSockets();
+    private final OpenConnections OPEN_CONNECTIONS = new OpenConnections();
+    private final ConnectedPlayers CONNECTED_PLAYERS = new ConnectedPlayers();
+
+    public BannedIPs getINTERNALLY_BLOCKED_IPS() {
+        return INTERNALLY_BLOCKED_IPS;
+    }
+
+    public OpenSockets getOPEN_SOCKETS() {
+        return OPEN_SOCKETS;
+    }
+
+    public OpenConnections getOPEN_CONNECTIONS() {
+        return OPEN_CONNECTIONS;
+    }
+
+    public ConnectedPlayers getCONNECTED_PLAYERS() {
+        return CONNECTED_PLAYERS;
+    }
+
+
+/**
+     * Restrictions map
+     *
+     * Open Sockets - All open sockets go here no class
+     * Connections - Remove if becomes player Connection any connection goes here but removed per type and purged after 5 minutes of not being removed
+     *
+     * Connected Players (Pending is now just a status)
+     *
+     * Purging Task for Open Sockets and Pending Players
+     *
+     * Banned Stuff
+     *
+     */
+
+
+
+
+    //List for packet 7 and other connect packet
+
+
+
+
+
+
 
 }
 

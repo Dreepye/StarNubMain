@@ -18,7 +18,7 @@
 
 package starnub.resources;
 
-import org.codehome.utilities.directories.DirectoryCheckCreate;
+import utilities.dircectories.DirectoryCheckCreate;
 import utilities.file.yaml.YAMLWrapper;
 
 /**
@@ -45,7 +45,7 @@ public class ResourceManager {
         return instance;
     }
 
-    public static YAMLWrapper getStarnubResources() {
+    public YAMLWrapper getStarnubResources() {
         return STARNUB_RESOURCES;
     }
 

@@ -16,7 +16,6 @@ import java.net.InetSocketAddress;
 public abstract class Connection {
 
     private final ConnectionStatus DISCONNECTED;
-    private final ConnectionStatus PENDING;
     private final ConnectionStatus CONNECTED;
 
     private volatile ConnectionStatus connectionStatus;
@@ -28,17 +27,12 @@ public abstract class Connection {
 
     public Connection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX) {
         DISCONNECTED = new Disconnected(this);
-        PENDING = new Pending(this);
         CONNECTED = new Connected(this);
         this.CLIENT_CTX = CLIENT_CTX;
         this.EVENT_ROUTER = EVENT_ROUTER;
         this.EVENT_MESSAGE = EVENT_ROUTER != null;
         this.CONNECTION_START_TIME = System.currentTimeMillis();
-        this.connectionStatus = PENDING;
-    }
-
-    protected ConnectionStatus getPENDING() {
-        return PENDING;
+        this.connectionStatus = CONNECTED;
     }
 
     protected ConnectionStatus getCONNECTED() {
@@ -51,6 +45,18 @@ public abstract class Connection {
 
     protected ConnectionStatus getConnectionStatus() {
         return connectionStatus;
+    }
+
+    protected void setConnectionStatus(ConnectionStatus connectionStatus) {
+        this.connectionStatus = connectionStatus;
+    }
+
+    /**
+     * This is to be used only after the connection is active or you have approved the connection internally in the program this
+     * is used in.
+     */
+    public void setConnectionConnected(){
+        connectionStatus = CONNECTED;
     }
 
     public ChannelHandlerContext getCLIENT_CTX() {
@@ -84,6 +90,10 @@ public abstract class Connection {
     public String getClientHostString(){
         return ((InetSocketAddress) CLIENT_CTX.channel().remoteAddress()).getHostString();
     }
+
+    public abstract void addConnection();
+
+    public abstract void removeConnection();
 
     /**
      * Recommended: For internal use.

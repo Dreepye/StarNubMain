@@ -19,8 +19,8 @@ operators: {
     file: ['ops.yml', 'StarNub/'],
     map: {uuids: !!set {"091c4675-7217-34d6-b06e-09f43a0ee7ce", "1f1f8584-0b7d-3189-8ddc-2cbc1dc3583b"}}},
 
-user_whitelist: {
-    file: ['user_whitelist.yml', 'StarNub/'],
+whitelist: {
+    file: ['whitelist.yml', 'StarNub/'],
     map: {uuid_ip: !!set {"0.0.0.1", "1f1f8584-0b7d-3189-8ddc-2cbc1dc3583b"}}},
 
 illegal_names: {

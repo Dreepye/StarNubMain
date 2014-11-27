@@ -77,11 +77,9 @@ public enum Connectionss {
     private final static Object CACHED_DATA_LOCK = new Object();
 
     private static ConcurrentHashMap<ChannelHandlerContext, Long> openSockets;
-    private static ConcurrentHashMap<ChannelHandlerContext, PendingPlayer> pendingConnections;
     private static ConcurrentHashMap<ChannelHandlerContext, Player> connectedPlayers;
-
     private static Set<Object> whitelist;
-    private static Set<UUID> opsList;
+
 
 
 

@@ -41,12 +41,17 @@ public class Connected implements ConnectionStatus {
      */
     @Override
     public boolean isConnected() {
+        boolean connected;
         if (CONNECTION instanceof ProxyConnection){
             ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
-            return proxyConnection.getCLIENT_CTX().channel().isActive() && proxyConnection.getSERVER_CTX().channel().isActive();
+            connected = proxyConnection.getCLIENT_CTX().channel().isActive() && proxyConnection.getSERVER_CTX().channel().isActive();
         } else {
-            return CONNECTION.getCLIENT_CTX().channel().isActive();
+            connected = CONNECTION.getCLIENT_CTX().channel().isActive();
         }
+        if (!connected){
+            CONNECTION.setConnectionStatus(CONNECTION.getDISCONNECTED());
+        }
+        return connected;
     }
 
     /**
@@ -58,12 +63,15 @@ public class Connected implements ConnectionStatus {
      */
     @Override
     public boolean disconnect() {
-        boolean disconnected = false;
         CONNECTION.getCLIENT_CTX().close(CONNECTION.getCLIENT_CTX().voidPromise());
         if (CONNECTION instanceof ProxyConnection){
             ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
             proxyConnection.getSERVER_CTX().close(proxyConnection.getSERVER_CTX().voidPromise());
         }
-        return isConnected();
+        boolean connected = isConnected();
+        if (!connected){
+            CONNECTION.setConnectionStatus(CONNECTION.getDISCONNECTED());
+        }
+        return connected;
     }
 }

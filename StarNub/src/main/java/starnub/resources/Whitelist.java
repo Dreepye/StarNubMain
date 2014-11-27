@@ -29,19 +29,19 @@ import java.io.IOException;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class UserWhitelist extends YAMLWrapper {
+public class Whitelist extends YAMLWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
      * @param starnubResources YAMLWrapper containing starnub resources
      */
-    public UserWhitelist(YAMLWrapper starnubResources) {
+    public Whitelist(YAMLWrapper starnubResources) {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "user_whitelist", "file"),
+                (String) starnubResources.getListNestedValue(0, "whitelist", "file"),
                 "resources",
-                (String) starnubResources.getListNestedValue(1, "user_whitelist", "file"),
+                (String) starnubResources.getListNestedValue(1, "whitelist", "file"),
                 false,
                 true,
                 true,

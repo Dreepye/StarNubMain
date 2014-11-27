@@ -49,18 +49,20 @@ import utilities.time.DateAndTimes;
 public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
-    private static final Configuration configuration = new Configuration(ResourceManager.getStarnubResources());
+    private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
     private static final DateAndTimes dateAndTimes = DateAndTimes.getInstance();
     private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("scheduled_task_thread_count", "resources"), "StarNub - Scheduled Task");
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
-    private static final StarNubVersion versionInstance = StarNubVersion.getInstance(ResourceManager.getStarnubResources());
+    private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
     private static final Connections connections = Connections.getInstance();
     private static final DatabaseTables databaseTables = DatabaseTables.getInstance();
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final PluginManager pluginManager;
     private static final Server server;
 
-
+    public static Connections getConnections() {
+        return connections;
+    }
 
     public static ResourceManager getResourceManager() {
         return resourceManager;

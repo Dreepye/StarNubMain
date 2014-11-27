@@ -31,10 +31,10 @@ import starbounddata.packets.misc.PassThroughPacket;
 import starnub.Server;
 import starnub.StarNub;
 import starnub.events.events.EventsInternals;
-import starnub.events.packet.PacketEventHandler;
-import starnub.events.packet.PacketEventSubscription;
+import starnub.events.events.StarNubEvent;
 import utilities.events.EventSubscription;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -170,25 +170,29 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
      * @throws Exception
      */
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {//TODO add connection
         if (CONNECTION_SIDE.equalsIgnoreCase("ServerSide")) {
-            EventsInternals.eventSend_StarNub_Socket_Connection_Attempt_Server(ctx);
+            new StarNubEvent("StarNub_Socket_Connection_Attempt_Server", ctx);
             EventsInternals.eventSend_StarNub_Socket_Connection_Success_Server(ctx);
             setPacketPool(ctx);
+            new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
         } else if (CONNECTION_SIDE.equalsIgnoreCase("ClientSide")) {
             setClientConnection(ctx);
         }
-
+        StarNub.getConnections().getOPEN_SOCKETS().put(ctx, System.currentTimeMillis());
     }
 
     private void setClientConnection(ChannelHandlerContext ctx){
         InetAddress connectingIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress();
-        if (StarNub.getInternallyBannedIps().contains(connectingIp)) {
-            EventsInternals.eventSend_StarNub_Socket_Connection_Failed_Blocked_IP_Client(ctx);
-            ctx.close();
-            return;
-        } else {
-            EventsInternals.eventSend_StarNub_Socket_Connection_Attempt_Client(ctx);
+        try {
+            boolean isBlocked = StarNub.getConnections().getINTERNALLY_BLOCKED_IPS().collectionContains(connectingIp, "ips");
+            if (isBlocked) {
+                new StarNubEvent("StarNub_Socket_Connection_Failed_Blocked_IP_Client", ctx);
+                ctx.close();
+                return;
+            }
+        } catch (IOException e) {
+            /* Silent Catch */
         }
         Bootstrap starNubMainOutboundSocket = new Bootstrap();
         starNubMainOutboundSocket
@@ -200,10 +204,12 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 .option(ChannelOption.SO_SNDBUF, TCPProxyServer.getSendBuffer())
                 .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, TCPProxyServer.getWriteHighWaterMark())
                 .handler(new TCPProxyServerPacketDecoder("ServerSide", ctx));
-        ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) ((Map)StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("starbound_port"));
+        ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starbound_port", "starnub settings")));
         destinationCTX = f.channel().pipeline().firstContext();
         EventsInternals.eventSend_StarNub_Socket_Connection_Success_Client(ctx);
         setPacketPool(ctx);
+        new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
+        //Insert Proxy Connection
     }
 
     @SuppressWarnings("unchecked")

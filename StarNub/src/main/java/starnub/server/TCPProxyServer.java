@@ -23,11 +23,9 @@ import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import lombok.Getter;
-import starnub.NamedThreadFactory;
 import starnub.StarNub;
+import utilities.concurrency.thread.NamedThreadFactory;
 
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 
@@ -47,7 +45,6 @@ import java.util.concurrent.Executors;
  */
 class TCPProxyServer {
 
-
     private static NioEventLoopGroup connectionBossGroup;
 
     private static NioEventLoopGroup connectionWorkerGroup;
@@ -62,10 +59,30 @@ class TCPProxyServer {
 
     private static int writeHighWaterMark;
 
-    static {
+    public TCPProxyServer() {
         setNetworkThreading();
         setSocketSettings();
         start();
+    }
+
+    public static boolean isTcpNoDelay() {
+        return tcpNoDelay;
+    }
+
+    public static PooledByteBufAllocator getSocketBuffer() {
+        return socketBuffer;
+    }
+
+    public static int getRecvBuffer() {
+        return recvBuffer;
+    }
+
+    public static int getSendBuffer() {
+        return sendBuffer;
+    }
+
+    public static int getWriteHighWaterMark() {
+        return writeHighWaterMark;
     }
 
     public static void setNetworkThreading() {
@@ -75,12 +92,6 @@ class TCPProxyServer {
                             1,
                             Executors.newCachedThreadPool(new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
         }
-//        if (connectionWorkerGroup == null) {
-//            connectionWorkerGroup =
-//                    new NioEventLoopGroup(
-//                            1),
-//                            Executors.newCachedThreadPool(new NamedThreadFactory("StarNub - TCP Proxy : Worker Thread")));
-//        }
     }
 
     public static void setSocketSettings(){
@@ -113,8 +124,7 @@ class TCPProxyServer {
                 .option(ChannelOption.SO_SNDBUF, sendBuffer)
                 .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, writeHighWaterMark)
                 .childHandler(new TCPProxyServerInitializer())
-                .bind((int) ((Map) StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("starnub_port"));
-
+                .bind((int) StarNub.getConfiguration().getNestedValue("starnub_port", "starnub settings"));
     }
 
     public static void shutdownNetworkThreads(){

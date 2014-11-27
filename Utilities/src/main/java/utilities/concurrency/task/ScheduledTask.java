@@ -1,40 +1,73 @@
 package utilities.concurrency.task;
 
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Represents a ScheduledTask which is to be used with the {@link TaskManager}
+ * Represents a abstract ScheduledTask which is to be used with the {@link TaskManager}
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public class ScheduledTask {
+public abstract class ScheduledTask {
 
-    private String taskOwner;
-    private String taskName;
-    private Runnable runnable;
+    private final String OWNER;
+    private final String NAME;
+    private final Runnable RUNNABLE;
     private ScheduledFuture<?> scheduledFuture;
 
-    public ScheduledTask(String taskOwner, String taskName, Runnable runnable, ScheduledFuture<?> scheduledFuture) {
-        this.taskOwner = taskOwner;
-        this.taskName = taskName;
-        this.runnable = runnable;
+    public ScheduledTask(String OWNER, String NAME, Runnable RUNNABLE, ScheduledFuture<?> scheduledFuture) {
+        this.OWNER = OWNER;
+        this.NAME = NAME;
+        this.RUNNABLE = RUNNABLE;
         this.scheduledFuture = scheduledFuture;
     }
 
-    public String getTaskOwner() {
-        return taskOwner;
+    public ScheduledTask(String OWNER, String NAME, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
+        this.OWNER = OWNER;
+        this.NAME = NAME;
+        this.RUNNABLE = RUNNABLE;
+        scheduleTask(timeDelay, timeUnit);
     }
 
-    public String getTaskName() {
-        return taskName;
+    public ScheduledTask(String OWNER, String NAME, boolean fixedDelay, long initialDelay, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
+        this.OWNER = OWNER;
+        this.NAME = NAME;
+        this.RUNNABLE = RUNNABLE;
+        if (!fixedDelay) {
+            scheduleRepeatingTask(initialDelay, timeDelay, timeUnit);
+        } else {
+            scheduleRepeatingFixedDelayTask(initialDelay, timeDelay, timeUnit);
+        }
+
     }
 
-    public Runnable getRunnable() {
-        return runnable;
+    public String getOWNER() {
+        return OWNER;
+    }
+
+    public String getNAME() {
+        return NAME;
+    }
+
+    public Runnable getRUNNABLE() {
+        return RUNNABLE;
     }
 
     public ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
     }
+
+    public void setScheduledFuture(ScheduledFuture<?> scheduledFuture) {
+        this.scheduledFuture = scheduledFuture;
+    }
+
+    public abstract void scheduleTask(long timeDelay, TimeUnit timeUnit);
+
+    public abstract void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit);
+
+    public abstract void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit);
+
+    public abstract void removeTask();
+
 }
