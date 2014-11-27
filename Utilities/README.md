@@ -22,6 +22,15 @@ Current Utility Functions
 	- StringCache - Holds the System Time and a String value
 	- TimeCache - Simple utilities.cache that holds the System Time from when it was constructed
 
+- Connectivity:
+	- Connection - Is a basic one sided netty connection
+	- ProxyConnection - Is a two sided connection
+	- ConnectionStatus - Represents a abstract class
+		- Connected - Extends ConnectionStatus
+		- Disconnected - Extends ConnectionStatus
+		- Initializing - Extends ConnectionStatus
+		- Pending - Extends ConnectionStatus
+
 - Date and Times:
 	- DateAndTimes - Simple Date formatter and time calculator
 

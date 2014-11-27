@@ -16,41 +16,34 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnub.connections.states.connectionstatus;
-
-import starnub.connections.Connection;
+package utilities.connectivity.connection;
 
 /**
- * Represents StarNubs Connected Status
+ * Represents StarNubs Disconnected Status
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Connected implements Status{
+public class Disconnected implements ConnectionStatus {
 
     Connection connection;
 
-    public Connected(Connection connection) {
+    public Disconnected(Connection connection) {
         this.connection = connection;
     }
 
     @Override
-    public void initializeConnection() {
-
+    public boolean connect() {
+        return false;
     }
 
     @Override
-    public void pendingConnection() {
-
+    public boolean isConnected() {
+        return false;
     }
 
     @Override
-    public void connect() {
-
-    }
-
-    @Override
-    public void disconnect() {
-
+    public boolean disconnect() {
+        return false;
     }
 }

@@ -16,41 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnub.connections.states.connectionstatus;
-
-import starnub.connections.Connection;
+package utilities.connectivity.connection;
 
 /**
- * Represents StarNubs PendingConnection Status
+ * Represents StarNubs Connection Status interface
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PendingConnection implements Status {
+public interface ConnectionStatus {
 
-    Connection connection;
-
-    public PendingConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
-    public void initializeConnection() {
-        
-    }
-
-    @Override
-    public void pendingConnection() {
-
-    }
-
-    @Override
-    public void connect() {
-
-    }
-
-    @Override
-    public void disconnect() {
-
-    }
+    public boolean connect();
+    public boolean isConnected();
+    public boolean disconnect();
 }
