@@ -19,11 +19,8 @@
 package starboundmanager;
 
 import starboundmanager.status.*;
-import utilities.concurrency.thread.ThreadSleep;
-
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
+import utilities.events.EventRouter;
+import utilities.events.types.ObjectEvent;
 
 /**
  * Represents ProcessManagement this will get a file path for which starbound_server.exe
@@ -40,19 +37,25 @@ public class StarboundManagement extends StarboundServerExe {
     private StarboundStatus unresponsive;
     private StarboundStatus shuttingDown;
 
-    private volatile StarboundStatus status;
-    protected static StarboundProcess starboundProcess;
-    private int serverVersion;
+    protected volatile StarboundStatus status;
+    protected StarboundProcess starboundProcess;
+    protected int serverVersion;
 
-    private StarboundManagement() {
+    protected final EventRouter EVENT_ROUTER;
+    protected final boolean EVENT_MESSAGE;
+
+    private StarboundManagement(EventRouter EVENT_ROUTER) {
         super();
-        stopped = new Stopped(this);
-        starting = new Starting(this);
-        running = new Running(this);
-        unresponsive = new Unresponsive(this);
-        shuttingDown = new Stopping(this);
-        status = stopped;
+        this.stopped = new Stopped(this);
+        this.starting = new Starting(this);
+        this.running = new Running(this);
+        this.unresponsive = new Unresponsive(this);
+        this.shuttingDown = new Stopping(this);
+        this.EVENT_ROUTER = EVENT_ROUTER;
+        this.EVENT_MESSAGE = EVENT_ROUTER != null;
+        this.status = stopped;
     }
+
 
     public StarboundStatus getStopped() {
         return stopped;
@@ -70,11 +73,19 @@ public class StarboundManagement extends StarboundServerExe {
         return shuttingDown;
     }
 
+    public StarboundStatus getUnresponsive() {
+        return unresponsive;
+    }
+
     public StarboundStatus getStatus() {
         return status;
     }
 
-    public static starboundmanager.StarboundProcess getStarboundProcess() {
+    public void setStatus(StarboundStatus status) {
+        this.status = status;
+    }
+
+    public StarboundProcess getStarboundProcess() {
         return starboundProcess;
     }
 
@@ -82,7 +93,11 @@ public class StarboundManagement extends StarboundServerExe {
         return serverVersion;
     }
 
-    public void start(){
+    public void setServerVersion(int serverVersion) {
+        this.serverVersion = serverVersion;
+    }
+
+    public void start(boolean consolePrint){
         status.start();
     }
 
@@ -91,7 +106,7 @@ public class StarboundManagement extends StarboundServerExe {
     }
 
     public void isResponsive(String ipAddress, int port, int queryAttempts){
-        status.isResponsive();
+        status.isResponsive(ipAddress, port, queryAttempts);
     }
 
     public void restart(){
@@ -107,42 +122,13 @@ public class StarboundManagement extends StarboundServerExe {
 
     }
 
-    public void startingUpListener(){
-        //No increment
-        //Task will check process then Query will be a task every 5 seconds
-        //Send Responsive event out
-    }
-
-    public void unresponsiveListener(){
-        //Increment for each responsive
-        //Task will check process then Query will be a task every 30 seconds
-        //Responsive will set responsive variable to 0
-    }
-
-    private boolean query(String ipAddress, int port, int timeout, int queryAttempts) {
-        int unresponsiveCount = 0;
-        while (unresponsiveCount < queryAttempts) {
-            try {
-                int version = StarboundQuery.query(ipAddress, port, timeout);
-                if (version > 0) {
-                    if (serverVersion == 0) {
-                        serverVersion = version;
-                    }
-                    return true;
-                }
-            } catch (IOException e) {
-                if (e instanceof ConnectException) {
-                    System.out.println("Connection Refused");
-                    ThreadSleep.timerSeconds(10);
-                } else if (e instanceof SocketTimeoutException) {
-                    System.out.println("Socket Timed Out");
-                } else {
-                    e.printStackTrace();
-                    ThreadSleep.timerSeconds(10);
-                }
-                unresponsiveCount++;
-            }
+    @SuppressWarnings("unchecked")
+    public void printOrEvent(String eventKey, Object eventData){
+        if (EVENT_MESSAGE) {
+            EVENT_ROUTER.eventNotify(new ObjectEvent(eventKey, eventData));
+            //TODO Management System - Player List, Banning, Kicking Plugin
+        } else {
+            System.out.println(eventKey + ": " +eventData);
         }
-        return false;
     }
 }

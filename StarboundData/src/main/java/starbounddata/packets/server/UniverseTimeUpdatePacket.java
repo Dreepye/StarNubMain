@@ -37,7 +37,7 @@ import starbounddata.variants.VLQ;
 public class UniverseTimeUpdatePacket extends Packet {
 
     /**
-     * A time that increments up when sent by the server
+     * A time that increments up when sent by the starnub
      */
     private long time;
 

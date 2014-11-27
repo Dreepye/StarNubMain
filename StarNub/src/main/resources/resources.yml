@@ -25,7 +25,7 @@ user_whitelist: {
 
 illegal_names: {
     file: ['illegal_nick_names.yml', 'StarNub/'],
-    map: {names: !!set {"starnub", "server", "starboundmanager", "admin", "moderator", "staff", "administrator", "owner", "moderator"}}},
+    map: {names: !!set {"starnub", "starnub", "starboundmanager", "admin", "moderator", "staff", "administrator", "owner", "moderator"}}},
 
 server_stats: {
     file: ['server_stats.yml', 'StarNub/'],
@@ -77,7 +77,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
       }
     },
 
-  "server info": {
+  "starnub info": {
       "server_name": "StarNub",
       "server_url": "http://www.starnub.org"
     },
@@ -258,9 +258,9 @@ default_groups_configuration: {
           "starnubinternals.NAME.color",
           "starnubinternals.NAME.singlespaces",
           "starnubinternals.chatrate.5000",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.server.starbounddata.packets.chat",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.server.whisper",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.server.commands",
+          "starnubinternals.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets.chat",
+          "starnubinternals.starbounddata.packets.starbounddata.packets.starnub.whisper",
+          "starnubinternals.starbounddata.packets.starbounddata.packets.starnub.commands",
           "starboundmanager.w",
           "starboundmanager.r",
           "starboundmanager.nick",

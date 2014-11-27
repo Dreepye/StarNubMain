@@ -30,7 +30,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
 /**
  * Represents the ClientDisconnectRequestPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet can be edited freely. This packet will send the server a disconnect request
+ * Notes: This packet can be edited freely. This packet will send the starnub a disconnect request
  * <p/>
  * Packet Direction: Client -> Server
  *

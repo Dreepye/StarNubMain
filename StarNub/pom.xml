@@ -12,7 +12,7 @@
     <artifactId>starnub</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>server</name>
+    <name>starnub</name>
     <url>http://www.starnub.org</url>
     <description>Java Wrapper for Starbound.</description>
     <organization>

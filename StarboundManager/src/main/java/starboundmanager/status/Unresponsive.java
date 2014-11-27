@@ -20,27 +20,25 @@ package starboundmanager.status;
 
 import starboundmanager.StarboundManagement;
 
-public class Unresponsive implements StarboundStatus {
+public class Unresponsive extends StarboundStatus {
 
-    StarboundManagement starboundManagement;
-
-    public Unresponsive(StarboundManagement starboundManagement) {
-        this.starboundManagement = starboundManagement;
+    public Unresponsive(StarboundManagement STARBOUND_MANAGEMENT) {
+        super(STARBOUND_MANAGEMENT);
     }
 
     @Override
-    public String start() {
+    public boolean start() {
         return null;
     }
 
     @Override
-    public String isAlive() {
-        return null;
+    public boolean isAlive() {
+        return false;
     }
 
     @Override
-    public String isResponsive() {
-        return null;
+    public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
+        return false;
     }
 
     @Override

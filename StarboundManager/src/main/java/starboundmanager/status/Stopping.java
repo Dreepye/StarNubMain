@@ -27,33 +27,28 @@ import starboundmanager.StarboundManagement;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Stopping implements StarboundStatus {
+public class Stopping extends StarboundStatus {
 
-    StarboundManagement starboundManagement;
-
-    public Stopping(StarboundManagement starboundManagement) {
-        this.starboundManagement = starboundManagement;
+    public Stopping(StarboundManagement STARBOUND_MANAGEMENT) {
+        super(STARBOUND_MANAGEMENT);
     }
 
     @Override
-    public String start() {
+    public boolean start() {
         String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
+
         return message;
     }
 
     @Override
-    public String isAlive() {
-        String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
-        return message;
+    public boolean isAlive() {
+
+        return false;
     }
 
     @Override
-    public String isResponsive() {
-        String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
-        return message;
+    public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
+        return false;
     }
 
     @Override

@@ -20,6 +20,7 @@ package starboundmanager.status;
 
 
 import starboundmanager.StarboundManagement;
+import utilities.concurrency.thread.ThreadSleep;
 
 /**
  * Represents StarNubs InitializingConnection Status
@@ -27,36 +28,65 @@ import starboundmanager.StarboundManagement;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Running implements StarboundStatus {
+public class Running extends StarboundStatus {
 
-    StarboundManagement starboundManagement;
-
-    public Running(StarboundManagement starboundManagement) {
-        this.starboundManagement = starboundManagement;
+    public Running(StarboundManagement STARBOUND_MANAGEMENT) {
+        super(STARBOUND_MANAGEMENT);
     }
 
     @Override
-    public String start() {
-        String message = "";
-        StarNub.getLogger().cInfoPrint("StarNub", message);
-        return message;
+    public boolean start() {
+        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Server_Status_Already_Started", STARBOUND_MANAGEMENT);
+        return true;
     }
 
     @Override
-    public String isAlive() {
-
-        return message;
+    public boolean isAlive() {
+        boolean isAlive = false;
+        try {
+            isAlive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
+        }catch (NullPointerException e){
+            /* Silent Catch */
+        }
+        if (!isAlive){
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Server_Status_Crashed", STARBOUND_MANAGEMENT);
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+        }
+        return isAlive;
     }
 
     @Override
-    public String isResponsive() {
-
-        return message;
+    public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
+        boolean isResponsive = false;
+        try {
+            isResponsive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
+        }catch (NullPointerException e){
+            /* Silent Catch */
+        }
+        if (!isResponsive){
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUnresponsive());
+        }
+        return isResponsive;
     }
 
     @Override
-    public String stop() {
-
-        return message;
+    public boolean stop() {
+        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Server_Status_Shutting_Down", STARBOUND_MANAGEMENT);
+        STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().destroy();
+        ThreadSleep.timerSeconds(2);
+        if (isAlive()){
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Server_Status_Shutdown_Error_Process", STARBOUND_MANAGEMENT);
+            STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().destroyForcibly();
+            ThreadSleep.timerSeconds(2);
+        }
+        if (isAlive()){
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Server_Status_Shutdown_Fatal_Process", STARBOUND_MANAGEMENT);
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUnresponsive());
+            return false;
+        } else {
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Server_Status_Shutdown", STARBOUND_MANAGEMENT);
+            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getStopped());
+            return true;
+        }
     }
 }

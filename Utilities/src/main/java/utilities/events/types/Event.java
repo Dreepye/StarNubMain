@@ -6,12 +6,12 @@ package utilities.events.types;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public abstract class Event<T1, T2> {
+public abstract class Event<T1> {
 
     private final T1 EVENT_KEY;
-    private final T2 EVENT_DATA;
+    private final Object EVENT_DATA;
 
-    public Event(T1 EVENT_KEY, T2 EVENT_DATA){
+    public Event(T1 EVENT_KEY, Object EVENT_DATA){
         this.EVENT_KEY = EVENT_KEY;
         this.EVENT_DATA = EVENT_DATA;
     }
@@ -20,7 +20,7 @@ public abstract class Event<T1, T2> {
         return EVENT_KEY;
     }
 
-    public T2 getEVENT_DATA() {
+    public Object getEVENT_DATA() {
         return EVENT_DATA;
     }
 }

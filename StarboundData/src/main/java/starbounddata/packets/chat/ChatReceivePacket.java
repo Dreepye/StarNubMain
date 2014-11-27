@@ -64,7 +64,7 @@ public class ChatReceivePacket extends Packet {
     private String world;
 
     /**
-     * ClientId of the sender which is assigned by the Starbound server
+     * ClientId of the sender which is assigned by the Starbound starnub
      */
     private int clientId;
 
@@ -74,7 +74,7 @@ public class ChatReceivePacket extends Packet {
     private String name;
 
     /**
-     * Message sent from the server
+     * Message sent from the starnub
      */
     private String message;
 

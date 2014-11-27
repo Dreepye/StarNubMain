@@ -34,7 +34,7 @@ import static utilities.compression.Zlib.compress;
  * <p/>
  * Notes:
  * - Packet ID is a single Byte
- * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the client and server side of the socket, this is used to write network data to the session
+ * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the client and starnub side of the socket, this is used to write network data to the session
  * - recycle represents if this packet should be recycled when handled by StarNub
  * <p/>
  *
