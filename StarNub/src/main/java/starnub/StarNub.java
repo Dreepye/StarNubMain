@@ -51,7 +51,7 @@ public final class StarNub {
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
     private static final DateAndTimes dateAndTimes = DateAndTimes.getInstance();
-    private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("scheduled_task_thread_count", "resources"), "StarNub - Scheduled Task");
+    private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
     private static final Connections connections = Connections.getInstance();

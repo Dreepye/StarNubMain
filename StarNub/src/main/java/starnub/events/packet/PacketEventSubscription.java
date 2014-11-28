@@ -72,7 +72,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      */
     @Override
     public void submitRegistration() {
-        if ((boolean) StarNub.getConfiguration().getNestedValue("packet_events", "starnub settings")) {
+        if ((boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "packet_events")) {
             StarNub.getServer().getPacketEventRouter().registerEventSubscription(EVENT_KEY, this);
         }
     }

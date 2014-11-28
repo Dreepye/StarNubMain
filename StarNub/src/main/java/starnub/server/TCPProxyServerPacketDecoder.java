@@ -207,7 +207,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 .option(ChannelOption.SO_SNDBUF, TCPProxyServer.getSendBuffer())
                 .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, TCPProxyServer.getWriteHighWaterMark())
                 .handler(new TCPProxyServerPacketDecoder("ServerSide", ctx));
-        ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starbound_port", "starnub settings")));
+        ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub settings", "starbound_port")));
         destinationCTX = f.channel().pipeline().firstContext();
         EventsInternals.eventSend_StarNub_Socket_Connection_Success_Client(ctx);
         setPacketPool(ctx);

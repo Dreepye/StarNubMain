@@ -35,8 +35,8 @@ public class StarNubEventRouter extends EventRouter<String, Event<String>, Boole
     }
 
     public void setResources(){
-        eventsQue = new ArrayBlockingQueue<>((int) StarNub.getConfiguration().getNestedValue("event_que_size", "resources"));
-        maxThreadCount = (int) StarNub.getConfiguration().getNestedValue("event_thread_count", "resources");
+        eventsQue = new ArrayBlockingQueue<>((int) StarNub.getConfiguration().getNestedValue("resources", "event_que_size"));
+        maxThreadCount = (int) StarNub.getConfiguration().getNestedValue("resources", "event_thread_count");
         currentThreads = new HashSet<>(maxThreadCount);
         shuttingDown = false;
     }

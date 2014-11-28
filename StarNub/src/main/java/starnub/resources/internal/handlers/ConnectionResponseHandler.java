@@ -82,7 +82,10 @@ public class ConnectionResponseHandler extends PacketEventHandler {
     private void postProcessing(Player player, int starboundClientId, RejectionCache rejectionCache) {
         PlayerCharacter playerCharacter = player.getPlayerCharacter();
         String characterName = playerCharacter.getCleanName();
-        if (rejectionCache.isREJECTED()) {
+        if (!rejectionCache.isREJECTED()) {
+            player.setStarboundClientId(starboundClientId);
+            new StarNubEvent("Player_Connected", player);
+        } else {
             RejectionCache.Reason rejectionReason = rejectionCache.getREJECTION_REASON();
             switch (rejectionReason) {
                 case RESTARTING: {
@@ -118,9 +121,6 @@ public class ConnectionResponseHandler extends PacketEventHandler {
                     break;
                 }
             }
-        } else {
-            player.setStarboundClientId(starboundClientId);
-            new StarNubEvent("Player_Connected", player);
         }
     }
 

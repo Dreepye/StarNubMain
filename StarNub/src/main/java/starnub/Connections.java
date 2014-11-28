@@ -92,8 +92,8 @@ public class Connections {
     }
 
     public int getExpectedPlayers(){
-        return (int) StarNub.getConfiguration().getNestedValue("player_limit", "resources")
-                + (int) StarNub.getConfiguration().getNestedValue("player_limit_reserved", "resources");
+        return (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit")
+                + (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit_reserved");
     }
 
     public int getExpectedThreadsGeneric(){

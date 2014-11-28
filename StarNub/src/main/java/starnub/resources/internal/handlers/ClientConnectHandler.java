@@ -104,10 +104,10 @@ public class ClientConnectHandler extends PacketEventHandler {
         Player player = new Player(starNubProxyConnection, playerName, playerUUID);
 
         String header =
-                "^#f5f5f5;-== " + StarNub.getConfiguration().getNestedValue("server_name", "starnub info") + " ==-\n" +
+                "^#f5f5f5;-== " + StarNub.getConfiguration().getNestedValue("starnub info", "server_name") + " ==-\n" +
                         "^#f5f5f5;-= Powered by StarNub.org =- \n\n";
         String footer =
-                "\n\n^#f5f5f5;For information visit: ^#990000;" + StringUtils.remove((String) StarNub.getConfiguration().getNestedValue("server_url", "starnub info"), "http://");
+                "\n\n^#f5f5f5;For information visit: ^#990000;" + StringUtils.remove((String) StarNub.getConfiguration().getNestedValue("starnub info", "server_url"), "http://");
 
         RejectionCache rejectionCache = null;
 
@@ -198,7 +198,7 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @return RejectionCache or null depending if we need to reject this player
      */
     private RejectionCache whitelist(Player player, String header, String footer) {
-        if ((boolean) (StarNub.getConfiguration().getNestedValue("whitelisted", "starnub settings"))) {
+        if ((boolean) (StarNub.getConfiguration().getNestedValue("starnub settings", "whitelisted"))) {
             String playerIP = player.getSessionIpString();
             String playerUUID = player.getPlayerCharacter().getUuid().toString();
             boolean ipWhitelisted = false;
@@ -297,8 +297,8 @@ public class ClientConnectHandler extends PacketEventHandler {
      */
     private RejectionCache serverFull(Player player, String header, String footer) {
         int currentPlayerCount = CONNECTIONS.getCONNECTED_PLAYERS().size();
-        int playerLimit = (int) StarNub.getConfiguration().getNestedValue("player_limit", "resources");
-        int vipLimit = (int) StarNub.getConfiguration().getNestedValue("player_limit_reserved", "resources");
+        int playerLimit = (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit");
+        int vipLimit = (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit_reserved");
         int combinedCount = playerLimit + vipLimit;
         if (currentPlayerCount >= playerLimit) {
             String reason;

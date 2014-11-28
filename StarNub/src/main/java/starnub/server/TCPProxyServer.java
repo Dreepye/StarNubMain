@@ -124,7 +124,7 @@ class TCPProxyServer {
                 .option(ChannelOption.SO_SNDBUF, sendBuffer)
                 .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, writeHighWaterMark)
                 .childHandler(new TCPProxyServerInitializer())
-                .bind((int) StarNub.getConfiguration().getNestedValue("starnub_port", "starnub settings"));
+                .bind((int) StarNub.getConfiguration().getNestedValue("starnub settings", "starnub_port"));
     }
 
     public static void shutdownNetworkThreads(){

@@ -229,7 +229,7 @@ public class DatabaseTables {
 
     public boolean setConnection() {
         String connectionString = "jdbc:";
-        String databaseType = (((String) (StarNub.getConfiguration().getNestedValue("type", "database"))).toLowerCase());
+        String databaseType = (((String) (StarNub.getConfiguration().getNestedValue("database", "type"))).toLowerCase());
         if (databaseType.equals("sqlite")) {
             try {
                 connectionString = connectionString+databaseType+":StarNub/Databases/StarNub.db";

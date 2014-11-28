@@ -29,12 +29,13 @@ public class StarNubProxyConnection extends ProxyConnection {
 
     public StarNubProxyConnection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
         super(EVENT_ROUTER, CLIENT_CTX, SERVER_CTX);
-        if ((boolean) StarNub.getConfiguration().getNestedValue("packet_events", "starnub settings")) {
+        if ((boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "packet_events")) {
             StarNub.getConnections().getOPEN_CONNECTIONS().put(CLIENT_CTX, this);
         } else {
             boolean uuidIp = false;
             try {
-                uuidIp = StarNub.getConnections().getWHITELIST().collectionContains(getClientIP(), "uuid_ip");
+                uuidIp = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "whitelisted") &&
+                          StarNub.getConnections().getWHITELIST().collectionContains(getClientIP(), "uuid_ip");
             } catch (IOException e) {
                 e.printStackTrace();
             }
