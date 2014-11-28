@@ -64,19 +64,22 @@ public class ConnectionResponseHandler extends PacketEventHandler {
                 return connectResponsePacket;
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(player.getCLIENT_CTX(), player);
-                new Thread(() -> postProcessing(player, connectResponsePacket, rejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
+                new Thread(() -> postProcessing(player, (int) connectResponsePacket.getClientId(), rejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
             }
         }
         return null;
     }
 
     /**
+     * Recommended: For internal use with StarNub
+     * <p>
+     * Uses: This will handle post processing of this connection
      *
-     * @param player
-     * @param connectResponsePacket
-     * @param rejectionCache
+     * @param player Player representing the player being post processed
+     * @param starboundClientId int representing the starbound client id
+     * @param rejectionCache RejectionCache representing the reason for rejection
      */
-    private void postProcessing(Player player, ConnectResponsePacket connectResponsePacket, RejectionCache rejectionCache) {
+    private void postProcessing(Player player, int starboundClientId, RejectionCache rejectionCache) {
         PlayerCharacter playerCharacter = player.getPlayerCharacter();
         String characterName = playerCharacter.getCleanName();
         if (rejectionCache.isREJECTED()) {
@@ -116,12 +119,20 @@ public class ConnectionResponseHandler extends PacketEventHandler {
                 }
             }
         } else {
-            int starboundClientID = (int) connectResponsePacket.getClientId();
-            player.setStarboundClientId(starboundClientID);
+            player.setStarboundClientId(starboundClientId);
             new StarNubEvent("Player_Connected", player);
         }
     }
 
+    /**
+     * Recommended: For internal use with StarNub
+     * <p>
+     * Uses: This will handle post processing of this connection
+     *
+     * @param player Player representing the player being post processed
+     * @param eventKey String representing the event key for the event
+     * @param consoleMessage String representing the console message to print
+     */
     private void rejectedProcess(Player player, String eventKey, String consoleMessage) {
         new StarNubEvent(eventKey, player);
         StarNub.getLogger().cWarnPrint("StarNub", consoleMessage + player.getSessionIpString());

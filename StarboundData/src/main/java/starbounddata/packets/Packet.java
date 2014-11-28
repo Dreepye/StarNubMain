@@ -21,13 +21,13 @@ package starbounddata.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
+import utilities.compression.Zlib;
 
 import java.util.HashSet;
 
 import static starbounddata.packets.StarboundBufferWriter.writeByte;
 import static starbounddata.packets.StarboundBufferWriter.writeByteArray;
 import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
-import static utilities.compression.Zlib.compress;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -139,7 +139,7 @@ public abstract class Packet {
         int payloadLengthOut = msgOut.readableBytes();
         byte[] dataOut;
         if (payloadLengthOut > 100) {
-            dataOut = compress(msgOut.readBytes(payloadLengthOut).array());
+            dataOut = Zlib.compress(msgOut.readBytes(payloadLengthOut).array());
             payloadLengthOut = -dataOut.length;
         } else {
             dataOut = msgOut.readBytes(payloadLengthOut).array();

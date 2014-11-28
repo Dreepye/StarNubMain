@@ -305,6 +305,15 @@ public class Player extends StarNubProxyConnection {
         new ChatSendPacket(SERVER_CTX, channel, message).routeToDestination();
     }
 
+    /**
+     * INTERNAL USE
+     * @return
+     */
+    @Override
+    public boolean disconnect(){
+        return super.disconnect();
+    }
+
     public boolean disconnectReason(String reason) {
         boolean disconnected = super.disconnect();
         if (disconnected) {
