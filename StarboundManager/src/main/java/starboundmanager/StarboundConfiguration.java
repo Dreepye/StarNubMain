@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class StarboundConfiguration {
 
-    private final StarboundManagement STARBOUND_MANAGEMENT;
+    private final StarboundManager STARBOUND_MANAGEMENT;
     private final String STARBOUND_CONFIGURATION;
     private final String STARBOUND_CONFIGURATION_BACKUP;
     private final File STARBOUND_CONFIGURATION_FILE;
@@ -52,7 +52,7 @@ public class StarboundConfiguration {
      * @param STARBOUND_CONFIGURATION String representing the name of the starbound configuration
      * @throws FileNotFoundException throws this exception if the file does not exist
      */
-    public StarboundConfiguration(StarboundManagement STARBOUND_MANAGEMENT, String STARBOUND_CONFIGURATION) throws FileNotFoundException {
+    public StarboundConfiguration(StarboundManager STARBOUND_MANAGEMENT, String STARBOUND_CONFIGURATION) throws FileNotFoundException {
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
         this.STARBOUND_CONFIGURATION = STARBOUND_CONFIGURATION;
         this.STARBOUND_CONFIGURATION_BACKUP = STARBOUND_CONFIGURATION + ".bak";
@@ -63,7 +63,7 @@ public class StarboundConfiguration {
         this.STARBOUND_CONFIGURATION_FILE_BACKUP= new File(STARBOUND_CONFIGURATION_BACKUP);
     }
 
-    public StarboundManagement getSTARBOUND_MANAGEMENT() {
+    public StarboundManager getSTARBOUND_MANAGEMENT() {
         return STARBOUND_MANAGEMENT;
     }
 

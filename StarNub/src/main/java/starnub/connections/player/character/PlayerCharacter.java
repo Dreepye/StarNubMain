@@ -23,12 +23,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import org.joda.time.DateTime;
 import starnub.StarNub;
 import starnub.connections.player.account.Account;
 import starnub.connections.player.achievements.CharacterAchievement;
 import starnub.connections.player.session.Restrictions;
+import utilities.strings.StringUtilities;
 
 import java.util.UUID;
 
@@ -81,7 +81,7 @@ public class PlayerCharacter {
      * Represents the characters Account that this character is attached to
      */
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "STARNUB_ID")
+    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "RESTRICTIONS_ID")
     private volatile Restrictions restrictions;
 
     /**
@@ -167,14 +167,14 @@ public class PlayerCharacter {
     /**
      * Required to build a character class
      * @param name String name of the character
-     * @param cleanName String clean name of the character
      * @param uuid uuid of the character
      */
-    public PlayerCharacter(String name, String cleanName, UUID uuid) {
+    public PlayerCharacter(String name, UUID uuid) {
         this.name = name;
-        this.cleanName = cleanName;
+        this.cleanName = StringUtilities.completeClean(name);
         this.uuid = uuid;
         this.lastSeen = DateTime.now();
+        this.restrictions = null;
     }
 
     public void setLastSeen(DateTime lastSeen) {
@@ -208,11 +208,16 @@ public class PlayerCharacter {
     }
 
     @SuppressWarnings("unchecked")
-    public void initialLogInProcessing(){
-        this.account.setLastLogin(DateTime.now());
-        this.account.loadPermissions();
-        /* This will set the channel group for the starbounddata.packets.chat channel from the loaded channel group, Needs refactoring later */
-        account.getAccountSettings().setDefaultChatRoom(StarNub.getServer().getServerChat().getChatRoomByAnyIdentifier(account.getAccountSettings().getDefaultChatRoom().getChatRoomName()));
+    public int initialLogInProcessing(){
+        int accountId = 0;
+        if (this.account != null) {
+            accountId = account.getStarnubId();
+            this.account.setLastLogin(DateTime.now());
+            this.account.loadPermissions();
+            StarNub.getDatabaseTables().getAccounts().update(this.account);
+        }
+        StarNub.getDatabaseTables().getCharacters().createOrUpdate(this);
+        return accountId;
     }
 
 }

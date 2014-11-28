@@ -16,21 +16,23 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnub.resources.internalmaps;
+package starnub.resources.internal;
 
 import io.netty.channel.ChannelHandlerContext;
 import starnub.Connections;
-import utilities.connectivity.connection.ProxyConnection;
+import starnub.StarNubTask;
+import utilities.connectivity.connection.Connection;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Represents StarNubTask instance
+ * Represents OpenConnections instance. These connections have no purpose yet and they will be purged after a set time.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class ProxyConnections extends ConcurrentHashMap<ChannelHandlerContext, ProxyConnection> {
+public class OpenConnections extends ConcurrentHashMap<ChannelHandlerContext, Connection> {
 
     private final Connections CONNECTIONS;
 
@@ -52,8 +54,20 @@ public class ProxyConnections extends ConcurrentHashMap<ChannelHandlerContext, P
      *                                            negative or the load factor or concurrencyLevel are
      *                                            nonpositive
      */
-    public ProxyConnections(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
+    public OpenConnections(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
+        new StarNubTask("StarNub", "StarNub - OpenConnections - Open Connection Purge", true , 15, 15, TimeUnit.SECONDS, this::connectionPurge);
+    }
+
+    /**
+     * This represents a lower level method for StarNubs API.
+     * <p>
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This method will purge open connections for connections that never been associated with any task or service within 30 seconds.
+     */
+    private void connectionPurge(){
+        this.entrySet().stream().filter(connectionsEntry -> connectionsEntry.getValue().getCONNECTION_START_TIME() >= 30000).forEach(connectionsEntry -> this.remove(connectionsEntry.getKey()).disconnect());
     }
 }

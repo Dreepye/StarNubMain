@@ -27,7 +27,7 @@ package starboundmanager;
  */
 public class Stopped extends StarboundStatus{
 
-    public Stopped(StarboundManagement STARBOUND_MANAGEMENT) {
+    public Stopped(StarboundManager STARBOUND_MANAGEMENT) {
         super(STARBOUND_MANAGEMENT);
     }
 

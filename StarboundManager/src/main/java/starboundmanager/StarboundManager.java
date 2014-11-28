@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class StarboundManagement extends StarboundServerExe {
+public class StarboundManager extends StarboundServerExe {
 
     private final StarboundStatus STOPPED;
     private final StarboundStatus STARTING;
@@ -57,7 +57,7 @@ public class StarboundManagement extends StarboundServerExe {
      *
      * @param EVENT_ROUTER EventRouter an event router from the Utilities Library
      */
-    private StarboundManagement(EventRouter EVENT_ROUTER) {
+    private StarboundManager(EventRouter EVENT_ROUTER) {
         super();
         this.STOPPED = new Stopped(this);
         this.STARTING = new Starting(this);

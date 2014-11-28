@@ -93,7 +93,7 @@ After the above I am going to get to work to finishing StarNub and preparing it 
     •	Fix Limbok Library and Javadoc Generation
 
 Small Changes:
-    •	Create a couple new classes for Database Data (Detailed Data Entity (Date, Reason, Date Expires, Imposer, Imposer ID))
+    •	Create a couple new classes for Database Data (Detailed Data Entity (Date, REJECTION_REASON, Date Expires, Imposer, Imposer ID))
     •	CMS Integration
         o	Hasher to match Danks
             	MessageDigest digest = MessageDigest.getInstance("SHA-256"); byte[] hash = digest.digest(text.getBytes("UTF-8"));

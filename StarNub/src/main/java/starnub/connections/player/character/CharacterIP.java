@@ -39,14 +39,12 @@ public class CharacterIP {
     /**
      * Represents the character that was seen with a specific IP
      */
-
     @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, foreignAutoRefresh = true, columnName = "CHARACTER_ID")
     private PlayerCharacter playerCharacter;
 
     /**
      * Represents this Characters IP in a string used for the database storage, cannot store InetAddress
      */
-
     @DatabaseField(dataType = DataType.STRING, canBeNull = false,  uniqueCombo = true, columnName = "IP")
     private String sessionIpString;
 

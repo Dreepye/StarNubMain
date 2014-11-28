@@ -29,7 +29,7 @@ import utilities.concurrency.thread.ThreadSleep;
  */
 public class Stopping extends StarboundStatus {
 
-    public Stopping(StarboundManagement STARBOUND_MANAGEMENT) {
+    public Stopping(StarboundManager STARBOUND_MANAGEMENT) {
         super(STARBOUND_MANAGEMENT);
     }
 

@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnub.resources.internalmaps;
+package starnub.resources.internal;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.joda.time.DateTime;

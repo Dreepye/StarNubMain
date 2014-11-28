@@ -26,9 +26,9 @@ import java.net.SocketTimeoutException;
 
 public abstract class StarboundStatus {
 
-    public final StarboundManagement STARBOUND_MANAGEMENT;
+    public final StarboundManager STARBOUND_MANAGEMENT;
 
-    public StarboundStatus(StarboundManagement STARBOUND_MANAGEMENT) {
+    public StarboundStatus(StarboundManager STARBOUND_MANAGEMENT) {
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
     }
 

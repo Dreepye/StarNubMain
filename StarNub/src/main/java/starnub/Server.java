@@ -19,30 +19,14 @@ package starnub;
 */
 
 import io.netty.channel.nio.NioEventLoopGroup;
-import lombok.Getter;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.codehome.utilities.simplejson.JSONObject;
-import org.codehome.utilities.simplejson.JSONPrettyPrint;
-import org.codehome.utilities.simplejson.parser.JSONParser;
-import org.codehome.utilities.simplejson.parser.ParseException;
-import org.codehome.utilities.timers.ThreadSleep;
-import starnub.NamedThreadFactory;
-import starnub.events.events.StarboundServerStatusEvent;
-import starnub.events.internaldebugging.PacketDebugger;
-import chatmanager.chat.ServerChat;
-//import org.starnub.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets.KnownPackets;
+import starbounddata.color.GameColors;
+import starboundmanager.StarboundManager;
 import starnub.events.packet.PacketEventRouter;
 import starnub.server.Connectionss;
-import starnub.server.TCPProxyServer;
-import starnub.server.UDPProxyServer;
-import starnub.server.packets.server.ProtocolVersionPacket;
-import starnub.server.starbound.OLDStarboundManager;
-import starbounddata.color.GameColors;
 
-import java.io.*;
-import java.util.Map;
 import java.util.concurrent.Executors;
+
+//import org.starnub.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets.KnownPackets;
 
 /**
  * Represents the Starbound Server core.
@@ -60,11 +44,13 @@ public enum Server {
     private static final PacketEventRouter packetEventRouter = new PacketEventRouter();
 
 
-
+    private static StarboundManager starboundManager;
     private TCPProxyServer tcpProxyServer;
     private Thread udpProxyServer;
 
-
+    public StarboundManager getStarboundManager() {
+        return starboundManager;
+    }
 
     /**
      * Attempts to set the {@link TCPProxyServer} singleton.

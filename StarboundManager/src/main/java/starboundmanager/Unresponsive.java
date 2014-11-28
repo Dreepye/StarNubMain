@@ -20,7 +20,7 @@ package starboundmanager;
 
 public class Unresponsive extends StarboundStatus {
 
-    public Unresponsive(StarboundManagement STARBOUND_MANAGEMENT) {
+    public Unresponsive(StarboundManager STARBOUND_MANAGEMENT) {
         super(STARBOUND_MANAGEMENT);
     }
 

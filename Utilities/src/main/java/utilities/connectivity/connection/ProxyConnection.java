@@ -18,7 +18,6 @@
 
 package utilities.connectivity.connection;
 
-
 import io.netty.channel.ChannelHandlerContext;
 import utilities.events.EventRouter;
 

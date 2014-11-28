@@ -16,33 +16,13 @@ package starnub;/*
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import starbounddata.packets.Packet;
-import starbounddata.packets.connection.ClientConnectPacket;
-import starnub.cache.wrappers.PlayerCtxCacheWrapper;
-import starnub.connections.player.StarNubProxyConnection;
-import starnub.connections.player.character.*;
 import starnub.connections.player.session.PendingPlayer;
-import starnub.connections.player.session.Player;
-import starnub.connections.player.session.Restrictions;
-import starnub.database.DatabaseTables;
-import starnub.events.events.PlayerEvent;
-import starnub.events.packet.PacketEventHandler;
-import starnub.events.packet.PacketEventSubscription;
 import starnub.resources.BannedIPs;
 import starnub.resources.Whitelist;
-import starnub.resources.internalmaps.OpenConnections;
-import starnub.resources.internalmaps.OpenSockets;
-import starnub.resources.internalmaps.Players;
-import starnub.resources.internalmaps.ProxyConnections;
-import starnub.senders.NameBuilder;
-import utilities.time.DateAndTimes;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.UUID;
+import starnub.resources.internal.OpenConnections;
+import starnub.resources.internal.OpenSockets;
+import starnub.resources.internal.Players;
+import starnub.resources.internal.ProxyConnections;
 
 public class Connections {
 

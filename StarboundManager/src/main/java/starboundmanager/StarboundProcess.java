@@ -34,7 +34,7 @@ import java.io.InputStreamReader;
 public class StarboundProcess implements Runnable {
 
     protected final Process PROCESS;
-    private final StarboundManagement STARBOUND_MANAGEMENT;
+    private final StarboundManager STARBOUND_MANAGEMENT;
 
     protected boolean STREAM_EVENT_MESSAGE;
     protected boolean STREAM_CONSOLE_PRINT;
@@ -49,7 +49,7 @@ public class StarboundProcess implements Runnable {
      * @param STREAM_CONSOLE_PRINT boolean representing if we should print console messages from the Starbound_Server.exe output stream
      * @throws IOException an exception if we cannot build the process
      */
-    StarboundProcess(StarboundManagement STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
+    StarboundProcess(StarboundManager STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder(STARBOUND_MANAGEMENT.getFilePath());
         processBuilder.redirectErrorStream(true);
         this.STREAM_EVENT_MESSAGE = STREAM_EVENT_MESSAGE && STARBOUND_MANAGEMENT.EVENT_ROUTER !=null;

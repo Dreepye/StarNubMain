@@ -27,7 +27,7 @@ package starboundmanager;
  */
 public class Running extends StarboundStatus {
 
-    public Running(StarboundManagement STARBOUND_MANAGEMENT) {
+    public Running(StarboundManager STARBOUND_MANAGEMENT) {
         super(STARBOUND_MANAGEMENT);
     }
 

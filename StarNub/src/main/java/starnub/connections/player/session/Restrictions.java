@@ -109,7 +109,12 @@ public class Restrictions {
     /**
      * Constructor for database purposes
      */
-    public Restrictions(){}
+    public Restrictions(){
+    }
+
+    public String getAccountSettings() {
+        return accountSettings;
+    }
 
     public boolean isMuted() {
         return muted;
@@ -117,6 +122,14 @@ public class Restrictions {
 
     public boolean isCommandBlocked() {
         return commandBlocked;
+    }
+
+    public boolean isUuidBanned() {
+        return uuidBanned;
+    }
+
+    public boolean isIpBanned() {
+        return ipBanned;
     }
 
     public String getImposerName() {
@@ -141,7 +154,6 @@ public class Restrictions {
 
     /**
      * This method is for setting a ban restriction
-     * @param restrictedIdentifier String Represents the restrictedIdentifier which can be a IP or uuid
      * @param dateRestrictionExpires long Represents the time the restriction will be removed
      */
     public void setBan(String accountSettings, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires) {
@@ -215,4 +227,6 @@ public class Restrictions {
         this.dateRestricted = DateTime.now();
         this.dateRestrictionExpires = dateRestrictionExpires;
     }
+
+
 }

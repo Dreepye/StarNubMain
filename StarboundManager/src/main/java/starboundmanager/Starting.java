@@ -29,7 +29,7 @@ import java.io.IOException;
  */
 public class Starting extends StarboundStatus {
 
-    public Starting(StarboundManagement STARBOUND_MANAGEMENT) {
+    public Starting(StarboundManager STARBOUND_MANAGEMENT) {
         super(STARBOUND_MANAGEMENT);
     }
 

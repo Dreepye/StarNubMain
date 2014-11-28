@@ -22,7 +22,7 @@ import utilities.cache.objects.TimeCache;
 import io.netty.channel.Channel;
 
 /**
- * Represents a Channel Cache. This utilities.cache can be used in any Cache Wrapper
+ * Represents a Channel Cache. This can be used in any Cache Wrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
