@@ -73,7 +73,7 @@ public class DateAndTimes {
      * @param dateTime DateTime representing the time
      * @return String with the future time
      */
-    public String getFormattedDate(String format, DateTime dateTime){
+    public static String getFormattedDate(String format, DateTime dateTime){
         DateTimeFormatter fmt = DateTimeFormat.forPattern(format);
         return fmt.print(dateTime);
     }

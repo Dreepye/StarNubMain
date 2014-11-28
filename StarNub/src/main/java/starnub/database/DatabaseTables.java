@@ -28,7 +28,7 @@ import starnub.connections.player.character.CharacterIP;
 import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.groups.*;
 import starnub.connections.player.session.Player;
-import starnub.connections.player.session.Restrictions;
+import starnub.connections.player.session.Ban;
 import starnub.database.tables.*;
 
 /**
@@ -211,7 +211,7 @@ public class DatabaseTables {
         this.playerSessionLog = playerSessionLog;
     }
 
-    public PlayerSessionRestrictions getPlayerSessionRestrictions() {
+    public PlayerSessionRestrictions getPlayerSessionBans() {
         return playerSessionRestrictions;
     }
 
@@ -269,7 +269,7 @@ public class DatabaseTables {
         groupInheritances = new GroupInheritances(connection, 0, GroupInheritance.class, Integer.class);
         groupPermissions = new GroupPermissions(connection, 0, GroupPermission.class, Integer.class);
         playerSessionLog = new PlayerSessionLog(connection, 0, Player.class, Integer.class);
-        playerSessionRestrictions = new PlayerSessionRestrictions(connection, 0, Restrictions.class, Integer.class);
+        playerSessionRestrictions = new PlayerSessionRestrictions(connection, 0, Ban.class, Integer.class);
         tags = new Tags(connection, 0, Tag.class, Integer.class);
     }
 }

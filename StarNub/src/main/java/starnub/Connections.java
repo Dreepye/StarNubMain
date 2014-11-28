@@ -17,7 +17,8 @@ package starnub;/*
  */
 
 import starnub.connections.player.session.PendingPlayer;
-import starnub.resources.BannedIPs;
+import starnub.resources.Bans;
+import starnub.resources.BlockedIPs;
 import starnub.resources.Whitelist;
 import starnub.resources.internal.OpenConnections;
 import starnub.resources.internal.OpenSockets;
@@ -49,20 +50,25 @@ public class Connections {
         return instance;
     }
 
-    private final BannedIPs INTERNALLY_BLOCKED_IPS = new BannedIPs(StarNub.getResourceManager().getStarnubResources());
+    private final BlockedIPs INTERNALLY_BLOCKED_IPS = new BlockedIPs(StarNub.getResourceManager().getStarnubResources());
     private final Whitelist WHITELIST = new Whitelist(StarNub.getResourceManager().getStarnubResources());
+    private final Bans BANS = new Bans();
 
     private final OpenSockets OPEN_SOCKETS = new OpenSockets();//Elements, expected Threads
     private final OpenConnections OPEN_CONNECTIONS = new OpenConnections();//Elements, expected Threads
-    private final ProxyConnections PROXY_CONNECTION= new ProxyConnections();//Elements, expected Threads
+    private final ProxyConnections PROXY_CONNECTION = new ProxyConnections();//Elements, expected Threads
     private final Players CONNECTED_PLAYERS = new Players();//Elements, expected Threads
 
-    public BannedIPs getINTERNALLY_BLOCKED_IPS() {
+    public BlockedIPs getINTERNALLY_BLOCKED_IPS() {
         return INTERNALLY_BLOCKED_IPS;
     }
 
     public Whitelist getWHITELIST() {
         return WHITELIST;
+    }
+
+    public Bans getBANS() {
+        return BANS;
     }
 
     public OpenSockets getOPEN_SOCKETS() {
@@ -79,6 +85,23 @@ public class Connections {
 
     public Players getCONNECTED_PLAYERS() {
         return CONNECTED_PLAYERS;
+    }
+
+    public getExpectedThreads(){
+
+    }
+
+    public int getExpectedPlayers(){
+        return (int) StarNub.getConfiguration().getNestedValue("player_limit", "resources")
+                + (int) StarNub.getConfiguration().getNestedValue("player_limit_reserved", "resources");
+    }
+
+    public int getExpectedThreadsGeneric(){
+        return 5;
+    }
+
+    public int getExpectedConnectsPercentage(){
+        return ((Double) (getExpectedPlayers() * 0.10)).intValue();
     }
 }
 

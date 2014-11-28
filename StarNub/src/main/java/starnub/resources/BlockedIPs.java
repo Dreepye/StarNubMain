@@ -24,19 +24,20 @@ import utilities.file.yaml.YAMLWrapper;
 import java.io.IOException;
 
 /**
- * Represents StarNubs Internally Banned IPs instance extending YAMLWrapper
+ * Represents StarNubs Internally Banned IPs, banned by the wrapper for DDOS or DOS and other
+ * activities instance extending YAMLWrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class BannedIPs extends YAMLWrapper {
+public class BlockedIPs extends YAMLWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
      * @param starnubResources YAMLWrapper containing starnub resources
      */
-    public BannedIPs(YAMLWrapper starnubResources) {
+    public BlockedIPs(YAMLWrapper starnubResources) {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "internally_blocked_ips", "file"),

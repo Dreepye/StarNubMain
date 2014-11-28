@@ -21,11 +21,14 @@ package utilities.cache.wrappers;
 
 
 import utilities.cache.objects.TimeCache;
+import utilities.concurrency.task.InternalTask;
+import utilities.concurrency.task.ScheduledTask;
 import utilities.concurrency.task.TaskManager;
 import utilities.exceptions.CacheWrapperOperationException;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +45,7 @@ public abstract class CacheWrapper<E1> {
     private final int CACHE_PRUNE_TASK_TIME;
     private final int CACHE_PURGE_TAKE_TIME;
     private final boolean AUTO_CACHE_PURGER;
-    private final ConcurrentHashMap<E1, TimeCache> cacheMap;
+    private final ConcurrentHashMap<E1, TimeCache> CACHE_MAP;
     private final String CACHE_OWNER;
     private final String CACHE_NAME;
     private final String ERROR_MSG;
@@ -65,7 +68,7 @@ public abstract class CacheWrapper<E1> {
         this.CACHE_PRUNE_TASK_TIME = 15;
         this.CACHE_PURGE_TAKE_TIME = 60;
         this.AUTO_CACHE_PURGER = AUTO_CACHE_PURGER;
-        this.cacheMap = new ConcurrentHashMap<E1, TimeCache>(expectedElements, 1.0f, expectedThreads);
+        this.CACHE_MAP = new ConcurrentHashMap<E1, TimeCache>(expectedElements, 1.0f, expectedThreads);
         startEventListener();
         cachePruneTask(SCHEDULED_THREAD_POOL_EXECUTOR);
         cachePurgeTask(SCHEDULED_THREAD_POOL_EXECUTOR);
@@ -94,7 +97,7 @@ public abstract class CacheWrapper<E1> {
         this.CACHE_PRUNE_TASK_TIME = CACHE_PRUNE_TASK_TIME;
         this.CACHE_PURGE_TAKE_TIME = CACHE_PURGE_TAKE_TIME;
         this.AUTO_CACHE_PURGER = AUTO_CACHE_PURGER;
-        this.cacheMap = new ConcurrentHashMap<E1, TimeCache>(expectedElements, 1.0f, expectedThreads);
+        this.CACHE_MAP = new ConcurrentHashMap<E1, TimeCache>(expectedElements, 1.0f, expectedThreads);
         startEventListener();
         cachePruneTask(SCHEDULED_THREAD_POOL_EXECUTOR);
         cachePurgeTask(SCHEDULED_THREAD_POOL_EXECUTOR);
@@ -119,8 +122,8 @@ public abstract class CacheWrapper<E1> {
         return AUTO_CACHE_PURGER;
     }
 
-    public ConcurrentHashMap<E1, TimeCache> getCacheMap() {
-        return cacheMap;
+    public ConcurrentHashMap<E1, TimeCache> getCACHE_MAP() {
+        return CACHE_MAP;
     }
 
     public String getCACHE_OWNER() {
@@ -136,8 +139,6 @@ public abstract class CacheWrapper<E1> {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will add a utilities.cache item to the utilities.cache. Cache that is added must represent a TimeCache
@@ -149,36 +150,28 @@ public abstract class CacheWrapper<E1> {
      */
     public void addCache(E1 key, TimeCache timeCache) throws CacheWrapperOperationException {
         try {
-            cacheMap.put(key, timeCache);
+            CACHE_MAP.put(key, timeCache);
         } catch (NullPointerException e) {
             throw new CacheWrapperOperationException(ERROR_MSG);
         }
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
-     * Uses: This will remove a key and its value you from utilities.cache
+     * Uses: This will remove a key and its value from cache and return it
      * <p/>
      *
      * @param key E1 representing a contactable key
      */
-    public void removeCache(E1 key) throws CacheWrapperOperationException {
+    public TimeCache removeCache(E1 key) throws CacheWrapperOperationException {
         try {
-            cacheMap.remove(key);
+            return CACHE_MAP.remove(key);
         } catch (NullPointerException e) {
             throw new CacheWrapperOperationException(ERROR_MSG);
         }
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
-     * Uses: This will replace a utilities.cache object if the key exist, and if not it will add the item to utilities.cache
+     * Uses: This will replace a utilities.cache object if the key exist, and if not it will add the item to cache
      * <p/>
      *
      * @param key           E1 representing a contactable key
@@ -186,18 +179,16 @@ public abstract class CacheWrapper<E1> {
      */
     public void replaceCache(E1 key, TimeCache timeCache) throws CacheWrapperOperationException {
         try {
-            cacheMap.put(key, timeCache);
+            CACHE_MAP.put(key, timeCache);
         } catch (NullPointerException e) {
             throw new CacheWrapperOperationException(ERROR_MSG);
         }
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will get a utilities.cache object associated to the key supplied
+     * Uses: This will get a cache object associated to the key supplied
      * <p/>
      *
      * @param key E1 representing a contactable key
@@ -205,7 +196,7 @@ public abstract class CacheWrapper<E1> {
      */
     public TimeCache getCache(E1 key) throws CacheWrapperOperationException {
         try {
-            return cacheMap.get(key);
+            return CACHE_MAP.get(key);
         } catch (NullPointerException e) {
             throw new CacheWrapperOperationException(ERROR_MSG);
         }
@@ -213,11 +204,9 @@ public abstract class CacheWrapper<E1> {
 
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will look through the utilities.cache to see if it past the time given. If so it will remove the utilities.cache and add the key
+     * Uses: This will look through the cache to see if it past the time given. If so it will remove the cache and add the key
      * to a HasSet to be returned to the caller.
      * <p/>
      *
@@ -226,16 +215,14 @@ public abstract class CacheWrapper<E1> {
      */
     public HashSet<E1> bulkCacheRemove(long pastTime) {
         HashSet<E1> toRemove = new HashSet<>();
-        cacheMap.keySet().stream().filter(element -> cacheMap.get(element).isPastDesignatedTime(pastTime)).forEach(element -> {
+        CACHE_MAP.keySet().stream().filter(element -> CACHE_MAP.get(element).isPastDesignatedTime(pastTime)).forEach(element -> {
             toRemove.add(element);
-            cacheMap.remove(element);
+            CACHE_MAP.remove(element);
         });
         return toRemove;
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will submit a task to StarNub to at a fixed rate schedule a prune task based on the time supplied.
@@ -245,14 +232,14 @@ public abstract class CacheWrapper<E1> {
      */
     public void cachePruneTask(ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR) {
         if (CACHE_PRUNE_TASK_TIME != 0) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    cacheMap.keySet().stream().filter(key -> cacheMap.get(key).getCacheAge() > TimeUnit.MILLISECONDS.convert(CACHE_PRUNE_TASK_TIME, TIME_UNIT)).forEach(cacheMap::remove);
-                }
-            };
+            Runnable runnable = this::cachePruner;
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-                ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayTask(CACHE_OWNER, String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME), runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
+                ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
+                String taskName = String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME);
+                ScheduledTask scheduledTask = new InternalTask(CACHE_OWNER, taskName, runnable,  scheduledFuture);
+                TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
+                taskManager.getTASK_LIST().put(CACHE_OWNER, new ConcurrentHashMap<>());
+                taskManager.getTASK_LIST().get(CACHE_OWNER).put(taskName, scheduledTask);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }
@@ -260,24 +247,29 @@ public abstract class CacheWrapper<E1> {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
+     * This will prune cache
+     */
+    private void cachePruner(){
+        CACHE_MAP.keySet().stream().filter(key -> CACHE_MAP.get(key).getCacheAge() > TimeUnit.MILLISECONDS.convert(CACHE_PRUNE_TASK_TIME, TIME_UNIT)).forEach(CACHE_MAP::remove);
+    }
+
+    /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will submit a task to StarNub to at a fixed rate schedule a purge task which will completely clear the utilities.cache
+     * Uses: This will submit a task to StarNub to at a fixed rate schedule a purge task which will completely clear the cache
      * <p/>
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      */
     public void cachePurgeTask(ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR) {
         if (CACHE_PURGE_TAKE_TIME != 0) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    cacheMap.clear();
-                }
-            };
+            Runnable runnable = this::cachePurger;
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-                ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayTask(CACHE_OWNER, String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME), runnable, CACHE_PURGE_TAKE_TIME, CACHE_PURGE_TAKE_TIME, TIME_UNIT);
+                ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
+                String taskName = String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME);
+                ScheduledTask scheduledTask = new InternalTask(CACHE_OWNER, taskName, runnable,  scheduledFuture);
+                TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
+                taskManager.getTASK_LIST().put(CACHE_OWNER, new ConcurrentHashMap<>());
+                taskManager.getTASK_LIST().get(CACHE_OWNER).put(taskName, scheduledTask);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }
@@ -285,12 +277,17 @@ public abstract class CacheWrapper<E1> {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
+     * This will purge all cache
+     */
+    private void cachePurger(){
+        CACHE_MAP.clear();
+    }
+
+    /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will execute the registerEvents() method which will register any event listeners with starnub which
-     * will enable auto utilities.cache removal based on the event and the implementers event method(s).
+     * will enable auto cache removal based on the event and the implementers event method(s).
      * <p/>
      */
     public void startEventListener() {

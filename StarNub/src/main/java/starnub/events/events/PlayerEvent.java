@@ -6,7 +6,7 @@ import starnub.connections.player.session.Player;
 import utilities.events.types.Event;
 import utilities.events.types.StringEvent;
 
-public class PlayerEvent extends StringEvent {
+public class PlayerEvent extends StarNubEvent {
 
     private final Player PLAYER_SESSION;
 
@@ -17,10 +17,10 @@ public class PlayerEvent extends StringEvent {
     /**
      *
      * @param PLAYER_SESSION Player representing the player involved in this event
-     * @param EVENT_DATA_OBJECT String representing the data (Reason, Command...)
+     * @param EVENT_REASON String representing the data (Reason, Command...)
      */
-    public PlayerEvent(String EVENT_KEY, Player PLAYER_SESSION, String EVENT_DATA_OBJECT) {
-        super(EVENT_KEY, EVENT_DATA_OBJECT);
+    public PlayerEvent(String EVENT_KEY, Player PLAYER_SESSION, String EVENT_REASON) {
+        super(EVENT_KEY, EVENT_REASON);
         this.PLAYER_SESSION = PLAYER_SESSION;
     }
 

@@ -19,7 +19,7 @@
 package starnub.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
-import starnub.connections.player.session.Restrictions;
+import starnub.connections.player.session.Ban;
 import starnub.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -30,13 +30,13 @@ import java.sql.SQLException;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PlayerSessionRestrictions extends TableWrapper<Restrictions, Integer> {
+public class PlayerSessionRestrictions extends TableWrapper<Ban, Integer> {
 
-    public PlayerSessionRestrictions(Class<Restrictions> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public PlayerSessionRestrictions(Class<Ban> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(typeParameterDBClass, typeParameterIDClass);
     }
 
-    public PlayerSessionRestrictions(ConnectionSource connectionSource, int oldVersion, Class<Restrictions> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public PlayerSessionRestrictions(ConnectionSource connectionSource, int oldVersion, Class<Ban> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
     }
 

@@ -30,6 +30,7 @@ import starnub.StarNub;
 import starnub.connections.player.StarNubProxyConnection;
 import starnub.connections.player.character.CharacterIP;
 import starnub.connections.player.character.PlayerCharacter;
+import starnub.events.events.PlayerEvent;
 import starnub.events.events.StarNubEvent;
 import utilities.strings.StringUtilities;
 
@@ -202,7 +203,7 @@ public class Player extends StarNubProxyConnection {
             StarNub.getDatabaseTables().getCharacterIPLog().create(characterIP);
             new StarNubEvent("Player_Character_New_IP", playerCharacter);
         }
-        this.account = playerCharacter.initialLogInProcessing();
+        this.account = playerCharacter.initialLogInProcessing(sessionIpString, playerUUID.toString());
         try {
             this.isOp = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
         } catch (Exception e){
@@ -304,7 +305,121 @@ public class Player extends StarNubProxyConnection {
         new ChatSendPacket(SERVER_CTX, channel, message).routeToDestination();
     }
 
+    public boolean disconnectReason(String reason) {
+        boolean disconnected = super.disconnect();
+        if (disconnected) {
+            Player player = StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
+            new PlayerEvent("Player_Disconnect_" + reason, player, reason);
+        }
+        return disconnected;
+    }
 
+    public boolean hasBasePermission(Player playerSession, String basePermission){
+        if (playerSession.isOp()) {
+            return true;
+        } else if (playerSession.getPlayerCharacter().getAccount() != null) {
+            return playerSession.getPlayerCharacter().getAccount().hasBasePermission(basePermission);
+        } else {
+            if (groupSync.getNoAccountGroup() != null) {
+                return groupSync.getNoAccountGroup().hasBasePermission(basePermission);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public boolean hasPermission(String permission, boolean checkWildCards){
+        String[] perms;
+        String perm3 = null;
+        boolean fullPermission = false;
+        try {
+            perms = permission.split("\\.", 3);
+            perm3 = perms[2];
+            fullPermission = true;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            perms = permission.split("\\.", 2);
+        }
+        return hasPermission(perms[0], perms[1], perm3, fullPermission, checkWildCards);
+    }
+
+    public boolean hasPermission(Player playerSession, String pluginCommandNamePermission, String commandPermission, boolean checkWildCards){
+        return hasPermission(playerSession, pluginCommandNamePermission, commandPermission, null, false, checkWildCards);
+    }
+
+    public boolean hasPermission(Player playerSession, String pluginCommandNamePermission, String mainArgOrVariable, String commandPermission, boolean checkWildCards){
+        return hasPermission(playerSession, pluginCommandNamePermission, commandPermission, mainArgOrVariable, true, checkWildCards);
+    }
+
+    @SuppressWarnings("all")
+    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, String mainArgOrVariable, boolean fullPermission, boolean checkWildCards){
+        if (this.isOp() && checkWildCards) {
+            return true;
+        } else if (this.getPlayerCharacter().getAccount() != null) {
+            return this.getPlayerCharacter().getAccount().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
+        } else {
+            if (groupSync.getNoAccountGroup() != null) {
+                return groupSync.getNoAccountGroup().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public String getPermissionVariable(String permission){
+        String[] perms;
+        try {
+            perms = permission.split("\\.", 3);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            perms = permission.split("\\.", 2);
+        }
+        return getPermissionVariable(perms[0], perms[1]);
+    }
+
+
+
+    @SuppressWarnings("all")
+    public String getPermissionVariable( String pluginCommandNamePermission, String commandPermission){
+        if (this.isOp()) {
+            return "OP";
+        } else if (this.getPlayerCharacter().getAccount() != null) {
+            return this.getPlayerCharacter().getAccount().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
+        } else {
+            if (groupSync.getNoAccountGroup() != null) {
+                return groupSync.getNoAccountGroup().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public int getPermissionVariableInteger(Player playerSession, String permission){
+        String[] perms;
+        try {
+            perms = permission.split("\\.", 3);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            perms = permission.split("\\.", 2);
+        }
+        return getPermissionVariableInteger(playerSession, perms[0], perms[1]);
+    }
+
+    public int getPermissionVariableInteger(Player playerSession, String pluginCommandNamePermission, String commandPermission){
+        String permissionVariable = getPermissionVariable(pluginCommandNamePermission, commandPermission);
+        if (permissionVariable == null) {
+            return -100001;
+        } else if (permissionVariable.equals("OP")) {
+            return -100000;
+        } else {
+            try {
+                return Integer.parseInt(permissionVariable);
+            } catch (NumberFormatException e) {
+                return -100002;
+            }
+        }
+    }
+
+
+
+    //remove from op
 }
 
 

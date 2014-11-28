@@ -34,7 +34,7 @@ public class TimeCache {
     /**
      * No Args constructor will the set cacheTime to the current system time.
      */
-    protected TimeCache() {
+    public TimeCache() {
         cacheTime = System.currentTimeMillis();
     }
 

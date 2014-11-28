@@ -27,7 +27,7 @@ import org.joda.time.DateTime;
 import starnub.StarNub;
 import starnub.connections.player.account.Account;
 import starnub.connections.player.achievements.CharacterAchievement;
-import starnub.connections.player.session.Restrictions;
+import starnub.connections.player.session.Ban;
 import utilities.strings.StringUtilities;
 
 import java.util.UUID;
@@ -82,7 +82,7 @@ public class PlayerCharacter {
      */
 
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "RESTRICTIONS_ID")
-    private volatile Restrictions restrictions;
+    private volatile Ban ban;
 
     /**
      * Represents the last time this character was used
@@ -160,8 +160,8 @@ public class PlayerCharacter {
         return characterAchievements;
     }
 
-    public Restrictions getRestrictions() {
-        return restrictions;
+    public Ban getBan() {
+        return ban;
     }
 
     /**
@@ -174,7 +174,7 @@ public class PlayerCharacter {
         this.cleanName = StringUtilities.completeClean(name);
         this.uuid = uuid;
         this.lastSeen = DateTime.now();
-        this.restrictions = null;
+        this.ban = null;
     }
 
     public void setLastSeen(DateTime lastSeen) {
@@ -208,7 +208,7 @@ public class PlayerCharacter {
     }
 
     @SuppressWarnings("unchecked")
-    public int initialLogInProcessing(){
+    public int initialLogInProcessing(String ip, String uuid){
         int accountId = 0;
         if (this.account != null) {
             accountId = account.getStarnubId();
@@ -217,7 +217,23 @@ public class PlayerCharacter {
             StarNub.getDatabaseTables().getAccounts().update(this.account);
         }
         StarNub.getDatabaseTables().getCharacters().createOrUpdate(this);
+        this.ban = StarNub.getConnections().getBANS().banGet(ip, uuid);
         return accountId;
     }
+
+    public void removeBan(){
+        this.ban.removeBan();
+        this.ban = null;
+        StarNub.getDatabaseTables().getCharacters().update(this);
+    }
+
+    public void addBan(String restrictedIdentifier, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires){
+        Ban ban = new Ban();
+        ban.setBan(restrictedIdentifier, imposerName, reason, imposerAccount, dateRestrictionExpires);
+        this.ban = ban;
+        this.ban.addBan();
+        StarNub.getDatabaseTables().getCharacters().update(this);
+    }
+
 
 }

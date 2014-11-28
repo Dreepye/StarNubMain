@@ -22,7 +22,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import starnub.Configuration;
 import starnub.Server;
@@ -36,7 +35,7 @@ import starnub.connections.player.character.CharacterIP;
 import starnub.connections.player.groups.GroupSync;
 import starnub.connections.player.session.PendingPlayer;
 import starnub.connections.player.session.Player;
-import starnub.connections.player.session.Restrictions;
+import starnub.connections.player.session.Ban;
 import starnub.database.DatabaseTables;
 import utilities.events.types.ObjectEvent;
 import starnub.events.events.PlayerEvent;
@@ -56,7 +55,6 @@ import starnub.server.packets.connection.ServerDisconnectPacket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -80,7 +78,7 @@ public enum Connectionss {
     private static ConcurrentHashMap<ChannelHandlerContext, Player> connectedPlayers;
     private static Set<Object> whitelist;
 
-    private static ConcurrentHashMap<Object, Restrictions> restrictedIPsUUIDs;
+    private static ConcurrentHashMap<Object, Ban> restrictedIPsUUIDs;
 
 //    private static Set<CachedData> cachedData;
     private volatile static GroupSync groupSync;
@@ -116,7 +114,7 @@ public enum Connectionss {
             );
         }
         if (restrictedIPsUUIDs == null) {
-            restrictedIPsUUIDs = new ConcurrentHashMap<Object, Restrictions>();
+            restrictedIPsUUIDs = new ConcurrentHashMap<Object, Ban>();
         }
         if (whitelist == null ) {
             HashSet hashSet = new HashSet();
@@ -131,7 +129,7 @@ public enum Connectionss {
 //            cachedData = Collections.synchronizedSet(hashSet);
 //        }
         if (alreadyLoggedIn == null){
-            alreadyLoggedIn = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Character Already Online", true, 10, false);
+            alreadyLoggedIn = new
         }
         if (groupSync == null){
             groupSync = GroupSync.INSTANCE;
@@ -317,136 +315,6 @@ public enum Connectionss {
     /**
      * This represents a higher level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This will return the restriction list for use in direct operations.
-     * Please use the other helper methods or request ones to be added in order
-     * to access restrictions list functions.
-     * <p>
-     */
-    private ConcurrentHashMap<Object, Restrictions> getRestrictedIPsUUIDsList() {
-        return restrictedIPsUUIDs;
-    }
-
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is used to load restrictions from the database into memory
-     * <p>
-     */
-    private void restrictionLoad() {
-        //PLACE_HOLDER - Event
-        try {
-            List<Restrictions> restrictedAccounts = StarNub.getDatabaseTables().getPlayerSessionRestrictions().getTableDao().queryForAll();
-            for (Restrictions restriction : restrictedAccounts) {
-                restrictionPurger(restriction);
-                Object castedIdentifier = identifierCast(restriction.getRestrictedIdentifier());
-                if (castedIdentifier instanceof UUID || castedIdentifier instanceof InetAddress) {
-                    restrictedIPsUUIDs.putIfAbsent(castedIdentifier, restriction);
-                } else if (castedIdentifier instanceof String) {
-                    identifierCastError((String) castedIdentifier, "restriction list", castedIdentifier.toString());
-                }
-            }
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-    }
-
-
-    public void restrictionRemove(){
-
-    }
-
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is used to automaticly remove any restrictions that have expired
-     * <p>
-     */
-    public void restrictionsPurge(){
-        restrictedIPsUUIDs.values().forEach(this::restrictionPurger);
-    }
-
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is the actual restriction purging method
-     * <p>
-     * @param restriction Restriction to be check for purge
-     */
-    private void restrictionPurger(Restrictions restriction) {
-        //PLACE_HOLDER - Event
-        if (restriction.getDateRestrictionExpires() == null) {
-            return;
-        }
-        if (restriction.getDateRestrictionExpires().isBeforeNow()) {
-            StarNub.getDatabaseTables().getPlayerSessionRestrictions().delete(restriction);
-            Object castedIdentifier = identifierCast(restriction.getRestrictedIdentifier());
-            StarNub.getLogger().cInfoPrint("StarNub", "A temporary restriction has expired and was removed. ");//event and info
-            restrictedIPsUUIDs.remove(castedIdentifier);
-        }
-    }
-
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is used to check when a player logs in, if they are restrictions or not
-     * <p>
-     */
-    public Restrictions getPlayerRestrictionLogOn(InetAddress ip, UUID uuid){
-        if (restrictedIPsUUIDs.containsKey(ip)) {
-            return restrictedIPsUUIDs.get(ip);
-        }
-        if (restrictedIPsUUIDs.containsKey(uuid)) {
-            return restrictedIPsUUIDs.get(uuid);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This method is used for muting a uuid or InetAddress
-     * <p>
-     * @param identifier Object representing a uuid or IP
-     * @param expirationDate DateTime the restriction will expire, NULL for never
-     */
-    public void playerRestrictMute(Object identifier, String imposerName, Account imposerAccount, String reason,  DateTime expirationDate){
-        //PLACE_HOLDER - Event
-        addRestrictions(identifier, imposerName, imposerAccount, reason,  expirationDate, true, false, false);
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This method is used for command blocking a uuid or InetAddress
-     * <p>
-     * @param identifier Object representing a uuid or IP
-     * @param imposerName String represneting who imposed the restriction
-     * @param imposerAccount Account representing who imposed the restriction
-     * @param expirationDate DateTime the restriction will expire, NULL for never
-     */
-    public void playerRestrictCommandBlock(Object identifier, String imposerName, Account imposerAccount, String reason, DateTime expirationDate){
-        //PLACE_HOLDER - Event
-        addRestrictions(identifier, imposerName, imposerAccount, reason,  expirationDate, false, true, false);
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method is used for banning a uuid or InetAddress
@@ -478,10 +346,10 @@ public enum Connectionss {
      */
     private void addRestrictions(Object identifier, String imposerName, Account imposerAccount, String reason, DateTime expirationDate, boolean mute, boolean commandBlock, boolean ban) {
         Player playerSession = getOnlinePlayerByAnyIdentifier(identifier);
-        Restrictions restrictions = new Restrictions(identifier.toString(), mute, commandBlock, ban, imposerName, imposerAccount, reason,  expirationDate);
+        Ban restrictions = new Ban(identifier.toString(), mute, commandBlock, ban, imposerName, imposerAccount, reason,  expirationDate);
         restrictedIPsUUIDs.putIfAbsent(identifier, restrictions);
         if (playerSession != null){
-            StarNub.getDatabaseTables().getPlayerSessionRestrictions().createOrUpdate(restrictions);
+            StarNub.getDatabaseTables().getPlayerSessionBans().createOrUpdate(restrictions);
             playerSession.setRestrictions(restrictions);
             if (ban) {
                 StarNub.getMessageSender().playerMessage("StarNub", playerSession, "You have been banned.");
@@ -542,7 +410,7 @@ public enum Connectionss {
 
                 InetAddress connectingIp = ((InetSocketAddress) cliConPacket.getSenderCTX().channel().remoteAddress()).getAddress();
                 UUID connectingUuid = cliConPacket.getUUID();
-                Restrictions restrictions = getPlayerRestrictionLogOn(connectingIp, connectingUuid);
+                Ban ban = getPlayerRestrictionLogOn(connectingIp, connectingUuid);
 
                 String header = "^#f5f5f5;-== " + confSI.get("server_name") + " ==-\n" +
                         "^#f5f5f5;-= Powered by StarNub.org =- \n\n";
@@ -561,17 +429,17 @@ public enum Connectionss {
                                 "\n^#f5f5f5;This starbounddata.packets.starbounddata.packets.starnub is whitelisted.\n";
                         rejectClient = "whitelist";
                     }
-                } else if (restrictions != null) {
-                    if (restrictions.isBanned()) {
+                } else if (ban != null) {
+                    if (ban.isBanned()) {
                     /* Build the string information */
-                        DateTime dateRestrictionExpires = restrictions.getDateRestrictionExpires();
+                        DateTime dateRestrictionExpires = ban.getDateRestrictionExpires();
                         if (dateRestrictionExpires == null) {
                             rejectionReason =
-                                    "\n^#f5f5f5;You have been permanently banned: \n^#990000; Since " + cDt.getFormattedDate("MMMM dd, yyyy", restrictions.getDateRestricted());
+                                    "\n^#f5f5f5;You have been permanently banned: \n^#990000; Since " + cDt.getFormattedDate("MMMM dd, yyyy", ban.getDateRestricted());
                             rejectClient = "ban";
                         } else {
                             rejectionReason =
-                                    "^#f5f5f5;You have been temporarily banned: \n^#990000; Since " + cDt.getFormattedDate("MMMM dd, yyyy", restrictions.getDateRestricted()) +
+                                    "^#f5f5f5;You have been temporarily banned: \n^#990000; Since " + cDt.getFormattedDate("MMMM dd, yyyy", ban.getDateRestricted()) +
                                             "\n^#f5f5f5;You will be automatically unbanned on: \n^#990000;" + cDt.getFormattedDate("MMMM dd, yyyy '@' HH:mm '- Server Time'", dateRestrictionExpires);
                             rejectClient = "tban";
                         }
