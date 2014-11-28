@@ -318,7 +318,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                     if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                         spaceMade = true;
                         break;
-                    } else if (!playerToKick.hasPermission("starnubinternals.reserved", true)) {
+                    } else if (!playerToKick.hasPermission("starnubinternals.reserved", true) || !playerToKick.hasPermission("starnubinternals.reserved.kick", true)) {
                         player.disconnectReason("Reserved_Kick");
                         try {
                             RESERVED_KICKED.addCache(playerToKick.getPlayerCharacter().getUuid(), new TimeCache());
