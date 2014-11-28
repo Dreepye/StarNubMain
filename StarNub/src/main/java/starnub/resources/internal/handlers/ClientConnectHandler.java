@@ -84,7 +84,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For internal use with StarNub
      * <p>
-     * Uses: Handles Client Connection Packets for connection attempts
+     * Uses: Handles Client Connection Packets for connection attempts. Step 1 of 2 (ConnectionResponsePacket is Part 2).
      *
      * @param eventData Packet representing the packet being routed
      * @return Packet any class representing packet can be returned
