@@ -231,7 +231,7 @@ public enum GroupSync {
         ((Map) groups.get(groupName)).replace(field, value);
         saveGroupsFile();
         for (Player players : StarNub.getServer().getConnectionss().getConnectedPlayers().values()) {
-            Account account = players.getCharacter().getAccount();
+            Account account = players.getPlayerCharacter().getAccount();
             if (account != null) {
                 try {
                     account.getGroups().refreshAll();

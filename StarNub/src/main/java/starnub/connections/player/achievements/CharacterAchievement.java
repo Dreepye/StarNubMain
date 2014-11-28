@@ -19,7 +19,7 @@ package starnub.connections.player.achievements;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starnub.connections.player.character.Character;
+import starnub.connections.player.character.PlayerCharacter;
 
 @DatabaseTable(tableName = "CHARACTER_ACHIEVEMENTS")
 public class CharacterAchievement {
@@ -35,7 +35,7 @@ public class CharacterAchievement {
      */
 
     @DatabaseField(foreign = true, columnName = "CHARACTER_ID")
-    private volatile starnub.connections.player.character.Character characterId;
+    private volatile PlayerCharacter playerCharacterId;
 
     /**
      * Represents this Players IP ina string mainly used for the database
@@ -53,8 +53,8 @@ public class CharacterAchievement {
         return characterAcheivmentId;
     }
 
-    public Character getCharacterId() {
-        return characterId;
+    public PlayerCharacter getPlayerCharacterId() {
+        return playerCharacterId;
     }
 
     public Achievement getAchievementId() {
@@ -63,11 +63,11 @@ public class CharacterAchievement {
 
     /**
      * Constructor used in adding, removing or updating a achievement record
-     * @param characterId int representing the characters id
+     * @param playerCharacterId int representing the characters id
      * @param achievementId int representing the achievement id
      */
-    public CharacterAchievement(Character characterId, Achievement achievementId) {
-        this.characterId = characterId;
+    public CharacterAchievement(PlayerCharacter playerCharacterId, Achievement achievementId) {
+        this.playerCharacterId = playerCharacterId;
         this.achievementId = achievementId;
     }
 }

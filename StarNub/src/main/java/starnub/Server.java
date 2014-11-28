@@ -79,7 +79,7 @@ public enum Server {
     }
 
 
-    public static PacketEventRouter getPacketEventRouter() {
+    public PacketEventRouter getPacketEventRouter() {
         return packetEventRouter;
     }
 

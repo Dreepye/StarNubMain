@@ -28,6 +28,7 @@ import org.joda.time.DateTime;
 import starnub.StarNub;
 import starnub.connections.player.account.Account;
 import starnub.connections.player.achievements.CharacterAchievement;
+import starnub.connections.player.session.Restrictions;
 
 import java.util.UUID;
 
@@ -46,7 +47,7 @@ import java.util.UUID;
  * @since 1.0
  */
 @DatabaseTable(tableName = "CHARACTERS")
-public class Character {
+public class PlayerCharacter {
 
     /**
      * Represents a unique characterId. It is unique based on Character Name and uuid
@@ -75,6 +76,13 @@ public class Character {
 
     @DatabaseField(dataType = DataType.UUID, uniqueCombo=true, columnName = "uuid")
     private volatile UUID uuid;
+
+    /**
+     * Represents the characters Account that this character is attached to
+     */
+
+    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "STARNUB_ID")
+    private volatile Restrictions restrictions;
 
     /**
      * Represents the last time this character was used
@@ -114,7 +122,7 @@ public class Character {
     /**
      * Constructor for database purposes
      */
-    public Character(){}
+    public PlayerCharacter(){}
 
     public int getCharacterid() {
         return characterid;
@@ -152,13 +160,17 @@ public class Character {
         return characterAchievements;
     }
 
+    public Restrictions getRestrictions() {
+        return restrictions;
+    }
+
     /**
      * Required to build a character class
      * @param name String name of the character
      * @param cleanName String clean name of the character
      * @param uuid uuid of the character
      */
-    public Character(String name, String cleanName, UUID uuid) {
+    public PlayerCharacter(String name, String cleanName, UUID uuid) {
         this.name = name;
         this.cleanName = cleanName;
         this.uuid = uuid;

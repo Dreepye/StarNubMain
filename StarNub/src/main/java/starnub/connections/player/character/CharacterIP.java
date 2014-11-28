@@ -24,7 +24,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.*;
-import java.lang.Character;
 import java.net.InetAddress;
 
 @DatabaseTable(tableName = "CHARACTER_IP_LOG")
@@ -42,7 +41,7 @@ public class CharacterIP {
      */
 
     @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, foreignAutoRefresh = true, columnName = "CHARACTER_ID")
-    private java.lang.Character character;
+    private PlayerCharacter playerCharacter;
 
     /**
      * Represents this Characters IP in a string used for the database storage, cannot store InetAddress
@@ -60,8 +59,8 @@ public class CharacterIP {
         return characterIDIPPairid;
     }
 
-    public Character getCharacter() {
-        return character;
+    public PlayerCharacter getPlayerCharacter() {
+        return playerCharacter;
     }
 
     public String getSessionIpString() {
@@ -70,21 +69,21 @@ public class CharacterIP {
 
     /**
      * Constructor used in adding, removing or updating a object in the database table character_ip_log
-     * @param character PlayerCharacter of the character that was seen with this ip
+     * @param playerCharacter PlayerCharacter of the character that was seen with this ip
      * @param sessionIpString String representing the IP Address as a string
      */
-    public CharacterIP(java.lang.Character character, String sessionIpString) {
-        this.character = character;
+    public CharacterIP(PlayerCharacter playerCharacter, String sessionIpString) {
+        this.playerCharacter = playerCharacter;
         this.sessionIpString = sessionIpString;
     }
 
     /**
      * Constructor used in adding, removing or updating a object in the database table character_ip_log
-     * @param character PlayerCharacter of the character that was seen with this ip
+     * @param playerCharacter PlayerCharacter of the character that was seen with this ip
      * @param sessionIp InetAddress representing the IP Address
      */
-    public CharacterIP(java.lang.Character character, InetAddress sessionIp) {
-        this.character = character;
+    public CharacterIP(PlayerCharacter playerCharacter, InetAddress sessionIp) {
+        this.playerCharacter = playerCharacter;
         this.sessionIpString = StringUtils.remove(sessionIp.toString(), "/");
     }
 }

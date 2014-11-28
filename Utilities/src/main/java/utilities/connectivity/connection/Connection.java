@@ -19,8 +19,8 @@ public abstract class Connection {
     private final ConnectionStatus CONNECTED;
 
     private volatile ConnectionStatus connectionStatus;
-    private final ChannelHandlerContext CLIENT_CTX;
-    private final long CONNECTION_START_TIME;
+    protected final ChannelHandlerContext CLIENT_CTX;
+    protected final long CONNECTION_START_TIME;
 
     protected final EventRouter EVENT_ROUTER;
     protected final boolean EVENT_MESSAGE;
@@ -90,8 +90,6 @@ public abstract class Connection {
     public String getClientHostString(){
         return ((InetSocketAddress) CLIENT_CTX.channel().remoteAddress()).getHostString();
     }
-
-    public abstract void addConnection();
 
     public abstract void removeConnection();
 

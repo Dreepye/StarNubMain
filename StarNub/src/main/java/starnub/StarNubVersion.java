@@ -112,7 +112,7 @@ public class StarNubVersion {
      * <p>
      * Uses: This will return a String Banner with the StarNub Phase and Version
      *
-     * @return
+     * @return String representing the starnub banner
      */
     public String versionBanner() {
         return "\n"

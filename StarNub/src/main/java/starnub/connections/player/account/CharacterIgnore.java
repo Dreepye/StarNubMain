@@ -21,7 +21,7 @@ package starnub.connections.player.account;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starnub.connections.player.character.Character;
+import starnub.connections.player.character.PlayerCharacter;
 
 @DatabaseTable(tableName = "CHARACTER_IGNORES")
 public class CharacterIgnore {
@@ -44,7 +44,7 @@ public class CharacterIgnore {
      */
 
     @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true,  columnName = "CHARACTER_ID")
-    private starnub.connections.player.character.Character characterId;
+    private PlayerCharacter playerCharacterId;
 
     /**
      * Constructor for database purposes
@@ -59,18 +59,18 @@ public class CharacterIgnore {
         return accountSetting;
     }
 
-    public Character getCharacterId() {
-        return characterId;
+    public PlayerCharacter getPlayerCharacterId() {
+        return playerCharacterId;
     }
 
     /**
      * Constructor used in adding, removing or updating an accounts ignored character list
      * @param accountSetting int representing main group that is inheriting a group
-     * @param characterId int representing the group that is being inherited
+     * @param playerCharacterId int representing the group that is being inherited
      */
-    public CharacterIgnore(Settings accountSetting, Character characterId) {
+    public CharacterIgnore(Settings accountSetting, PlayerCharacter playerCharacterId) {
         this.accountSetting = accountSetting;
-        this.characterId = characterId;
+        this.playerCharacterId = playerCharacterId;
     }
 
 }

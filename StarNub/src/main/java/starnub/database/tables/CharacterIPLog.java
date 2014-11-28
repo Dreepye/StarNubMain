@@ -120,10 +120,10 @@ public class CharacterIPLog extends TableWrapper<CharacterIP, Integer> {
         return associatedIps;
     }
 
-    public List<CharacterIP> getCharactersAssociatedIPList(starnub.connections.player.character.Character character){
+    public List<CharacterIP> getCharactersAssociatedIPList(PlayerCharacter playerCharacter){
         try {
             return getTableDao().queryBuilder().where()
-                    .eq("CHARACTER_ID", character)
+                    .eq("CHARACTER_ID", playerCharacter)
                     .query();
         } catch (SQLException e) {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));

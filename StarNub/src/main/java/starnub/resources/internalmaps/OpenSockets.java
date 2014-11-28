@@ -19,10 +19,22 @@
 package starnub.resources.internalmaps;
 
 import io.netty.channel.ChannelHandlerContext;
+import org.joda.time.DateTime;
+import starnub.Connections;
+import starnub.StarNubTask;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents OpenSockets instance are OpenSockets who have no purpose yet and will be purged after a set time
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class OpenSockets extends ConcurrentHashMap<ChannelHandlerContext, Long> {
+
+    private final Connections CONNECTIONS;
 
     /**
      * Creates a new, empty map with an initial table size based on
@@ -42,23 +54,20 @@ public class OpenSockets extends ConcurrentHashMap<ChannelHandlerContext, Long> 
      *                                            negative or the load factor or concurrencyLevel are
      *                                            nonpositive
      */
-    public OpenSockets(int initialCapacity, float loadFactor, int concurrencyLevel) {
+    public OpenSockets(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
-        purgeSockets();
+        this.CONNECTIONS = CONNECTIONS;
+        new StarNubTask("StarNub", "StarNub - OpenSockets - Socket Purge", true , 15, 15, TimeUnit.SECONDS, this::purgeSockets);
     }
 
+    /**
+     * This represents a lower level method for StarNubs API.
+     * <p>
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This method will purge open sockets for connections that never completed within 30 seconds.
+     */
     private void purgeSockets(){
-        new T
+        this.keySet().stream().filter(channelHandlerContext -> (DateTime.now().getMillis() - this.get(channelHandlerContext)) >= 30000).forEach(channelHandlerContext -> channelHandlerContext.close());
     }
-
-
-
-
-
-
-
-
-    // Purge
-    // Task
-    //
 }

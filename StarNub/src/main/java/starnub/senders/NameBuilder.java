@@ -196,12 +196,12 @@ public class NameBuilder {
             playerMessage("StarNub", playerSender, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "You do not have the permission \"starnub.starbounddata.packets.starbounddata.packets.starnub.whisper\" you cannot whisper.");
             return false;
         }
-        if (playerReceiver.getCharacter().getAccount() != null) {
-            if (playerReceiver.getCharacter().getAccount().getAccountSettings().isAppearOffline()
+        if (playerReceiver.getPlayerCharacter().getAccount() != null) {
+            if (playerReceiver.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline()
                     && !con.hasPermission(playerSender, "starnubinternals.bypass.appearoffline", true)) {
                 playerNotFoundMsg(playerSender);
                 return false;
-            } else if (playerReceiver.getCharacter().getAccount().getAccountSettings().isWhisperBlocking()
+            } else if (playerReceiver.getPlayerCharacter().getAccount().getAccountSettings().isWhisperBlocking()
                     && !con.hasPermission(playerSender, "starnubinternals.bypass.whisperblock", true)) {
                playerMessage("StarNub", playerSender, ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "This character is not receiving whispers.");
                 return false;
@@ -533,8 +533,8 @@ public class NameBuilder {
         if (playerTags) {
             String prefix = "";
             String suffix = "";
-            if (player.getCharacter().getAccount() != null) {
-                Settings sett = player.getCharacter().getAccount().getAccountSettings();
+            if (player.getPlayerCharacter().getAccount() != null) {
+                Settings sett = player.getPlayerCharacter().getAccount().getAccountSettings();
                 if (sett.getChatPrefix1() != null) {
                     prefix = sett.getChatPrefix1().getColorTag();
                 }
@@ -580,8 +580,8 @@ public class NameBuilder {
         if (playerTags) {
             String prefix = "";
             String suffix = "";
-            if (player.getCharacter().getAccount() != null) {
-                Settings sett = player.getCharacter().getAccount().getAccountSettings();
+            if (player.getPlayerCharacter().getAccount() != null) {
+                Settings sett = player.getPlayerCharacter().getAccount().getAccountSettings();
                 if (sett.getChatPrefix1() != null) {
                     prefix = sett.getChatPrefix1().getCleanTag();
                 }
@@ -605,7 +605,7 @@ public class NameBuilder {
             }
         }
         if (originalName){
-            playerName = player.getCharacter().getCleanName() + " (Nick: " + playerName + ")";
+            playerName = player.getPlayerCharacter().getCleanName() + " (Nick: " + playerName + ")";
         }
         return playerName;
     }

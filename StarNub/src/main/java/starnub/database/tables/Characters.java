@@ -26,7 +26,7 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnub.StarNub;
-import starnub.connections.player.character.Character;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -40,13 +40,13 @@ import java.util.UUID;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Characters extends TableWrapper<Character, Integer> {
+public class Characters extends TableWrapper<PlayerCharacter, Integer> {
 
-    public Characters(Class<starnub.connections.player.character.Character> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public Characters(Class<PlayerCharacter> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(typeParameterDBClass, typeParameterIDClass);
     }
 
-    public Characters(ConnectionSource connectionSource, int oldVersion, Class<Character> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public Characters(ConnectionSource connectionSource, int oldVersion, Class<PlayerCharacter> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
     }
 
@@ -57,16 +57,16 @@ public class Characters extends TableWrapper<Character, Integer> {
         }
     }
 
-    public Character getCharacterFromNameUUIDCombo(String nameString, UUID UUID) {
+    public PlayerCharacter getCharacterFromNameUUIDCombo(String nameString, UUID UUID) {
         try {
-            QueryBuilder<Character, Integer> queryBuilder =
+            QueryBuilder<PlayerCharacter, Integer> queryBuilder =
                     getTableDao().queryBuilder();
-            Where<Character, Integer> where = queryBuilder.where();
+            Where<PlayerCharacter, Integer> where = queryBuilder.where();
             queryBuilder.where()
                     .eq("NAME", nameString)
                     .and()
                     .eq("uuid", UUID);
-            PreparedQuery<Character> preparedQuery = queryBuilder.prepare();
+            PreparedQuery<PlayerCharacter> preparedQuery = queryBuilder.prepare();
             return getTableDao().queryForFirst(preparedQuery);
         } catch (Exception e) {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
@@ -74,15 +74,15 @@ public class Characters extends TableWrapper<Character, Integer> {
         }
     }
 
-    public Character getCharacterFromCleanNameCombo(String nameString) {
-        Character character = null;
+    public PlayerCharacter getCharacterFromCleanNameCombo(String nameString) {
+        PlayerCharacter playerCharacter = null;
         try {
-            QueryBuilder<Character, Integer> queryBuilder =
+            QueryBuilder<PlayerCharacter, Integer> queryBuilder =
                     getTableDao().queryBuilder();
-            Where<Character, Integer> where = queryBuilder.where();
+            Where<PlayerCharacter, Integer> where = queryBuilder.where();
             queryBuilder.where()
                     .like("CLEAN_NAME", nameString);
-            PreparedQuery<Character> preparedQuery = queryBuilder.prepare();
+            PreparedQuery<PlayerCharacter> preparedQuery = queryBuilder.prepare();
             return getTableDao().queryForFirst(preparedQuery);
         } catch (Exception e) {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
@@ -90,7 +90,7 @@ public class Characters extends TableWrapper<Character, Integer> {
         }
     }
 
-    public List<Character> getCharacterByName(String characterString){
+    public List<PlayerCharacter> getCharacterByName(String characterString){
         try {
             return getTableDao().queryBuilder().where()
                     .like("CLEAN_NAME", characterString)
@@ -101,7 +101,7 @@ public class Characters extends TableWrapper<Character, Integer> {
         return null;
     }
 
-    public List<Character> getCharactersListFromStarnubId(int starnubId) {
+    public List<PlayerCharacter> getCharactersListFromStarnubId(int starnubId) {
         try {
             return getTableDao().queryForEq("STARNUB_ID", starnubId);
         } catch (SQLException e) {

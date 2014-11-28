@@ -28,10 +28,11 @@ import io.netty.handler.codec.ReplayingDecoder;
 import org.reflections.Reflections;
 import starbounddata.packets.Packet;
 import starbounddata.packets.misc.PassThroughPacket;
-import starnub.Server;
 import starnub.StarNub;
+import starnub.connections.player.StarNubProxyConnection;
 import starnub.events.events.EventsInternals;
 import starnub.events.events.StarNubEvent;
+import utilities.connectivity.connection.ProxyConnection;
 import utilities.events.EventSubscription;
 
 import java.io.IOException;
@@ -66,6 +67,8 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     private boolean compressed;
     private int packetIDIndex;
     private Packet packet;
+
+    private StarNubProxyConnection starNubProxyConnection;
 
     public TCPProxyServerPacketDecoder(String connectionSide) {
         super(DecoderState.READ_PACKET_ID );
@@ -124,7 +127,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 checkpoint(DecoderState.READ_PAYLOAD);
             }
             case READ_PAYLOAD: {
-                HashSet<EventSubscription> hashSet = Server.getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
+                HashSet<EventSubscription> hashSet = StarNub.getServer().getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
                 /* Handle Packet if there is an event handler for it, else do not create objects */
                 if (hashSet != null) {
                     in.skipBytes(1+vlqLength);
@@ -209,43 +212,45 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         EventsInternals.eventSend_StarNub_Socket_Connection_Success_Client(ctx);
         setPacketPool(ctx);
         new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
-        //Insert Proxy Connection
+        starNubProxyConnection = new StarNubProxyConnection(StarNub.getStarNubEventRouter(), ctx, destinationCTX);
     }
 
     @SuppressWarnings("unchecked")
     private void setPacketPool(ChannelHandlerContext ctx) {
-        this.packetPool = new HashMap<>();
-        Map<String, Object> packetCountMap = new YamlLoader().resourceYamlLoader("servers/resources.yml");
-        int packetCount = (int) packetCountMap.get("packet_count");
-        for (int index = 0; index <= packetCount; index++) {
-            try {
-                PassThroughPacket packetToSet = PassThroughPacket.class.newInstance();
-                packetToSet.setPacketId((byte) index);
-                this.packetPool.put((byte) index, packetToSet);
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        Map<String, Object> implementedPackets = new YamlLoader().resourceYamlLoader("starboundmanager/starbound_packet_types.yml");
-        Reflections reflections = new Reflections("org.starnub.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets");
-        Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
-        for (Object value : implementedPackets.values()) {
-            ArrayList<Object> list = (ArrayList<Object>) value;
-            for (Class c : allClasses) {
-                String className = c.getName();
-                if (className.substring(className.lastIndexOf(".") + 1).equals((String) list.get(0))) {
-                    /* Add to known packet */
-                    try {
-                        this.packetPool.replace((byte) Integer.parseInt((String) list.get(1)), Class.forName(className).asSubclass(Packet.class).newInstance());
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        for (Packet packet : this.packetPool.values()) {
-            packet.setDestinationSenderCTX(destinationCTX, ctx);
-        }
+
+
+//        this.packetPool = new HashMap<>();
+//        Map<String, Object> packetCountMap = new YamlLoader().resourceYamlLoader("servers/resources.yml");
+//        int packetCount = (int) packetCountMap.get("packet_count");
+//        for (int index = 0; index <= packetCount; index++) {
+//            try {
+//                PassThroughPacket packetToSet = PassThroughPacket.class.newInstance();
+//                packetToSet.setPacketId((byte) index);
+//                this.packetPool.put((byte) index, packetToSet);
+//            } catch (InstantiationException | IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        Map<String, Object> implementedPackets = new YamlLoader().resourceYamlLoader("starboundmanager/starbound_packet_types.yml");
+//        Reflections reflections = new Reflections("org.starnub.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets");
+//        Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
+//        for (Object value : implementedPackets.values()) {
+//            ArrayList<Object> list = (ArrayList<Object>) value;
+//            for (Class c : allClasses) {
+//                String className = c.getName();
+//                if (className.substring(className.lastIndexOf(".") + 1).equals((String) list.get(0))) {
+//                    /* Add to known packet */
+//                    try {
+//                        this.packetPool.replace((byte) Integer.parseInt((String) list.get(1)), Class.forName(className).asSubclass(Packet.class).newInstance());
+//                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//        for (Packet packet : this.packetPool.values()) {
+//            packet.setDestinationSenderCTX(destinationCTX, ctx);
+//        }
     }
 
     /**
@@ -280,6 +285,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private void closeConnection(ChannelHandlerContext ctx){
         try {
+            StarNub.getConnections().getCONNECTED_PLAYERS().
             StarNub.getServer().getConnectionss().playerDisconnectPurposely(ctx, "Disconnected");
             ctx.channel().close();
             ctx.channel().eventLoop().shutdownGracefully();

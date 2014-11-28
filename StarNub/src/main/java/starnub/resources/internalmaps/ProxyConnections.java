@@ -19,17 +19,20 @@
 package starnub.resources.internalmaps;
 
 import io.netty.channel.ChannelHandlerContext;
-import starnub.StarNub;
-import starnub.connections.player.session.Player;
-import starnub.resources.Operators;
-import starnub.resources.Whitelist;
+import starnub.Connections;
+import utilities.connectivity.connection.ProxyConnection;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConnectedPlayers extends ConcurrentHashMap<ChannelHandlerContext, Player> {
+/**
+ * Represents StarNubTask instance
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class ProxyConnections extends ConcurrentHashMap<ChannelHandlerContext, ProxyConnection> {
 
-    private final Whitelist WHITELIST = new Whitelist(StarNub.getResourceManager().getStarnubResources());
-    private final Operators OPERATORS = new Operators(StarNub.getResourceManager().getStarnubResources());
+    private final Connections CONNECTIONS;
 
     /**
      * Creates a new, empty map with an initial table size based on
@@ -49,8 +52,8 @@ public class ConnectedPlayers extends ConcurrentHashMap<ChannelHandlerContext, P
      *                                            negative or the load factor or concurrencyLevel are
      *                                            nonpositive
      */
-    public ConnectedPlayers(int initialCapacity, float loadFactor, int concurrencyLevel) {
+    public ProxyConnections(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
+        this.CONNECTIONS = CONNECTIONS;
     }
-
 }

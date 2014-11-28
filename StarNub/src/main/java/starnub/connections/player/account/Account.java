@@ -27,7 +27,7 @@ import lombok.Getter;
 import org.codehome.utilities.crypto.PasswordHash;
 import org.joda.time.DateTime;
 import starnub.StarNub;
-import starnub.connections.player.character.Character;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.groups.Group;
 import starnub.connections.player.groups.GroupAssignment;
 import starnub.connections.player.groups.GroupInheritance;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * Represents a StarNub account. Accounts are crucial. They are require for StarNub.
  * This will explain how the account system works...
  * <p>
- * When a player logs into the starbounddata.packets.starbounddata.packets.starnub, that is a character the {@link starnub.connections.player.character.Character}
+ * When a player logs into the starbounddata.packets.starbounddata.packets.starnub, that is a character the {@link starnub.connections.player.character.PlayerCharacter}
  * class represents this that character gets attached to a {@link starnub.connections.player.session.Player} session, the Player
  * class represents the session of a character while online. Now the character/player can choose to create an account. This account
  * then hold their personal starbounddata.packets.starbounddata.packets.starnub settings and preferences, like ignore list, starbounddata.packets.chat rooms they were in, ect ect. This Account class
@@ -109,7 +109,7 @@ public class Account {
      */
 
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
-    private volatile ForeignCollection<starnub.connections.player.character.Character> characters;
+    private volatile ForeignCollection<PlayerCharacter> playerCharacters;
 
     /**
      * This represents whether an account has been disabled or not
@@ -211,8 +211,8 @@ public class Account {
         return lastLogin;
     }
 
-    public ForeignCollection<Character> getCharacters() {
-        return characters;
+    public ForeignCollection<PlayerCharacter> getPlayerCharacters() {
+        return playerCharacters;
     }
 
     public boolean isDisbaled() {
@@ -249,7 +249,7 @@ public class Account {
      * @param accountName String representing the account name
      * @param accountPassword String representing the password
      */
-    public Account(Character player, String accountName, String accountPassword) {
+    public Account(PlayerCharacter player, String accountName, String accountPassword) {
         this.accountName = accountName;
         this.accountSettings = new Settings(accountName, StarNub.getServer().getServerChat().getChatRoomByName("Universe"));
         this.lastLogin = DateTime.now();

@@ -67,7 +67,9 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     }
 
     /**
-     * This will register this Event Subscription with the {@link starnub.events.starnub.StarNubEventRouter}
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will register this Event Subscription with the {@link starnub.events.starnub.StarNubEventRouter} - If you used auto register DO NOT USE this
      */
     @Override
     public void submitRegistration() {
@@ -75,7 +77,9 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     }
 
     /**
-     * This will remove this Event Subscription from the {@link starnub.events.starnub.StarNubEventRouter}
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will remove this Event Subscription from the {@link starnub.events.starnub.StarNubEventRouter}
      */
     @Override
     public void removeRegistration() {

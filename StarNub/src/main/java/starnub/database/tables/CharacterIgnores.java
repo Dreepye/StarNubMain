@@ -26,6 +26,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnub.StarNub;
 import starnub.connections.player.account.CharacterIgnore;
 import starnub.connections.player.account.Settings;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -51,7 +52,7 @@ public class CharacterIgnores extends TableWrapper<CharacterIgnore, Integer> {
 
     }
 
-    public CharacterIgnore getIgnoredCharacter(Settings settings, starnub.connections.player.character.Character character) {
+    public CharacterIgnore getIgnoredCharacter(Settings settings, PlayerCharacter playerCharacter) {
         CharacterIgnore characterIgnore = null;
         try {
             QueryBuilder<CharacterIgnore, Integer> queryBuilder =
@@ -60,7 +61,7 @@ public class CharacterIgnores extends TableWrapper<CharacterIgnore, Integer> {
             queryBuilder.where()
                     .eq("ACCOUNT_SETTINGS_ID", settings)
                     .and()
-                    .eq("CHARACTER_ID", character);
+                    .eq("CHARACTER_ID", playerCharacter);
             PreparedQuery<CharacterIgnore> preparedQuery = queryBuilder.prepare();
             characterIgnore = getTableDao().queryForFirst(preparedQuery);
         } catch (Exception e) {

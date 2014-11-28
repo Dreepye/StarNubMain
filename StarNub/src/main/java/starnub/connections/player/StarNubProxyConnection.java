@@ -19,22 +19,41 @@
 package starnub.connections.player;
 
 import io.netty.channel.ChannelHandlerContext;
+import starnub.StarNub;
 import utilities.connectivity.connection.ProxyConnection;
 import utilities.events.EventRouter;
 
-public class StarNubProxyConnection extends ProxyConnection{
+import java.io.IOException;
+
+public class StarNubProxyConnection extends ProxyConnection {
 
     public StarNubProxyConnection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
         super(EVENT_ROUTER, CLIENT_CTX, SERVER_CTX);
+        if ((boolean) StarNub.getConfiguration().getNestedValue("packet_events", "starnub settings")) {
+            StarNub.getConnections().getOPEN_CONNECTIONS().put(CLIENT_CTX, this);
+        } else {
+            boolean uuidIp = false;
+            try {
+                uuidIp = StarNub.getConnections().getWHITELIST().collectionContains(getClientIP(), "uuid_ip");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (uuidIp) {
+                StarNub.getConnections().getPROXY_CONNECTION().put(CLIENT_CTX, this);
+            } else {
+                this.disconnect();
+            }
+        }
     }
 
-    @Override
-    public void addConnection() {
-
-    }
-
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This will automatically schedule a one time task and it can be canceled by calling removeTask()
+     */
     @Override
     public void removeConnection() {
-
+        StarNub.getConnections().getOPEN_CONNECTIONS().remove(CLIENT_CTX);
+        StarNub.getConnections().getPROXY_CONNECTION().remove(CLIENT_CTX);
     }
 }

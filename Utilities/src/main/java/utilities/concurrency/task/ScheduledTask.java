@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class ScheduledTask {
 
-    private final String OWNER;
-    private final String NAME;
-    private final Runnable RUNNABLE;
-    private ScheduledFuture<?> scheduledFuture;
+    protected final String OWNER;
+    protected final String NAME;
+    protected final Runnable RUNNABLE;
+    protected ScheduledFuture<?> scheduledFuture;
 
     public ScheduledTask(String OWNER, String NAME, Runnable RUNNABLE, ScheduledFuture<?> scheduledFuture) {
         this.OWNER = OWNER;
@@ -39,7 +39,6 @@ public abstract class ScheduledTask {
         } else {
             scheduleRepeatingFixedDelayTask(initialDelay, timeDelay, timeUnit);
         }
-
     }
 
     public String getOWNER() {

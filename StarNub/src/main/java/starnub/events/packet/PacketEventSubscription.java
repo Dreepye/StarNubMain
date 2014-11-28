@@ -66,15 +66,21 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     }
 
     /**
-     * This will register this Event Subscription with the {@link starnub.events.packet.PacketEventRouter}
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will register this Event Subscription with the {@link starnub.events.packet.PacketEventRouter} - If you used auto register DO NOT USE this
      */
     @Override
     public void submitRegistration() {
-        StarNub.getServer().getPacketEventRouter().registerEventSubscription(EVENT_KEY, this);
+        if ((boolean) StarNub.getConfiguration().getNestedValue("packet_events", "starnub settings")) {
+            StarNub.getServer().getPacketEventRouter().registerEventSubscription(EVENT_KEY, this);
+        }
     }
 
     /**
-     * This will remove this Event Subscription from the {@link starnub.events.packet.PacketEventRouter}
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will remove this Event Subscription from the {@link starnub.events.packet.PacketEventRouter}
      */
     @Override
     public void removeRegistration() {

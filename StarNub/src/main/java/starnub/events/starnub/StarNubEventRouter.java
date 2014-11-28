@@ -1,6 +1,7 @@
 package starnub.events.starnub;
 
 import starnub.StarNub;
+import starnub.StarNubTask;
 import starnub.plugins.runnable.StarNubRunnable;
 import utilities.events.EventRouter;
 import utilities.events.EventSubscription;
@@ -41,36 +42,32 @@ public class StarNubEventRouter extends EventRouter<String, Event<String>, Boole
     }
 
     public void startEventRouter(){
-        StarNub.getTaskManager().scheduleAtFixedRateTask(
-                "StarNub",
-                "StarNub - Internal Event Handler Processor",
-                () -> {
-                    int quePercentage = (int) (((double) eventsQue.remainingCapacity() / eventsQue.size()) * 100);
-                    while (quePercentage <= 10) {
-                        if (startNewRunnable()) {
-                            System.out.println("Starting new runnable to handle overloaded event que.");
-                        }
-                    }
-                    if (quePercentage <= 25) {
-                        startNewRunnable();
-                    }
-                    if (quePercentage > 90) {
-                        synchronized (HASHSET_LOCK_OBJECT_2) {
-                            if (currentThreads.size() > 1) {
-                                for (StarNubRunnable starNubRunnable : currentThreads) {
-                                    starNubRunnable.setShuttingDown(true);
-                                    currentThreads.remove(starNubRunnable);
-                                    System.out.println("Shutting down idle event thread.");
-                                }
-                            }
-                        }
-                    }
-                },
-                10,
-                10,
-                TimeUnit.SECONDS);
+        new StarNubTask("StarNub", "StarNub - Event Router - Internal Event Handler Processor", true , 10, 10, TimeUnit.SECONDS, this::checkQue);
         if (currentThreads.isEmpty()){
             startNewRunnable();
+        }
+    }
+
+    public void checkQue(){
+        int quePercentage = (int) (((double) eventsQue.remainingCapacity() / eventsQue.size()) * 100);
+        while (quePercentage <= 10) {
+            if (startNewRunnable()) {
+                System.out.println("Starting new runnable to handle overloaded event que.");
+            }
+        }
+        if (quePercentage <= 25) {
+            startNewRunnable();
+        }
+        if (quePercentage > 90) {
+            synchronized (HASHSET_LOCK_OBJECT_2) {
+                if (currentThreads.size() > 1) {
+                    for (StarNubRunnable starNubRunnable : currentThreads) {
+                        starNubRunnable.setShuttingDown(true);
+                        currentThreads.remove(starNubRunnable);
+                        System.out.println("Shutting down idle event thread.");
+                    }
+                }
+            }
         }
     }
 

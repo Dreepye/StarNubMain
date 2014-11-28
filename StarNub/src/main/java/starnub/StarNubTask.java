@@ -19,92 +19,130 @@
 package starnub;
 
 import utilities.concurrency.task.ScheduledTask;
+import utilities.concurrency.task.TaskManager;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents StarNubTask instance
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
 public class StarNubTask extends ScheduledTask {
 
+    TaskManager taskManager = StarNub.getTaskManager();
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will automatically schedule a one time task and it can be canceled by calling removeTask()
+     *
+     * @param OWNER String representing the owner of this task. HIGHLY RECOMMENDED: Please use your exact plugin name from your plugin.yml
+     * @param NAME String representing some name that you want to use that can be used when searching for specific task
+     * @param timeDelay long representing the interval that this task should wait until it executes
+     * @param timeUnit TimeUnit representing what your timeDelay is measured as
+     * @param RUNNABLE Runnable representing the Runnable that extends run() with the code that you want to execute
+     */
     public StarNubTask(String OWNER, String NAME, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
         super(OWNER, NAME, timeDelay, timeUnit, RUNNABLE);
     }
 
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will automatically schedule a repeating with or without a fixed delay task and it can be canceled by calling removeTask()
+     *
+     * @param OWNER String representing the owner of this task. HIGHLY RECOMMENDED: Please use your exact plugin name from your plugin.yml
+     * @param NAME String representing some name that you want to use that can be used when searching for specific task
+     * @param fixedDelay boolean representing if this should wait a fixed amount before starting
+     * @param initialDelay long representing the fixed delay value, if false, use 0
+     * @param timeDelay long representing the interval that this task should repeat itself
+     * @param timeUnit TimeUnit representing what your timeDelay is measured as
+     * @param RUNNABLE Runnable representing the Runnable that extends run() with the code that you want to execute
+     */
     public StarNubTask(String OWNER, String NAME, boolean fixedDelay, long initialDelay, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
         super(OWNER, NAME, fixedDelay, initialDelay, timeDelay, timeUnit, RUNNABLE);
     }
 
+    /**
+     * Recommended: For internal use with StarNub.
+     *
+     * Uses: This will schedule a one time task then insert this task into the task list
+     *
+     * @param timeDelay long representing the interval that this task should repeat itself
+     * @param timeUnit TimeUnit representing what your timeDelay is measured as
+     */
     @Override
     public void scheduleTask(long timeDelay, TimeUnit timeUnit) {
-
+        super.scheduledFuture = taskManager.schedule(super.RUNNABLE, timeDelay, timeUnit);
+        insertTaskList();
     }
 
+    /**
+     * Recommended: For internal use with StarNub.
+     *
+     * Uses: This will schedule a repeating task then insert this task into the task list
+     *
+     * @param initialDelay long representing the fixed delay value, if false, use 0
+     * @param timeDelay long representing the interval that this task should repeat itself
+     * @param timeUnit TimeUnit representing what your timeDelay is measured as
+     */
     @Override
     public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
-
+        super.scheduledFuture = taskManager.scheduleAtFixedRate(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
+        insertTaskList();
     }
 
+    /**
+     * Recommended: For internal use with StarNub.
+     *
+     * Uses: This will schedule a repeating task with a fixed delay then insert this task into the task list
+     *
+     * @param initialDelay long representing the fixed delay value, if false, use 0
+     * @param timeDelay long representing the interval that this task should repeat itself
+     * @param timeUnit TimeUnit representing what your timeDelay is measured as
+     */
     @Override
     public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
-
+        super.scheduledFuture = taskManager.scheduleWithFixedDelay(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
+        insertTaskList();
     }
 
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     *
+     * Uses: This will remove the task from the task list
+     */
     @Override
     public void removeTask() {
-
+        try {
+            taskManager.getTASK_LIST().get(super.OWNER).remove(super.NAME).getScheduledFuture().cancel(true);
+        }catch (NullPointerException e){
+            /* Silent Catch */
+        }
     }
 
-
-
-
-
-    ///Implenetent the below on the task
     /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
      * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is used internally for StarNub to schedule task on the behalf of plugins and the program it's self
-     * <p>
-     * @param taskType representing the task type
-     * @param scheduledTask representing the Task Owner, Name and Runnable
-     * @param initialDelay long representing the initial delay before starting the task
-     * @param timeDelay long representing how far out to schedule the task
-     * @param timeUnit TimeUnit representing the units of time the time delay is for, see Java API for specifics
-     * @return String representing the success message
+     *
+     * Uses: This will insert this task into the task list
      */
-    private String taskScheduler(String taskType, ScheduledTask scheduledTask, long initialDelay, long timeDelay, TimeUnit timeUnit) {
-        scheduledTask.scheduleThisTask(taskType, this, initialDelay, timeDelay, timeUnit);
-        String taskOwner = scheduledTask.getOWNER();
-        String taskName = scheduledTask.getNAME();
-        insertTaskOwner(taskOwner);
-        ConcurrentHashMap<String, ScheduledTask> stg = TASK_LIST.get(taskOwner);
+    private void insertTaskList() {
+        ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = taskManager.getTASK_LIST();
+        if (!taskList.containsKey(super.OWNER)){
+            taskList.put(super.OWNER, new ConcurrentHashMap<>());
+        }
+        ConcurrentHashMap<String, ScheduledTask> stg = taskList.get(super.OWNER);
         int inc = 0;
-        String taskNameOriginal = taskName + " - ";
-        do  {
-            taskName = taskNameOriginal + inc;
-            if (!stg.containsKey(taskName)) {
-                stg.putIfAbsent(taskName, scheduledTask);
+        do {
+            String taskNameOriginal = super.NAME + " - " + inc;
+            if (!stg.containsKey(taskNameOriginal)) {
+                stg.putIfAbsent(taskNameOriginal, this);
                 break;
             }
             inc++;
-        } while (stg.containsKey(taskName));
-        String scheduled = "scheduler-not-scheduled-unknown";
-        if ((TASK_LIST.get(taskOwner).get(taskName).getScheduledFuture() != null)) {
-            scheduled = "scheduler-scheduled";
-        }
-        return scheduled;
+        } while (true);
     }
-
-    /**
-     * This method will check to see if the Task Owner exist, and if not insert them into the Task List
-     *
-     * @param taskOwner String the Task Owner to check or insert
-     */
-    private void insertTaskOwner(String taskOwner){
-        taskOwner = taskOwner.toLowerCase();
-        if (!TASK_LIST.containsKey(taskOwner)){
-            TASK_LIST.put(taskOwner, new ConcurrentHashMap<>());
-        }
-    }
-
 }

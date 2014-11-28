@@ -31,7 +31,7 @@ import starnub.StarNub;
 import starnub.cache.objects.TimeCache;
 import starnub.cache.wrappers.PlayerUUIDCacheWrapper;
 import starnub.connections.player.account.Account;
-import starnub.connections.player.character.Character;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.character.CharacterIP;
 import starnub.connections.player.groups.GroupSync;
 import starnub.connections.player.session.PendingPlayer;
@@ -79,11 +79,6 @@ public enum Connectionss {
     private static ConcurrentHashMap<ChannelHandlerContext, Long> openSockets;
     private static ConcurrentHashMap<ChannelHandlerContext, Player> connectedPlayers;
     private static Set<Object> whitelist;
-
-
-
-
-
 
     private static ConcurrentHashMap<Object, Restrictions> restrictedIPsUUIDs;
 
@@ -584,15 +579,15 @@ public enum Connectionss {
                 }
 
             /* Character check or create & db create/save */
-                starnub.connections.player.character.Character character = cDb.getCharacters().getCharacterFromNameUUIDCombo(cliConPacket.getPlayerName(), cliConPacket.getUUID());
-                if (character == null) {
-                    character = new Character(
+                PlayerCharacter playerCharacter = cDb.getCharacters().getCharacterFromNameUUIDCombo(cliConPacket.getPlayerName(), cliConPacket.getUUID());
+                if (playerCharacter == null) {
+                    playerCharacter = new PlayerCharacter(
                             cliConPacket.getPlayerName(),
                             cChatF.cleanNameComplete(cliConPacket.getPlayerName()),
                             cliConPacket.getUUID());
                     //PLACE_HOLDER - New character seen event
                 } else {
-                    UUID uuid = character.getUuid();
+                    UUID uuid = playerCharacter.getUuid();
                     if (isOnline("StarNub", uuid)) {
                         if (alreadyLoggedIn.getCache(uuid) != null) {
                             playerDisconnectPurposely(uuid, "Already Logged In");
@@ -604,21 +599,21 @@ public enum Connectionss {
                             rejectClient = "online";
                         }
                     } else {
-                        character.setLastSeen(DateTime.now());
+                        playerCharacter.setLastSeen(DateTime.now());
                     }
                 }
 
             /* Account last login time and ID set & db create/save */
                 int accountId = 0;
-                if (character.getAccount() != null) {
-                    accountId = character.getAccount().getStarnubId();
-                    character.initialLogInProcessing();
-                    cDb.getAccounts().update(character.getAccount());
+                if (playerCharacter.getAccount() != null) {
+                    accountId = playerCharacter.getAccount().getStarnubId();
+                    playerCharacter.initialLogInProcessing();
+                    cDb.getAccounts().update(playerCharacter.getAccount());
                     //PLACE_HOLDER - Account Log-In Event
                 }
-                cDb.getCharacters().createOrUpdate(character);
+                cDb.getCharacters().createOrUpdate(playerCharacter);
 
-                Player playerSession = new Player(cliConPacket.getSenderCTX(), cliConPacket.getDestinationCTX(), connectingIp, character, null, accountId, opsList.contains(connectingUuid));
+                Player playerSession = new Player(cliConPacket.getSenderCTX(), cliConPacket.getDestinationCTX(), connectingIp, playerCharacter, null, accountId, opsList.contains(connectingUuid));
 
                 //TODO ignore list This currently just sets it to not have a null list for the starbounddata.packets.chat rooms
                 playerSession.setDoNotSendMessageList();
@@ -627,7 +622,7 @@ public enum Connectionss {
                 //PLACE_HOLDER - Session event
 
             /* Unique Character & IP log check, creation & db create/save */
-                CharacterIP characterIP = new CharacterIP(character, playerSession.getSessionIp());
+                CharacterIP characterIP = new CharacterIP(playerCharacter, playerSession.getSessionIp());
                 if (!cDb.getCharacterIPLog().isCharacterIDAndIPComboRecorded(characterIP)) {
                     cDb.getCharacterIPLog().create(characterIP);
                 }
@@ -725,7 +720,7 @@ public enum Connectionss {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Character character = playerSession.getCharacter();
+                        PlayerCharacter playerCharacter = playerSession.getPlayerCharacter();
                         playerSession.setStarboundClientId(conResPacket.getClientId());
 
                         Server cServer = StarNub.getServer();
@@ -787,22 +782,7 @@ public enum Connectionss {
         });
     }
 
-    //TODO starbounddata.packets.world intercept
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This method will purge open sockets for connections that never completed within 30 seconds. This is used to
-     * help prevent dos, by opening sockets on StarNub. This is surly not full proof as sometime the socket hangs open
-     * on the OS side, this method will eventually be accompanied by more sure proof methods, such as a starbounddata.packets.connection rate limiter
-     * when a DOS or DDOS is detected, as well as a manual packet back to the connector to insure socket close.
-     * <p>
-     */
-    public void openSocketPurge(){
-        openSockets.keySet().stream().filter(ctx -> (DateTime.now().getMillis() - openSockets.get(ctx)) >= 30000).forEach(ctx -> ctx.close());
-    }
 
     /**
      * This represents a lower level method for StarNubs API.
@@ -1000,9 +980,9 @@ public enum Connectionss {
             @Override
             public void onEvent(Event eventData) {
                 Player playerSession = (Player) ((PlayerEvent) eventData).getPLAYER_SESSION();
-                Character character = playerSession.getCharacter();
+                PlayerCharacter playerCharacter = playerSession.getPlayerCharacter();
                 playerSession.setEndTimeUtc(DateTime.now());
-                character.updatePlayedTimeLastSeen();
+                playerCharacter.updatePlayedTimeLastSeen();
                 try {
                     playerSession.getServerCtx().close();
                 } catch (Exception e) {
@@ -1058,8 +1038,8 @@ public enum Connectionss {
      */
     public void connectedPlayerPlayedTimeUpdate(){
         for (Player players : connectedPlayers.values()) {
-            Character character = players.getCharacter();
-            character.updatePlayedTimeLastSeen();
+            PlayerCharacter playerCharacter = players.getPlayerCharacter();
+            playerCharacter.updatePlayedTimeLastSeen();
         }
     }
 
@@ -1159,7 +1139,7 @@ public enum Connectionss {
      */
     private Player playerByUUID(UUID uuid) {
         for (Player playerSession : connectedPlayers.values()){
-            if (playerSession.getCharacter().getUuid().equals(uuid)) {
+            if (playerSession.getPlayerCharacter().getUuid().equals(uuid)) {
                 return playerSession;
             }
         }
@@ -1198,7 +1178,7 @@ public enum Connectionss {
      */
     private Player playerByName(String identifierString) {
         for (Player playerSession : connectedPlayers.values()){
-            if (playerSession.getCharacter().getName().equalsIgnoreCase(identifierString) || playerSession.getCharacter().getCleanName().equalsIgnoreCase(identifierString) ||
+            if (playerSession.getPlayerCharacter().getName().equalsIgnoreCase(identifierString) || playerSession.getPlayerCharacter().getCleanName().equalsIgnoreCase(identifierString) ||
                     playerSession.getNickName().equalsIgnoreCase(identifierString) || playerSession.getCleanNickName().equalsIgnoreCase(identifierString) ||
                     playerSession.getGameName().equalsIgnoreCase(identifierString)) {
                 return playerSession;
@@ -1455,8 +1435,8 @@ public enum Connectionss {
             Player senderSession = getOnlinePlayerByAnyIdentifier(sender);
             if (hasPermission(senderSession, "starnub.bypass.appearoffline", true)) {
                  return true;
-            } else if (playerSession.getCharacter().getAccount() != null) {
-                return !playerSession.getCharacter().getAccount().getAccountSettings().isAppearOffline();
+            } else if (playerSession.getPlayerCharacter().getAccount() != null) {
+                return !playerSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
             } else {
                 return true;
             }
@@ -1467,8 +1447,8 @@ public enum Connectionss {
 
     public ArrayList<Boolean> canSeePlayerIsHiddenCanSee(Object senderSession, Player playerSession) {
         boolean appearOffline = false;
-        if (playerSession.getCharacter().getAccount() != null) {
-            appearOffline = playerSession.getCharacter().getAccount().getAccountSettings().isAppearOffline();
+        if (playerSession.getPlayerCharacter().getAccount() != null) {
+            appearOffline = playerSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
         }
 
         if (senderSession instanceof Player) {
@@ -1570,8 +1550,8 @@ public enum Connectionss {
     public boolean hasBasePermission(Player playerSession, String basePermission){
         if (playerSession.isOp()) {
             return true;
-        } else if (playerSession.getCharacter().getAccount() != null) {
-            return playerSession.getCharacter().getAccount().hasBasePermission(basePermission);
+        } else if (playerSession.getPlayerCharacter().getAccount() != null) {
+            return playerSession.getPlayerCharacter().getAccount().hasBasePermission(basePermission);
         } else {
             if (groupSync.getNoAccountGroup() != null) {
                 return groupSync.getNoAccountGroup().hasBasePermission(basePermission);
@@ -1607,8 +1587,8 @@ public enum Connectionss {
     public boolean hasPermission(Player playerSession, String pluginCommandNamePermission, String commandPermission, String mainArgOrVariable, boolean fullPermission, boolean checkWildCards){
         if (playerSession.isOp() && checkWildCards) {
             return true;
-        } else if (playerSession.getCharacter().getAccount() != null) {
-             return playerSession.getCharacter().getAccount().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
+        } else if (playerSession.getPlayerCharacter().getAccount() != null) {
+             return playerSession.getPlayerCharacter().getAccount().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
         } else {
              if (groupSync.getNoAccountGroup() != null) {
                  return groupSync.getNoAccountGroup().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
@@ -1632,8 +1612,8 @@ public enum Connectionss {
     public String getPermissionVariable(Player playerSession, String pluginCommandNamePermission, String commandPermission){
         if (playerSession.isOp()) {
             return "OP";
-        } else if (playerSession.getCharacter().getAccount() != null) {
-            return playerSession.getCharacter().getAccount().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
+        } else if (playerSession.getPlayerCharacter().getAccount() != null) {
+            return playerSession.getPlayerCharacter().getAccount().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
         } else {
             if (groupSync.getNoAccountGroup() != null) {
                 return groupSync.getNoAccountGroup().getPermissionSpecific(pluginCommandNamePermission, commandPermission);

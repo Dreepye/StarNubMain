@@ -25,7 +25,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Getter;
 import starnub.StarNub;
-import starnub.connections.player.character.Character;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.groups.Group;
 import starnub.connections.player.groups.GroupAssignment;
 import starnub.connections.player.groups.Tag;
@@ -36,7 +36,6 @@ import java.util.Map;
 
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
 public class Settings {
-
 
     @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS")
     private volatile String accountSettings;
@@ -159,14 +158,14 @@ public class Settings {
         StarNub.getDatabaseTables().getAccountSettings().update(this);
     }
 
-    public void addIgnoredCharacter(starnub.connections.player.character.Character character){
-        if (StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, character) == null) {
-            this.characterIgnores.add(new CharacterIgnore(this, character));
+    public void addIgnoredCharacter(PlayerCharacter playerCharacter){
+        if (StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, playerCharacter) == null) {
+            this.characterIgnores.add(new CharacterIgnore(this, playerCharacter));
         }
     }
 
-    public void removeIgnoredCharacter(Character character){
-        this.characterIgnores.remove(StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, character));
+    public void removeIgnoredCharacter(PlayerCharacter playerCharacter){
+        this.characterIgnores.remove(StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, playerCharacter));
     }
 
     public void addChatRoomSubscription(ChatRoom chatRoom){
@@ -201,12 +200,12 @@ public class Settings {
             StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when looking up available Tags.");
             return;
         }
-        if (playerSession.getCharacter().getAccount() == null) {
+        if (playerSession.getPlayerCharacter().getAccount() == null) {
             StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
             return;
         }
         String availableTags = "Available Tags: ";
-        for (GroupAssignment groupAssignment : playerSession.getCharacter().getAccount().getGroups()) {
+        for (GroupAssignment groupAssignment : playerSession.getPlayerCharacter().getAccount().getGroups()) {
             Group group = groupAssignment.getGroup();
             String groupTag = group.getTag().getName();
             if (sender instanceof Player) {
@@ -234,7 +233,7 @@ public class Settings {
             StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when trying to set Tags.");
             return;
         }
-        if (playerSession.getCharacter().getAccount() == null) {
+        if (playerSession.getPlayerCharacter().getAccount() == null) {
             StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
             return;
         }
@@ -244,7 +243,7 @@ public class Settings {
         if (prefixOrSuffix.contains("[")) {
             prefixOrSuffix =  prefixOrSuffix.replace("[", "");
         }
-        for (GroupAssignment groupAssignment : playerSession.getCharacter().getAccount().getGroups()) {
+        for (GroupAssignment groupAssignment : playerSession.getPlayerCharacter().getAccount().getGroups()) {
             Group group = groupAssignment.getGroup();
             String groupTag = group.getTag().getName();
             if (groupTag.equalsIgnoreCase(prefixOrSuffix)) {

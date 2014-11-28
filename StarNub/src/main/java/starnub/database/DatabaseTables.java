@@ -25,6 +25,7 @@ import starnub.connections.player.account.*;
 import starnub.connections.player.achievements.Achievement;
 import starnub.connections.player.achievements.CharacterAchievement;
 import starnub.connections.player.character.CharacterIP;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.groups.*;
 import starnub.connections.player.session.Player;
 import starnub.connections.player.session.Restrictions;
@@ -257,7 +258,7 @@ public class DatabaseTables {
         accountSettings = new AccountSettings(connection, 0, Settings.class, String.class);
         accountPermissions = new AccountPermissions(connection, 0, AccountPermission.class, Integer.class);
         achievements = new Achievements(connection, 0, Achievement.class, Integer.class);
-        characters = new Characters(connection, 0, starnub.connections.player.character.Character.class, Integer.class);
+        characters = new Characters(connection, 0, PlayerCharacter.class, Integer.class);
         characterAchievements = new CharacterAchievements(connection, 0, CharacterAchievement.class, Integer.class);
         characterIgnores = new CharacterIgnores(connection, 0, CharacterIgnore.class, Integer.class);
         characterIPLog = new CharacterIPLog(connection, 0, CharacterIP.class, Integer.class);

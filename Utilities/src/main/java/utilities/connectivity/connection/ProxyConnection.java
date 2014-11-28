@@ -31,9 +31,9 @@ import java.net.InetSocketAddress;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public class ProxyConnection extends Connection {
+public abstract class ProxyConnection extends Connection {
 
-    private final ChannelHandlerContext SERVER_CTX;
+    protected final ChannelHandlerContext SERVER_CTX;
 
     public ProxyConnection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
         super(EVENT_ROUTER, CLIENT_CTX);
@@ -59,4 +59,6 @@ public class ProxyConnection extends Connection {
     public String getServerHostString(){
         return ((InetSocketAddress) SERVER_CTX.channel().remoteAddress()).getHostString();
     }
+
+    public abstract void removeConnection();
 }

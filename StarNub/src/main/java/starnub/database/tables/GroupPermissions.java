@@ -24,6 +24,7 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnub.StarNub;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.groups.Group;
 import starnub.connections.player.groups.GroupPermission;
 import starnub.database.TableWrapper;
@@ -70,7 +71,7 @@ public class GroupPermissions extends TableWrapper<GroupPermission, Integer> {
         return groupAssignment;
     }
 
-    public List<GroupPermission> getGroupPermissions(starnub.connections.player.character.Character groupId){
+    public List<GroupPermission> getGroupPermissions(PlayerCharacter groupId){
         try {
             return getTableDao().queryBuilder().where()
                     .eq("GROUP", groupId)
