@@ -15,8 +15,10 @@
         <module>StarNubClient</module>
         <module>Utilities</module>
         <module>CentralServer</module>
+        <module>CentralClient</module>
         <module>Proxy</module>
         <module>StarboundManager</module>
+        <module>StarNubData</module>
     </modules>
 
 <build>

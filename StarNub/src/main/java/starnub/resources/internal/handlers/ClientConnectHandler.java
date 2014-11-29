@@ -179,7 +179,7 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @return RejectionCache or null depending if we need to reject this player
      */
     private RejectionCache restartingCheck(Player player, String header, String footer) {
-        if (StarNub.getServer().getStarboundManager().getStatus() instanceof Starting) {
+        if (StarNub.getStarboundServer().getStarboundManager().getStatus() instanceof Starting) {
             String reason = "\n^#f5f5f5;Starbound is restarting, please come back in a few minutes.\n";
             return new RejectionCache(true, RejectionCache.Reason.RESTARTING, header + reason + footer, player);
         } else {

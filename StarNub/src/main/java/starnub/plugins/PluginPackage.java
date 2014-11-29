@@ -18,11 +18,11 @@
 
 package starnub.plugins;
 
-import org.codehome.utilities.files.GetFileSize;
-import starnub.Configuration;
 import starnub.StarNub;
 import starnub.events.events.ThreadEvent;
 import starnub.plugins.runnable.StarNubRunnable;
+import starnub.resources.Configuration;
+import utilities.file.utility.GetFileSize;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,39 +45,22 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class PluginPackage {
 
-
     public final String PLUGIN_NAME;
-
     public final double VERSION;
-
     public final double SIZE_KBS;
-
     public final String DEPENDENCIES;
-
     public final boolean HAS_CONFIGURATION_FILE;
-
     public final Configuration CONFIGURATION;
-
     public final String PLUGIN_LANGUAGE;
-
     public final String PLUGIN_AUTHOR;
-
     public final String PLUGIN_URL;
-
     public final String PLUGIN_DESCRIPTION;
-
     private final Plugin PLUGIN;
-
     public final boolean HAS_COMMANDS;
-
     public final String COMMANDS_NAME;
-
     public final String COMMANDS_ALIAS;
-
     private final ConcurrentHashMap<ArrayList<String>, CommandPackage> COMMAND_PACKAGES;
-
     private boolean isEnabled;
-
     private boolean hasThreads;
 
     private ConcurrentHashMap<Thread, StarNubRunnable> threads;
@@ -125,7 +108,7 @@ public abstract class PluginPackage {
 
         this.PLUGIN_NAME = pluginName;
         this.VERSION = version;
-        this.SIZE_KBS = new GetFileSize().getFileSize(pluginLocation, "kilobytes");
+        this.SIZE_KBS = GetFileSize.getFileSize(pluginLocation, "kilobytes");
         this.DEPENDENCIES = dependencies;
         this.HAS_CONFIGURATION_FILE = pluginConfigurationFile;
         this.CONFIGURATION = pluginConfiguration;

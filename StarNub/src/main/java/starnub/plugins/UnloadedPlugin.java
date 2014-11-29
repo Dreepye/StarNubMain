@@ -31,17 +31,11 @@ import java.util.Map;
  */
 class UnloadedPlugin {
 
-
     private final String PLUGIN_NAME;
-
     private final double PLUGIN_VERSION;
-
     private final URL PLUGIN_URL;
-
     private final File PLUGIN_FILE;
-
     private final URLClassLoader PLUGIN_URL_CLASS_LOADER;
-
     private final Map<String, Object> PLUGIN_PLUGIN_YML;
 
     /**

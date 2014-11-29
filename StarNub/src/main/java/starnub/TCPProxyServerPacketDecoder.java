@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnub.server;
+package starnub;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -27,7 +27,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.ReplayingDecoder;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starnub.StarNub;
 import starnub.connections.player.StarNubProxyConnection;
 import starnub.connections.player.session.Player;
 import starnub.events.events.EventsInternals;
@@ -128,7 +127,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 checkpoint(DecoderState.READ_PAYLOAD);
             }
             case READ_PAYLOAD: {
-                HashSet<EventSubscription> hashSet = StarNub.getServer().getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
+                HashSet<EventSubscription> hashSet = StarNub.getStarboundServer().getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
                 /* Handle Packet if there is an event handler for it, else do not create objects */
                 if (hashSet != null) {
                     in.skipBytes(1+vlqLength);

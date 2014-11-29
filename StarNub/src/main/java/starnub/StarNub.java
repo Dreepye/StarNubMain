@@ -18,13 +18,10 @@
 
 package starnub;
 
-import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 
 import starnub.database.DatabaseTables;
-import starnub.events.events.EventsInternals;
 import starnub.events.events.StarNubEvent;
-import starnub.events.packet.PacketEventRouter;
 import starnub.events.starnub.StarNubEventRouter;
 import starnub.logger.MultiOutputLogger;
 import starnub.plugins.PluginManager;
@@ -32,9 +29,6 @@ import starnub.resources.Configuration;
 import starnub.resources.ResourceManager;
 import starnub.senders.NameBuilder;
 import utilities.concurrency.task.TaskManager;
-import utilities.time.DateAndTimes;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the StarNubs core.
@@ -60,8 +54,8 @@ public final class StarNub {
     private static final Connections connections = Connections.getInstance();
     private static final DatabaseTables databaseTables = DatabaseTables.getInstance();
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
-    private static final PluginManager pluginManager;
-    private static final Server server;
+    private static final PluginManager pluginManager = PluginManager.getInstance();
+    private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
     public static Connections getConnections() {
         return connections;
@@ -74,7 +68,6 @@ public final class StarNub {
     public static Configuration getConfiguration() {
         return configuration;
     }
-
 
 
     public static NameBuilder getNameBuilder() {
@@ -101,8 +94,8 @@ public final class StarNub {
         return pluginManager;
     }
 
-    public static Server getServer() {
-        return server;
+    public static StarboundServer getStarboundServer() {
+        return STARBOUND_SERVER;
     }
 
     public static TaskManager getTaskManager() {

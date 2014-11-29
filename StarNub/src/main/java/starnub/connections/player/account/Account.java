@@ -251,7 +251,7 @@ public class Account {
      */
     public Account(PlayerCharacter player, String accountName, String accountPassword) {
         this.accountName = accountName;
-        this.accountSettings = new Settings(accountName, StarNub.getServer().getServerChat().getChatRoomByName("Universe"));
+        this.accountSettings = new Settings(accountName, StarNub.getStarboundServer().getServerChat().getChatRoomByName("Universe"));
         this.lastLogin = DateTime.now();
         try {
             this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
@@ -265,8 +265,8 @@ public class Account {
             StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
         }
         StarNub.getDatabaseTables().getAccounts().createIfNotExist(this);
-        for (String groupName : StarNub.getServer().getConnectionss().getGroupSync().getGroups().keySet()) {
-            Map<String, Object> group = (Map) StarNub.getServer().getConnectionss().getGroupSync().getGroups().get(groupName);
+        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
+            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
             if (((String) group.get("type")).equalsIgnoreCase("default")) {
                 getAndAddGroup(groupName);
             }

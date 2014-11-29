@@ -16,16 +16,14 @@
 * this CodeHome Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnub.server;
+package starnub;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnub.StarNub;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Map;
 
 /**
 * This class will simply pass UDP traffic to starbounddata.packets.starbounddata.packets.starnub. This is
@@ -40,9 +38,9 @@ import java.util.Map;
 */
 final class UDPProxyServer implements Runnable {
 
-    private final int snServerPort = (int) ((Map) StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("starnub_port");
+    private final int snServerPort = (int) StarNub.getConfiguration().getNestedValue("starnub settings", "starnub_port");
     private final String sbRemoteHost = "127.0.0.1";
-    private final int sbRemotePort = (int) ((Map)StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("starbound_port");
+    private final int sbRemotePort = (int) StarNub.getConfiguration().getNestedValue("starnub settings", "starbound_port");
     private DatagramSocket ds;
 
     /**
@@ -63,9 +61,8 @@ final class UDPProxyServer implements Runnable {
         byte[] reply = new byte[4096];
 
         /* Loop until starbounddata.packets.starbounddata.packets.starnub is shutting down */
-        while (!StarNub.getTask().isShuttingDown()) {
+        while (true) {
             try {
-
 				/* (1) receive data from client */
                 DatagramPacket from_client = new DatagramPacket(request, request.length);
                 ds.receive(from_client);

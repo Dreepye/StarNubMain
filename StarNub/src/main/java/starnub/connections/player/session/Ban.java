@@ -77,7 +77,7 @@ public class Ban {
 
     @DatabaseField(dataType = DataType.STRING, columnName = "REASON")
     private volatile String reason;
-
+//server banned on auto grab
 
     /**
      * Represents the time the restriction was placed

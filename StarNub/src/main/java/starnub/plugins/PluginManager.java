@@ -43,20 +43,29 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public enum PluginManager {
-    INSTANCE;
+public class PluginManager {
 
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final PluginManager instance = new PluginManager();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private PluginManager() {
+    }
+
+    public static PluginManager getInstance() {
+        return instance;
+    }
 
     protected final static String pluginDirString = "StarNub/Plugins/";
-
     protected static ConcurrentHashMap<String, UnloadedPlugin> unloadedPlugins;
-
     protected static ConcurrentHashMap<String, PluginPackage> loadedPlugins;
-
     public static String getPluginDirString() {
         return pluginDirString;
     }
-
     public static ConcurrentHashMap<String, UnloadedPlugin> getUnloadedPlugins() {
         return unloadedPlugins;
     }

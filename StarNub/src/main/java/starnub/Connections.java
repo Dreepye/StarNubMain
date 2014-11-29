@@ -16,7 +16,7 @@ package starnub;/*
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import starnub.connections.player.session.PendingPlayer;
+import starnub.cache.wrappers.IPCacheWrapper;
 import starnub.resources.Bans;
 import starnub.resources.BlockedIPs;
 import starnub.resources.Whitelist;
@@ -24,6 +24,8 @@ import starnub.resources.internal.OpenConnections;
 import starnub.resources.internal.OpenSockets;
 import starnub.resources.internal.Players;
 import starnub.resources.internal.ProxyConnections;
+
+import java.util.concurrent.TimeUnit;
 
 public class Connections {
 
@@ -49,15 +51,16 @@ public class Connections {
     public static Connections getInstance() {
         return instance;
     }
-
+    //CHECK AUTO PURGE ALGORYTHEM
+    //starnub syncronising
+    private final IPCacheWrapper INTERNAL_IP_WATCHLIST = new IPCacheWrapper("StarNub", "StarNub - Internal IP Watch List", true, StarNub.getTaskManager(), 15, 60, TimeUnit.SECONDS, 50, 25);
     private final BlockedIPs INTERNALLY_BLOCKED_IPS = new BlockedIPs(StarNub.getResourceManager().getStarnubResources());
     private final Whitelist WHITELIST = new Whitelist(StarNub.getResourceManager().getStarnubResources());
     private final Bans BANS = new Bans();
-
-    private final OpenSockets OPEN_SOCKETS = new OpenSockets();//Elements, expected Threads
-    private final OpenConnections OPEN_CONNECTIONS = new OpenConnections();//Elements, expected Threads
-    private final ProxyConnections PROXY_CONNECTION = new ProxyConnections();//Elements, expected Threads
-    private final Players CONNECTED_PLAYERS = new Players();//Elements, expected Threads
+    private final OpenSockets OPEN_SOCKETS = new OpenSockets(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
+    private final OpenConnections OPEN_CONNECTIONS = new OpenConnections(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
+    private final ProxyConnections PROXY_CONNECTION = new ProxyConnections(this, getExpectedPlayers(), 1.0f, getExpectedConnectsPercentage() );//Elements, expected Threads
+    private final Players CONNECTED_PLAYERS = new Players(this, getExpectedPlayers(), 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
 
     public BlockedIPs getINTERNALLY_BLOCKED_IPS() {
         return INTERNALLY_BLOCKED_IPS;
@@ -87,13 +90,9 @@ public class Connections {
         return CONNECTED_PLAYERS;
     }
 
-    public getExpectedThreads(){
-
-    }
-
     public int getExpectedPlayers(){
         return (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit")
-                + (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit_reserved");
+                + (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit_reserved") + 2;
     }
 
     public int getExpectedThreadsGeneric(){

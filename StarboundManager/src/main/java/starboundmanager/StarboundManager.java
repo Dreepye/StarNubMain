@@ -57,7 +57,7 @@ public class StarboundManager extends StarboundServerExe {
      *
      * @param EVENT_ROUTER EventRouter an event router from the Utilities Library
      */
-    private StarboundManager(EventRouter EVENT_ROUTER) {
+    public StarboundManager(EventRouter EVENT_ROUTER) {
         super();
         this.STOPPED = new Stopped(this);
         this.STARTING = new Starting(this);

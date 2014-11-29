@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnub.server;
+package starnub;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -31,7 +31,6 @@ import io.netty.channel.socket.SocketChannel;
  */
 class TCPProxyServerInitializer extends ChannelInitializer<SocketChannel> {
 
-    /* We use an initializer to set up any handlers for this channel */
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addFirst(new TCPProxyServerPacketDecoder("ClientSide"));

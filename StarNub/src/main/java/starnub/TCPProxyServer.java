@@ -16,14 +16,13 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnub.server;
+package starnub;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import starnub.StarNub;
 import utilities.concurrency.thread.NamedThreadFactory;
 
 import java.util.concurrent.Executors;
@@ -46,17 +45,11 @@ import java.util.concurrent.Executors;
 class TCPProxyServer {
 
     private static NioEventLoopGroup connectionBossGroup;
-
     private static NioEventLoopGroup connectionWorkerGroup;
-
     private static boolean tcpNoDelay;
-
     private static PooledByteBufAllocator socketBuffer;
-
     private static int recvBuffer;
-
     private static int sendBuffer;
-
     private static int writeHighWaterMark;
 
     public TCPProxyServer() {

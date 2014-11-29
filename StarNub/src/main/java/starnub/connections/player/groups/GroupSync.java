@@ -230,7 +230,7 @@ public enum GroupSync {
     public void updateGroupField(String groupName, String field, String value){
         ((Map) groups.get(groupName)).replace(field, value);
         saveGroupsFile();
-        for (Player players : StarNub.getServer().getConnectionss().getConnectedPlayers().values()) {
+        for (Player players : StarNub.getStarboundServer().getConnectionss().getConnectedPlayers().values()) {
             Account account = players.getPlayerCharacter().getAccount();
             if (account != null) {
                 try {

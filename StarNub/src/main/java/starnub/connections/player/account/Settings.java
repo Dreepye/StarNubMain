@@ -195,7 +195,7 @@ public class Settings {
     }
 
     public void availableTags(Object sender, Object playerIdentifier){
-        Player playerSession = StarNub.getServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        Player playerSession = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
         if (playerSession == null) {
             StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when looking up available Tags.");
             return;
@@ -228,7 +228,7 @@ public class Settings {
     }
 
     public void setPreffixOrSuffix(Object sender, Object playerIdentifier, boolean prefix, int position, String prefixOrSuffix){
-        Player playerSession = StarNub.getServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        Player playerSession = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
         if (playerSession == null) {
             StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when trying to set Tags.");
             return;

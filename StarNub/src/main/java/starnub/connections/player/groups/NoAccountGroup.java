@@ -53,7 +53,7 @@ public class NoAccountGroup {
 
     public NoAccountGroup(){
         String noAccountGroup = "";
-        Map<String, Object> groups = StarNub.getServer().getConnectionss().getGroupSync().getGroups();
+        Map<String, Object> groups = StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups();
         for (String groupName : groups.keySet()){
             Map groupMap = (Map) groups.get(groupName);
             if (((String) groupMap.get("type")).equalsIgnoreCase("noaccount")){
