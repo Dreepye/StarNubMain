@@ -20,7 +20,7 @@ package starnub;
 
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
-import starboundmanager.StarboundManagement;
+
 import starnub.database.DatabaseTables;
 import starnub.events.events.EventsInternals;
 import starnub.events.events.StarNubEvent;
@@ -30,8 +30,11 @@ import starnub.logger.MultiOutputLogger;
 import starnub.plugins.PluginManager;
 import starnub.resources.Configuration;
 import starnub.resources.ResourceManager;
+import starnub.senders.NameBuilder;
 import utilities.concurrency.task.TaskManager;
 import utilities.time.DateAndTimes;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the StarNubs core.
@@ -50,8 +53,8 @@ public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
-    private static final DateAndTimes dateAndTimes = DateAndTimes.getInstance();
     private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
+    private static final NameBuilder nameBuilder = new NameBuilder();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
     private static final Connections connections = Connections.getInstance();
@@ -72,8 +75,10 @@ public final class StarNub {
         return configuration;
     }
 
-    public static DateAndTimes getDateAndTimes() {
-        return dateAndTimes;
+
+
+    public static NameBuilder getNameBuilder() {
+        return nameBuilder;
     }
 
     public static MultiOutputLogger getLogger() {
@@ -123,6 +128,11 @@ public final class StarNub {
         logger.eventListenerRegistration(); /*  */
         starNubEventRouter.startEventRouter();
         new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
+
+//        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", ));
+
+
+
     }
 
 

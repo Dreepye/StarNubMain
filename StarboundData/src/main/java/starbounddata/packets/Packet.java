@@ -44,8 +44,8 @@ import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
 public abstract class Packet {
 
     private final byte PACKET_ID;
-    private final ChannelHandlerContext SENDER_CTX;
-    private final ChannelHandlerContext DESTINATION_CTX;
+    private ChannelHandlerContext SENDER_CTX;
+    private ChannelHandlerContext DESTINATION_CTX;
     private boolean recycle;
 
     public Packet(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {

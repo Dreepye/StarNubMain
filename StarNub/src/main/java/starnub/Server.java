@@ -41,6 +41,7 @@ public enum Server {
     INSTANCE;
 
     private static final GameColors gameColors = GameColors.getInstance();
+
     private static final PacketEventRouter packetEventRouter = new PacketEventRouter();
 
 
@@ -50,6 +51,10 @@ public enum Server {
 
     public StarboundManager getStarboundManager() {
         return starboundManager;
+    }
+
+    public GameColors getGameColors() {
+        return gameColors;
     }
 
     /**

@@ -68,8 +68,6 @@ public class VLQ {
     ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will created a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
@@ -92,8 +90,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will created a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
@@ -119,8 +115,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will created a s{@link starbounddata.variants.VLQ} from a long
@@ -142,8 +136,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will created a u{@link starbounddata.variants.VLQ} from a long
@@ -173,8 +165,6 @@ public class VLQ {
     ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
@@ -196,8 +186,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
@@ -223,8 +211,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a s{@link starbounddata.variants.VLQ} from a byte[]
@@ -246,8 +232,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a u{@link starbounddata.variants.VLQ} from a byte[]
@@ -274,8 +258,6 @@ public class VLQ {
 
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a s{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
@@ -296,8 +278,6 @@ public class VLQ {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a u{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}

@@ -55,8 +55,6 @@ public class ClientDisconnectRequestPacket extends Packet {
     }
 
     /**
-     * This represents a lower level method for StarNubs API.
-     * <p/>
      * Recommended: For internal StarNub usage.
      * <p/>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
@@ -70,8 +68,6 @@ public class ClientDisconnectRequestPacket extends Packet {
     }
 
     /**
-     * This represents a lower level method for StarNubs API.
-     * <p/>
      * Recommended: For internal StarNub usage.
      * <p/>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields

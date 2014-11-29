@@ -19,6 +19,7 @@
 package starnub.senders;
 
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.color.GameColors;
 import starnub.StarNub;
 import starnub.connections.player.account.Settings;
 import starnub.connections.player.session.Player;
@@ -45,7 +46,7 @@ public class NameBuilder {
     /**
      * This constructor is private - Singleton Pattern
      */
-    private NameBuilder(){}
+    public NameBuilder(){}
 
     /**
      *
@@ -510,7 +511,7 @@ public class NameBuilder {
                 nameString = string;
             }
             if (color){
-                nameString = gameColors.getDefaultServerNameColor() + nameString;
+                nameString = StarNub.getServer().getGameColors().getDefaultServerNameColor() + nameString;
             }
         }
         return nameString;
@@ -529,7 +530,7 @@ public class NameBuilder {
      * @return String built player name
      */
     public String msgPlayerNameBuilderFinal(Player player, boolean playerTags, boolean originalName){
-        String playerName = gameColors.getDefaultNameColor() +  player.getNickName();
+        String playerName = StarNub.getServer().getGameColors().getDefaultNameColor() +  player.getNickName();
         if (playerTags) {
             String prefix = "";
             String suffix = "";
@@ -554,7 +555,7 @@ public class NameBuilder {
                     playerName = playerName + " " + suffix;
                 }
             } else {
-                playerName = StarNub.getServer().getConnectionss().getGroupSync().getNoAccountGroup().getTag().getColorTag() + " " + playerName;
+//                playerName = StarNub.getServer().getConnectionss().getGroupSync().getNoAccountGroup().getTag().getColorTag() + " " + playerName;
             }
         }
         if (originalName){
@@ -601,7 +602,7 @@ public class NameBuilder {
                     playerName = playerName + " " + suffix;
                 }
             } else {
-                playerName = StarNub.getServer().getConnectionss().getGroupSync().getNoAccountGroup().getTag().getCleanTag() + " " + playerName;
+//                playerName = StarNub.getServer().getConnectionss().getGroupSync().getNoAccountGroup().getTag().getCleanTag() + " " + playerName;
             }
         }
         if (originalName){

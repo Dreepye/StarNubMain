@@ -19,6 +19,12 @@
 package starbounddata.packets;
 
 import io.netty.channel.ChannelHandlerContext;
+import org.reflections.Reflections;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Represents all of the packets and methods to generate a packet data for StarNub and Plugins
@@ -81,13 +87,15 @@ public enum Packets {
 
     private String classString;
     private boolean debug;
+    private static HashMap<Byte, Class> packetClasses = setPrePacketCache();
 
-    //        @Getter
-//        private static HashMap<Integer, String> packetClassPaths = buildClassPaths();
-//
     Packets(String classString, boolean debug) {
         this.classString = classString;
         this.debug = debug;
+    }
+
+    public byte getPacketId() {
+        return (byte) this.ordinal();
     }
 
     public String getClassString() {
@@ -106,49 +114,62 @@ public enum Packets {
         this.debug = debug;
     }
 
-    //        private static HashMap<Integer, String> buildClassPaths(){
-//
-//
-//
-//        }
-//
-//
-//TODO
-//        public static HashMap<Byte, Packet> packetCache(ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX){
-//            for (Packets p : packets.)
-//                Reflections reflections = new Reflections("org.starnub.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets");
-//                Set<Class<? extends Packet>> allClasses =
-//                        reflections.getSubTypesOf(Packet.class);
-//            for (Class c : allClasses){
-//                String className = c.getName();
-//                if (className.substring(className.lastIndexOf(".")+1).equals((String) list.get(0))){
-//                    try {
-//                                /* Add to known packet */
-//                        Class<? extends Packet> packetClass = (Class.forName(className).asSubclass(Packet.class));
-//
-//
-//                Class myClass = Class.forName("MyClass");
-//
-//        }
-//
-//        private static Packet packetInitializer(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX){
-//
-//        }
-//
-    public static Packet getPacket(ChannelHandlerContext DESTINATION_CTX) {
-        Packet packet = null;
-        return packet;
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This method will scan the class path starbounddata.packets and this enum and match class paths with packet types
+     * to be pre loaded for incoming connections
+     *
+     */
+    public static HashMap<Byte, Class> setPrePacketCache(){
+        Reflections reflections = new Reflections("starbounddata.packets");
+        Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
+        HashMap<String, Class> packetPaths = new HashMap<String, Class>();
+        for (Class c : allClasses) {
+            String className = c.getName();
+            packetPaths.put(className.substring(className.lastIndexOf(".") + 1), c);
+        }
+        HashMap<Byte, Class> packetCacheToSet = new HashMap<>();
+        for (Packets packet : Packets.values()) {
+            String packetName = packet.classString.substring(0, packet.classString.lastIndexOf("."));
+            Class packetPath = packetPaths.get(packetName);
+            packetCacheToSet.put((byte) packet.ordinal(), packetPath);
+        }
+        return packetCacheToSet;
     }
 
-    public byte getPacketId() {
-        return (byte) this.ordinal();
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p/>
+     * Uses: This will create new packets from the packet cache and insert them into a HashMap to be used in
+     * player connections.
+     *
+     * @param SENDER_CTX ChannelHandlerContext the sender ChannelHandlerContext to add to the packet being created
+     * @param DESTINATION_CTX ChannelHandlerContext the destination ChannelHandlerContext to add to the packet being created
+     * @return HashMap the packet cache to be used in packet routing
+     */
+    public static HashMap<Byte, Packet> getPacketCache(ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        HashMap<Byte, Packet> packetPool = new HashMap<>();
+        for (int i = 0; i < packetClasses.size(); i++) {
+            Byte packetID = (byte) i;
+            Class packetClass = packetClasses.get(packetID);
+            Constructor constructor;
+            Packet packet = null;
+            try {
+                constructor = packetClass.getConstructor(new Class[]{ChannelHandlerContext.class, ChannelHandlerContext.class});
+                packet = (Packet) constructor.newInstance(new Object[]{SENDER_CTX, DESTINATION_CTX});
+            } catch (NoSuchMethodException | NullPointerException e){
+                try {
+                    constructor = packetClass.getConstructor(new Class[]{Byte.class, ChannelHandlerContext.class, ChannelHandlerContext.class});
+                    packet = (Packet) constructor.newInstance(new Object[]{packetID, SENDER_CTX, DESTINATION_CTX});
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e1) {
+                    e1.printStackTrace();
+                }
+            } catch (InvocationTargetException | InstantiationException |IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            packetPool.put(packetID, packet);
+        }
+        return packetPool;
     }
-
-//
-//
-//        //HashMap Generator
-//        //Packet Creator - remove ids from packets hard coding
-//        //Value returns
-//        //Debugs will be passed back in a hashset
-//
 }

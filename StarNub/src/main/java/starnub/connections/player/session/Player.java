@@ -26,13 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import starbounddata.packets.chat.ChatReceivePacket;
 import starbounddata.packets.chat.ChatSendPacket;
+import starbounddata.packets.connection.ClientDisconnectRequestPacket;
+import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnub.StarNub;
 import starnub.connections.player.StarNubProxyConnection;
 import starnub.connections.player.character.CharacterIP;
 import starnub.connections.player.character.PlayerCharacter;
 import starnub.events.events.PlayerEvent;
 import starnub.events.events.StarNubEvent;
-import utilities.strings.StringUtilities;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -305,13 +306,11 @@ public class Player extends StarNubProxyConnection {
         new ChatSendPacket(SERVER_CTX, channel, message).routeToDestination();
     }
 
-    /**
-     * INTERNAL USE
-     * @return
-     */
     @Override
-    public boolean disconnect(){
-        return super.disconnect();
+    public boolean disconnect() {
+        boolean disconnect = super.disconnect();
+        packetDisconnect();
+        return disconnect;
     }
 
     public boolean disconnectReason(String reason) {
@@ -319,8 +318,22 @@ public class Player extends StarNubProxyConnection {
         if (disconnected) {
             Player player = StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
             new PlayerEvent("Player_Disconnect_" + reason, player, reason);
+            disconnectCleanUp();
+            if (!reason.equalsIgnoreCase("quit")){
+                packetDisconnect();
+            }
         }
         return disconnected;
+    }
+
+    private void disconnectCleanUp(){
+        this.setEndTimeUtc(DateTime.now());
+        playerCharacter.updatePlayedTimeLastSeen();
+    }
+
+    private void packetDisconnect(){
+        new ClientDisconnectRequestPacket(SERVER_CTX);
+        new ServerDisconnectPacket(CLIENT_CTX,"");
     }
 
     public boolean hasBasePermission(Player playerSession, String basePermission){

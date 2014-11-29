@@ -17,8 +17,6 @@ import java.util.UUID;
 public class StarboundBufferReader {
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 1 byte from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 1 byte
@@ -32,8 +30,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 1 byte from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 1 byte
@@ -47,8 +43,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 2 bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 2 bytes
@@ -62,8 +56,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 3 bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 3 bytes
@@ -77,8 +69,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 4 bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 4 bytes
@@ -92,8 +82,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 8 bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 8 bytes
@@ -107,8 +95,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 16 bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 16 bytes
@@ -122,8 +108,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a VLQ and then a variant length of bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by the length of the VLQ and read bytes
@@ -138,8 +122,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a all bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index to the writer index
@@ -153,10 +135,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
      * Uses: This will read a unsigned short value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 2 bytes
      * <p/>
      *
@@ -168,8 +146,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a unsigned medium value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 3 bytes
@@ -183,8 +159,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a unsigned int value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 4 bytes
@@ -198,8 +172,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a int value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 4 bytes
@@ -213,8 +185,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a long value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 8 bytes
@@ -228,8 +198,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a float value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 4 bytes
@@ -243,8 +211,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a double value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 8 bytes
@@ -258,8 +224,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read 1 byte and form a boolean value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 1 byte
@@ -273,8 +237,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a VLQ and then a byte array to form a String value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by the length of the VLQ and read bytes
@@ -292,8 +254,6 @@ public class StarboundBufferReader {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will read a uuid value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 16 bytes

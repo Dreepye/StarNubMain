@@ -65,6 +65,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(player.getCLIENT_CTX(), player);
                 new Thread(() -> postProcessing(player, (int) connectResponsePacket.getClientId(), rejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
+                return connectResponsePacket;
             }
         }
         return null;

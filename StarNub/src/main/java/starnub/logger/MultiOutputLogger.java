@@ -2,11 +2,16 @@ package starnub.logger;
 
 import org.joda.time.DateTime;
 import starnub.StarNub;
-import utilities.events.types.StringEvent;
-import utilities.events.types.Event;
+import starnub.StarNubTask;
+import starnub.events.events.StarNubEvent;
 import starnub.events.starnub.StarNubEventHandler;
+import starnub.events.starnub.StarNubEventSubscription;
+import utilities.events.types.Event;
+import utilities.strings.StringUtilities;
+import utilities.time.DateAndTimes;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * StarNub's Logger Class
@@ -15,13 +20,10 @@ import java.util.Map;
  * various levels 0 - Not Logging, 1 - Log To Screen, 2 - Log To File and
  * 3 - Log to Screen and File.
  * <p>
- * The defaults are not to log events and debug, log starbounddata.packets.chat to screen and utilities.file and
- * everything else to utilities.file only.
- *
- *
+ * The defaults are not to log debug and events. Everything is to be logged in some fashion.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 public class MultiOutputLogger {
 
@@ -56,6 +58,8 @@ public class MultiOutputLogger {
         this.INFORMATION_WARNING_LOGGER = new FileLog("StarNub/Logs/Information_Warning/");
         this.ERROR_FATAL_LOGGER = new FileLog("StarNub/Logs/Error/");
         this.dayOfMonth = new DateTime().getDayOfMonth();
+        new StarNubTask("StarNub", "StarNub - Log Flush", true, 30, 30, TimeUnit.SECONDS, this::flushAllLogs);
+        new StarNubTask("StarNub", "StarNub - Log Rotate Check", true, 30, 30, TimeUnit.SECONDS, this::logRotateCheckAllLogs);
     }
 
     public static MultiOutputLogger getInstance() {
@@ -69,15 +73,13 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This represents what items shall not be logged by StarNub.
      * <p>
-     *
-
      */
     @SuppressWarnings("unchecked")
     private void setLoggingLevels() {
-        Map<String, Object> logLevels = (Map) ((Map) StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("log_levels");
+        Map<String, Object> logLevels = (Map) StarNub.getConfiguration().getNestedValue("starnub settings", "log_levels");
         String illegal = "Illegal %s log level. Choose (0 - No Logging, 1 - Console Only, 2 - File Only, 3 - Console and File. Exiting StarNub....";
-        for (String key : logLevels.keySet()){
-            switch (key){
+        for (String key : logLevels.keySet()) {
+            switch (key) {
                 case "events": {
                     int logLevelEvents = (int) logLevels.get(key);
                     if (logLevelEvents > 3) {
@@ -105,7 +107,7 @@ public class MultiOutputLogger {
                     this.logChat = (int) logLevels.get(key);
                     break;
                 }
-                case "command":{
+                case "command": {
                     int logLevelCommand = (int) logLevels.get(key);
                     if (logLevelCommand > 3) {
                         System.out.printf(illegal, "command");
@@ -114,7 +116,7 @@ public class MultiOutputLogger {
                     this.logCommand = (int) logLevels.get(key);
                     break;
                 }
-                case "information":{
+                case "information": {
                     int logLevelInformation = (int) logLevels.get(key);
                     if (logLevelInformation > 3) {
                         System.out.printf(illegal, "information");
@@ -123,7 +125,7 @@ public class MultiOutputLogger {
                     this.logInformation = (int) logLevels.get(key);
                     break;
                 }
-                case "warning":{
+                case "warning": {
                     int logLevelWarning = (int) logLevels.get(key);
                     if (logLevelWarning > 3) {
                         System.err.printf(illegal, "warning");
@@ -132,7 +134,7 @@ public class MultiOutputLogger {
                     this.logWarning = (int) logLevels.get(key);
                     break;
                 }
-                case "error":{
+                case "error": {
                     int logLevelError = (int) logLevels.get(key);
                     if (logLevelError != 3) {
                         if (logLevelError == 2) {
@@ -158,100 +160,220 @@ public class MultiOutputLogger {
         }
     }
 
-    public void eventListenerRegistration(){
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Event", new StarNubEventHandler() {
+    public void eventListenerRegistration() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Event", new StarNubEventHandler<Event<String>>() {
             @Override
-            public void onEvent(Event eventData) {
-                String logString = ((StringEvent) eventData).getLOG_STRING();
-                switch (logEvent){
-                    case 0: { /* Not Logging */ break; }
-                    case 1: { System.err.println(logString); break; }
-                    case 2: { EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                    case 3: { System.out.println(logString); EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString); break; }
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logEvent) {
+                    case 0: { /* Not Logging */
+                        break;
+                    }
+                    case 1: {
+                        System.err.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
                 }
-            }});
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Debug", new StarNubEventHandler() {
-                @Override
-                public void onEvent(Event eventData) {
-                    String logString = ((StringEvent) eventData).getLOG_STRING();
-                switch (logDebug){
-                    case 0: { /* Not Logging */ break; }
-                    case 1: { System.err.println(logString); break; }
-                    case 2: { EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                    case 3: { System.err.println(logString); EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                }
-            }});
+                return eventData;
+            }
+        });
 
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Chat", new StarNubEventHandler() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Debug", new StarNubEventHandler<Event<String>>() {
             @Override
-            public void onEvent(Event eventData) {
-                String logString = ((StringEvent) eventData).getLOG_STRING();
-                switch (logChat){
-                    case 0: { /* Not Logging */ break; }
-                    case 1: { System.out.println(logString); break; }
-                    case 2: { CHAT_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                    case 3: { System.out.println(logString); CHAT_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                }
-            }});
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Command", new StarNubEventHandler() {
-                @Override
-                public void onEvent(Event eventData) {
-                    String logString = ((StringEvent) eventData).getLOG_STRING();
-                    switch (logCommand){
-                        case 0: { /* Not Logging */ break; }
-                        case 1: { System.out.println(logString); break; }
-                        case 2: { COMMAND_LOGGER.getFileWriter().writeToBuffer(logString) ;break; }
-                        case 3: { System.out.println(logString); COMMAND_LOGGER.getFileWriter().writeToBuffer(logString); break; }
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logDebug) {
+                    case 0: { /* Not Logging */
+                        break;
                     }
-            }});
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Information", new StarNubEventHandler() {
+                    case 1: {
+                        System.err.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.err.println(logString);
+                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
+
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Chat", new StarNubEventHandler<Event<String>>() {
             @Override
-            public void onEvent(Event eventData) {
-                String logString = ((StringEvent) eventData).getLOG_STRING();
-                switch (logInformation){
-                    case 0: { /* Not Logging */ break; }
-                    case 1: { System.out.println(logString); break; }
-                    case 2: { INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                    case 3: { System.out.println(logString); INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                }
-        }});
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Warning", new StarNubEventHandler() {
-                @Override
-                public void onEvent(Event eventData) {
-                    String logString = ((StringEvent) eventData).getLOG_STRING();
-                    switch (logWarning){
-                        case 0: { /* Not Logging */ break; }
-                        case 1: { System.out.println(logString); break; }
-                        case 2: { INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                        case 3: { System.out.println(logString); INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString); break; }
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logChat) {
+                    case 0: { /* Not Logging */
+                        break;
                     }
-        }});
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Error", new StarNubEventHandler() {
+                    case 1: {
+                        System.out.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        CHAT_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        CHAT_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
+
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Command", new StarNubEventHandler<Event<String>>() {
             @Override
-            public void onEvent(Event eventData) {
-                String logString = ((StringEvent) eventData).getLOG_STRING();
-                switch (logError){
-                    case 0: { /* Not Logging */ break; }
-                    case 1: { System.out.println(logString); break; }
-                    case 2: { ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                    case 3: { System.out.println(logString); ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString); ERROR_FATAL_LOGGER.getFileWriter().flushLogs(); break; }
-                }
-        }});
-        StarNub.getStarNubEventRouter().registerEventSubscription("StarNub", "StarNub_Log_Fatal", new StarNubEventHandler() {
-                @Override
-                public void onEvent(Event eventData) {
-                    String logString = ((StringEvent) eventData).getLOG_STRING();
-                    switch (logFatal){
-                        case 0: { /* Not Logging */ break; }
-                        case 1: { System.out.println(logString); break; }
-                        case 2: { ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString); break; }
-                        case 3: { System.out.println(logString); ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString); ERROR_FATAL_LOGGER.getFileWriter().flushLogs(); break; }
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logCommand) {
+                    case 0: { /* Not Logging */
+                        break;
                     }
-            }});
+                    case 1: {
+                        System.out.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        COMMAND_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        COMMAND_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
+
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Information", new StarNubEventHandler<Event<String>>() {
+            @Override
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logInformation) {
+                    case 0: { /* Not Logging */
+                        break;
+                    }
+                    case 1: {
+                        System.out.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
+
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Warning", new StarNubEventHandler<Event<String>>() {
+            @Override
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logWarning) {
+                    case 0: { /* Not Logging */
+                        break;
+                    }
+                    case 1: {
+                        System.out.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
+
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Error", new StarNubEventHandler<Event<String>>() {
+            @Override
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logError) {
+                    case 0: { /* Not Logging */
+                        break;
+                    }
+                    case 1: {
+                        System.out.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                        ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
+
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Fatal", new StarNubEventHandler<Event<String>>() {
+            @Override
+            public Event<String> onEvent(Event<String> eventData) {
+                String logString = (String) eventData.getEVENT_DATA();
+                switch (logFatal) {
+                    case 0: { /* Not Logging */
+                        break;
+                    }
+                    case 1: {
+                        System.out.println(logString);
+                        break;
+                    }
+                    case 2: {
+                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println(logString);
+                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                        ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
+                        break;
+                    }
+                }
+                return eventData;
+            }
+        });
     }
 
 
-    public void flushAllLogs(){
+    public void flushAllLogs() {
         this.EVENT_DEBUG_LOGGER.getFileWriter().flushLogs();
         this.CHAT_LOGGER.getFileWriter().flushLogs();
         this.COMMAND_LOGGER.getFileWriter().flushLogs();
@@ -259,16 +381,17 @@ public class MultiOutputLogger {
         this.ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
     }
 
-    public void logRotateCheckAllLogs(){
-        double logSize = (double) ((Map)StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("log_size");
+    public void logRotateCheckAllLogs() {
+        double logSize = (double) StarNub.getConfiguration().getNestedValue("starnub settings", "log_size");
         this.EVENT_DEBUG_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
         this.CHAT_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
-        this.COMMAND_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");;
+        this.COMMAND_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
+        ;
         this.INFORMATION_WARNING_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
         this.ERROR_FATAL_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
     }
 
-    public void closeAllLogs(){
+    public void closeAllLogs() {
         this.EVENT_DEBUG_LOGGER.closeLog();
         this.CHAT_LOGGER.closeLog();
         this.COMMAND_LOGGER.closeLog();
@@ -276,7 +399,7 @@ public class MultiOutputLogger {
         this.ERROR_FATAL_LOGGER.closeLog();
     }
 
-    public void startAllLogs(){
+    public void startAllLogs() {
         this.EVENT_DEBUG_LOGGER.startNewLog();
         this.CHAT_LOGGER.startNewLog();
         this.COMMAND_LOGGER.startNewLog();
@@ -295,7 +418,7 @@ public class MultiOutputLogger {
      * @return boolean true if on
      */
     public boolean isLogEvent() {
-        return logEvent != 0 ;
+        return logEvent != 0;
     }
 
     /**
@@ -621,8 +744,6 @@ public class MultiOutputLogger {
         return logFatal == 1 || logFatal == 3;
     }
 
-    //TODO
-
     /**
      * This represents a higher level method for StarNubs API.
      * <p>
@@ -636,9 +757,7 @@ public class MultiOutputLogger {
      * @param message String that represents the Chat message
      */
     public void cEvePrint(Object sender, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Event",
-                stringBuilder(sender, " Event", message)));
+        new StarNubEvent("StarNub_Log_Event", stringBuilder(sender, " Event", message));
     }
 
     /**
@@ -654,9 +773,7 @@ public class MultiOutputLogger {
      * @param message String that represents the Chat message
      */
     public void cDebPrint(Object sender, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Debug",
-                stringBuilder(sender, " Debug", message)));
+        new StarNubEvent("StarNub_Log_Debug", stringBuilder(sender, " Debug", message));
     }
 
     /**
@@ -674,15 +791,14 @@ public class MultiOutputLogger {
      * @param destination String where the message is going
      */
     public void cChatPrint(Object sender, String message, Object destination) {
-        boolean charName = (boolean) ((Map) StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("log_character_names");
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Chat",
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "log_character_names");
+        new StarNubEvent("StarNub_Log_Chat",
                 stringBuilder(
                         "StarNub",
                         " Chat",
-                        "[" + StarNub.getMessageSender().cUnknownNameBuilder(sender, true, charName) + " -> " +
-                                StarNub.getMessageSender().cUnknownNameBuilder(destination, true, charName) + "]: "
-                                + StarNub.getServer().getServerChat().getChatFilter().removeColors(message))));
+                        "[" + StarNub.getNameBuilder().cUnknownNameBuilder(sender, true, charName) + " -> " +
+                                StarNub.getNameBuilder().cUnknownNameBuilder(destination, true, charName) + "]: "
+                                + StringUtilities.removeColors(message)));
     }
 
     /**
@@ -695,19 +811,17 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param senderReceiver      String which represents the message sender and receiver of the message
-     * @param message     String message to be sent to the starbounddata.packets.starbounddata.packets.starnub
+     * @param senderReceiver String which represents the message sender and receiver of the message
+     * @param message        String message to be sent to the starbounddata.packets.starbounddata.packets.starnub
      */
     public void cWhisperPrint(String senderReceiver, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Chat",
+        new StarNubEvent("StarNub_Log_Chat",
                 stringBuilder(
                         "StarNub",
                         " Chat",
                         "[" + senderReceiver + "]: "
-                                + StarNub.getServer().getServerChat().getChatFilter().removeColors(message))));
+                                + StringUtilities.removeColors(message)));
     }
-
 
     /**
      * This represents a lower level method for StarNubs API.
@@ -719,17 +833,16 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param sender Object so that we can receive multiple sender types
+     * @param sender  Object so that we can receive multiple sender types
      * @param message String message that was sent to the command sender, the reasons for failure
      */
     public void cCommandFailurePrint(Object sender, String message) {
-        boolean charName = (boolean) ((Map) StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("log_character_names");
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Command",
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "log_character_names");
+        new StarNubEvent("StarNub_Log_Command",
                 stringBuilder(
                         "StarNub",
                         " Command-Fail",
-                        StarNub.getMessageSender().cUnknownNameBuilder(sender, true, charName) + " -> " + message)));
+                        StarNub.getNameBuilder().cUnknownNameBuilder(sender, true, charName) + " -> " + message));
     }
 
     /**
@@ -742,17 +855,16 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param sender Object so that we can receive multiple sender types
+     * @param sender  Object so that we can receive multiple sender types
      * @param message String representing the command that was successfully executed
      */
     public void cCommandSuccessPrint(Object sender, String message) {
-        boolean charName = (boolean) ((Map) StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("log_character_names");
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Command",
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "log_character_names");
+        new StarNubEvent("StarNub_Log_Command",
                 stringBuilder(
                         "StarNub",
                         " Command-Success",
-                        StarNub.getMessageSender().cUnknownNameBuilder(sender, true, charName) + " -> " + message)));
+                        StarNub.getNameBuilder().cUnknownNameBuilder(sender, true, charName) + " -> " + message));
     }
 
     /**
@@ -765,13 +877,11 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param sender Object so that we can receive multiple sender types
+     * @param sender  Object so that we can receive multiple sender types
      * @param message String that represents the Info message
      */
     public void cInfoPrint(Object sender, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Information",
-                stringBuilder(sender, " Info", message)));
+        new StarNubEvent("StarNub_Log_Information", stringBuilder(sender, " Info", message));
     }
 
     /**
@@ -784,13 +894,11 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param sender Object so that we can receive multiple sender types
+     * @param sender  Object so that we can receive multiple sender types
      * @param message String that represents the error message
      */
     public void cWarnPrint(Object sender, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Warning",
-                stringBuilder(sender, " Warning", message)));
+        new StarNubEvent("StarNub_Log_Warning", stringBuilder(sender, " Warning", message));
     }
 
     /**
@@ -803,13 +911,11 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param sender Object so that we can receive multiple sender types
+     * @param sender  Object so that we can receive multiple sender types
      * @param message String that represents the error message
      */
     public void cErrPrint(Object sender, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Error",
-                stringBuilder(sender, " Fatal", message)));
+        new StarNubEvent("StarNub_Log_Error", stringBuilder(sender, " Error", message));
     }
 
     /**
@@ -822,13 +928,11 @@ public class MultiOutputLogger {
      * will not see any of these messages.
      * <p>
      *
-     * @param sender Object so that we can receive multiple sender types
+     * @param sender  Object so that we can receive multiple sender types
      * @param message String that represents the error message
      */
     public void cFatPrint(Object sender, String message) {
-        StarNub.getStarNubEventRouter().notify(new StringEvent(
-                "StarNub_Log_Fatal",
-                stringBuilder(sender, " Fatal", message)));
+        new StarNubEvent("StarNub_Log_Fatal", stringBuilder(sender, " Fatal", message));
     }
 
     /**
@@ -841,7 +945,7 @@ public class MultiOutputLogger {
      */
 
     private String stringBuilder(Object sender, String type, String message) {
-        return timeStamp() + "[" + StarNub.getMessageSender().cNonPlayerNameBuild(sender) + type + "]: " + message;
+        return timeStamp() + "[" + StarNub.getNameBuilder().cNonPlayerNameBuild(sender) + type + "]: " + message;
     }
 
     /**
@@ -855,7 +959,7 @@ public class MultiOutputLogger {
      * @return String that is now timed stamped
      */
     private String timeStamp() {
-        return StarNub.getDateAndTimes().getFormattedTimeNow("[HH:mm:ss]");
+        return DateAndTimes.getFormattedTimeNow("[HH:mm:ss]");
     }
 
 }

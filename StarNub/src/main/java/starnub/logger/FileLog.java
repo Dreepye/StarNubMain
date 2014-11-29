@@ -1,23 +1,16 @@
 package starnub.logger;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.codehome.utilities.files.GetFileSize;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import starnub.StarNub;
+import utilities.file.utility.GetFileSize;
 
 public class FileLog {
 
-
     private final String FILE_DIRECTORY_STRING;
-
-
     private volatile String actualFile;
-
-
     private volatile int fileCount;
-
-
     private FileLogWriter fileWriter;
 
     public FileLog(String FILE_DIRECTORY_STRING) {
@@ -26,6 +19,10 @@ public class FileLog {
         this.actualFile = FILE_DIRECTORY_STRING + new DateTime().toString(DateTimeFormat.forPattern("dd-MMM-yy")) + "_" + fileCount + ".log";
         this.fileWriter = new FileLogWriter(actualFile);
         this.fileCount++;
+    }
+
+    public FileLogWriter getFileWriter() {
+        return fileWriter;
     }
 
     public void startNewLog(){
@@ -57,7 +54,7 @@ public class FileLog {
 
     public void logRotateFileSize(double maxFileSize, String fileMeasure) {
         try {
-            if (new GetFileSize().getFileSize(actualFile, fileMeasure) > maxFileSize) {
+            if (GetFileSize.getFileSize(actualFile, fileMeasure) > maxFileSize) {
                 this.fileCount++;
                 rotateLogFile();
             }

@@ -25,20 +25,21 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.ReplayingDecoder;
-import org.reflections.Reflections;
 import starbounddata.packets.Packet;
-import starbounddata.packets.misc.PassThroughPacket;
+import starbounddata.packets.Packets;
 import starnub.StarNub;
 import starnub.connections.player.StarNubProxyConnection;
+import starnub.connections.player.session.Player;
 import starnub.events.events.EventsInternals;
 import starnub.events.events.StarNubEvent;
-import utilities.connectivity.connection.ProxyConnection;
 import utilities.events.EventSubscription;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import static utilities.compression.Zlib.decompress;
 
@@ -217,40 +218,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     @SuppressWarnings("unchecked")
     private void setPacketPool(ChannelHandlerContext ctx) {
-
-
-//        this.packetPool = new HashMap<>();
-//        Map<String, Object> packetCountMap = new YamlLoader().resourceYamlLoader("servers/resources.yml");
-//        int packetCount = (int) packetCountMap.get("packet_count");
-//        for (int index = 0; index <= packetCount; index++) {
-//            try {
-//                PassThroughPacket packetToSet = PassThroughPacket.class.newInstance();
-//                packetToSet.setPacketId((byte) index);
-//                this.packetPool.put((byte) index, packetToSet);
-//            } catch (InstantiationException | IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        Map<String, Object> implementedPackets = new YamlLoader().resourceYamlLoader("starboundmanager/starbound_packet_types.yml");
-//        Reflections reflections = new Reflections("org.starnub.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets");
-//        Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
-//        for (Object value : implementedPackets.values()) {
-//            ArrayList<Object> list = (ArrayList<Object>) value;
-//            for (Class c : allClasses) {
-//                String className = c.getName();
-//                if (className.substring(className.lastIndexOf(".") + 1).equals((String) list.get(0))) {
-//                    /* Add to known packet */
-//                    try {
-//                        this.packetPool.replace((byte) Integer.parseInt((String) list.get(1)), Class.forName(className).asSubclass(Packet.class).newInstance());
-//                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//        for (Packet packet : this.packetPool.values()) {
-//            packet.setDestinationSenderCTX(destinationCTX, ctx);
-//        }
+        packetPool = Packets.getPacketCache(ctx, destinationCTX);
     }
 
     /**
@@ -285,9 +253,8 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private void closeConnection(ChannelHandlerContext ctx){
         try {
-            StarNub.getConnections().getCONNECTED_PLAYERS().
-            StarNub.getServer().getConnectionss().playerDisconnectPurposely(ctx, "Disconnected");
-            ctx.channel().close();
+            Player player = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(ctx);
+            player.disconnectReason("Closed_By_Handler");
             ctx.channel().eventLoop().shutdownGracefully();
         } catch (NullPointerException e){
             /* Silent Catch */

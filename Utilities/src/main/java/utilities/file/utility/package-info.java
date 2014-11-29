@@ -17,6 +17,6 @@
  */
 
 /**
- * utilities.file is the package contains file classes and utilities
+ * utilities.file.utility is the package contains file utilities
  */
-package utilities.file;
+package utilities.file.utility;

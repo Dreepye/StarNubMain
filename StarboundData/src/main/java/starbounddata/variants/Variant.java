@@ -67,8 +67,6 @@ public class Variant {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will created a {@link starbounddata.variants.Variant} from a {@link io.netty.buffer.ByteBuf}
@@ -118,8 +116,6 @@ public class Variant {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a {@link starbounddata.variants.Variant} to a {@link io.netty.buffer.ByteBuf}

@@ -17,8 +17,6 @@ import java.util.UUID;
 public class StarboundBufferWriter {
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write 1 byte to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 1 byte
@@ -32,8 +30,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write some number of byte to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by some number of byte
@@ -47,8 +43,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a variant length byte[] value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by a variant length and the number of bytes
@@ -63,8 +57,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a short value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 2 bytes
@@ -78,8 +70,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a medium value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 3 bytes
@@ -93,8 +83,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a int value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 4 bytes
@@ -108,8 +96,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a long value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 8 bytes
@@ -123,8 +109,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a float value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 4 bytes
@@ -138,8 +122,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a double value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 8 bytes
@@ -153,8 +135,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a boolean value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 1 bytes
@@ -168,8 +148,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a String value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by a variant length and the number of bytes
@@ -183,8 +161,6 @@ public class StarboundBufferWriter {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will write a uuid value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 16 bytes

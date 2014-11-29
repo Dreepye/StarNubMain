@@ -77,8 +77,6 @@ public final class GameColors {
     }
 
     /**
-     * This represents a higher level method for StarNubs API.
-     * <p/>
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
      * Uses: This will refresh the default colors in this class
@@ -261,8 +259,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will return a color or hex based on a shortcut.
@@ -287,8 +283,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will return a hex value based on a color name
@@ -309,8 +303,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will look up a color value based on the hex value
@@ -331,8 +323,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will remove the color special characters from a string "^, # and ;"
@@ -350,8 +340,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will format a string for in game use
@@ -366,8 +354,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will validate a color or hex value returning it if it exist in game
@@ -389,8 +375,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will replace shortcuts with the hex color tag
@@ -412,8 +396,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code
@@ -431,8 +413,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a higher level method for StarNubs API.
-         * <p/>
          * Recommended: For Plugin Developers & Anyone else.
          * <p/>
          * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code based on a provided search term.
@@ -458,8 +438,6 @@ public final class GameColors {
         }
 
         /**
-         * This represents a lower level method for StarNubs API.
-         * <p/>
          * Recommended: For internal StarNub usage.
          * <p/>
          * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
@@ -507,8 +485,6 @@ public final class GameColors {
             }
 
             /**
-             * This represents a higher level method for StarNubs API.
-             * <p/>
              * Recommended: For Plugin Developers & Anyone else.
              * <p/>
              * Uses: This returns the color name formatted as such without the quotes "^COLOR;"
@@ -521,8 +497,6 @@ public final class GameColors {
             }
 
             /**
-             * This represents a higher level method for StarNubs API.
-             * <p/>
              * Recommended: For Plugin Developers & Anyone else.
              * <p/>
              * Uses: This returns the color hex formatted as such without the quotes "^HEX_STRING;"
@@ -535,8 +509,6 @@ public final class GameColors {
             }
 
             /**
-             * This represents a higher level method for StarNubs API.
-             * <p/>
              * Recommended: For Plugin Developers & Anyone else.
              * <p/>
              * Uses: This returns the color shortcut formatted as such without the quotes "{SHORTCUT}"

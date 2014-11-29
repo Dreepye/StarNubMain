@@ -22,22 +22,24 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
+import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnub.Connections;
 import starnub.StarNub;
+import starnub.StarNubTask;
 import starnub.cache.wrappers.PlayerCtxCacheWrapper;
+import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.session.Player;
 import starnub.events.packet.PacketEventSubscription;
 import starnub.resources.Operators;
 import starnub.resources.internal.handlers.ClientConnectHandler;
 import starnub.resources.internal.handlers.ConnectionResponseHandler;
+import starnub.resources.internal.handlers.ServerDisconnectHandler;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents StarNubTask instance
@@ -48,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
 
     private final Connections CONNECTIONS;
-    private final PlayerCtxCacheWrapper ACCEPT_REJECT = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, StarNub.getTaskManager(),)//Elements, expected Threads
+    private final PlayerCtxCacheWrapper ACCEPT_REJECT;
     private final Operators OPERATORS = new Operators(StarNub.getResourceManager().getStarnubResources());
 
     /**
@@ -69,12 +71,20 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      *                                            negative or the load factor or concurrencyLevel are
      *                                            nonpositive
      */
-    public Players(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
+    public Players(Connections CONNECTIONS, int expectedThreads, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
-        new PacketEventSubscription("StarNub", ClientConnectPacket.class, true, new ClientConnectHandler(CONNECTIONS));
+        this.ACCEPT_REJECT  = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, StarNub.getTaskManager(), 20, expectedThreads, TimeUnit.MINUTES, 10, 60);
+        new PacketEventSubscription("StarNub", ClientConnectPacket.class, true, new ClientConnectHandler(CONNECTIONS, expectedThreads));
         new PacketEventSubscription("StarNub", ConnectResponsePacket.class, true, new ConnectionResponseHandler(CONNECTIONS));
+        new PacketEventSubscription("StarNub", ServerDisconnectPacket.class, true, new ServerDisconnectHandler(CONNECTIONS));
+        new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
+        new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
+        new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
+
     }
+
+
 
     public PlayerCtxCacheWrapper getACCEPT_REJECT() {
         return ACCEPT_REJECT;
@@ -82,6 +92,47 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
 
     public Operators getOPERATORS() {
         return OPERATORS;
+    }
+
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This method will go through each online player, and update the database Played time counter as well
+     * as the last seen Date. This ensures that the time is accurate in case of critical crash of the starbounddata.packets.starbounddata.packets.starnub tool
+     * or improper restart.
+     * <p>
+     */
+    public void connectedPlayerPlayedTimeUpdate(){
+        for (Player players : this.values()) {
+            PlayerCharacter playerCharacter = players.getPlayerCharacter();
+            playerCharacter.updatePlayedTimeLastSeen();
+        }
+    }
+
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This method will go through each online player, and insure they are still connect.
+     * If not it will send a player lost starbounddata.packets.connection message and remove them from the database.
+     * <p>
+     */
+    public void connectedPlayerLostConnectionCheck() {
+        for (Map.Entry<ChannelHandlerContext, Player> playerEntry : this.entrySet()){
+            Player player = playerEntry.getValue();
+            if (!player.isConnected()){
+                player.disconnectReason("Connection_Lost");
+            }
+        }
+    }
+
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This method will print all of the online players out in a debug message if turned on
+     * <p>
+     */
+    private void getOnlinePlayerListTask() {
+        StarNub.getLogger().cDebPrint("StarNub", getOnlinePlayersNameList("StarNub", true, true));
     }
 
     /**
@@ -280,7 +331,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
     public boolean canSeePlayer(Object sender, Player playerSession){
         if (sender instanceof Player) {
             Player senderSession = getOnlinePlayerByAnyIdentifier(sender);
-            if (hasPermission(senderSession, "starnub.bypass.appearoffline", true)) {
+            if (senderSession.hasPermission("starnub.bypass.appearoffline", true)) {
                 return true;
             } else if (playerSession.getPlayerCharacter().getAccount() != null) {
                 return !playerSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
@@ -302,7 +353,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
             Player sender = getOnlinePlayerByAnyIdentifier(senderSession);
             boolean canSeePlayer = true;
             if (appearOffline) {
-                canSeePlayer = hasPermission(sender, "starnub.bypass.appearoffline", true);
+                canSeePlayer = sender.hasPermission("starnub.bypass.appearoffline", true);
             }
             return canSeeHashSetBuilder(appearOffline, canSeePlayer);
         } else {
@@ -330,7 +381,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @return String with all of the online players
      */
     public String getOnlinePlayersNameList(Object sender, boolean showStarboundId, boolean showStarNubId) {
-        List<String> sortedPlayers = new ArrayList<String>();//TODO broken not working fully?
+        List<String> sortedPlayers = new ArrayList<String>();
         String tokenBaseShowStarboundId = "";
         String tokenBaseShowStarNubId = "";
         if (showStarboundId) {
