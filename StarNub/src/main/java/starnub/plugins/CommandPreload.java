@@ -18,16 +18,16 @@
 
 package starnub.plugins;
 
-import org.codehome.utilities.files.JarResourceLoadFromDisk;
-import org.codehome.utilities.files.YamlLoader;
 import starnub.StarNub;
+import utilities.file.utility.JarResourceLoadFromDisk;
+import utilities.file.yaml.YAMLWrapper;
 
 import java.io.File;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Represents Java Plugin Loader.
@@ -71,125 +71,73 @@ enum CommandPreload {
 
     @SuppressWarnings("unchecked")
     private CommandPackage commandPackageLoader(Object sender, String commandsYMLString, String pluginName, URLClassLoader classLoader, String pluginCommandName) {
-
-        Map<String, Object> commandFile = new YamlLoader().resourceStreamYamlLoader(classLoader.getResourceAsStream(commandsYMLString));
-        if (commandFile == null) {
+        final YAMLWrapper COMMAND_FILE = new YAMLWrapper(pluginName, commandsYMLString, classLoader.getResourceAsStream(commandsYMLString), "", false, false, true, false);
+        if (COMMAND_FILE.getDATA() == null) {
             StarNub.getLogger().cErrPrint("StarNub", "StarNub could not load a specific mainArgs .yml: "+commandsYMLString+" from "+pluginName+" plugin.");
             return null;
         }
+        Object commandObject = COMMAND_FILE.getValue("commands");
+        Object mainArgsObject = COMMAND_FILE.getValue("main_args");
+        String commandClassString = (String) COMMAND_FILE.getValue("class");
+        int canUse = (int) COMMAND_FILE.getValue("can_use");
+        String description = (String) COMMAND_FILE.getValue("description");
+        String permission = pluginCommandName + "." + commandObject + "." + mainArgsObject;
 
-        commandFile = commandYamlValidator(commandFile, pluginCommandName, pluginName);
-
-        ArrayList<String> commandName = new ArrayList<String>();
-        Object commandNameObject = commandFile.get("commands");
-        if (commandNameObject instanceof String){
-            commandName.add(((String) commandNameObject).toLowerCase());
-        } else if (commandNameObject instanceof List) {
-            for (String loadingCommand : (ArrayList<String>) commandNameObject) {
-                commandName.add(loadingCommand.toLowerCase());
-            }
+        ArrayList<String> commandName = new ArrayList<>();
+        if (mainArgsObject instanceof String){
+            commandName.add(((String) mainArgsObject).toLowerCase());
+        } else if (mainArgsObject instanceof List) {
+            commandName.addAll(((ArrayList<String>) mainArgsObject).stream().map(loadingCommand -> loadingCommand.toLowerCase()).collect(Collectors.toList()));
         }
-
         /* Command main args is used for plugin only, mainArgs is used as the Command Package name */
-        ArrayList<String> mainArgs = new ArrayList<String>();
-        Object commandObject = commandFile.get("main_args");
-        if (commandObject instanceof String){
-            mainArgs.add(((String) commandObject).toLowerCase());
-        } else if (commandObject instanceof List) {
-            for (String loadingCommand : (ArrayList<String>) commandObject) {
-                mainArgs.add(loadingCommand.toLowerCase());
-            }
+        ArrayList<String> mainArgs = new ArrayList<>();
+        if (mainArgsObject instanceof String){
+            mainArgs.add(((String) mainArgsObject).toLowerCase());
+        } else if (mainArgsObject instanceof List) {
+            mainArgs.addAll(((ArrayList<String>) mainArgsObject).stream().map(loadingCommand -> loadingCommand.toLowerCase()).collect(Collectors.toList()));
         }
-
-        String mainCommandClass = (String) commandFile.get("class");
 
         /* Load Class into a java class, then cast to a Plugin */
         Command command;
         Class<?> javaClass;
         try {
-            javaClass = classLoader.loadClass(mainCommandClass);
+            javaClass = classLoader.loadClass(commandClassString);
             try {
                 Class<? extends Command> commandClass = javaClass.asSubclass(Command.class);
                 try {
                     command = commandClass.newInstance();
                 } catch (InstantiationException e) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " could not instantiate command.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " could not instantiate command.");
                     return null;
                 } catch (IllegalAccessException e) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " could not instantiate plugin, illegal access exception.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " could not instantiate plugin, illegal access exception.");
                     return null;
                 }
             } catch (ClassCastException e) {
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " does not represent a command.");
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " does not represent a command.");
                 return null;
             }
         } catch (ClassNotFoundException e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " class not found or issue with plugin imports: \"" + mainCommandClass + "\" for \"class\" value in: \"" + commandsYMLString + "\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " class not found or issue with plugin imports: \"" + mainCommandClass + "\" for \"class\" value in: \"" + commandsYMLString + "\".");
             return null;
         } catch (NoClassDefFoundError e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " package not found or issue with plugin imports: \"" + mainCommandClass + "\" for \"class\" value in: \"" + commandsYMLString + "\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error: Command " + commandName + " package not found or issue with plugin imports: \"" + mainCommandClass + "\" for \"class\" value in: \"" + commandsYMLString + "\".");
             return null;
         }
         try {
             return new CommandPackage(
                     commandName,
                     mainArgs,
-                    mainCommandClass,
-                    pluginCommandName + "." + commandFile.get("command") + "." + mainArgs,
-                    (int) commandFile.get("can_use"),
-                    (String) commandFile.get("description"),
-                    command);
+                    commandClassString,
+                    permission,
+                    canUse,
+                    description,
+                    command
+            );
         } catch (NullPointerException e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error:  : Command " + commandName + " null value or empty: \"command.yml\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" command Load Error:  : Command " + commandName + " null value or empty: \"command.yml\".");
         }
         return null;
-    }
-
-    private Map<String, Object> commandYamlValidator(Map<String, Object> commandFile, String commandName, String pluginName) {
-        Map<String, Object> defaultCommandYaml = new YamlLoader().resourceYamlLoader("servers/integrity/default_command.yml");
-
-        for (String commandItemString : defaultCommandYaml.keySet()) {
-
-            Object commandItem = null;
-            try {
-                commandItem = (Object) commandFile.get(commandItemString);
-            } catch (NullPointerException e) {
-                StarNub.getLogger().cErrPrint("StarNub", "StarNub had issues verifying the type safety of a \""+commandName+"\" command{name}.yml, \""+commandItemString+"\" appears to be null, empty or not correctly typed?");
-            }
-
-            Object defaultCommandItem = (Object) defaultCommandYaml.get(commandItemString);
-
-            try {
-                if (defaultCommandItem instanceof String) {
-                    if (!(commandItem instanceof String)) {
-                        commandFile.replace(commandItemString, commandItem.toString());
-                    }
-                } else if (defaultCommandItem instanceof Integer) {
-                    if (!(commandItem instanceof Integer)) {
-                        commandFile.replace(commandItemString, Integer.parseInt(commandItem.toString()));
-                    }
-                } else if (defaultCommandItem instanceof Double) {
-                    if (!(commandItem instanceof Double)) {
-                        commandFile.replace(commandItemString, Double.parseDouble(commandItem.toString()));
-                    }
-                } else if (defaultCommandItem instanceof Boolean) {
-                    if (!(commandItem instanceof Boolean)) {
-                        if (commandItem.toString().equalsIgnoreCase("true")) {
-                            commandFile.replace(commandItemString, true);
-                        } else if (commandItem.toString().equalsIgnoreCase("false")) {
-                            commandFile.replace(commandItemString, false);
-                        }
-                    }
-                }
-            } catch (NullPointerException e) {
-                StarNub.getLogger().cErrPrint("StarNub", "Plugin Manager: Command Loader: Plugin " + pluginName + ". Command: " +
-                        commandFile.get("name") + " Should be updated to the newest StarNub standard. Please contact " +
-                        "the plugin maker to have this updated or if you are the plugin maker visit www.StarNub.org " +
-                        "- StarNubPlugin project and find the commands configurations of that project which will be set to" +
-                        "the standard.");
-            }
-        }
-        return commandFile;
     }
 }
 

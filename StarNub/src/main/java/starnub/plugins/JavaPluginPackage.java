@@ -18,8 +18,8 @@
 
 package starnub.plugins;
 
-import starnub.Configuration;
 import starnub.plugins.runnable.StarNubRunnable;
+import starnub.resources.PluginConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,8 +51,7 @@ public class JavaPluginPackage extends PluginPackage {
      * This is one long constructor, but it is to make plugin information available and
      * simple to grab.
      * <p>
-     *
-     * @param pluginName              String the plugin name
+     *  @param pluginName              String the plugin name
      * @param version                 double the plugin version
      * @param pluginLocation          File where on the hard disk is the plugin
      * @param dependencies            String a comma separated list of dependencies
@@ -67,11 +66,11 @@ public class JavaPluginPackage extends PluginPackage {
      * @param pluginCommandsName      String representing the commands name
      * @param pluginCommandsAlias     String representing the commands alias
      * @param pluginCommandPackages   ConcurrentHashMap the plugin commands
-     *                                <String, CommandPackage> String = name of command, CommandPackage is like
-     *                                similar to a PluginPackage
+*                                <String, CommandPackage> String = name of command, CommandPackage is like
+*                                similar to a PluginPackage
      * @param MAIN_CLASS               String which is the class location for the plugin
      */
-    public JavaPluginPackage(String pluginName, double version, File pluginLocation, String dependencies, boolean pluginConfigurationFile, Configuration pluginConfiguration, String pluginLanguage, String pluginAuthor, String pluginURL, String pluginDescription, Plugin plugin, boolean pluginCommands, String pluginCommandsName, String pluginCommandsAlias, ConcurrentHashMap<ArrayList<String>, CommandPackage> pluginCommandPackages, boolean HAS_THREADS, ConcurrentHashMap<Thread, StarNubRunnable> THREADS, String MAIN_CLASS) {
+    public JavaPluginPackage(String pluginName, double version, File pluginLocation, String dependencies, boolean pluginConfigurationFile, PluginConfiguration pluginConfiguration, String pluginLanguage, String pluginAuthor, String pluginURL, String pluginDescription, Plugin plugin, boolean pluginCommands, String pluginCommandsName, String pluginCommandsAlias, ConcurrentHashMap<ArrayList<String>, CommandPackage> pluginCommandPackages, boolean HAS_THREADS, ConcurrentHashMap<Thread, StarNubRunnable> THREADS, String MAIN_CLASS) {
         super(pluginName, version, pluginLocation, dependencies, pluginConfigurationFile, pluginConfiguration, pluginLanguage, pluginAuthor, pluginURL, pluginDescription, plugin, pluginCommands, pluginCommandsName, pluginCommandsAlias, pluginCommandPackages, HAS_THREADS, THREADS);
         this.MAIN_CLASS = MAIN_CLASS;
     }

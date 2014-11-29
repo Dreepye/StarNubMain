@@ -1,20 +1,17 @@
 package starnub.connections.player.groups;
 
-import lombok.Getter;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.codehome.utilities.files.YamlDumper;
-import org.codehome.utilities.files.YamlLoader;
 import starnub.StarNub;
-import starnub.connections.player.account.Account;
-import starnub.connections.player.session.Player;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public enum GroupSync {
     INSTANCE;
-
 
     private Map<String, Object> groups;
 
@@ -33,15 +30,15 @@ public enum GroupSync {
     public void groupSynchronizeFileToDB(Object sender){
         loadGroupsFromDisk();
         if (this.groups == null){
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "The groups from utilities.file could not be synchronized with the" +
-                    "Database groups, make sure that the StarNub/groups.yml utilities.file exist and that their is no YAML syntax errors.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "The groups from utilities.file could not be synchronized with the" +
+//                    "Database groups, make sure that the StarNub/groups.yml utilities.file exist and that their is no YAML syntax errors.");
             return;
         }
         synchronizeGroupsFileToDB();
     }
 
     public void loadGroupsFromDisk(){
-        this.groups = new YamlLoader().filePathYamlLoader("StarNub/groups.yml");
+//        this.groups = new YamlLoader().filePathYamlLoader("StarNub/groups.yml");
     }
 
     private void synchronizeGroupsFileToDB(){
@@ -215,7 +212,7 @@ public enum GroupSync {
      * This method will save the configuration to utilities.file.
      */
     private void saveGroupsFile() {
-        new YamlDumper().toFileYamlDump(this.groups, "StarNub/groups.yml");
+//        new YamlDumper().toFileYamlDump(this.groups, "StarNub/groups.yml");
     }
 
 //    inherited_groups: ['none'],
@@ -230,16 +227,16 @@ public enum GroupSync {
     public void updateGroupField(String groupName, String field, String value){
         ((Map) groups.get(groupName)).replace(field, value);
         saveGroupsFile();
-        for (Player players : StarNub.getStarboundServer().getConnectionss().getConnectedPlayers().values()) {
-            Account account = players.getPlayerCharacter().getAccount();
-            if (account != null) {
-                try {
-                    account.getGroups().refreshAll();
-                } catch (SQLException e) {
-                    StarNub.getLogger().cFatPrint("StarNub", "Unable to refresh player assigned groups for account \""+account.getAccountName()+"\".");
-                }
-            }
-        }
+//        for (Player players : StarNub.getStarboundServer().getConnectionss().getConnectedPlayers().values()) {
+//            Account account = players.getPlayerCharacter().getAccount();
+//            if (account != null) {
+//                try {
+//                    account.getGroups().refreshAll();
+//                } catch (SQLException e) {
+//                    StarNub.getLogger().cFatPrint("StarNub", "Unable to refresh player assigned groups for account \""+account.getAccountName()+"\".");
+//                }
+//            }
+//        }
     }
 
 }

@@ -21,10 +21,7 @@ package starnub.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import starnub.StarNub;
-
-import java.util.Map;
 
 @DatabaseTable(tableName = "TAGS")
 public class Tag {
@@ -58,7 +55,7 @@ public class Tag {
     public Tag(String typeOfTag, String name, String color) {
         this.typeOfTag = typeOfTag;
         this.name = name;
-        this.color = StarNub.getMessageSender().getGameColors().validateColor(color);
+//        this.color = StarNub.getMessageSender().getGameColors().validateColor(color);
         StarNub.getDatabaseTables().getTags().createOrUpdate(this);
     }
 
@@ -99,15 +96,15 @@ public class Tag {
            tagString = this.color + tagString;
         }
         if (brackets) {
-            Map conf = (Map) StarNub.getConfiguration().getConfiguration().get("groups");
-            String start = (String) conf.get("bracket_start");
-            String end = (String) conf.get("bracket_end");
-            if (color) {
-                String bracketColor = StarNub.getMessageSender().getGameColors().getBracketColor();
-                start = bracketColor + start;
-                end = bracketColor + end;
-            }
-            tagString = start + tagString + end;
+//            Map conf = (Map) StarNub.getConfiguration().getConfiguration().get("groups");
+//            String start = (String) conf.get("bracket_start");
+//            String end = (String) conf.get("bracket_end");
+//            if (color) {
+////                String bracketColor = StarNub.getMessageSender().getGameColors().getBracketColor();
+//                start = bracketColor + start;
+//                end = bracketColor + end;
+//            }
+//            tagString = start + tagString + end;
         }
         return tagString;
     }

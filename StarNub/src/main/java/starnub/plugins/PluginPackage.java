@@ -21,7 +21,7 @@ package starnub.plugins;
 import starnub.StarNub;
 import starnub.events.events.ThreadEvent;
 import starnub.plugins.runnable.StarNubRunnable;
-import starnub.resources.Configuration;
+import starnub.resources.PluginConfiguration;
 import utilities.file.utility.GetFileSize;
 
 import java.io.File;
@@ -50,7 +50,7 @@ public abstract class PluginPackage {
     public final double SIZE_KBS;
     public final String DEPENDENCIES;
     public final boolean HAS_CONFIGURATION_FILE;
-    public final Configuration CONFIGURATION;
+    public final PluginConfiguration CONFIGURATION;
     public final String PLUGIN_LANGUAGE;
     public final String PLUGIN_AUTHOR;
     public final String PLUGIN_URL;
@@ -69,7 +69,7 @@ public abstract class PluginPackage {
      * This is one long constructor, but it is to make plugin information available and
      * simple to grab.
      * <p>
-     *  @param pluginName              String the plugin name
+     * @param pluginName              String the plugin name
      * @param version                 double the plugin version
      * @param pluginLocation          File where on the hard disk is the plugin
      * @param dependencies            String a comma separated list of dependencies
@@ -93,7 +93,7 @@ public abstract class PluginPackage {
                          File pluginLocation,
                          String dependencies,
                          boolean pluginConfigurationFile,
-                         Configuration pluginConfiguration,
+                         PluginConfiguration pluginConfiguration,
                          String pluginLanguage,
                          String pluginAuthor,
                          String pluginURL,
@@ -145,7 +145,7 @@ public abstract class PluginPackage {
         return HAS_CONFIGURATION_FILE;
     }
 
-    public Configuration getCONFIGURATION() {
+    public PluginConfiguration getCONFIGURATION() {
         return CONFIGURATION;
     }
 

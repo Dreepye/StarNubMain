@@ -23,16 +23,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import starnub.StarNub;
 import starnub.connections.player.character.PlayerCharacter;
 import starnub.connections.player.groups.Group;
 import starnub.connections.player.groups.GroupAssignment;
 import starnub.connections.player.groups.Tag;
 import starnub.connections.player.session.Player;
-import chatmanager.chat.ChatRoom;
-
-import java.util.Map;
 
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
 public class Settings {
@@ -40,9 +36,9 @@ public class Settings {
     @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS")
     private volatile String accountSettings;
 
-
-    @DatabaseField(foreign = true,  foreignAutoRefresh = true, columnName = "DEFAULT_CHAT_ROOM")
-    private volatile ChatRoom defaultChatRoom;
+//
+//    @DatabaseField(foreign = true,  foreignAutoRefresh = true, columnName = "DEFAULT_CHAT_ROOM")
+//    private volatile ChatRoom defaultChatRoom;
 
 
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_1")
@@ -69,8 +65,8 @@ public class Settings {
     private volatile ForeignCollection<CharacterIgnore> characterIgnores;
 
 
-    @ForeignCollectionField(eager = true, maxEagerLevel = 3)
-    private volatile ForeignCollection<ChatRoomSubscription> chatRoomSubscriptions;
+//    @ForeignCollectionField(eager = true, maxEagerLevel = 3)
+//    private volatile ForeignCollection<ChatRoomSubscription> chatRoomSubscriptions;
 
 
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = "APPEAR_OFFLINE")
@@ -81,11 +77,6 @@ public class Settings {
     public String getAccountSettings() {
         return accountSettings;
     }
-
-    public ChatRoom getDefaultChatRoom() {
-        return defaultChatRoom;
-    }
-
     public Tag getChatPrefix1() {
         return chatPrefix1;
     }
@@ -110,22 +101,18 @@ public class Settings {
         return characterIgnores;
     }
 
-    public ForeignCollection<ChatRoomSubscription> getChatRoomSubscriptions() {
-        return chatRoomSubscriptions;
-    }
+//    public ForeignCollection<ChatRoomSubscription> getChatRoomSubscriptions() {
+//        return chatRoomSubscriptions;
+//    }
 
     public boolean isAppearOffline() {
         return appearOffline;
     }
 
-    public Settings(String accountSettings, ChatRoom defaultChatRoom) {
+    public Settings(String accountSettings) {
         this.accountSettings = accountSettings;
-        this.defaultChatRoom = defaultChatRoom;
+//        this.defaultChatRoom = defaultChatRoom;
         StarNub.getDatabaseTables().getAccountSettings().createIfNotExist(this);
-    }
-
-    public void setDefaultChatRoom(ChatRoom defaultChatRoom) {
-        this.defaultChatRoom = defaultChatRoom;
     }
 
     public void setChatPrefix1(Tag chatPrefix1) {
@@ -168,40 +155,43 @@ public class Settings {
         this.characterIgnores.remove(StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, playerCharacter));
     }
 
-    public void addChatRoomSubscription(ChatRoom chatRoom){
-        if (StarNub.getDatabaseTables().getChatRoomSubscriptions().getChatRoomSubscription(this, chatRoom) == null) {
-            this.chatRoomSubscriptions.add(new ChatRoomSubscription(this, chatRoom));
-        }
-    }
-
-    public void removeChatRoomSubscription(ChatRoom chatRoom){
-        this.chatRoomSubscriptions.remove(StarNub.getDatabaseTables().getChatRoomSubscriptions().getChatRoomSubscription(this, chatRoom));
-    }
+//    public void addChatRoomSubscription(ChatRoom chatRoom){
+//        if (StarNub.getDatabaseTables().getChatRoomSubscriptions().getChatRoomSubscription(this, chatRoom) == null) {
+//            this.chatRoomSubscriptions.add(new ChatRoomSubscription(this, chatRoom));
+//        }
+//    }
+//
+//    public void removeChatRoomSubscription(ChatRoom chatRoom){
+//        this.chatRoomSubscriptions.remove(StarNub.getDatabaseTables().getChatRoomSubscriptions().getChatRoomSubscription(this, chatRoom));
+//    }
 
     public String buildTagFinal(String tag) {
-        String tagStartEndColor = (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start_end_color");
-        return tagStartEndColor +
-               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start") +
-               tag +
-               tagStartEndColor +
-               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_end") +
-               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("global_name_color");
+//        String tagStartEndColor = (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start_end_color");
+//        return tagStartEndColor +
+//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start") +
+//               tag +
+//               tagStartEndColor +
+//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_end") +
+//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("global_name_color");
+        return tag;
     }
 
     public String buildTagNoColor(String tag){
-        return (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start") +
-               tag +
-               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_end");
+//        return (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start") +
+//               tag +
+//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_end");
+        return tag;
     }
 
     public void availableTags(Object sender, Object playerIdentifier){
-        Player playerSession = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        Player playerSession = null;
+//        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
         if (playerSession == null) {
-            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when looking up available Tags.");
+//            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when looking up available Tags.");
             return;
         }
         if (playerSession.getPlayerCharacter().getAccount() == null) {
-            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
+//            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
             return;
         }
         String availableTags = "Available Tags: ";
@@ -221,20 +211,21 @@ public class Settings {
             /* Do nothing no players are online */
         }
         if (sender instanceof Player) {
-            StarNub.getMessageSender().playerMessage("StarNub", sender, availableTags);
+//            StarNub.getMessageSender().playerMessage("StarNub", sender, availableTags);
         } else {
             StarNub.getLogger().cInfoPrint("StarNub", availableTags);
         }
     }
 
     public void setPreffixOrSuffix(Object sender, Object playerIdentifier, boolean prefix, int position, String prefixOrSuffix){
-        Player playerSession = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        Player playerSession =null;
+//        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
         if (playerSession == null) {
-            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when trying to set Tags.");
+//            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when trying to set Tags.");
             return;
         }
         if (playerSession.getPlayerCharacter().getAccount() == null) {
-            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
+//            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
             return;
         }
         if (prefixOrSuffix.contains("]")) {
@@ -249,32 +240,32 @@ public class Settings {
             if (groupTag.equalsIgnoreCase(prefixOrSuffix)) {
                 Tag tagSelected = group.getTag();
                 if (isUsingTag(groupTag)) {
-                    StarNub.getMessageSender().playerMessage("StarNub", sender, "You already have this Tag set in one of your Tag slots.");
+//                    StarNub.getMessageSender().playerMessage("StarNub", sender, "You already have this Tag set in one of your Tag slots.");
                 }
                 if (prefix) {
                     if (position == 1) {
                         this.chatPrefix1 = tagSelected;
-                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 1st Prefix is now set to \""+buildTagFinal(groupTag)+"\".");
+//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 1st Prefix is now set to \""+buildTagFinal(groupTag)+"\".");
                         return;
                     } else if (position == 2 ) {
                         this.chatPrefix2 = tagSelected;
-                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 2nd Prefix is now set to \""+buildTagFinal(groupTag)+"\".");
+//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 2nd Prefix is now set to \""+buildTagFinal(groupTag)+"\".");
                         return;
                     }
                 } else {
                     if (position == 1) {
                         this.chatSuffix1 = tagSelected;
-                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 1st Suffix is now set to \""+buildTagFinal(groupTag)+"\".");
+//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 1st Suffix is now set to \""+buildTagFinal(groupTag)+"\".");
                         return;
                     } else if (position == 2 ) {
                         this.chatSuffix2 = tagSelected;
-                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 2nd Suffix is now set to \""+buildTagFinal(groupTag)+"\".");
+//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 2nd Suffix is now set to \""+buildTagFinal(groupTag)+"\".");
                         return;
                     }
                 }
             }
         }
-        StarNub.getMessageSender().playerMessage("StarNub", sender, "It appears we could not find the Tag you were looking for, check your spelling or available Tags.");
+//        StarNub.getMessageSender().playerMessage("StarNub", sender, "It appears we could not find the Tag you were looking for, check your spelling or available Tags.");
     }
 
     public boolean isUsingTag(String prefixOrSuffix){

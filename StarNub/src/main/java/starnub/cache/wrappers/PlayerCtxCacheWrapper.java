@@ -19,7 +19,7 @@
 package starnub.cache.wrappers;
 
 import io.netty.channel.ChannelHandlerContext;
-import starnub.events.events.PlayerEvent;
+import starnub.connections.player.session.Player;
 import starnub.events.starnub.StarNubEventHandler;
 import starnub.events.starnub.StarNubEventSubscription;
 import utilities.cache.wrappers.CacheWrapper;
@@ -79,7 +79,8 @@ public class PlayerCtxCacheWrapper extends CacheWrapper<ChannelHandlerContext> {
             @Override
             @SuppressWarnings("unchecked")
             public Event onEvent(Event eventData) {
-                getCACHE_MAP().remove(((PlayerEvent) eventData).getPLAYER_SESSION().getCLIENT_CTX());
+                Player player = (Player) eventData.getEVENT_DATA();
+                getCACHE_MAP().remove(player.getCLIENT_CTX());
                 return null;
             }
         });

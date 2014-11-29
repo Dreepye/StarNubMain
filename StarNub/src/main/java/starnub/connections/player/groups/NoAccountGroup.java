@@ -1,12 +1,10 @@
 package starnub.connections.player.groups;
 
-import lombok.Getter;
 import starnub.StarNub;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -53,13 +51,13 @@ public class NoAccountGroup {
 
     public NoAccountGroup(){
         String noAccountGroup = "";
-        Map<String, Object> groups = StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups();
-        for (String groupName : groups.keySet()){
-            Map groupMap = (Map) groups.get(groupName);
-            if (((String) groupMap.get("type")).equalsIgnoreCase("noaccount")){
-                noAccountGroup = groupName;
-            }
-        }
+//        Map<String, Object> groups = StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups();
+//        for (String groupName : groups.keySet()){
+//            Map groupMap = (Map) groups.get(groupName);
+//            if (((String) groupMap.get("type")).equalsIgnoreCase("noaccount")){
+//                noAccountGroup = groupName;
+//            }
+//        }
         Group group = StarNub.getDatabaseTables().getGroups().getGroupByName(noAccountGroup);
         loadPermissions(group);
         this.name = group.getLadderName();
@@ -103,7 +101,9 @@ public class NoAccountGroup {
 
     public void reloadPermissions() {
         permissions.clear();
-        String noAccountGroup = (String) ((Map)StarNub.getConfiguration().getConfiguration().get("groups")).get("no_account_group");
+        String noAccountGroup = null;
+
+//                = (String) ((Map)StarNub.getConfiguration().getConfiguration().get("groups")).get("no_account_group");
         Group group = StarNub.getDatabaseTables().getGroups().getGroupByName(noAccountGroup);
         loadPermissions(group);
     }

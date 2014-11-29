@@ -69,8 +69,8 @@ public class DatabaseTables {
     private CharacterAchievements characterAchievements;
     private CharacterIgnores characterIgnores;
     private CharacterIPLog characterIPLog;
-    private ChatRooms chatRooms;
-    private ChatRoomSubscriptions chatRoomSubscriptions;
+//    private ChatRooms chatRooms;
+//    private ChatRoomSubscriptions chatRoomSubscriptions;
     private Groups groups;
     private GroupAssignments groupAssignments;
     private GroupInheritances groupInheritances;
@@ -155,21 +155,21 @@ public class DatabaseTables {
         this.characterIPLog = characterIPLog;
     }
 
-    public ChatRooms getChatRooms() {
-        return chatRooms;
-    }
-
-    public void setChatRooms(ChatRooms chatRooms) {
-        this.chatRooms = chatRooms;
-    }
-
-    public ChatRoomSubscriptions getChatRoomSubscriptions() {
-        return chatRoomSubscriptions;
-    }
-
-    public void setChatRoomSubscriptions(ChatRoomSubscriptions chatRoomSubscriptions) {
-        this.chatRoomSubscriptions = chatRoomSubscriptions;
-    }
+//    public ChatRooms getChatRooms() {
+//        return chatRooms;
+//    }
+//
+//    public void setChatRooms(ChatRooms chatRooms) {
+//        this.chatRooms = chatRooms;
+//    }
+//
+//    public ChatRoomSubscriptions getChatRoomSubscriptions() {
+//        return chatRoomSubscriptions;
+//    }
+//
+//    public void setChatRoomSubscriptions(ChatRoomSubscriptions chatRoomSubscriptions) {
+//        this.chatRoomSubscriptions = chatRoomSubscriptions;
+//    }
 
     public Groups getGroups() {
         return groups;
@@ -263,7 +263,7 @@ public class DatabaseTables {
         characterIgnores = new CharacterIgnores(connection, 0, CharacterIgnore.class, Integer.class);
         characterIPLog = new CharacterIPLog(connection, 0, CharacterIP.class, Integer.class);
 //        chatRooms = new ChatRooms(connection, 0, ChatRoom.class, Integer.class);
-        chatRoomSubscriptions = new ChatRoomSubscriptions(connection, 0, ChatRoomSubscription.class, Integer.class);
+//        chatRoomSubscriptions = new ChatRoomSubscriptions(connection, 0, ChatRoomSubscription.class, Integer.class);
         groups = new Groups(connection, 0, Group.class, String.class);
         groupAssignments = new GroupAssignments(connection, 0, GroupAssignment.class, Integer.class);
         groupInheritances = new GroupInheritances(connection, 0, GroupInheritance.class, Integer.class);

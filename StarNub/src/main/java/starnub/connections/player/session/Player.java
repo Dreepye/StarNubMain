@@ -21,7 +21,6 @@ package starnub.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.sun.media.jfxmedia.events.PlayerEvent;
 import io.netty.channel.Channel;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -296,7 +295,6 @@ public class Player extends StarNubProxyConnection {
 
     }
 
-    @Override
     public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message){
         if (sender instanceof Player) {
 //            new ChatReceivePacket(CLIENT_CTX, channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message).routeToDestination();
@@ -343,11 +341,11 @@ public class Player extends StarNubProxyConnection {
         } else if (playerSession.getPlayerCharacter().getAccount() != null) {
             return playerSession.getPlayerCharacter().getAccount().hasBasePermission(basePermission);
         } else {
-            if (groupSync.getNoAccountGroup() != null) {
-                return groupSync.getNoAccountGroup().hasBasePermission(basePermission);
-            } else {
+//            if (groupSync.getNoAccountGroup() != null) {
+//                return groupSync.getNoAccountGroup().hasBasePermission(basePermission);
+//            } else {
                 return false;
-            }
+//            }
         }
     }
 
@@ -365,12 +363,12 @@ public class Player extends StarNubProxyConnection {
         return hasPermission(perms[0], perms[1], perm3, fullPermission, checkWildCards);
     }
 
-    public boolean hasPermission(Player playerSession, String pluginCommandNamePermission, String commandPermission, boolean checkWildCards){
-        return hasPermission(playerSession, pluginCommandNamePermission, commandPermission, null, false, checkWildCards);
+    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, boolean checkWildCards){
+        return hasPermission(pluginCommandNamePermission, commandPermission, null, false, checkWildCards);
     }
 
-    public boolean hasPermission(Player playerSession, String pluginCommandNamePermission, String mainArgOrVariable, String commandPermission, boolean checkWildCards){
-        return hasPermission(playerSession, pluginCommandNamePermission, commandPermission, mainArgOrVariable, true, checkWildCards);
+    public boolean hasPermission(String pluginCommandNamePermission, String mainArgOrVariable, String commandPermission, boolean checkWildCards){
+        return hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, true, checkWildCards);
     }
 
     @SuppressWarnings("all")
@@ -380,11 +378,11 @@ public class Player extends StarNubProxyConnection {
         } else if (this.getPlayerCharacter().getAccount() != null) {
             return this.getPlayerCharacter().getAccount().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
         } else {
-            if (groupSync.getNoAccountGroup() != null) {
-                return groupSync.getNoAccountGroup().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
-            } else {
+//            if (groupSync.getNoAccountGroup() != null) {
+//                return groupSync.getNoAccountGroup().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
+//            } else {
                 return false;
-            }
+//            }
         }
     }
 
@@ -407,11 +405,11 @@ public class Player extends StarNubProxyConnection {
         } else if (this.getPlayerCharacter().getAccount() != null) {
             return this.getPlayerCharacter().getAccount().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
         } else {
-            if (groupSync.getNoAccountGroup() != null) {
-                return groupSync.getNoAccountGroup().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
-            } else {
+//            if (groupSync.getNoAccountGroup() != null) {
+//                return groupSync.getNoAccountGroup().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
+//            } else {
                 return null;
-            }
+//            }
         }
     }
 

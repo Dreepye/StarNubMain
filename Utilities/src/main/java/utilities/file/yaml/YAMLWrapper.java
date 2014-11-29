@@ -44,7 +44,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param OWNER                  String owner of this YAMLFile
      * @param FILE_NAME              String file name of the file
-     * @param DEFAULT_FILE_PATH      String default path to the file
+     * @param DEFAULT_FILE_PATH      Object default path to the file
      * @param DISK_FILE_PATH         String default path to file on the disk
      * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
      * @param DUMP_ON_MODIFICATION   boolean are we dumping on modification
@@ -68,7 +68,7 @@ public class YAMLWrapper extends YAMLFile {
     /**
      * @param OWNER                                      String owner of this YAMLFile
      * @param FILE_NAME                                  String file name of the file
-     * @param DEFAULT_FILE_PATH                          String default path to the file
+     * @param DEFAULT_FILE_PATH                          Object default path to the file
      * @param DISK_FILE_PATH                             String default path to file on the disk
      * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
      * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes

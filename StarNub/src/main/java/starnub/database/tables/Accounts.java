@@ -25,10 +25,10 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.codehome.utilities.crypto.PasswordHash;
 import starnub.StarNub;
 import starnub.connections.player.account.Account;
 import starnub.database.TableWrapper;
+import utilities.crypto.PasswordHash;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

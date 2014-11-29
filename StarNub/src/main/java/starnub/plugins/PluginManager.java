@@ -18,11 +18,13 @@
 
 package starnub.plugins;
 
+import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import starnub.StarNub;
 import starnub.events.events.ThreadEvent;
 import starnub.plugins.runnable.StarNubRunnable;
+import starnub.resources.TemporaryYAML;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -131,17 +133,16 @@ public class PluginManager {
         ConcurrentHashMap<String, UnloadedPlugin> unloadedPluginConcurrentHashMap = new ConcurrentHashMap<String, UnloadedPlugin>();
         File[] pluginFiles = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(new File(pluginDirString), new String[]{"jar"}, false));
         for (File pluginFile : pluginFiles) {
-            Map<String, Object> data;
+            TemporaryYAML data;
             URLClassLoader classLoader;
             String pluginName;
             double version;
             try {
                 URL pluginUrl = pluginFile.toURI().toURL();
-                classLoader = new URLClassLoader(
-                        new URL[]{pluginUrl}, StarNub.class.getClassLoader());
-                data = new YamlLoader().resourceStreamYamlLoader(classLoader.getResourceAsStream("plugin.yml"));
-                pluginName = (String) data.get("name");
-                version = (double) data.get("version");
+                classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
+                data = new TemporaryYAML(classLoader.getResourceAsStream("plugin.yml"));
+                pluginName = (String) data.getValue("name");
+                version = (double) data.getValue("version");
                 if (unloadedPluginConcurrentHashMap.containsKey(pluginName)) {
                     double storedVersion = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_VERSION();
                     if (storedVersion < version) {
@@ -213,29 +214,29 @@ public class PluginManager {
         updateScan();
         pluginName = pluginName.toLowerCase();
         if (unloadedPlugins.size() == 0) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "StarNub could not locate a Plugin with named \"" + pluginName + "\". StarNub also " +
-                    "was unable to locate any new versions of any plugins in StarNub/Plugins.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "StarNub could not locate a Plugin with named \"" + pluginName + "\". StarNub also " +
+//                    "was unable to locate any new versions of any plugins in StarNub/Plugins.");
         }
         for (String unloadedPluginString : unloadedPlugins.keySet()) {
             if (unloadedPluginString.equalsIgnoreCase(pluginName)) {
                 UnloadedPlugin unloadedPlugin = unloadedPlugins.get(unloadedPluginString);
-                if ((boolean) unloadedPlugin.getPLUGIN_PLUGIN_YML().get("live_update")) {
+                if ((boolean) unloadedPlugin.getPLUGIN_PLUGIN_YML().getValue("live_update")) {
                     double upgradingVersion = unloadedPlugin.getPLUGIN_VERSION();
                     loadSpecificPlugin(sender, unloadedPluginString, true, false);
                     if (loadedPlugins.get(unloadedPluginString).getVERSION() == upgradingVersion) {
-                        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginString + " has successfully been updated to version \"" + Double.toString(upgradingVersion) + "\".");
+//                        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginString + " has successfully been updated to version \"" + Double.toString(upgradingVersion) + "\".");
                     }
                 } else {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginString + " Does not allow live updating. You must Shutdown StarNub for this plugin.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginString + " Does not allow live updating. You must Shutdown StarNub for this plugin.");
                 }
             } else {
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "StarNub could not locate a named \"" + unloadedPluginString + "\". Here are the names of the plugins we detected that are not loaded: ");
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "StarNub could not locate a named \"" + unloadedPluginString + "\". Here are the names of the plugins we detected that are not loaded: ");
                 String unloadedPluginList = "Unloaded Plugins: ";
                 for (UnloadedPlugin unloadedPlugin : unloadedPlugins.values()) {
                     unloadedPluginList = unloadedPluginList + unloadedPlugin.getPLUGIN_NAME() + "(" + unloadedPlugin.getPLUGIN_VERSION() + "), ";
                 }
                 unloadedPluginList = unloadedPluginList.substring(0, unloadedPluginList.lastIndexOf(", ")) + ".";
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginList);
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginList);
             }
         }
     }
@@ -267,7 +268,7 @@ public class PluginManager {
         for (String unloadedPluginName : unloadedPlugins.keySet()) {
             loadSpecificPlugin(sender, unloadedPluginName, false, true);
         }
-        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, stringCreateLoadedPlugins());
+//        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, stringCreateLoadedPlugins());
     }
 
     /**
@@ -282,9 +283,9 @@ public class PluginManager {
     public void loadSpecificPlugin(Object sender, String pluginName, boolean upgrade, boolean groupLoad) {
         JavaPluginPreload.INSTANCE.pluginPackageLoader(sender, unloadedPlugins.remove(pluginName), upgrade);
         if (!groupLoad && loadedPlugins.containsKey(pluginName)) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was successfully loaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was successfully loaded.");
         } else if (!groupLoad && !loadedPlugins.containsKey(pluginName)) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was not successfully loaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was not successfully loaded.");
         }
     }
 
@@ -299,9 +300,9 @@ public class PluginManager {
      */
     public void isPluginLoaded(Object sender, String pluginName) {
         if (loadedPlugins.contains(pluginName)) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is loaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is loaded.");
         } else {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is not loaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is not loaded.");
         }
     }
 
@@ -317,10 +318,10 @@ public class PluginManager {
         disableAllPlugins();
         loadedPlugins.clear();
         if (loadedPlugins.size() > 0) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "All plugins were successfully unloaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "All plugins were successfully unloaded.");
         } else {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "Not all plugins were successfully unloaded.");
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  stringCreateLoadedPlugins());
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "Not all plugins were successfully unloaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  stringCreateLoadedPlugins());
         }
     }
 
@@ -339,9 +340,9 @@ public class PluginManager {
         disableSpecificPlugin(pluginName);
         loadedPlugins.remove(pluginName);
         if (!loadedPlugins.contains(pluginName)) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was successfully unloaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was successfully unloaded.");
         } else {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was not successfully unloaded.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was not successfully unloaded.");
         }
     }
 
@@ -427,8 +428,8 @@ public class PluginManager {
         String resolvedPlugin = resolvePlugin(pluginName);
         File pluginFile = new File(pluginDirString + resolvedPlugin + ".jar");
         if (!pluginFile.exists()){
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "Could not find plugin while trying to extract its" +
-                    "resources.");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "Could not find plugin while trying to extract its" +
+//                    "resources.");
             return;
         }
         Map<String, Object> data;
@@ -501,7 +502,7 @@ public class PluginManager {
      *
      */
     public void getLoadedPluginsPrint(Object sender) {
-        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  stringCreateLoadedPlugins());
+//        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  stringCreateLoadedPlugins());
     }
 
     /**
@@ -588,7 +589,8 @@ public class PluginManager {
     }
 
     public Map<String, Object> getConfiguration(String pluginNameOrAlias) {
-        return getPluginPackageNameAlias(pluginNameOrAlias).getCONFIGURATION().getConfiguration();
+//        return getPluginPackageNameAlias(pluginNameOrAlias).getCONFIGURATION().getConfiguration();
+        return null;
     }
 
     /**

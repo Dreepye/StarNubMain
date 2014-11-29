@@ -23,8 +23,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
-import org.codehome.utilities.crypto.PasswordHash;
 import org.joda.time.DateTime;
 import starnub.StarNub;
 import starnub.connections.player.character.PlayerCharacter;
@@ -32,9 +30,12 @@ import starnub.connections.player.groups.Group;
 import starnub.connections.player.groups.GroupAssignment;
 import starnub.connections.player.groups.GroupInheritance;
 import starnub.connections.player.groups.GroupPermission;
+import utilities.crypto.PasswordHash;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -251,13 +252,13 @@ public class Account {
      */
     public Account(PlayerCharacter player, String accountName, String accountPassword) {
         this.accountName = accountName;
-        this.accountSettings = new Settings(accountName, StarNub.getStarboundServer().getServerChat().getChatRoomByName("Universe"));
+//        this.accountSettings = new Settings(accountName, StarNub.getStarboundServer().getServerChat().getChatRoomByName("Universe"));
         this.lastLogin = DateTime.now();
         try {
             this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
         } catch (Exception e) {
-            StarNub.getMessageSender().playerMessage("StarNub", player,"There was a critical error in creating your account. Something " +
-                    "went wrong with your password, please contact a administrator.");
+//            StarNub.getMessageSender().playerMessage("StarNub", player,"There was a critical error in creating your account. Something " +
+//                    "went wrong with your password, please contact a administrator.");
         }
         try {
             this.groups = StarNub.getDatabaseTables().getAccounts().getTableDao().getEmptyForeignCollection("GROUP_ASSIGNMENTS");
@@ -265,12 +266,12 @@ public class Account {
             StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
         }
         StarNub.getDatabaseTables().getAccounts().createIfNotExist(this);
-        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
-            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
-            if (((String) group.get("type")).equalsIgnoreCase("default")) {
-                getAndAddGroup(groupName);
-            }
-        }
+//        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
+//            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
+//            if (((String) group.get("type")).equalsIgnoreCase("default")) {
+//                getAndAddGroup(groupName);
+//            }
+//        }
         loadPermissions();
         setUpdateTagsMainGroups();
     }

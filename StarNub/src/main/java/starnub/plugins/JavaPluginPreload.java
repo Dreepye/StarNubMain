@@ -18,11 +18,10 @@
 
 package starnub.plugins;
 
-
-import org.codehome.utilities.directories.DirectoryCheckCreate;
-import starnub.Configuration;
 import starnub.StarNub;
 import starnub.plugins.runnable.StarNubRunnable;
+import starnub.resources.PluginConfiguration;
+import utilities.dircectories.DirectoryCheckCreate;
 
 import java.io.File;
 import java.net.URLClassLoader;
@@ -60,7 +59,7 @@ enum JavaPluginPreload {
     @SuppressWarnings("unchecked")
     public void pluginPackageLoader(Object sender, UnloadedPlugin unloadedPlugin, boolean isUpgrading) {
         String pluginName = unloadedPlugin.getPLUGIN_NAME();
-        Map data = unloadedPlugin.getPLUGIN_PLUGIN_YML();
+        Map data = unloadedPlugin.getPLUGIN_PLUGIN_YML().getDATA();
         URLClassLoader classLoader = unloadedPlugin.getPLUGIN_URL_CLASS_LOADER();
         String URLString = unloadedPlugin.getPLUGIN_URL().toString();
         File pluginFilePath = unloadedPlugin.getPLUGIN_FILE();
@@ -69,7 +68,7 @@ enum JavaPluginPreload {
         if (!isUpgrading) {
             for (PluginPackage pluginPackage : PluginManager.loadedPlugins.values()) {
                 if (pluginPackage.getPLUGIN_NAME().equals(data.get("name"))) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is already loaded.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is already loaded.");
                     return;
                 }
             }
@@ -80,7 +79,7 @@ enum JavaPluginPreload {
         try {
             mainClass = (String) data.get("class");
         } catch (NullPointerException e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Could not find \"class\" value in: \"plugin.yml\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Could not find \"class\" value in: \"plugin.yml\".");
             return;
         }
 
@@ -94,43 +93,39 @@ enum JavaPluginPreload {
                 try {
                     plugin = pluginClass.newInstance();
                 } catch (InstantiationException e) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Could not instantiate plugin.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Could not instantiate plugin.");
                     return;
                 } catch (IllegalAccessException e) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Could not instantiate plugin, illegal access exception.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Could not instantiate plugin, illegal access exception.");
                     return;
                 }
             } catch (ClassCastException e) {
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Does not represent a plugin.");
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Does not represent a plugin.");
                 return;
             }
         } catch (ClassNotFoundException e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Class not found: \"" + mainClass + "\" for \"class\" value in: \"plugin.yml\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Class not found: \"" + mainClass + "\" for \"class\" value in: \"plugin.yml\".");
             return;
         } catch (NoClassDefFoundError e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Package not found: \"" + mainClass + "\" for \"class\" value in: \"plugin.yml\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Package not found: \"" + mainClass + "\" for \"class\" value in: \"plugin.yml\".");
             return;
         }
 
         /*  Dependency check */
-        if (!dependencyCheck(sender, pluginName, data)) {
-            return;
-        }
+//        if (!dependencyCheck(sender, pluginName, data)) {
+//            return;
+//        }
 
         /*  Directory Check & configuration load */
         new DirectoryCheckCreate("StarNub/Plugins", pluginName, pluginName+"/CommandsInfo");
         boolean configurationFile = (boolean) data.get("configuration");
-        Configuration configuration = null;
-        if (configurationFile) {
-            configuration = new Configuration(pluginName + " Plugin Configuration",classLoader.getResourceAsStream("default_plugin_configuration.yml"), "StarNub/Plugins/" + pluginName + "/" + pluginName.toLowerCase() + "_config.yml");
-            configuration.loadConfiguration(false);
+        PluginConfiguration pluginConfiguration = new PluginConfiguration(pluginName, pluginName.toLowerCase() + "_config.yml", classLoader.getResourceAsStream("default_plugin_configuration.yml"), "StarNub/Plugins/" + pluginName + "/");
+
+        if (pluginConfiguration.getDATA() == null) {
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Unable to load Plugin Configuration for Plugin.");
+            return;
         }
-        if (configurationFile) {
-            if (configuration.getConfiguration() == null) {
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Unable to load Plugin Configuration for Plugin.");
-                return;
-            }
-        }
+
 
         boolean commands = (boolean) data.get("commands");
         String commandName = (String) data.get("commands_name");
@@ -159,7 +154,7 @@ enum JavaPluginPreload {
                     pluginFilePath,
                     (String) data.get("dependencies"),
                     configurationFile,
-                    configuration,
+                    pluginConfiguration,
                     (String) data.get("language"),
                     (String) data.get("author"),
                     (String) data.get("url"),
@@ -177,10 +172,8 @@ enum JavaPluginPreload {
             }
             StarNub.getPluginManager().addLoadedPlugin(pluginName , javaPluginPackage);
             StarNub.getPluginManager().removeUnloadedPluginFromList(pluginName);
-
-
         } catch (NullPointerException e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Null value or empty: \"plugin.yml\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Null value or empty: \"plugin.yml\".");
         }
     }
 
@@ -199,15 +192,15 @@ enum JavaPluginPreload {
         boolean success = false;
         try {
             try {
-                List<String> dependencies = (List<String>) StarNub.getConfiguration().getConfiguration().get("dependencies");
-                for (String dependency : dependencies) {
-                    success = checkDependency(sender, pluginName, dependency);
-                    if (!success) {
-                        return  false;
-                    }
-                }
+//                List<String> dependencies = (List<String>) StarNub.getConfiguration().getConfiguration().get("dependencies");
+//                for (String dependency : dependencies) {
+//                    success = checkDependency(sender, pluginName, dependency);
+//                    if (!success) {
+//                        return  false;
+//                    }
+//                }
             } catch (ClassCastException ex) {
-                 return checkDependency(sender, pluginName, (String) StarNub.getConfiguration().getConfiguration().get("dependencies"));
+//                 return checkDependency(sender, pluginName, (String) StarNub.getConfiguration().getConfiguration().get("dependencies"));
             }
         } catch (NullPointerException e) {
             return true;
@@ -227,15 +220,15 @@ enum JavaPluginPreload {
      * @return boolean if the dependency load was successful or not
      */
     private boolean checkDependency(Object sender, String pluginName, String dependency) {
-        if (!StarNub.getPluginManager().getLoadedPlugins().contains(pluginName)) {
-            StarNub.getPluginManager().loadSpecificPlugin(sender, dependency, false, false);//TODO FIX
-            if (StarNub.getPluginManager().getLoadedPlugins().contains(pluginName)) {
-                return true;
-            } else {
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Failure to load dependency \"" + dependency + ".");
-                return false;
-            }
-        }
+//        if (!StarNub.getPluginManager().getLoadedPlugins().contains(pluginName)) {
+//            StarNub.getPluginManager().loadSpecificPlugin(sender, dependency, false, false);//TODO FIX
+//            if (StarNub.getPluginManager().getLoadedPlugins().contains(pluginName)) {
+//                return true;
+//            } else {
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Failure to load dependency \"" + dependency + ".");
+//                return false;
+//            }
+//        }
         return false;
     }
 }
