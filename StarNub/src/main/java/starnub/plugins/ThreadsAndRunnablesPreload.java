@@ -18,7 +18,6 @@
 
 package starnub.plugins;
 
-import starnub.StarNub;
 import starnub.plugins.runnable.StarNubRunnable;
 
 import java.io.File;
@@ -69,21 +68,21 @@ enum ThreadsAndRunnablesPreload {
                 try {
                     return starNubRunnableClass.newInstance();
                 } catch (InstantiationException e) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, could not instantiate StarNubRunnable.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, could not instantiate StarNubRunnable.");
                     return null;
                 } catch (IllegalAccessException e) {
-                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, could not instantiate plugin, illegal access exception.");
+//                    StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, could not instantiate plugin, illegal access exception.");
                     return null;
                 }
             } catch (ClassCastException e) {
-                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, does not represent a StarNubRunnable.");
+//                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, does not represent a StarNubRunnable.");
                 return null;
             }
         } catch (ClassNotFoundException e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, class not found or issue with plugin imports: \"" + classString + "\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, class not found or issue with plugin imports: \"" + classString + "\".");
             return null;
         } catch (NoClassDefFoundError e) {
-            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, package not found or issue with plugin imports: \"" + classString + "\".");
+//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " runnable load error, package not found or issue with plugin imports: \"" + classString + "\".");
             return null;
         }
     }

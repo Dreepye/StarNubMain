@@ -85,7 +85,7 @@ public abstract class CacheWrapper<E1> {
      *                              not exist already, if you will not be using this which is not recommended, use null in its place.
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      * @param TIME_UNIT             TimeUnit representing the time units to set the auto prune and purge to set 0 for off (Not recommended)
-     * @param CACHE_PRUNE_TASK_TIME int representing the time units to to automatically remove utilities.cache of this age at the set interval of this time unit
+     * @param CACHE_PRUNE_TASK_TIME int representing the time units to to automatically remove cache of this age at the set interval of this time unit
      * @param CACHE_PURGE_TAKE_TIME int representing the time to purge all utilities.cache entirely
      * @param expectedElements  int representing the max number of elements that will be in the utilities.cache at one time
      * @param expectedThreads   int representing the max number of threads you expect to be accessing the elements at one time

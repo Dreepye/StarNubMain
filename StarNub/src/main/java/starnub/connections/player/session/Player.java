@@ -21,6 +21,7 @@ package starnub.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.sun.media.jfxmedia.events.PlayerEvent;
 import io.netty.channel.Channel;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -32,8 +33,8 @@ import starnub.StarNub;
 import starnub.connections.player.StarNubProxyConnection;
 import starnub.connections.player.character.CharacterIP;
 import starnub.connections.player.character.PlayerCharacter;
-import starnub.events.events.PlayerEvent;
 import starnub.events.events.StarNubEvent;
+import utilities.events.types.StringEvent;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -298,7 +299,7 @@ public class Player extends StarNubProxyConnection {
     @Override
     public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message){
         if (sender instanceof Player) {
-            new ChatReceivePacket(CLIENT_CTX, channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message).routeToDestination();
+//            new ChatReceivePacket(CLIENT_CTX, channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message).routeToDestination();
         }
     }
     
@@ -317,7 +318,7 @@ public class Player extends StarNubProxyConnection {
         boolean disconnected = super.disconnect();
         if (disconnected) {
             Player player = StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
-            new PlayerEvent("Player_Disconnect_" + reason, player, reason);
+            new StringEvent("Player_Disconnect_" + reason, player);
             disconnectCleanUp();
             if (!reason.equalsIgnoreCase("quit")){
                 packetDisconnect();

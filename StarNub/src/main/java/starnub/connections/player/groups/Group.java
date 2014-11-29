@@ -23,7 +23,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import lombok.Getter;
 import starnub.StarNub;
 
 import java.sql.SQLException;

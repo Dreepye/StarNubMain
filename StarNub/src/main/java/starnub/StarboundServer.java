@@ -63,7 +63,12 @@ public class StarboundServer {
     public PacketEventRouter getPacketEventRouter() {
         return packetEventRouter;
     }
-
+    public TCPProxyServer getTcpProxyServer() {
+        return tcpProxyServer;
+    }
+    public Thread getUdpProxyServer() {
+        return udpProxyServer;
+    }
 
     public void start() {
 

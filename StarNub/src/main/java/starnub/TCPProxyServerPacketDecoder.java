@@ -29,7 +29,6 @@ import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starnub.connections.player.StarNubProxyConnection;
 import starnub.connections.player.session.Player;
-import starnub.events.events.EventsInternals;
 import starnub.events.events.StarNubEvent;
 import utilities.events.EventSubscription;
 
@@ -176,7 +175,6 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {//TODO add connection
         if (CONNECTION_SIDE.equalsIgnoreCase("ServerSide")) {
             new StarNubEvent("StarNub_Socket_Connection_Attempt_Server", ctx);
-            EventsInternals.eventSend_StarNub_Socket_Connection_Success_Server(ctx);
             setPacketPool(ctx);
             new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
         } else if (CONNECTION_SIDE.equalsIgnoreCase("ClientSide")) {
@@ -209,7 +207,6 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 .handler(new TCPProxyServerPacketDecoder("ServerSide", ctx));
         ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub settings", "starbound_port")));
         destinationCTX = f.channel().pipeline().firstContext();
-        EventsInternals.eventSend_StarNub_Socket_Connection_Success_Client(ctx);
         setPacketPool(ctx);
         new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
         starNubProxyConnection = new StarNubProxyConnection(StarNub.getStarNubEventRouter(), ctx, destinationCTX);
@@ -221,7 +218,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     }
 
     /**
-     * This method will send a Player Disconnect Event {@link starnub.events.events.PlayerEvent}
+     * This method will send a Player Disconnect Event }
      *
      * After channel is inactive we want to remove the channel from
      * the starbounddata.packets.global list.

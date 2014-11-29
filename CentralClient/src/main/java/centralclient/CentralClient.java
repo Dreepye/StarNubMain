@@ -17,9 +17,4 @@ package centralclient;/*
  */
 
 public class CentralClient {
-
-
-
-
-
 }

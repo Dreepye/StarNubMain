@@ -19,12 +19,10 @@
 package starnub;
 
 import org.joda.time.DateTime;
-
 import starnub.database.DatabaseTables;
 import starnub.events.events.StarNubEvent;
 import starnub.events.starnub.StarNubEventRouter;
 import starnub.logger.MultiOutputLogger;
-import starnub.plugins.PluginManager;
 import starnub.resources.Configuration;
 import starnub.resources.ResourceManager;
 import starnub.senders.NameBuilder;
@@ -54,7 +52,7 @@ public final class StarNub {
     private static final Connections connections = Connections.getInstance();
     private static final DatabaseTables databaseTables = DatabaseTables.getInstance();
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
-    private static final PluginManager pluginManager = PluginManager.getInstance();
+//    private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
     public static Connections getConnections() {
@@ -68,7 +66,6 @@ public final class StarNub {
     public static Configuration getConfiguration() {
         return configuration;
     }
-
 
     public static NameBuilder getNameBuilder() {
         return nameBuilder;
@@ -90,9 +87,9 @@ public final class StarNub {
         return starNubEventRouter;
     }
 
-    public static PluginManager getPluginManager() {
-        return pluginManager;
-    }
+//    public static PluginManager getPluginManager() {
+//        return pluginManager;
+//    }
 
     public static StarboundServer getStarboundServer() {
         return STARBOUND_SERVER;
@@ -120,6 +117,7 @@ public final class StarNub {
 
         logger.eventListenerRegistration(); /*  */
         starNubEventRouter.startEventRouter();
+        STARBOUND_SERVER.getUdpProxyServer().start();
         new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
 
 //        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", ));

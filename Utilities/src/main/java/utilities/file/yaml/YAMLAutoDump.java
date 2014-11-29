@@ -18,10 +18,14 @@
 
 package utilities.file.yaml;
 
+import utilities.concurrency.task.InternalTask;
+import utilities.concurrency.task.ScheduledTask;
 import utilities.concurrency.task.TaskManager;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -69,9 +73,14 @@ public class YAMLAutoDump {
             }
         };
         if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-            ((TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR).scheduleWithFixedDelayTask(yamlFile.getOWNER(), "YAML Wrapper - Auto Dumper - File: " + yamlFile.getFILE_NAME(), runnable, 1, AUTO_DUMP_INTERVAL, TimeUnit.MINUTES);
+            ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 5, 5, TimeUnit.MINUTES);
+            String taskName = "YAML Wrapper - Auto Dumper - File: " + yamlFile.getFILE_NAME();
+            ScheduledTask scheduledTask = new InternalTask("Utilities", taskName, runnable,  scheduledFuture);
+            TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
+            taskManager.getTASK_LIST().put("Utilities", new ConcurrentHashMap<>());
+            taskManager.getTASK_LIST().get("Utilities").put(taskName, scheduledTask);
         } else {
-            SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, 1, AUTO_DUMP_INTERVAL, TimeUnit.MINUTES);
+            SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, 5, AUTO_DUMP_INTERVAL, TimeUnit.MINUTES);
         }
     }
 }
