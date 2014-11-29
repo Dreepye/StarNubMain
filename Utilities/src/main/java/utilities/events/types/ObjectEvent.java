@@ -11,4 +11,5 @@ public class ObjectEvent extends Event<String> {
     public ObjectEvent(String EVENT_KEY, Object EVENT_DATA) {
         super(EVENT_KEY, EVENT_DATA);
     }
+
 }

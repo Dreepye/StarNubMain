@@ -159,7 +159,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         ChannelHandlerContext clientCTX = player.getCLIENT_CTX();
         player.getPlayerCharacter().setLastSeen(DateTime.now());
         new StarNubEvent("Player_Connection_Attempt", this);
-        StarNub.getLogger().cDebPrint("StarNub", "A Player is attempting to connect to the server on IP: " + player.getSessionIpString() + ".");
+        StarNub.getLogger().cDebPrint("StarNub", "A Player is attempting to connect to the network on IP: " + player.getSessionIpString() + ".");
         try {
             CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().addCache(clientCTX, rejectionCache);
         } catch (CacheWrapperOperationException e) {
@@ -171,7 +171,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For internal use with StarNub
      * <p>
-     * Uses: This checks to see if the server is restarting
+     * Uses: This checks to see if the network is restarting
      *
      * @param player Player player session
      * @param header rejection header
@@ -190,7 +190,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For internal use with StarNub
      * <p>
-     * Uses: This checks to see if the server is whitelisted and is the player on it
+     * Uses: This checks to see if the network is whitelisted and is the player on it
      *
      * @param player Player player session
      * @param header rejection header
@@ -214,7 +214,7 @@ public class ClientConnectHandler extends PacketEventHandler {
             } else if (uuidWhitelisted) {
                 return null;
             } else {
-                String reason = "\n^#f5f5f5;This server is whitelisted.\n";
+                String reason = "\n^#f5f5f5;This network is whitelisted.\n";
                 return new RejectionCache(true, RejectionCache.Reason.WHITELIST, header + reason + footer, player);
             }
         } else {
@@ -288,7 +288,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For internal use with StarNub
      * <p>
-     * Uses: This checks to see if the server is full. Reserved Kick can will kick regular players first, then reserved players. Reserved plays can only ick regular players
+     * Uses: This checks to see if the network is full. Reserved Kick can will kick regular players first, then reserved players. Reserved plays can only ick regular players
      *
      * @param player Player player session
      * @param header rejection header
@@ -343,7 +343,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                     }
                 }
                 if (!spaceMade) {
-                    reason = "^#f5f5f5;This server is full and no more VIP slots are available.";
+                    reason = "^#f5f5f5;This network is full and no more VIP slots are available.";
                     return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP_KICK, header + reason + footer, player);
                 }
             } else if (player.hasPermission("starnubinternals.reserved", true)) {
@@ -361,11 +361,11 @@ public class ClientConnectHandler extends PacketEventHandler {
                     }
                 }
                 if (!spaceMade) {
-                    reason = "^#f5f5f5;This server is full and no more VIP slots are available." + previousKick;
+                    reason = "^#f5f5f5;This network is full and no more VIP slots are available." + previousKick;
                     return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP, header + reason + footer, player);
                 }
             } else {
-                reason = "^#f5f5f5;This server is full and you do not have permission to enter." + previousKick;
+                reason = "^#f5f5f5;This network is full and you do not have permission to enter." + previousKick;
                 return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL, header + reason + footer, player);
             }
         }

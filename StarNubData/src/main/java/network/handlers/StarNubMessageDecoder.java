@@ -16,18 +16,26 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.events.types;
+package network.handlers;
 
-/**
- * Represents a IntegerEvent with a Event Key (String) and Event Data (String)
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class StringEvent extends Event<String> {
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.serialization.ClassResolver;
+import io.netty.handler.codec.serialization.ObjectDecoder;
 
-    public StringEvent(String EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
+
+public  class StarNubMessageDecoder extends ObjectDecoder {
+    
+    public StarNubMessageDecoder(ClassResolver classResolver) {
+        super(classResolver);
     }
 
+    public StarNubMessageDecoder(int maxObjectSize, ClassResolver classResolver) {
+        super(maxObjectSize, classResolver);
+    }
+
+    @Override
+    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        return super.decode(ctx, in);
+    }
 }

@@ -40,7 +40,7 @@ public class Stopped extends StarboundStatus{
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the server started
+     * @return boolean representing if the network started
      */
     @Override
     public boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) {
@@ -64,12 +64,12 @@ public class Stopped extends StarboundStatus{
     /**
      * Recommended: For internal use.
      * <p>
-     * Uses: This cannot be used while the server is stopped
+     * Uses: This cannot be used while the network is stopped
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the starbound server is responsive
+     * @return boolean representing if the starbound network is responsive
      */
     @Override
     public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
@@ -80,9 +80,9 @@ public class Stopped extends StarboundStatus{
     /**
      * Recommended: For internal use.
      * <p>
-     * Uses: This cannot be used with the server is stopped
+     * Uses: This cannot be used with the network is stopped
      *
-     * @return boolean representing if the server is stopped
+     * @return boolean representing if the network is stopped
      */
     @Override
     public boolean stop() {

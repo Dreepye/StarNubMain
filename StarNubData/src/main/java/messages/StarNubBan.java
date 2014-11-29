@@ -16,18 +16,35 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.events.types;
+package messages;
 
-/**
- * Represents a IntegerEvent with a Event Key (String) and Event Data (String)
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class StringEvent extends Event<String> {
+public abstract class StarNubBan extends StarNubMessage {
 
-    public StringEvent(String EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
+    public enum BanIdentifier{
+        IP,
+        UUID
+    }
+
+    public enum BanRequest{
+        ADD,
+        REMOVE
+    }
+
+    private final BanIdentifier BAN_IDENTIFIER;
+    private final BanRequest BAN_REQUEST;
+
+    public StarNubBan(Direction DIRECTION, Type TYPE, BanIdentifier BAN_IDENTIFIER, BanRequest BAN_REQUEST) {
+        super(DIRECTION, TYPE);
+        this.BAN_IDENTIFIER = BAN_IDENTIFIER;
+        this.BAN_REQUEST = BAN_REQUEST;
+    }
+
+    public BanIdentifier getBAN_IDENTIFIER() {
+        return BAN_IDENTIFIER;
+    }
+
+    public BanRequest getBAN_REQUEST() {
+        return BAN_REQUEST;
     }
 
 }

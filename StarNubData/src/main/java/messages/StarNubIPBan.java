@@ -16,18 +16,20 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.events.types;
+package messages;
 
-/**
- * Represents a IntegerEvent with a Event Key (String) and Event Data (String)
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class StringEvent extends Event<String> {
+import java.net.InetAddress;
 
-    public StringEvent(String EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
+public class StarNubIPBan extends StarNubBan {
+
+    private final InetAddress IP;
+
+    public StarNubIPBan(Direction DIRECTION, Type TYPE, BanIdentifier BAN_IDENTIFIER, BanRequest BAN_REQUEST, InetAddress IP) {
+        super(DIRECTION, TYPE, BAN_IDENTIFIER, BAN_REQUEST);
+        this.IP = IP;
     }
 
+    public InetAddress getIP() {
+        return IP;
+    }
 }

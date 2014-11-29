@@ -16,18 +16,25 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.events.types;
+package network.handlers;
 
-/**
- * Represents a IntegerEvent with a Event Key (String) and Event Data (String)
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class StringEvent extends Event<String> {
+import events.event.CentralEvent;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import messages.StarNubMessage;
+import utilities.events.EventRouter;
 
-    public StringEvent(String EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
+public class StarNubMessageReader extends SimpleChannelInboundHandler<StarNubMessage> {
+
+    private final EventRouter EVENT_ROUTER;
+
+    public StarNubMessageReader(EventRouter EVENT_ROUTER) {
+        this.EVENT_ROUTER = EVENT_ROUTER;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, StarNubMessage starNubMessage) throws Exception {
+        EVENT_ROUTER.eventNotify(new CentralEvent(starNubMessage.getTYPE(), starNubMessage));
+    }
 }

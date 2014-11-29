@@ -57,7 +57,7 @@ public class NameBuilder {
 //     *
 //     * @param sender Object which represents the message sender can be a string
 //     * @param playerIdentifier Object which represents the player identifier can be any type listed
-//     *                         at {@link starnub.server.Connectionss} under method PlayerByAnyIdentifier.
+//     *                         at {@link starnub.network.Connectionss} under method PlayerByAnyIdentifier.
 //     * @param message String the message to be sent to player or console
 //     */
 //    public void playerOrConsoleMessage(Object sender, Object playerIdentifier, String message){
@@ -614,12 +614,12 @@ public class NameBuilder {
 //     * @param message String the message to be sent to the player
 //     * @return ChatReceivePacket the packets.chat packet to be sent to player
 //     */
-//    private ChatReceivePacket playerPacketCraft(Object sender, Player player, boolean server, ChatReceivePacket.ChatReceiveChannel channel, boolean tags, String message){
+//    private ChatReceivePacket playerPacketCraft(Object sender, Player player, boolean network, ChatReceivePacket.ChatReceiveChannel channel, boolean tags, String message){
 //        if (!(sender instanceof Player) && !channel.equals(ChatReceivePacket.ChatReceiveChannel.COMMAND)) {
 //            message = gameColors.getDefaultServerChatColor() + message;
 //        }
 //        ChannelHandlerContext ctx;
-//        if (!server){
+//        if (!network){
 //            ctx = player.getClientCtx();
 //        } else {
 //            ctx = player.getServerCtx();

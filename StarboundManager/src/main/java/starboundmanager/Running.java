@@ -34,13 +34,13 @@ public class Running extends StarboundStatus {
     /**
      * Recommended: For internal use.
      * <p>
-     * Uses: This will not work because the server is already running
+     * Uses: This will not work because the network is already running
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the server started
+     * @return boolean representing if the network started
      */
     @Override
     public boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) {
@@ -73,14 +73,14 @@ public class Running extends StarboundStatus {
     /**
      * Recommended: For internal use.
      * <p>
-     * Uses: This will attempt to see if the Starbound server is responsive, but depending on the current status may or may not work, queries are attempted
+     * Uses: This will attempt to see if the Starbound network is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes. This will transition the state to unresponsive
      * if unresponsive
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the starbound server is responsive
+     * @return boolean representing if the starbound network is responsive
      */
     @Override
     public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
@@ -102,7 +102,7 @@ public class Running extends StarboundStatus {
      * Uses: This will attempt to stop the Starbound process by transition the status to stopping and then calling the stop method of the stopping
      * status
      *
-     * @return boolean representing if the server is stopped
+     * @return boolean representing if the network is stopped
      */
     @Override
     public boolean stop() {

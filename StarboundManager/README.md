@@ -18,7 +18,7 @@ Current Classes
 - StarboundProcess - Contains the Starbound process that the JAVA JVM started as well as extends RUNNABLE to manage the starbound stream. It is printed or sent through an event system if packet_decoding is off
 - StarboundQuery - Static method to query the starnub
 - StarboundServerExe - This class extends OperatingSystem from the Utilities Library, it contains the OS type, OS Bit Version, Starbound_Server.exe location
-- StarboundStatus - Abstract class for managing states also contains methods for querying the server
+- StarboundStatus - Abstract class for managing states also contains methods for querying the network
     - Running - Extends StarboundStatus
     - Starting - Extends StarboundStatus
     - Stopped - Extends StarboundStatus

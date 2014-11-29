@@ -90,35 +90,35 @@ public class ConnectionResponseHandler extends PacketEventHandler {
             RejectionCache.Reason rejectionReason = rejectionCache.getREJECTION_REASON();
             switch (rejectionReason) {
                 case RESTARTING: {
-                    rejectedProcess(player, "Player_Connection_Failure_Server_Restarting", "A player tried to log into the server while its preparing to restart: ");
+                    rejectedProcess(player, "Player_Connection_Failure_Server_Restarting", "A player tried to log into the network while its preparing to restart: ");
                     break;
                 }
                 case WHITELIST: {
-                    rejectedProcess(player, "Player_Connection_Failure_Whitelist", "A Player tried connecting while the server is whitelisted on IP: ");
+                    rejectedProcess(player, "Player_Connection_Failure_Whitelist", "A Player tried connecting while the network is whitelisted on IP: ");
                     break;
                 }
                 case TEMPORARY_BANNED: {
-                    rejectedProcess(player, "Player_Connection_Failure_Banned_Temporary", "A temporary banned Player tried connecting to the server on IP: ");
+                    rejectedProcess(player, "Player_Connection_Failure_Banned_Temporary", "A temporary banned Player tried connecting to the network on IP: ");
                     break;
                 }
                 case BANNED: {
-                    rejectedProcess(player, "Player_Connection_Failure_Banned_Permanent", "A permanently banned Player tried connecting to the server on IP:  ");
+                    rejectedProcess(player, "Player_Connection_Failure_Banned_Permanent", "A permanently banned Player tried connecting to the network on IP:  ");
                     break;
                 }
                 case ALREADY_LOGGED_IN: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Already_Online", "A Player tried to log in to the server with the same character multiple times. Character: " + characterName + ". on IP:");
+                    rejectedProcess(player, "Player_Connection_Failure_Character_Already_Online", "A Player tried to log in to the network with the same character multiple times. Character: " + characterName + ". on IP:");
                     break;
                 }
                 case SERVER_FULL: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full", "A Player tried to log in to the server while it was full and is not a reserved player. Character: " + characterName + ". on IP:");
+                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full", "A Player tried to log in to the network while it was full and is not a reserved player. Character: " + characterName + ". on IP:");
                     break;
                 }
                 case SERVER_FULL_NO_VIP: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full_No_Vip", "A Player tried to log in to the server while it was full and is a reserved player, but no reserved slots are free. Character: " + characterName + ". on IP:");
+                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full_No_Vip", "A Player tried to log in to the network while it was full and is a reserved player, but no reserved slots are free. Character: " + characterName + ". on IP:");
                     break;
                 }
                 case SERVER_FULL_NO_VIP_KICK: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full_No_Vip_Kick", "A Player tried to log in to the server while it was full and is a reserved kick player, but no reserved slots or reserved kick slots are free. Character: " + characterName + ". on IP:");
+                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full_No_Vip_Kick", "A Player tried to log in to the network while it was full and is a reserved kick player, but no reserved slots or reserved kick slots are free. Character: " + characterName + ". on IP:");
                     break;
                 }
             }

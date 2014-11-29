@@ -16,18 +16,35 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.events.types;
+package messages;
 
-/**
- * Represents a IntegerEvent with a Event Key (String) and Event Data (String)
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class StringEvent extends Event<String> {
+public class StarNubMessage implements java.io.Serializable {
 
-    public StringEvent(String EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
+    public enum Direction {
+        CENTRAL_SERVER,
+        STARNUB_SERVER
     }
 
+    public enum Type {
+        LICENSE,
+        SERVER_MESSAGE,
+        STARNUB_BROADCAST,
+        BAN
+    }
+
+    private final Direction DIRECTION;
+    private final Type TYPE;
+
+    public StarNubMessage(Direction DIRECTION, Type TYPE) {
+        this.DIRECTION = DIRECTION;
+        this.TYPE = TYPE;
+    }
+
+    public Direction getDIRECTION() {
+        return DIRECTION;
+    }
+
+    public Type getTYPE() {
+        return TYPE;
+    }
 }

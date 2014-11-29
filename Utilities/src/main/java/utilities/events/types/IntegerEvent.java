@@ -11,4 +11,5 @@ public class IntegerEvent extends Event<String> {
     public IntegerEvent(String EVENT_KEY, Integer EVENT_DATA) {
         super(EVENT_KEY, EVENT_DATA);
     }
+
 }

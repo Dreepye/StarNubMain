@@ -16,18 +16,25 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.events.types;
+package messages;
 
-/**
- * Represents a IntegerEvent with a Event Key (String) and Event Data (String)
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class StringEvent extends Event<String> {
+public class StarNubLicense extends StarNubMessage {
 
-    public StringEvent(String EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
+    public enum LicenseRequest {
+        CHECK,
+        BIND,
+        BIND_ACCEPT,
+        BIND_DENY
     }
 
+    private final LicenseRequest LICENSE_REQUEST;
+
+    public StarNubLicense(Direction DIRECTION, Type TYPE, LicenseRequest LICENSE_REQUEST) {
+        super(DIRECTION, TYPE);
+        this.LICENSE_REQUEST = LICENSE_REQUEST;
+    }
+
+    public LicenseRequest getLICENSE_REQUEST() {
+        return LICENSE_REQUEST;
+    }
 }
