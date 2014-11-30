@@ -32,7 +32,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
 /**
  * Represents the DamageTileGroup and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client.
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p/>
  * Packet Direction: Client -> Server
  *

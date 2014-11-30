@@ -9,14 +9,14 @@ Change Log:
 //EPOLL
 
 
-        defaultNameColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("global_name_color"));
-        defaultChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("global_message_name_color"));
-        defaultServerNameColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("server_name_color"));
-        defaultServerChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub starbounddata.packets.chat")).get("server_message_color"));
+        defaultNameColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver starbounddata.packets.chat")).get("global_name_color"));
+        defaultChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver starbounddata.packets.chat")).get("global_message_name_color"));
+        defaultServerNameColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver starbounddata.packets.chat")).get("server_name_color"));
+        defaultServerChatColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver starbounddata.packets.chat")).get("server_message_color"));
         bracketColor = validateColor((String) ((Map)StarNub.getConfiguration().getConfiguration().get("groups")).get("bracket_color"));
 
-        jsonObject.put("gamePort", ((Map)StarNub.getConfiguration().getConfiguration().get("starnub settings")).get("starbound_port"));
-        jsonObject.put("serverName", ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnub info")).get("server_name"));
+        jsonObject.put("gamePort", ((Map)StarNub.getConfiguration().getConfiguration().get("starnubserver settings")).get("starbound_port"));
+        jsonObject.put("serverName", ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver info")).get("server_name"));
         jsonObject.put("maxPlayers", (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit") +
                 (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit_reserved") +
                 2);
@@ -36,7 +36,7 @@ So here are my plans – this will be my last update of StarNub for a while
 After the above I am going to get to work to finishing StarNub and preparing it for 1.0, these are not in order.
     •	Networking
         -	I will be studying low level programming. My goal is to program the network from scratch over a library, which enables me to troubleshoot and have more control over the process and removing the library overhead. The Netty.IO library is great but not for Starbound. Unless I can configure it differently.
-        -	Server Query to keep the starbounddata.packets.starbounddata.packets.starnub up needs to be kept on its own
+        -	Server Query to keep the starbounddata.packets.starbounddata.packets.starnubserver up needs to be kept on its own
         -	Server Query’s from external websites need to be handled better
         - Connection clean up disconnects, epoll
 
@@ -106,7 +106,7 @@ Small Changes:
     •	Add shadow, clear and other support (GameColors.class)
 
     •	Commands (Small changes)
-        o	/starbounddata.packets.starbounddata.packets.starnub time
+        o	/starbounddata.packets.starbounddata.packets.starnubserver time
         o	/restart timer
         o	 /permissions
             	Create, delete, update, add, remove, info

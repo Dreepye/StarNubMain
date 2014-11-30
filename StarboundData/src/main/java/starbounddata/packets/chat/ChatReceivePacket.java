@@ -30,7 +30,7 @@ import static starbounddata.packets.StarboundBufferWriter.*;
 /**
  * Represents the ChatReceivedPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient
  * <p/>
  * Packet Direction: Server -> Client
  *
@@ -64,7 +64,7 @@ public class ChatReceivePacket extends Packet {
     private String world;
 
     /**
-     * ClientId of the sender which is assigned by the Starbound starnub
+     * ClientId of the sender which is assigned by the Starbound starnubserver
      */
     private int clientId;
 
@@ -74,7 +74,7 @@ public class ChatReceivePacket extends Packet {
     private String name;
 
     /**
-     * Message sent from the starnub
+     * Message sent from the starnubserver
      */
     private String message;
 

@@ -32,8 +32,8 @@ import static starbounddata.packets.StarboundBufferWriter.*;
 /**
  * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client.
- * This packet is sent when a client is initially requesting a connection to the starnub after it received
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
+ * This packet is sent when a starnubclient is initially requesting a connection to the starnubserver after it received
  * the {@link starbounddata.packets.server.ProtocolVersionPacket}
  * <p/>
  * Packet Direction: Client -> Server

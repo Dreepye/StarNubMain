@@ -26,7 +26,7 @@ import java.util.List;
 
 
 /**
- * A JSON array. JSONObject supports java.org.starnub.util.List interface.
+ * A JSON array. JSONObject supports java.org.starnubserver.util.List interface.
  *
  * @author FangYidong fangyidong@yahoo.com.cn
  *         <p>

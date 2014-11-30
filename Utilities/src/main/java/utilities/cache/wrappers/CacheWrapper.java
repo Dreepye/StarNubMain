@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents Abstract CacheWrapper that can be transformed to accept any type of key and be used with any
- * specific types of utilities.cache found in (@link starnub.utilities.cache.objects}.
+ * specific types of utilities.cache found in (@link starnubserver.utilities.cache.objects}.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
@@ -286,7 +286,7 @@ public abstract class CacheWrapper<E1> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will execute the registerEvents() method which will register any event listeners with starnub which
+     * Uses: This will execute the registerEvents() method which will register any event listeners with starnubserver which
      * will enable auto cache removal based on the event and the implementers event method(s).
      * <p/>
      */

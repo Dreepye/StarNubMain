@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2014 www.StarNub.org - Underbalanced
  *
- * This file is part of org.starnub a Java Wrapper for Starbound.
+ * This file is part of org.starnubserver a Java Wrapper for Starbound.
  *
  * This above mentioned StarNub software is free software:
  * you can redistribute it and/or modify it under the terms

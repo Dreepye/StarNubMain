@@ -1,6 +1,6 @@
-#fileExtractor.fileUnpack("starnub/jars/starnubessentials-1.0.jar", "StarNub/Plugins/starnubessentials-1.0.jar", true);
-#fileExtractor.fileUnpack("starnub/jars/starnubcommandsplugin-1.0.jar", "StarNub/Plugins/starnubcommandsplugin-1.0.jar", true);
-#fileExtractor.fileUnpack("starnub/jars/starboundcommandsplugin-1.0.jar", "StarNub/Plugins/starboundcommandsplugin-1.0.jar", true);
+#fileExtractor.fileUnpack("starnubserver/jars/starnubessentials-1.0.jar", "StarNub/Plugins/starnubessentials-1.0.jar", true);
+#fileExtractor.fileUnpack("starnubserver/jars/starnubcommandsplugin-1.0.jar", "StarNub/Plugins/starnubcommandsplugin-1.0.jar", true);
+#fileExtractor.fileUnpack("starnubserver/jars/starboundcommandsplugin-1.0.jar", "StarNub/Plugins/starboundcommandsplugin-1.0.jar", true);
 
 {
 starnub_version: {
@@ -11,9 +11,9 @@ starnub_version: {
          size: 12.50,
              }},
 
-internally_blocked_ips: {
-    file: ['internally_blocked_ips.yml', 'StarNub/Databases/'],
-    map: {ips: !!set {0.0.0.0, 0.0.0.1}}},
+#internally_blocked_ips: {
+#    file: ['internally_blocked_ips.yml', 'StarNub/Databases/'],
+#    map: {ips: !!set {0.0.0.0, 0.0.0.1}}},
 
 operators: {
     file: ['ops.yml', 'StarNub/'],
@@ -25,7 +25,7 @@ whitelist: {
 
 illegal_names: {
     file: ['illegal_nick_names.yml', 'StarNub/'],
-    map: {names: !!set {"starnub", "starnub", "starboundmanager", "admin", "moderator", "staff", "administrator", "owner", "moderator"}}},
+    map: {names: !!set {"starnubserver", "starnubserver", "starboundmanager", "admin", "moderator", "staff", "administrator", "owner", "moderator"}}},
 
 server_stats: {
     file: ['server_stats.yml', 'StarNub/'],
@@ -76,7 +76,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
 
   "starnub info": {
       "server_name": "StarNub",
-      "server_url": "http://www.starnub.org"
+      "server_url": "http://www.starnubserver.org"
     },
 
   "resources": {
@@ -151,13 +151,13 @@ default_groups_configuration: {
         "permissions": [
           "starnubinternals.chatrate.0",
           "starnubinternal.bypass.*",
-          "starnub.admin.kick",
-          "starnub.admin.ban",
-          "starnub.appear.*",
+          "starnubserver.admin.kick",
+          "starnubserver.admin.ban",
+          "starnubserver.appear.*",
           "starnubinternals.starbounddata.packets.chat.*",
           "starnubinternals.NAME.*",
-          "starnub.admin.restart",
-          "starnub.admin.broadcast"
+          "starnubserver.admin.restart",
+          "starnubserver.admin.broadcast"
         ]
       },
     "moderator": {
@@ -176,9 +176,9 @@ default_groups_configuration: {
         "permissions": [
           "starnubinternals.chatrate.1000",
           "starnubinternal.bypass.*",
-          "starnub.admin.kick",
-          "starnub.admin.ban",
-          "starnub.appear.*"
+          "starnubserver.admin.kick",
+          "starnubserver.admin.ban",
+          "starnubserver.appear.*"
         ]
       },
     "trustee": {
@@ -197,8 +197,8 @@ default_groups_configuration: {
         "permissions": [
           "starnubinternals.chatrate.1000",
           "starnubinternal.bypass.*",
-          "starnub.admin.kick",
-          "starnub.admin.ban"
+          "starnubserver.admin.kick",
+          "starnubserver.admin.ban"
         ]
       },
     "citizen": {
@@ -232,8 +232,8 @@ default_groups_configuration: {
           "rank": 0
         },
         "permissions": [
-          "starnub.chatrooms.leave",
-          "starnub.chatrooms.join",
+          "starnubserver.chatrooms.leave",
+          "starnubserver.chatrooms.join",
           "starnubinternals.chatrate.3000"
         ]
       },
@@ -251,24 +251,24 @@ default_groups_configuration: {
           "rank": 0
         },
         "permissions": [
-          "starnub.commands.*",
+          "starnubserver.commands.*",
           "starnubinternals.NAME.color",
           "starnubinternals.NAME.singlespaces",
           "starnubinternals.chatrate.5000",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.starnub.starbounddata.packets.chat",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.starnub.whisper",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.starnub.commands",
+          "starnubinternals.starbounddata.packets.starbounddata.packets.starnubserver.starbounddata.packets.chat",
+          "starnubinternals.starbounddata.packets.starbounddata.packets.starnubserver.whisper",
+          "starnubinternals.starbounddata.packets.starbounddata.packets.starnubserver.commands",
           "starboundmanager.w",
           "starboundmanager.r",
           "starboundmanager.nick",
           "starboundmanager.pvp.*",
-          "starnub.account.new",
-          "starnub.account.addchar",
-          "starnub.account.changepass",
-          "starnub.online",
-          "starnub.who",
-          "starnub.players",
-          "starnub.help"
+          "starnubserver.account.new",
+          "starnubserver.account.addchar",
+          "starnubserver.account.changepass",
+          "starnubserver.online",
+          "starnubserver.who",
+          "starnubserver.players",
+          "starnubserver.help"
         ]
       }
     }

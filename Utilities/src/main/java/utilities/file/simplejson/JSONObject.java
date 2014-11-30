@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * A JSON object. Key value pairs are unordered. JSONObject supports java.org.starnub.util.Map interface.
+ * A JSON object. Key value pairs are unordered. JSONObject supports java.org.starnubserver.util.Map interface.
  *
  * @author FangYidong
  */

@@ -29,8 +29,8 @@ import static starbounddata.packets.StarboundBufferWriter.writeInt;
 /**
  * Represents the ProtocolVersionPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet SHOULD NOT be edited freely. If the wrong version is sent to the client they will not
- * be able to connect to the starnub and received a wrong client version message. This is the first packet sent after a client completes a 3 way TCP handshake
+ * Notes: This packet SHOULD NOT be edited freely. If the wrong version is sent to the starnubclient they will not
+ * be able to connect to the starnubserver and received a wrong starnubclient version message. This is the first packet sent after a starnubclient completes a 3 way TCP handshake
  * <p/>
  * Packet Direction: Server -> Client
  *
@@ -40,7 +40,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeInt;
 public class ProtocolVersionPacket extends Packet {
 
     /**
-     * Some int set by the starnub based on the servers Starbound version
+     * Some int set by the starnubserver based on the servers Starbound version
      */
     private int protocolVersion;
 

@@ -28,7 +28,7 @@ import starbounddata.variants.VLQ;
  * Represents the HeartbeatPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
  * Notes: This packet SHOULD NOT be edited freely. This packet is generated ever step by the
- * Starbound Server and sent to the Client, The client responds after 3 steps
+ * Starbound Server and sent to the Client, The starnubclient responds after 3 steps
  * <p/>
  * Packet Direction: Server -> Client / Client -> Server
  *

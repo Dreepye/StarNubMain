@@ -29,7 +29,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 /**
  * Represents the ServerDisconnectPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet can be edited freely. This packet will send the client a disconnect notification
+ * Notes: This packet can be edited freely. This packet will send the starnubclient a disconnect notification
  * <p/>
  * Packet Direction: Server -> Client
  *

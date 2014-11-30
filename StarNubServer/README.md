@@ -7,7 +7,7 @@ OUTDATED - Update coming soon
 StarNub was created to enhance Starbound
 
 Wiki - https://github.com/StarNub/StarNub/wiki
-API - http://docs.starnub.org/StarNubApi/
+API - http://docs.starnubserver.org/StarNubApi/
 
 Authors: Underbalanced
 
@@ -27,7 +27,7 @@ Base Features:
    - StarNub Configuration:
 		- Step by step setup, or extract a utilities.file and edit
 		- Configuration self heals data types
-		- Most configuration items can be modified while the starbounddata.packets.starbounddata.packets.starnub is running
+		- Most configuration items can be modified while the starbounddata.packets.starbounddata.packets.starnubserver is running
    - Starbound Configuration:
 		- Auto generate configuration if it does not exist in directory
 		*- Auto write configuration variables when changed in StarNub configuration
@@ -48,7 +48,7 @@ Base Features:
 		*- Auto internal ip banning on DOS or DDOS
 		*- Connection rate limiter in case of ddos detected
    - Unique account system:
-		- Characters that join a starbounddata.packets.starbounddata.packets.starnub can create an account or attach a character to an account this enables them to keep personal settings, groups, permissions and centralize all the information about them from each character into one spot
+		- Characters that join a starbounddata.packets.starbounddata.packets.starnubserver can create an account or attach a character to an account this enables them to keep personal settings, groups, permissions and centralize all the information about them from each character into one spot
    - 3 Tier permissions system {base}.{sub}.{permission}. 
 		- You can use permissions to allow command usage, block breaking size, starbounddata.packets.chat speed are just a few uses of permissions
 		- Accounts and Groups can have permissions. If a group inherited another group, the permissions are thus inherited as well and the player assumse each of the permissions
@@ -74,7 +74,7 @@ Base Features:
 		- Players can be ignored by other players both players will not see each others starbounddata.packets.chat or be able to whisper each other
 		- Allow colored nick names or starbounddata.packets.chat by players
 		*- Tokens for information an colors instead of ^blue; or ^#0000CC; you could use {bl} for online {online}
-		- Illegal names and nick names are automatically changed when a player joins and sent to the starbounddata.packets.starbounddata.packets.starnub
+		- Illegal names and nick names are automatically changed when a player joins and sent to the starbounddata.packets.starbounddata.packets.starnubserver
 		- PVP messages are no longer starbounddata.packets.global but local
 		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character NAME colored or not, nick NAME, ip, uuid
 			- Example /w 2 hey = Starbound id, /w 2s hey statnubd up, /w underbalanced hey, /w 127.0.0.1 hey who is this?
@@ -91,18 +91,18 @@ Base Features:
 			- Checks if players can use the command or not based on the command settings
 			- Checks if everyone can use the command or if the player has permissions
 		- Commands are used by /{commandname or alias} {command}
-			- Example /starnub online or /sn online - would return whos online
+			- Example /starnubserver online or /sn online - would return whos online
 			- Commands can be mapped to shortcuts using the shortcut.yml in StarNub directory
-				- Example: Config utilities.file would be starnub: ['online', 'who'], starboundmanager: ['ban', 'kick']
-					- ^-this would map /starnub online or /starnub who to /online or /who and /starboundmanager ban and /starboundmanager kick to /ban and /kick
-			- Only one unique command can be mapped, so if both starnub and starboundmanager both have 'ban' only one can be shortcut's
+				- Example: Config utilities.file would be starnubserver: ['online', 'who'], starboundmanager: ['ban', 'kick']
+					- ^-this would map /starnubserver online or /starnubserver who to /online or /who and /starboundmanager ban and /starboundmanager kick to /ban and /kick
+			- Only one unique command can be mapped, so if both starnubserver and starboundmanager both have 'ban' only one can be shortcut's
 		- Players can be command blocked
 					
-	- Whitelisted starbounddata.packets.starbounddata.packets.starnub option (uuid, ip or starnub id)
+	- Whitelisted starbounddata.packets.starbounddata.packets.starnubserver option (uuid, ip or starnubserver id)
 	
 	- Restrictions: 
-		- Offline banning by uuid, ip, character NAME, starnub id
-		- Online banning by uuid, ip, character NAME, starboundmanager id*preferd, starnub id* prefered
+		- Offline banning by uuid, ip, character NAME, starnubserver id
+		- Online banning by uuid, ip, character NAME, starboundmanager id*preferd, starnubserver id* prefered
 		- Can ban session uuid, ip or ban all ips ever seen with character and every uuid seen with an ip
 		- Players can be permanently muted, command blocked or banned
 		- Players can also be temporarily muted command blocked or banned, these are automatically removed after the time expired
@@ -117,13 +117,13 @@ Base Features:
 		
 	- Plugins
 		- Easy StarNub API for creating plugins
-		- Some plugins can be updated while starbounddata.packets.starbounddata.packets.starnub is running
+		- Some plugins can be updated while starbounddata.packets.starbounddata.packets.starnubserver is running
 		- If two versions of the same plugin are in the plugins director, only the newest well be loaded
 		- Plugins can use StarNubs configuration class to enable self updating, healing and cleaning configuration
 		- Built in event system that allows event creation and subscription
 	
-   - Future support	for multi lingual starbounddata.packets.starbounddata.packets.starnub tool messages and plugins support
-   - Future additional player, plugin and starbounddata.packets.starbounddata.packets.starnub stats
+   - Future support	for multi lingual starbounddata.packets.starbounddata.packets.starnubserver tool messages and plugins support
+   - Future additional player, plugin and starbounddata.packets.starbounddata.packets.starnubserver stats
    
 Optional Essentials Plugin Features:
 	- Server Monitor (Checks every 20 seconds)

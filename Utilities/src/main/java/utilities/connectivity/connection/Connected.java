@@ -63,7 +63,7 @@ public class Connected implements ConnectionStatus {
      */
     @Override
     public boolean disconnect() {
-        CONNECTION.getCLIENT_CTX().close(CONNECTION.getCLIENT_CTX().voidPromise());
+        CONNECTION.getCLIENT_CTX().close();
         if (CONNECTION instanceof ProxyConnection){
             ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
             proxyConnection.getSERVER_CTX().close(proxyConnection.getSERVER_CTX().voidPromise());

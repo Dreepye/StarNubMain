@@ -32,7 +32,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 /**
  * Represents the ChatSentPacket and methods to generate a packet data for StarNub and Plugins
  * <p/>
- * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the client
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient
  * <p/>
  * Packet Direction: Client -> Server
  *
@@ -56,7 +56,7 @@ public class ChatSendPacket extends Packet {
     private ChatSendChannel channel;
 
     /**
-     * Message sent from the client
+     * Message sent from the starnubclient
      */
     private String message;
 

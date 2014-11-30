@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class Vec2IArray extends ArrayList<Vec2I> {
 
     /**
-     * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnub. This is still a sizable area
+     * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
      */
     public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException{
         int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
