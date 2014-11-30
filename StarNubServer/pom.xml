@@ -9,14 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>starnub</artifactId>
+    <artifactId>starnubserver</artifactId>
     <version>1.0-Beta</version>
 
-    <name>starnub</name>
+    <name>starnubserver</name>
     <url>http://www.starnub.org</url>
     <description>Java Wrapper for Starbound.</description>
     <organization>
-        <name>StarNub</name>
+        <name>StarNubServer</name>
         <url>http://www.starnub.org</url>
     </organization>
     <scm>
@@ -27,7 +27,7 @@
         <url>http://www.starnub.org</url>
     </issueManagement>
     <build>
-        <finalName>starnub</finalName>
+        <finalName>starnubserver</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

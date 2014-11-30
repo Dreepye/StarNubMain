@@ -18,6 +18,7 @@
 
 package starnub;
 
+import io.netty.util.ResourceLeakDetector;
 import org.joda.time.DateTime;
 import starnub.database.DatabaseTables;
 import starnub.events.events.StarNubEvent;
@@ -47,10 +48,10 @@ public final class StarNub {
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
     private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
-    private static final NameBuilder nameBuilder = new NameBuilder();
+    private static final NameBuilder nameBuilder = new NameBuilder();// MAKE STATIC AND NOT HERE TODO
+    private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
-    private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final DatabaseTables databaseTables = DatabaseTables.getInstance();
     private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
@@ -111,25 +112,20 @@ public final class StarNub {
      */
     private static void start () {
         /* This Resource detector is for debugging only */
-//        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
 
         /* Setting Temporary Time - Measuring StarNub Start Up Time */
         DateTime starnubStarTime = DateTime.now();
         /* Identify the main thread as StarNub - Main for debugging and OS Task List Identification */
         Thread.currentThread().setName("StarNub - Main");
 
-        logger.eventListenerRegistration(); /*  */
+//        logger.eventListenerRegistration(); /*  */
         starNubEventRouter.startEventRouter();
         STARBOUND_SERVER.getUdpProxyServer().start();
         new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
 
-//        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", ));
-
-
-
+//        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", StarNub::tempTime));
     }
-
-
 }
 
 

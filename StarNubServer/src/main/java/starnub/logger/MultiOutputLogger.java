@@ -60,6 +60,7 @@ public class MultiOutputLogger {
         this.dayOfMonth = new DateTime().getDayOfMonth();
         new StarNubTask("StarNub", "StarNub - Log Flush", true, 30, 30, TimeUnit.SECONDS, this::flushAllLogs);
         new StarNubTask("StarNub", "StarNub - Log Rotate Check", true, 30, 30, TimeUnit.SECONDS, this::logRotateCheckAllLogs);
+        eventListenerRegistration();
     }
 
     public static MultiOutputLogger getInstance() {
@@ -98,10 +99,10 @@ public class MultiOutputLogger {
                     this.logDebug = (int) logLevels.get(key);
                     break;
                 }
-                case "packets/chat": {
+                case "chat": {
                     int logLevelChat = (int) logLevels.get(key);
                     if (logLevelChat > 3) {
-                        System.out.printf(illegal, "packets/chat");
+                        System.out.printf(illegal, "chat");
                         System.exit(0);
                     }
                     this.logChat = (int) logLevels.get(key);
@@ -161,7 +162,7 @@ public class MultiOutputLogger {
     }
 
     public void eventListenerRegistration() {
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Event", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Event", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -187,7 +188,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Debug", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Debug", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -213,7 +214,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Chat", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Chat", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -239,7 +240,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Command", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Command", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -265,7 +266,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Information", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Information", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -291,7 +292,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Warning", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Warning", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -317,7 +318,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Error", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Error", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -344,7 +345,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Fatal", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", "StarNub_Log_Fatal", true, new StarNubEventHandler<Event<String>>() {
             @Override
             public Event<String> onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
