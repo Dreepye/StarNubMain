@@ -49,7 +49,7 @@ public class PassThroughPacket extends Packet {
         this.payload = payload;
     }
 
-    public PassThroughPacket(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+    public PassThroughPacket(Byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
         super(PACKET_ID, SENDER_CTX, DESTINATION_CTX);
     }
 

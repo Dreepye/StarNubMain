@@ -30,15 +30,10 @@ import utilities.file.yaml.YAMLWrapper;
 public class ResourceManager {
 
     private static final ResourceManager instance = new ResourceManager();
-    private static YAMLWrapper STARNUB_RESOURCES;
+    private static YAMLWrapper STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "", "", false, false, true, false);
 
     private ResourceManager() {
         directoryCheck();
-        try {
-            STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "resources/", "StarNub/Databases", false, false, true, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static ResourceManager getInstance() {

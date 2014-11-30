@@ -40,7 +40,7 @@ public class IllegalNames extends YAMLWrapper {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "illegal_names", "file"),
-                "resources",
+                starnubResources.getNestedValue("illegal_names", "map"),
                 (String) starnubResources.getListNestedValue(1, "illegal_names", "file"),
                 false,
                 true,

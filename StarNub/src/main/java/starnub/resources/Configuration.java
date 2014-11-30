@@ -37,7 +37,7 @@ public class Configuration extends YAMLWrapper {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "default_configuration", "file"),
-                "resources",
+                starnubResources.getNestedValue("default_configuration", "map"),
                 (String) starnubResources.getListNestedValue(1, "default_configuration", "file"),
                 false,
                 true,

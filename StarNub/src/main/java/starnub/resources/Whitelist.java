@@ -40,7 +40,7 @@ public class Whitelist extends YAMLWrapper {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "whitelist", "file"),
-                "resources",
+                starnubResources.getNestedValue("whitelist", "map"),
                 (String) starnubResources.getListNestedValue(1, "whitelist", "file"),
                 false,
                 true,

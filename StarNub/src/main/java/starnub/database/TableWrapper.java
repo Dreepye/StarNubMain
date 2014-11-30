@@ -11,7 +11,6 @@ import java.sql.SQLException;
 
 public abstract class TableWrapper<T1, T2> {
 
-
     private Dao<T1, T2> tableDao;
     final Class<T1> typeParameterDBClass;
     final Class<T2> typeParameterIDClass;

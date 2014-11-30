@@ -37,7 +37,7 @@ public class GroupsVerifyDump extends YAMLWrapper {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "default_groups_configuration", "file"),
-                "resources",
+                starnubResources.getNestedValue("default_groups_configuration", "map"),
                 (String) starnubResources.getListNestedValue(1, "default_groups_configuration", "file"),
                 false,
                 true,

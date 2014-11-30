@@ -40,7 +40,7 @@ public class Operators extends YAMLWrapper {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "internally_blocked_ips", "file"),
-                "resources",
+                starnubResources.getNestedValue("internally_blocked_ips", "map"),
                 (String) starnubResources.getListNestedValue(1, "internally_blocked_ips", "file"),
                 false,
                 true,

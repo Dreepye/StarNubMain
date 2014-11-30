@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class StarNubTask extends ScheduledTask {
 
-    TaskManager taskManager = StarNub.getTaskManager();
+    private static TaskManager taskManager = StarNub.getTaskManager();
 
     /**
      * Recommended: For Plugin Developers & Anyone else.

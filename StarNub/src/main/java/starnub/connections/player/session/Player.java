@@ -184,6 +184,10 @@ public class Player extends StarNubProxyConnection {
         return doNotSendMessageList;
     }
 
+    public Player() {
+        super(null, null, null);
+    }
+
     public Player(StarNubProxyConnection proxyConnection, String playerName, UUID playerUUID) {
         super(StarNub.getStarNubEventRouter(), proxyConnection.getCLIENT_CTX(), proxyConnection.getSERVER_CTX());
         this.gameName = playerCharacter.getName();

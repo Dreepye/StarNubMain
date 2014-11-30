@@ -37,7 +37,7 @@ public class ServerStats extends YAMLWrapper {
         super(
                 "StarNub",
                 (String) starnubResources.getListNestedValue(0, "server_stats", "file"),
-                "resources",
+                starnubResources.getNestedValue("server_stats", "map"),
                 (String) starnubResources.getListNestedValue(1, "server_stats", "file"),
                 false,
                 true,

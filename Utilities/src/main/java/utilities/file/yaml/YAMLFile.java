@@ -54,7 +54,7 @@ public class YAMLFile {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         if (DEFAULT_FILE_PATH instanceof String) {
-            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, true);
+            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, absolutePath);
         } else {
             this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
         }
@@ -79,7 +79,7 @@ public class YAMLFile {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         if (DEFAULT_FILE_PATH instanceof String) {
-            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, true);
+            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, absolutePath);
         } else {
             this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
         }
@@ -131,6 +131,7 @@ public class YAMLFile {
             dir.mkdirs();
         }
         if (!(filePath).startsWith("/") && absolutePath) {
+
             filePath = "/" + filePath;
         }
         if (!(filePath).endsWith("/") && filePath.length() > 0){
@@ -185,7 +186,8 @@ public class YAMLFile {
     @SuppressWarnings("unchecked")
     protected Map<String, Object> loadFromDefault() throws Exception {
         if (DEFAULT_FILE_PATH instanceof String) {
-            try (InputStream resourceAsStream = this.getClass().getResourceAsStream((String) DEFAULT_FILE_PATH)) {
+            String defaultPath = (String) DEFAULT_FILE_PATH;
+            try (InputStream resourceAsStream = this.getClass().getResourceAsStream(defaultPath)) {
                 return (Map<String, Object>) new Yaml().load(resourceAsStream);
             }
         } else if (DEFAULT_FILE_PATH instanceof InputStream) {

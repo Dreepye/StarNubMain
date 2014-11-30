@@ -62,7 +62,7 @@ public class StarNubVersion {
             YAMLWrapper starnubVersion = new YAMLWrapper(
                     "StarNub",
                     (String) starnubResources.getListNestedValue(0, "starnub_version", "file"),
-                    "resources",
+                    starnubResources.getNestedValue("starnub_version", "map"),
                     (String) starnubResources.getListNestedValue(1, "starnub_version", "file"),
                     false,
                     false,
