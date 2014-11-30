@@ -24,7 +24,7 @@ import org.yaml.snakeyaml.Yaml;
 import starnubserver.StarNub;
 import starnubserver.events.events.ThreadEvent;
 import starnubserver.plugins.runnable.StarNubRunnable;
-import starnubserver.resources.TemporaryYAML;
+import utilities.file.yaml.YAMLWrapper;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -133,14 +133,14 @@ public class PluginManager {
         ConcurrentHashMap<String, UnloadedPlugin> unloadedPluginConcurrentHashMap = new ConcurrentHashMap<String, UnloadedPlugin>();
         File[] pluginFiles = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(new File(pluginDirString), new String[]{"jar"}, false));
         for (File pluginFile : pluginFiles) {
-            TemporaryYAML data;
+            YAMLWrapper data;
             URLClassLoader classLoader;
             String pluginName;
             double version;
             try {
                 URL pluginUrl = pluginFile.toURI().toURL();
                 classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
-                data = new TemporaryYAML(classLoader.getResourceAsStream("plugin.yml"));
+                data = new YAMLWrapper("StarNub", "StarNub - PluginLoader", classLoader.getResourceAsStream("plugin.yml"), "");
                 pluginName = (String) data.getValue("name");
                 version = (double) data.getValue("version");
                 if (unloadedPluginConcurrentHashMap.containsKey(pluginName)) {

@@ -24,7 +24,6 @@ import utilities.exceptions.CollectionDoesNotExistException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Represents a YAMLWrapper. The YAML Wrapper is constructed and then contains methods for manipulating
@@ -42,20 +41,24 @@ public class YAMLWrapper extends YAMLFile {
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
+     * Note: Absolute file paths are not support and can only be references as such "" - For base starbound directory or StarNub/ for starnub directory, ect...
+     * Resource paths are references by "/" or /StarNub/, we will build out the full path using the file and path you supply.
+     *
      * @param OWNER                  String owner of this YAMLFile
      * @param FILE_NAME              String file name of the file
      * @param DEFAULT_FILE_PATH      Object default path to the file
      * @param DISK_FILE_PATH         String default path to file on the disk
-     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
+     * @param defaultPathResource    boolean is this a resource or file path
      * @param DUMP_ON_MODIFICATION   boolean are we dumping on modification
      * @param loadOnConstruct        boolean load the file on construction of this wrapper
      * @param validateOnConstruction boolean validate the Map against the Default Map on construction
+     * @param dumpToDisk             boolean representing if we are going to save the file to disk, this is usually if the file is only used internally
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction) {
-        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, DUMP_ON_MODIFICATION);
+    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean defaultPathResource, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction,  boolean dumpToDisk) {
+        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, defaultPathResource, DUMP_ON_MODIFICATION);
         try {
             if (loadOnConstruct) {
-                DATA.putAll(loadOnConstruct());
+                DATA.putAll(loadOnConstruct(dumpToDisk));
             }
             if (validateOnConstruction) {
                 mapVerifyInternally();
@@ -66,27 +69,22 @@ public class YAMLWrapper extends YAMLFile {
     }
 
     /**
-     * @param OWNER                                      String owner of this YAMLFile
-     * @param FILE_NAME                                  String file name of the file
-     * @param DEFAULT_FILE_PATH                          Object default path to the file
-     * @param DISK_FILE_PATH                             String default path to file on the disk
-     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
-     * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes
-     * @param DUMP_ON_MODIFICATION                       boolean are we dumping on modification
-     * @param loadOnConstruct                            boolean load the file on construction of this wrapper
-     * @param validateOnConstruction                     boolean validate the Map against the Default Map on construction
-     * @param AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor representing where to submit the auto dump task to
-     * @param map                                        Map representing the map to auto dump
+     * This will construct a YAML file, YAML dumper, YAML auto dumper
+     *
+     * Note: This is for temp files
+     *
+     * Note: Absolute file paths are not support and can only be references as such "" - For base starbound directory or StarNub/ for starnub directory, ect...
+     * Resource paths are references by "/" or /StarNub/, we will build out the full path using the file and path you supply.
+     *
+     * @param OWNER                  String owner of this YAMLFile
+     * @param FILE_NAME              String file name of the file
+     * @param DEFAULT_FILE_PATH      Object default path to the file
+     * @param DISK_FILE_PATH         String default path to file on the disk
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) {
-        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, absolutePath, AUTO_DUMP_INTERVAL, DUMP_ON_MODIFICATION, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, map);
+    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH) {
+        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, true, false);
         try {
-            if (loadOnConstruct) {
-                DATA.putAll(loadOnConstruct());
-            }
-            if (validateOnConstruction) {
-                mapVerifyInternally();
-            }
+            DATA.putAll(loadOnConstruct(false));
         } catch (Exception e){
             e.printStackTrace();
         }

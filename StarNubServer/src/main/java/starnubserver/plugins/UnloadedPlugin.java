@@ -18,7 +18,7 @@
 
 package starnubserver.plugins;
 
-import starnubserver.resources.TemporaryYAML;
+import utilities.file.yaml.YAMLWrapper;
 
 import java.io.File;
 import java.net.URL;
@@ -37,14 +37,14 @@ class UnloadedPlugin {
     private final URL PLUGIN_URL;
     private final File PLUGIN_FILE;
     private final URLClassLoader PLUGIN_URL_CLASS_LOADER;
-    private final TemporaryYAML PLUGIN_PLUGIN_YML;
+    private final YAMLWrapper PLUGIN_PLUGIN_YML;
 
     /**
      *  @param PLUGIN_NAME String representing the plugin on disk
      * @param PLUGIN_URL URL representing the plugin location on disk
      * @param PLUGIN_PLUGIN_YML Map representing the plugin.yml which
      */
-    public UnloadedPlugin(String PLUGIN_NAME, double PLUGIN_VERSION, URL PLUGIN_URL, URLClassLoader PLUGIN_URL_CLASS_LOADER, TemporaryYAML PLUGIN_PLUGIN_YML) {
+    public UnloadedPlugin(String PLUGIN_NAME, double PLUGIN_VERSION, URL PLUGIN_URL, URLClassLoader PLUGIN_URL_CLASS_LOADER, YAMLWrapper PLUGIN_PLUGIN_YML) {
         this.PLUGIN_NAME = PLUGIN_NAME;
         this.PLUGIN_VERSION = PLUGIN_VERSION;
         this.PLUGIN_URL = PLUGIN_URL;
@@ -74,7 +74,7 @@ class UnloadedPlugin {
         return PLUGIN_URL_CLASS_LOADER;
     }
 
-    public TemporaryYAML getPLUGIN_PLUGIN_YML() {
+    public YAMLWrapper getPLUGIN_PLUGIN_YML() {
         return PLUGIN_PLUGIN_YML;
     }
 }

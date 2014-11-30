@@ -39,6 +39,7 @@ public class PluginConfiguration extends YAMLWrapper {
                 false,
                 true,
                 true,
+                true,
                 true
         );
     }

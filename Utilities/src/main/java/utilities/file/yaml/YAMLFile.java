@@ -22,7 +22,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Represents a YAMLFile. This provides methods for creating, accessing, dumping
@@ -43,54 +42,32 @@ public class YAMLFile {
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
+     * Note: Absolute file paths are not support and can only be references as such "" - For base starbound directory or StarNub/ for starnub directory, ect...
+     * Resource paths are references by "/" or /StarNub/, we will build out the full path using the file and path you supply.
+     *
      * @param OWNER                String owner of this YAMLFile
      * @param FILE_NAME            String file name of the file
      * @param DEFAULT_FILE_PATH    Object default path to the file (String, InputString, Map)
-     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
+     * @param defaultPathResource  boolean is this a resource or file path
      * @param DISK_FILE_PATH       String default path to file on the disk
      * @param DUMP_ON_MODIFICATION boolean are we dumping on modification
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, boolean DUMP_ON_MODIFICATION) {
+    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean defaultPathResource, boolean DUMP_ON_MODIFICATION) {
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         if (DEFAULT_FILE_PATH instanceof String) {
-            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, absolutePath);
+            String defaultPathTemp = (String) DEFAULT_FILE_PATH;
+            if (defaultPathResource){
+                this.DEFAULT_FILE_PATH = buildResourcePath(defaultPathTemp);
+            } else {
+                this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME);
+            }
         } else {
             this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
         }
-        this.DISK_FILE_PATH = buildPath(DISK_FILE_PATH, FILE_NAME, absolutePath);
+        this.DISK_FILE_PATH = buildPath(DISK_FILE_PATH, FILE_NAME);
         this.DISK_FILE = new File(this.DISK_FILE_PATH);
         this.YAML_DUMPER = new YAMLDumper(null, DUMP_ON_MODIFICATION);
-    }
-
-    /**
-     * @param OWNER                                      String owner of this YAMLFile
-     * @param FILE_NAME                                  String file name of the file
-     * @param DEFAULT_FILE_PATH                          Object default path to the file (String, InputString, Map)
-     * @param DISK_FILE_PATH                             String default path to file on the disk
-     * @param absolutePath           boolean is this an absolute path (true) (Absolute as in C:/ or /), (false) Folder/
-     * @param AUTO_DUMP_INTERVAL                         int the auto dump interval in minutes
-     * @param DUMP_ON_MODIFICATION                       boolean are we dumping on modification
-     * @param AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor representing where to submit the auto dump task to
-     * @param map                                        Map representing the map to auto dump
-     * @throws Exception
-     */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean absolutePath, int AUTO_DUMP_INTERVAL, boolean DUMP_ON_MODIFICATION, ScheduledThreadPoolExecutor AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR, Map map) {
-        this.OWNER = OWNER;
-        this.FILE_NAME = FILE_NAME;
-        if (DEFAULT_FILE_PATH instanceof String) {
-            this.DEFAULT_FILE_PATH = buildPath((String) DEFAULT_FILE_PATH, FILE_NAME, absolutePath);
-        } else {
-            this.DEFAULT_FILE_PATH = DEFAULT_FILE_PATH;
-        }
-        this.DISK_FILE_PATH = buildPath(DISK_FILE_PATH, FILE_NAME, absolutePath);
-        this.DISK_FILE = new File(this.DISK_FILE_PATH);
-        YAMLAutoDump yamlAutoDump = null;
-        if (AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR != null) {
-            yamlAutoDump = new YAMLAutoDump(true, AUTO_DUMP_INTERVAL, AUTO_DUMPER_SCHEDULED_THREAD_POOL_EXECUTOR);
-            yamlAutoDump.scheduleAutoDumping(this, map);
-        }
-        YAML_DUMPER = new YAMLDumper(yamlAutoDump, DUMP_ON_MODIFICATION);
     }
 
     public String getOWNER() {
@@ -125,14 +102,10 @@ public class YAMLFile {
      * @return String full file filePath
      */
     @SuppressWarnings("unchecked")
-    private String buildPath(String filePath, String file, boolean absolutePath){
+    private String buildPath(String filePath, String file){
         File dir = new File(filePath);
         if (!dir.exists()){
             dir.mkdirs();
-        }
-        if (!(filePath).startsWith("/") && absolutePath) {
-
-            filePath = "/" + filePath;
         }
         if (!(filePath).endsWith("/") && filePath.length() > 0){
             filePath = filePath + "/";
@@ -141,12 +114,26 @@ public class YAMLFile {
     }
 
     /**
+     * This will build a resource path
+     *
+     * @param filePath String representing the resource file path
+     * @return String representing the correct resource file path
+     */
+    private String buildResourcePath(String filePath){
+        if (!(filePath).startsWith("/")) {
+            return"/" + filePath;
+        } else {
+            return filePath;
+        }
+    }
+
+    /**
      * This will load the file from disk on construction, but if it does not exist it will load the default file
      * <p>
      *
      * @throws Exception if the file cannot be loaded
      */
-    protected Map<String, Object> loadOnConstruct() throws Exception {
+    protected Map<String, Object> loadOnConstruct(boolean dumpToDisk) throws Exception {
         Map<String, Object> DATA;
         try {
             DATA = loadFromDisk();
@@ -160,7 +147,9 @@ public class YAMLFile {
         if (DATA == null) {
             throw new NullPointerException();
         }
-        dumpToFile(DATA);
+        if (dumpToDisk) {
+            dumpToFile(DATA);
+        }
         return DATA;
     }
 

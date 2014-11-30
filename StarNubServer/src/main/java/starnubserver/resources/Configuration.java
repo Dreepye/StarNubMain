@@ -42,6 +42,7 @@ public class Configuration extends YAMLWrapper {
                 false,
                 true,
                 true,
+                true,
                 true
         );
     }

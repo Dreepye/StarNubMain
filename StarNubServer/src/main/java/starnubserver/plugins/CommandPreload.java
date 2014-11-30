@@ -71,7 +71,7 @@ enum CommandPreload {
 
     @SuppressWarnings("unchecked")
     private CommandPackage commandPackageLoader(Object sender, String commandsYMLString, String pluginName, URLClassLoader classLoader, String pluginCommandName) {
-        final YAMLWrapper COMMAND_FILE = new YAMLWrapper(pluginName, commandsYMLString, classLoader.getResourceAsStream(commandsYMLString), "", false, false, true, false);
+        final YAMLWrapper COMMAND_FILE = new YAMLWrapper(pluginName, commandsYMLString, classLoader.getResourceAsStream(commandsYMLString), "");
         if (COMMAND_FILE.getDATA() == null) {
             StarNub.getLogger().cErrPrint("StarNub", "StarNub could not load a specific mainArgs .yml: "+commandsYMLString+" from "+pluginName+" plugin.");
             return null;

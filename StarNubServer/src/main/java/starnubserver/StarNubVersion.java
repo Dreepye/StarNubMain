@@ -63,11 +63,7 @@ public class StarNubVersion {
                     "StarNub",
                     (String) starnubResources.getListNestedValue(0, "starnub_version", "file"),
                     starnubResources.getNestedValue("starnub_version", "map"),
-                    (String) starnubResources.getListNestedValue(1, "starnub_version", "file"),
-                    false,
-                    false,
-                    true,
-                    false
+                    (String) starnubResources.getListNestedValue(1, "starnub_version", "file")
             );
             PHASE = (String) starnubVersion.getValue("phase");
             VERSION = (double) starnubVersion.getValue("version");

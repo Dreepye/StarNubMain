@@ -45,6 +45,7 @@ public class Whitelist extends YAMLWrapper {
                 false,
                 true,
                 true,
+                true,
                 true
         );
     }

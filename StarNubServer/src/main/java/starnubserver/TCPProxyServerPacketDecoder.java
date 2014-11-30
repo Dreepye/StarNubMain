@@ -174,7 +174,8 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
      * @throws Exception
      */
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {//TODO add connection
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        StarNub.getConnections().getOPEN_SOCKETS().put(ctx, System.currentTimeMillis());
         if (CONNECTION_SIDE.equalsIgnoreCase("ServerSide")) {
             new StarNubEvent("StarNub_Socket_Connection_Attempt_Server", ctx);
             setPacketPool(ctx);
@@ -182,7 +183,6 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         } else if (CONNECTION_SIDE.equalsIgnoreCase("ClientSide")) {
             setClientConnection(ctx);
         }
-        StarNub.getConnections().getOPEN_SOCKETS().put(ctx, System.currentTimeMillis());
     }
 
     private void setClientConnection(ChannelHandlerContext ctx) throws CacheWrapperOperationException {

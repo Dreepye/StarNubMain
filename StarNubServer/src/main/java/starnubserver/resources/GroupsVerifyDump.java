@@ -42,6 +42,7 @@ public class GroupsVerifyDump extends YAMLWrapper {
                 false,
                 true,
                 true,
+                true,
                 true
         );
     }

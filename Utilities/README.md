@@ -68,7 +68,6 @@ Misc
 
 To Do:
 ============
-- Add Observable and Supplier Systems so that external programs can receive specific details and use them, such as one time purges, What was purged?
 
 	
 Installation

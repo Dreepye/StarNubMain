@@ -42,6 +42,7 @@ public class ServerStats extends YAMLWrapper {
                 false,
                 true,
                 true,
+                true,
                 true
         );
     }

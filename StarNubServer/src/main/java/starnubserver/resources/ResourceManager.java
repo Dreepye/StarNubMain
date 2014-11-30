@@ -30,7 +30,7 @@ import utilities.file.yaml.YAMLWrapper;
 public class ResourceManager {
 
     private static final ResourceManager instance = new ResourceManager();
-    private static YAMLWrapper STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "", "", false, false, true, false);
+    private static YAMLWrapper STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "", "", true, false, true, false, false);
 
     private ResourceManager() {
         directoryCheck();

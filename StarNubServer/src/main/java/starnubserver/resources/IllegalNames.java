@@ -45,6 +45,7 @@ public class IllegalNames extends YAMLWrapper {
                 false,
                 true,
                 true,
+                true,
                 true
         );
     }
