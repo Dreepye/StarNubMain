@@ -46,8 +46,8 @@ public class DamageTileGroupPacket extends Packet {
     private TileLayer layer;
     private Vec2F sourcePosition;
 
-    public DamageTileGroupPacket(ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
-        super(Packets.DAMAGETILEGROUP.getPacketId(), null, DESTINATION_CTX);
+    public DamageTileGroupPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
+        super(DIRECTION, Packets.DAMAGETILEGROUP.getPacketId(), null, DESTINATION_CTX);
         this.tilePositions = tilePositions;
         this.layer = layer;
         this.sourcePosition = sourcePosition;
@@ -129,14 +129,13 @@ public class DamageTileGroupPacket extends Packet {
         BACKGROUND
     }
 
-    public enum TileDamageType {
-        NONE,
-        PLANTISH,
-        BLOCKISH,
-        BEAMISH,
-        EXPLOSIVE,
-        FIRE,
-        TILLING,
-        CRUSHING,
+    @Override
+    public String toString() {
+        return "DamageTileGroupPacket{" +
+                "tileDamage=" + tileDamage +
+                ", tilePositions=" + tilePositions +
+                ", layer=" + layer +
+                ", sourcePosition=" + sourcePosition +
+                '}';
     }
 }

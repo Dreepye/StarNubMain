@@ -43,12 +43,21 @@ import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
  */
 public abstract class Packet {
 
+    public enum Direction{
+        STARBOUND_SERVER,
+        STARBOUND_CLIENT,
+        BIDIRECTIONAL,
+        NOT_USED
+    }
+
+    private final Direction DIRECTION;
     private final byte PACKET_ID;
-    private ChannelHandlerContext SENDER_CTX;
-    private ChannelHandlerContext DESTINATION_CTX;
+    private final ChannelHandlerContext SENDER_CTX;
+    private final ChannelHandlerContext DESTINATION_CTX;
     private boolean recycle;
 
-    public Packet(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+    public Packet(Direction DIRECTION, byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        this.DIRECTION = DIRECTION;
         this.PACKET_ID = PACKET_ID;
         this.SENDER_CTX = SENDER_CTX;
         this.DESTINATION_CTX = DESTINATION_CTX;
@@ -149,5 +158,15 @@ public abstract class Packet {
         writeSignedVLQNoObject(msgOut, payloadLengthOut);
         writeByteArray(msgOut, dataOut);
         return msgOut;
+    }
+
+    @Override
+    public String toString() {
+        return "Packet{" +
+                "PACKET_ID=" + PACKET_ID +
+                ", SENDER_CTX=" + SENDER_CTX +
+                ", DESTINATION_CTX=" + DESTINATION_CTX +
+                ", recycle=" + recycle +
+                '}';
     }
 }

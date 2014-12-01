@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import starbounddata.variants.VLQ;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Represents a Vec2I Array which contains 0-SomeNumber of 2 dimensional integer vector of (x, y)
@@ -32,6 +33,33 @@ import java.util.ArrayList;
  * @since 1.0 Beta
  */
 public class Vec2IArray extends ArrayList<Vec2I> {
+
+    public Vec2IArray() {
+        super();
+    }
+
+    /**
+     * This will create a vector array using the two vectors provided. In short this will provide a fill or remove method
+     * anything between vector 1 and vector 2 will be added or removed.
+     *
+     * @param vector1 Vec2I representing the first vector that you want to start your array
+     * @param vector2 Vec2I representing the second vector that you want to end your array
+     * @throws ArrayIndexOutOfBoundsException
+     */
+    public Vec2IArray(Vec2I vector1, Vec2I vector2) throws ArrayIndexOutOfBoundsException{
+        int lowX = vector1.getX() > vector2.getX() ? vector2.getX() : vector1.getX();
+        int highX = vector1.getX() > vector2.getX() ? vector1.getX() : vector2.getX();
+        int lowY = vector1.getY() > vector2.getY() ? vector2.getY() : vector1.getY();
+        int highY = vector1.getY() > vector2.getY() ? vector1.getY() : vector2.getY();
+        while (lowX <= highX){
+            int tempY = lowY;
+            while(tempY <= highY){
+                this.add(new Vec2I(lowX, tempY));
+                tempY++;
+            }
+            lowX++;
+        }
+    }
 
     /**
      * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
@@ -54,5 +82,17 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         for (Vec2I vec2I : this) {
             vec2I.writeVec2I(out);
         }
+    }
+
+    public HashSet<Vec2IArray> getVec2IGroups(int groupSize){
+        HashSet<Vec2IArray> groups = new HashSet<>();
+        while (this.size() > 0){
+            Vec2IArray group = new Vec2IArray();
+            while (group.size() < groupSize && this.size() > 0){
+                group.add(this.remove(0));
+            }
+            groups.add(group);
+        }
+        return groups;
     }
 }

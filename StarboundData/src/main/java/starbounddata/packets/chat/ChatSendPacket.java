@@ -85,8 +85,8 @@ public class ChatSendPacket extends Packet {
      *                <br>
      * @param message
      */
-    public ChatSendPacket(ChannelHandlerContext DESTINATION_CTX, ChatSendChannel channel, String message) {
-        super(Packets.CHATSENT.getPacketId(), null, DESTINATION_CTX);
+    public ChatSendPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, ChatSendChannel channel, String message) {
+        super(DIRECTION, Packets.CHATSENT.getPacketId(), null, DESTINATION_CTX);
         this.channel = channel;
         this.message = message;
     }
@@ -117,5 +117,13 @@ public class ChatSendPacket extends Packet {
     public void write(ByteBuf out) {
         writeStringVLQ(out, this.message);
         writeByte(out, (byte) this.channel.ordinal());
+    }
+
+    @Override
+    public String toString() {
+        return "ChatSendPacket{" +
+                "channel=" + channel +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

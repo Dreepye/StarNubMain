@@ -24,6 +24,7 @@ import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.variants.Variant;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static starbounddata.packets.StarboundBufferReader.*;
@@ -108,8 +109,8 @@ public class ClientConnectPacket extends Packet {
         this.account = account;
     }
 
-    public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
-        super(Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
+    public ClientConnectPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
+        super(DIRECTION, Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
         this.assetDigest = assetDigest;
 //        Claim = claim;
         this.uuid = uuid;
@@ -169,5 +170,18 @@ public class ClientConnectPacket extends Packet {
         writeStringVLQ(out, this.species);
         writeVLQArray(out, this.shipWorld);
         writeStringVLQ(out, this.account);
+    }
+
+    @Override
+    public String toString() {
+        return "ClientConnectPacket{" +
+                "assetDigest='" + assetDigest + '\'' +
+                ", Claim=" + Claim +
+                ", uuid=" + uuid +
+                ", playerName='" + playerName + '\'' +
+                ", species='" + species + '\'' +
+                ", shipWorld=" + Arrays.toString(shipWorld) +
+                ", account='" + account + '\'' +
+                '}';
     }
 }

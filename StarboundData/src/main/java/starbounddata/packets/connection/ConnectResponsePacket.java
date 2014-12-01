@@ -22,8 +22,11 @@ package starbounddata.packets.connection;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
 import starbounddata.variants.VLQ;
 import starbounddata.variants.Variant;
+
+import java.util.Arrays;
 
 import static starbounddata.packets.StarboundBufferReader.*;
 import static starbounddata.packets.StarboundBufferWriter.*;
@@ -205,8 +208,8 @@ public class ConnectResponsePacket extends Packet {
         this.tempByteArray = tempByteArray;
     }
 
-    public ConnectResponsePacket(byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(PACKET_ID, SENDER_CTX, DESTINATION_CTX);
+    public ConnectResponsePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CONNECTIONRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -254,5 +257,29 @@ public class ConnectResponsePacket extends Packet {
         VLQ.writeSignedVLQNoObject(out, this.clientId);
         writeStringVLQ(out, this.rejectionReason);
         writeByteArray(out, this.tempByteArray);
+    }
+
+    @Override
+    public String toString() {
+        return "ConnectResponsePacket{" +
+                "success=" + success +
+                ", clientId=" + clientId +
+                ", rejectionReason='" + rejectionReason + '\'' +
+                ", celestialInformation=" + celestialInformation +
+                ", orbitalLevels=" + orbitalLevels +
+                ", ChunkSize=" + ChunkSize +
+                ", XYCoordinateMin=" + XYCoordinateMin +
+                ", XYCoordinateMax=" + XYCoordinateMax +
+                ", ZCoordinateMin=" + ZCoordinateMin +
+                ", ZCoordinateMax=" + ZCoordinateMax +
+                ", NumberofSectors=" + NumberofSectors +
+                ", SectorId='" + SectorId + '\'' +
+                ", SectorName='" + SectorName + '\'' +
+                ", SectorSeed=" + SectorSeed +
+                ", SectorPrefix='" + SectorPrefix + '\'' +
+                ", Parameters=" + Parameters +
+                ", SectorConfig=" + SectorConfig +
+                ", tempByteArray=" + Arrays.toString(tempByteArray) +
+                '}';
     }
 }

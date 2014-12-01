@@ -36,6 +36,11 @@ public class Vec2I {
         this.y = y;
     }
 
+    public Vec2I(ByteBuf in) {
+        this.x = in.readInt();
+        this.y = in.readInt();
+    }
+
     public int getX() {
         return x;
     }
@@ -50,11 +55,6 @@ public class Vec2I {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public Vec2I(ByteBuf in) {
-        this.x = in.readInt();
-        this.y = in.readInt();
     }
 
     /**

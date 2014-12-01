@@ -47,8 +47,8 @@ public class ProtocolVersionPacket extends Packet {
     /**
      * @param protocolVersion int representing the protocol version
      */
-    public ProtocolVersionPacket(ChannelHandlerContext DESTINATION_CTX, int protocolVersion) {
-        super(Packets.PROTOCOLVERSION.getPacketId(), null, DESTINATION_CTX);
+    public ProtocolVersionPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, int protocolVersion) {
+        super(DIRECTION, Packets.PROTOCOLVERSION.getPacketId(), null, DESTINATION_CTX);
         this.protocolVersion = protocolVersion;
     }
 
@@ -82,5 +82,12 @@ public class ProtocolVersionPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeInt(out, this.protocolVersion);
+    }
+
+    @Override
+    public String toString() {
+        return "ProtocolVersionPacket{" +
+                "protocolVersion=" + protocolVersion +
+                '}';
     }
 }

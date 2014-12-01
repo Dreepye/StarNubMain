@@ -41,8 +41,8 @@ public class UniverseTimeUpdatePacket extends Packet {
      */
     private long time;
 
-    public UniverseTimeUpdatePacket(ChannelHandlerContext DESTINATION_CTX) {
-        super(Packets.UNIVERSETIMEUPDATE.getPacketId(), null, DESTINATION_CTX);
+    public UniverseTimeUpdatePacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.UNIVERSETIMEUPDATE.getPacketId(), null, DESTINATION_CTX);
     }
 
     public long getTime() {
@@ -77,5 +77,12 @@ public class UniverseTimeUpdatePacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         VLQ.writeVLQNoObject(out, this.time);
+    }
+
+    @Override
+    public String toString() {
+        return "UniverseTimeUpdatePacket{" +
+                "time=" + time +
+                '}';
     }
 }

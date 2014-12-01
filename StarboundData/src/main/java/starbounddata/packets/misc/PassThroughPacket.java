@@ -22,6 +22,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 
+import java.util.Arrays;
+
 import static starbounddata.packets.StarboundBufferReader.readAllBytes;
 import static starbounddata.packets.StarboundBufferWriter.writeByteArray;
 
@@ -49,8 +51,8 @@ public class PassThroughPacket extends Packet {
         this.payload = payload;
     }
 
-    public PassThroughPacket(Byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(PACKET_ID, SENDER_CTX, DESTINATION_CTX);
+    public PassThroughPacket(Direction DIRECTION, Byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, PACKET_ID, SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -77,5 +79,12 @@ public class PassThroughPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeByteArray(out, this.payload);
+    }
+
+    @Override
+    public String toString() {
+        return "PassThroughPacket{" +
+                "payload=" + Arrays.toString(payload) +
+                '}';
     }
 }

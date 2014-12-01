@@ -35,63 +35,63 @@ import java.util.Set;
  * @since 1.0 Beta
  */
 public enum Packets {
-    PROTOCOLVERSION("PassThroughPacket.class", false),
-    CONNECTIONRESPONSE("PassThroughPacket.class", false),
-    DISCONNECTRESPONSE("PassThroughPacket.class", false),
-    HANDSHAKECHALLENGE("PassThroughPacket.class", false),
-    CHATRECEIVED("PassThroughPacket.class", false),
-    UNIVERSETIMEUPDATE("PassThroughPacket.class", false),
-    CELESTIALRESPONSE("PassThroughPacket.class", false),
-    CLIENTCONNECT("PassThroughPacket.class", false),
-    CLIENTDISCONNECT("PassThroughPacket.class", false),
-    HANDSHAKERESPONSE("PassThroughPacket.class", false),
-    WARPCOMMAND("PassThroughPacket.class", false),
-    CHATSENT("PassThroughPacket.class", false),
-    CELESTIALREQUEST("PassThroughPacket.class", false),
-    CLIENTCONTEXTUPDATE("PassThroughPacket.class", false),
-    WORLDSTART("PassThroughPacket.class", false),
-    WORLDSTOP("PassThroughPacket.class", false),
-    TILEARRAYUPDATE("PassThroughPacket.class", false),
-    TILEUPDATE("PassThroughPacket.class", false),
-    TILELIQUIDUPDATE("PassThroughPacket.class", false),
-    TILEDAMAGEUPDATE("PassThroughPacket.class", false),
-    TILEMODIFICATIONFAILURE("PassThroughPacket.class", false),
-    GIVEITEM("PassThroughPacket.class", false),
-    SWAPCONTAINERRESULT("PassThroughPacket.class", false),
-    ENVIRONMENTUPDATE("PassThroughPacket.class", false),
-    ENTITYINTERACTRESULT("PassThroughPacket.class", false),
-    MODIFYTILELIST("PassThroughPacket.class", false),
-    DAMAGETILE("PassThroughPacket.class", false),
-    DAMAGETILEGROUP("PassThroughPacket.class", false),
-    REQUESTDROP("PassThroughPacket.class", false),
-    SPAWNENTITY("PassThroughPacket.class", false),
-    ENTITYINTERACT("PassThroughPacket.class", false),
-    CONNECTWIRE("PassThroughPacket.class", false),
-    DISCONNECTALLWIRES("PassThroughPacket.class", false),
-    OPENCONTAINER("PassThroughPacket.class", false),
-    CLOSECONTAINER("PassThroughPacket.class", false),
-    SWAPCONTAINER("PassThroughPacket.class", false),
-    ITEMAPPLYCONTAINER("PassThroughPacket.class", false),
-    STARTCRAFTINGCONTAINER("PassThroughPacket.class", false),
-    STOPCRAFTINGCONTAINER("PassThroughPacket.class", false),
-    BURNCONTAINER("PassThroughPacket.class", false),
-    CLEARCONTAINER("PassThroughPacket.class", false),
-    WORLDCLIENTSTATEUPDATE("PassThroughPacket.class", false),
-    ENTITYCREATE("PassThroughPacket.class", false),
-    ENTITYUPDATE("PassThroughPacket.class", false),
-    ENTITYDESTROY("PassThroughPacket.class", false),
-    DAMAGENOTIFICATION("PassThroughPacket.class", false),
-    STATUSEFFECTREQUEST("PassThroughPacket.class", false),
-    UPDATEWORLDPROPERTIES("PassThroughPacket.class", false),
-    HEARTBEAT("PassThroughPacket.class", false);
+    PROTOCOLVERSION("PassThroughPacket.class", Packet.Direction.STARBOUND_CLIENT),
+    CONNECTIONRESPONSE("PassThroughPacket.class", Packet.Direction.STARBOUND_SERVER),
+    DISCONNECTRESPONSE("PassThroughPacket.class", Packet.Direction.STARBOUND_CLIENT),
+    HANDSHAKECHALLENGE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CHATRECEIVED("PassThroughPacket.class", Packet.Direction.STARBOUND_CLIENT),
+    UNIVERSETIMEUPDATE("PassThroughPacket.class", Packet.Direction.STARBOUND_CLIENT),
+    CELESTIALRESPONSE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CLIENTCONNECT("PassThroughPacket.class", Packet.Direction.STARBOUND_SERVER),
+    CLIENTDISCONNECT("PassThroughPacket.class", Packet.Direction.STARBOUND_SERVER),
+    HANDSHAKERESPONSE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    WARPCOMMAND("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CHATSENT("PassThroughPacket.class", Packet.Direction.STARBOUND_SERVER),
+    CELESTIALREQUEST("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CLIENTCONTEXTUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    WORLDSTART("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    WORLDSTOP("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    TILEARRAYUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    TILEUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    TILELIQUIDUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    TILEDAMAGEUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    TILEMODIFICATIONFAILURE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    GIVEITEM("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    SWAPCONTAINERRESULT("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ENVIRONMENTUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ENTITYINTERACTRESULT("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    MODIFYTILELIST("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    DAMAGETILE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    DAMAGETILEGROUP("PassThroughPacket.class", Packet.Direction.STARBOUND_SERVER),
+    REQUESTDROP("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    SPAWNENTITY("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ENTITYINTERACT("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CONNECTWIRE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    DISCONNECTALLWIRES("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    OPENCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CLOSECONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    SWAPCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ITEMAPPLYCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    STARTCRAFTINGCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    STOPCRAFTINGCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    BURNCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    CLEARCONTAINER("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    WORLDCLIENTSTATEUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ENTITYCREATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ENTITYUPDATE("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    ENTITYDESTROY("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    DAMAGENOTIFICATION("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    STATUSEFFECTREQUEST("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    UPDATEWORLDPROPERTIES("PassThroughPacket.class", Packet.Direction.NOT_USED),
+    HEARTBEAT("PassThroughPacket.class", Packet.Direction.BIDIRECTIONAL);
 
     private String classString;
-    private boolean debug;
+    private Packet.Direction direction;
     private static HashMap<Byte, Class> packetClasses = setPrePacketCache();
 
-    Packets(String classString, boolean debug) {
+    Packets(String classString, Packet.Direction direction) {
         this.classString = classString;
-        this.debug = debug;
+        this.direction = direction;
     }
 
     public byte getPacketId() {
@@ -106,12 +106,12 @@ public enum Packets {
         this.classString = classString;
     }
 
-    public boolean isDebug() {
-        return debug;
+    public Packet.Direction getDirection() {
+        return direction;
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
+    public void setDirection(Packet.Direction direction) {
+        this.direction = direction;
     }
 
     /**
@@ -148,7 +148,7 @@ public enum Packets {
      * @param DESTINATION_CTX ChannelHandlerContext the destination ChannelHandlerContext to add to the packet being created
      * @return HashMap the packet cache to be used in packet routing
      */
-    public static HashMap<Byte, Packet> getPacketCache(ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+    public static HashMap<Byte, Packet> getPacketCache(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
         HashMap<Byte, Packet> packetPool = new HashMap<>();
         for (int i = 0; i < packetClasses.size(); i++) {
             Byte packetID = (byte) i;

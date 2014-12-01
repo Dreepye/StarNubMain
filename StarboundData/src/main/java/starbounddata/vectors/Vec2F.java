@@ -36,6 +36,11 @@ public class Vec2F {
         this.y = y;
     }
 
+    public Vec2F(ByteBuf in) {
+        this.x = in.readFloat();
+        this.y = in.readFloat();
+    }
+
     public float getX() {
         return x;
     }
@@ -50,11 +55,6 @@ public class Vec2F {
 
     public void setY(float y) {
         this.y = y;
-    }
-
-    public Vec2F(ByteBuf in) {
-        this.x = in.readFloat();
-        this.y = in.readFloat();
     }
 
     /**

@@ -40,8 +40,8 @@ public class ServerDisconnectPacket extends Packet {
 
     private String reason;
 
-    public ServerDisconnectPacket(ChannelHandlerContext DESTINATION_CTX, String reason) {
-        super(Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
+    public ServerDisconnectPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, String reason) {
+        super(DIRECTION, Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
         this.reason = reason;
     }
 
@@ -77,5 +77,12 @@ public class ServerDisconnectPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeStringVLQ(out, this.reason);
+    }
+
+    @Override
+    public String toString() {
+        return "ServerDisconnectPacket{" +
+                "reason='" + reason + '\'' +
+                '}';
     }
 }

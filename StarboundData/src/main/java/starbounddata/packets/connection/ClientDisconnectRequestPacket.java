@@ -49,8 +49,8 @@ public class ClientDisconnectRequestPacket extends Packet {
         this.emptyByte = emptyByte;
     }
 
-    public ClientDisconnectRequestPacket(ChannelHandlerContext DESTINATION_CTX) {
-        super(Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);
+    public ClientDisconnectRequestPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);
         emptyByte = 1;
     }
 
@@ -78,5 +78,12 @@ public class ClientDisconnectRequestPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeByte(out, this.emptyByte);
+    }
+
+    @Override
+    public String toString() {
+        return "ClientDisconnectRequestPacket{" +
+                "emptyByte=" + emptyByte +
+                '}';
     }
 }

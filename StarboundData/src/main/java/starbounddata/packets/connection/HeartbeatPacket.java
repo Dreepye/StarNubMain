@@ -39,8 +39,8 @@ public class HeartbeatPacket extends Packet {
 
     private long currentStep;
 
-    public HeartbeatPacket(ChannelHandlerContext DESTINATION_CTX) {
-        super(Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
+    public HeartbeatPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
     }
 
     public long getCurrentStep() {
@@ -71,5 +71,12 @@ public class HeartbeatPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         VLQ.writeSignedVLQNoObject(out, this.currentStep);
+    }
+
+    @Override
+    public String toString() {
+        return "HeartbeatPacket{" +
+                "currentStep=" + currentStep +
+                '}';
     }
 }

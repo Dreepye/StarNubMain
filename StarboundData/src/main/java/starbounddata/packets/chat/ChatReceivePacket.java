@@ -134,8 +134,8 @@ public class ChatReceivePacket extends Packet {
      * @param name            String name of the Sender
      * @param message         String the message
      */
-    public ChatReceivePacket(ChannelHandlerContext DESTINATION_CTX, ChatReceiveChannel channel, String world, long clientId, String name, String message) {
-        super(Packets.CHATRECEIVED.getPacketId(), null, DESTINATION_CTX);
+    public ChatReceivePacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, ChatReceiveChannel channel, String world, long clientId, String name, String message) {
+        super(DIRECTION, Packets.CHATRECEIVED.getPacketId(), null, DESTINATION_CTX);
         this.channel = channel;
         this.world = world;
         this.clientId = (int) clientId;
@@ -175,5 +175,16 @@ public class ChatReceivePacket extends Packet {
         writeInt(out, this.clientId);
         writeStringVLQ(out, this.name);
         writeStringVLQ(out, this.message);
+    }
+
+    @Override
+    public String toString() {
+        return "ChatReceivePacket{" +
+                "channel=" + channel +
+                ", world='" + world + '\'' +
+                ", clientId=" + clientId +
+                ", name='" + name + '\'' +
+                ", message='" + message + '\'' +
+                "} " + super.toString();
     }
 }
