@@ -28,9 +28,9 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
  * Represents the ServerDisconnectPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. This packet will send the starnubclient a disconnect notification
- * <p/>
+ * <p>
  * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -40,8 +40,32 @@ public class ServerDisconnectPacket extends Packet {
 
     private String reason;
 
-    public ServerDisconnectPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, String reason) {
-        super(DIRECTION, Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ServerDisconnectPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.DISCONNECTRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param reason          String representing the reason
+     */
+    public ServerDisconnectPacket(ChannelHandlerContext DESTINATION_CTX, String reason) {
+        super(Packets.DISCONNECTRESPONSE.getDirection(), Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
         this.reason = reason;
     }
 
@@ -55,9 +79,9 @@ public class ServerDisconnectPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -68,9 +92,9 @@ public class ServerDisconnectPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -83,6 +107,6 @@ public class ServerDisconnectPacket extends Packet {
     public String toString() {
         return "ServerDisconnectPacket{" +
                 "reason='" + reason + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

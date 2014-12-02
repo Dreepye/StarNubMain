@@ -32,11 +32,11 @@ import static starbounddata.packets.StarboundBufferWriter.*;
 
 /**
  * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * This packet is sent when a starnubclient is initially requesting a connection to the starnubserver after it received
  * the {@link starbounddata.packets.server.ProtocolVersionPacket}
- * <p/>
+ * <p>
  * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -52,6 +52,41 @@ public class ClientConnectPacket extends Packet {
     private String species;
     private byte[] shipWorld;
     private String account;
+
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ClientConnectPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CLIENTCONNECT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
+        super(Packets.CLIENTCONNECT.getDirection(), Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
+        this.assetDigest = assetDigest;
+//        Claim = claim;
+        this.uuid = uuid;
+        this.playerName = playerName;
+        this.species = species;
+        this.shipWorld = shipWorld;
+        this.account = account;
+    }
 
     public String getAssetDigest() {
         return assetDigest;
@@ -109,22 +144,11 @@ public class ClientConnectPacket extends Packet {
         this.account = account;
     }
 
-    public ClientConnectPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
-        super(DIRECTION, Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
-        this.assetDigest = assetDigest;
-//        Claim = claim;
-        this.uuid = uuid;
-        this.playerName = playerName;
-        this.species = species;
-        this.shipWorld = shipWorld;
-        this.account = account;
-    }
-
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -148,9 +172,9 @@ public class ClientConnectPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -182,6 +206,7 @@ public class ClientConnectPacket extends Packet {
                 ", species='" + species + '\'' +
                 ", shipWorld=" + Arrays.toString(shipWorld) +
                 ", account='" + account + '\'' +
-                '}';
+                "} " + super.toString();
     }
+
 }

@@ -28,10 +28,10 @@ import static starbounddata.packets.StarboundBufferWriter.writeInt;
 
 /**
  * Represents the ProtocolVersionPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet SHOULD NOT be edited freely. If the wrong version is sent to the starnubclient they will not
  * be able to connect to the starnubserver and received a wrong starnubclient version message. This is the first packet sent after a starnubclient completes a 3 way TCP handshake
- * <p/>
+ * <p>
  * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -45,10 +45,31 @@ public class ProtocolVersionPacket extends Packet {
     private int protocolVersion;
 
     /**
-     * @param protocolVersion int representing the protocol version
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public ProtocolVersionPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, int protocolVersion) {
-        super(DIRECTION, Packets.PROTOCOLVERSION.getPacketId(), null, DESTINATION_CTX);
+    public ProtocolVersionPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.PROTOCOLVERSION.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param protocolVersion int representing the Starbounds protocol version
+     */
+    public ProtocolVersionPacket(ChannelHandlerContext DESTINATION_CTX, int protocolVersion) {
+        super(Packets.PROTOCOLVERSION.getDirection(), Packets.PROTOCOLVERSION.getPacketId(), null, DESTINATION_CTX);
         this.protocolVersion = protocolVersion;
     }
 
@@ -62,7 +83,7 @@ public class ProtocolVersionPacket extends Packet {
 
     /**
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -73,9 +94,9 @@ public class ProtocolVersionPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -88,6 +109,6 @@ public class ProtocolVersionPacket extends Packet {
     public String toString() {
         return "ProtocolVersionPacket{" +
                 "protocolVersion=" + protocolVersion +
-                '}';
+                "} " + super.toString();
     }
 }

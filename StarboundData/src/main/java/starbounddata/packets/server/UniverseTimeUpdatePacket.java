@@ -26,9 +26,9 @@ import starbounddata.variants.VLQ;
 
 /**
  * Represents the UniverseTimeUpdate and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet SHOULD NOT be edited freely.
- * <p/>
+ * <p>
  * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -37,52 +37,78 @@ import starbounddata.variants.VLQ;
 public class UniverseTimeUpdatePacket extends Packet {
 
     /**
-     * A time that increments up when sent by the starnubserver
+     * A time that increments up when sent by the Starbound Server
      */
-    private long time;
+    private long universeTime;
 
-    public UniverseTimeUpdatePacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.UNIVERSETIMEUPDATE.getPacketId(), null, DESTINATION_CTX);
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public UniverseTimeUpdatePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.UNIVERSETIMEUPDATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param universeTime    long representing the Starbound universe time
+     */
+    public UniverseTimeUpdatePacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, long universeTime) {
+        super(Packets.UNIVERSETIMEUPDATE.getDirection(), Packets.UNIVERSETIMEUPDATE.getPacketId(), null, DESTINATION_CTX);
+        this.universeTime = universeTime;
+    }
+
+    public long getUniverseTime() {
+        return universeTime;
+    }
+
+    public void setUniverseTime(long universeTime) {
+        this.universeTime = universeTime;
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
     @Override
     public void read(ByteBuf in) {
-        this.time = VLQ.readSignedFromBufferNoObject(in);
+        this.universeTime = VLQ.readSignedFromBufferNoObject(in);
     }
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
     @Override
     public void write(ByteBuf out) {
-        VLQ.writeVLQNoObject(out, this.time);
+        VLQ.writeVLQNoObject(out, this.universeTime);
     }
 
     @Override
     public String toString() {
         return "UniverseTimeUpdatePacket{" +
-                "time=" + time +
-                '}';
+                "time=" + universeTime +
+                "} " + super.toString();
     }
+
 }

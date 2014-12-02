@@ -64,4 +64,12 @@ public class Vec2F {
         out.writeFloat(this.x);
         out.writeFloat(this.y);
     }
+
+    @Override
+    public String toString() {
+        return "Vec2F{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

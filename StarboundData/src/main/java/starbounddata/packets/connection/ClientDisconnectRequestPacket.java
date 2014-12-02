@@ -29,9 +29,9 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
 
 /**
  * Represents the ClientDisconnectRequestPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. This packet will send the starnubserver a disconnect request
- * <p/>
+ * <p>
  * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -41,6 +41,34 @@ public class ClientDisconnectRequestPacket extends Packet {
 
     private byte emptyByte;
 
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ClientDisconnectRequestPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CLIENTDISCONNECT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ClientDisconnectRequestPacket(ChannelHandlerContext DESTINATION_CTX) {
+        super(Packets.CLIENTDISCONNECT.getDirection(), Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);
+        emptyByte = 1;
+    }
+
     public byte getEmptyByte() {
         return emptyByte;
     }
@@ -49,16 +77,11 @@ public class ClientDisconnectRequestPacket extends Packet {
         this.emptyByte = emptyByte;
     }
 
-    public ClientDisconnectRequestPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);
-        emptyByte = 1;
-    }
-
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -69,9 +92,9 @@ public class ClientDisconnectRequestPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -84,6 +107,7 @@ public class ClientDisconnectRequestPacket extends Packet {
     public String toString() {
         return "ClientDisconnectRequestPacket{" +
                 "emptyByte=" + emptyByte +
-                '}';
+                "} " + super.toString();
     }
+
 }

@@ -26,10 +26,10 @@ import starbounddata.variants.VLQ;
 
 /**
  * Represents the HeartbeatPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet SHOULD NOT be edited freely. This packet is generated ever step by the
  * Starbound Server and sent to the Client, The starnubclient responds after 3 steps
- * <p/>
+ * <p>
  * Packet Direction: Server -> Client / Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -39,8 +39,33 @@ public class HeartbeatPacket extends Packet {
 
     private long currentStep;
 
-    public HeartbeatPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public HeartbeatPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.HEARTBEAT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param currentStep     long representing the current step
+     */
+    public HeartbeatPacket(ChannelHandlerContext DESTINATION_CTX, long currentStep) {
+        super(Packets.HEARTBEAT.getDirection(), Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
+        this.currentStep = currentStep;
     }
 
     public long getCurrentStep() {
@@ -53,7 +78,7 @@ public class HeartbeatPacket extends Packet {
 
     /**
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -64,7 +89,7 @@ public class HeartbeatPacket extends Packet {
 
     /**
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -77,6 +102,6 @@ public class HeartbeatPacket extends Packet {
     public String toString() {
         return "HeartbeatPacket{" +
                 "currentStep=" + currentStep +
-                '}';
+                "} " + super.toString();
     }
 }

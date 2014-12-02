@@ -22,7 +22,7 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * Represents a Variant Length Quantity(VLQ).
- * <p/>
+ * <p>
  * This is a complex data type. More information can be found here.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -49,31 +49,13 @@ public class VLQ {
         this.value = value;
     }
 
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public long getValue() {
-        return value;
-    }
-
-    public void setValue(long value) {
-        this.value = value;
-    }
-
-    ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
-
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will created a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf in which is to be read
      * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.variants.VLQ}
@@ -91,11 +73,11 @@ public class VLQ {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will created a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf in which is to be read
      * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.variants.VLQ}
@@ -114,13 +96,23 @@ public class VLQ {
         return new VLQ(length, value);
     }
 
+    public long getValue() {
+        return value;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
+    }
+
+    ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will created a s{@link starbounddata.variants.VLQ} from a long
-     * <p/>
+     * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
-     * <p/>
+     * <p>
      *
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual sVLQ field
@@ -137,11 +129,11 @@ public class VLQ {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will created a u{@link starbounddata.variants.VLQ} from a long
-     * <p/>
+     * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
-     * <p/>
+     * <p>
      *
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual VLQ field
@@ -162,15 +154,13 @@ public class VLQ {
         return output;
     }
 
-    ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
-
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will read a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      * Notes: This will not create a VLQ object and should be used
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the bytes to be read for a reason length from a signed vlq
      * @return int representing the reason length
@@ -187,11 +177,11 @@ public class VLQ {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will read a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      * Notes: This will not create a VLQ object and should be used
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the bytes to be read for a reason length from a vlq
      * @return int representing the reason length
@@ -210,13 +200,15 @@ public class VLQ {
         return payloadLength;
     }
 
+    ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will read a s{@link starbounddata.variants.VLQ} from a byte[]
-     * <p/>
+     * <p>
      * Notes: This will not create a VLQ object and should be used
-     * <p/>
+     * <p>
      *
      * @param in byte[] representing the bytes to be read for a reason length from a signed vlq
      * @return int representing the reason length
@@ -233,11 +225,11 @@ public class VLQ {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will read a u{@link starbounddata.variants.VLQ} from a byte[]
-     * <p/>
+     * <p>
      * Notes: This will not create a VLQ object and should be used
-     * <p/>
+     * <p>
      *
      * @param in byte[] representing the bytes to be read for a reason length from a vlq
      * @return int representing the reason length
@@ -256,14 +248,13 @@ public class VLQ {
         return payloadLength;
     }
 
-
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will write a s{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      * Notes: This will not create a VLQ object and should be used
-     * <p/>
+     * <p>
      *
      * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
@@ -279,11 +270,11 @@ public class VLQ {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will write a u{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      * Notes: This will not create a VLQ object and should be used
-     * <p/>
+     * <p>
      *
      * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
@@ -302,5 +293,21 @@ public class VLQ {
             out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */
             value >>>= 7;
         }
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    @Override
+    public String toString() {
+        return "VLQ{" +
+                "length=" + length +
+                ", value=" + value +
+                '}';
     }
 }

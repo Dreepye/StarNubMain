@@ -78,9 +78,9 @@ public final class GameColors {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will refresh the default colors in this class
-     * <p/>
+     * <p>
      */
     public void setColors(String defaultNameColor, String defaultChatColor, String defaultServerNameColor, String defaultServerChatColor, String bracketColor) {
         this.defaultNameColor = defaultNameColor;
@@ -90,12 +90,23 @@ public final class GameColors {
         this.bracketColor = bracketColor;
     }
 
+    @Override
+    public String toString() {
+        return "GameColors{" +
+                "defaultNameColor='" + defaultNameColor + '\'' +
+                ", defaultChatColor='" + defaultChatColor + '\'' +
+                ", defaultServerNameColor='" + defaultServerNameColor + '\'' +
+                ", defaultServerChatColor='" + defaultServerChatColor + '\'' +
+                ", bracketColor='" + bracketColor + '\'' +
+                '}';
+    }
+
     ///////////////////     REPRESENTS THE COLORS ENUM     ///////////////////
 
     /**
      * Represents Starbound colors represented in Verb Name, Hex, and StarNub shortcut annotation, this enumeration also contains
      * the {@link starbounddata.color.GameColors.Colors.Color} class
-     * <p/>
+     * <p>
      *
      * @author Daniel (Underbalanced) (www.StarNub.org)
      * @since 1.0 Beta
@@ -250,19 +261,136 @@ public final class GameColors {
             this.shortcut = shortcut;
         }
 
-        public String getHexValue() {
-            return hexValue;
-        }
-
-        public String getShortcut() {
-            return shortcut;
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will validate a color or hex value returning it if it exist in game
+         * <p>
+         *
+         * @param string String representing the string to be validated
+         * @param format boolean do you want to have it formatted for in game color display
+         * @return String valid color string, will return null if color does not exist
+         */
+        public static String validate(String string, boolean format) {
+            int index = string.contains("#") ? 2 : 1;
+            String substring = string.substring(index, string.lastIndexOf(";"));
+            int stringLength = substring.length();
+            if ((stringLength == 3 || stringLength == 6) && string.matches(".*\\d.*")) {
+                return fromHex(substring, format);
+            } else {
+                return fromColor(substring, format);
+            }
         }
 
         /**
          * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
+         * <p>
+         * Uses: This method will look up a color value based on the hex value
+         * <p>
+         *
+         * @param hex    String representing the hex value to be looked up
+         * @param format boolean do you want to have it formatted for in game color display
+         * @return String representing the color value
+         */
+        public static String fromHex(String hex, boolean format) {
+            hex = cleanString(hex);
+            for (Colors c : Colors.values()) {
+                if (c.hexValue.equalsIgnoreCase(hex)) {
+                    return format ? format(c.toString(), false) : c.toString();
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will return a hex value based on a color name
+         * <p>
+         *
+         * @param color  String representing the color name
+         * @param format boolean do you want to have it formatted for in game color display
+         * @return String representing the hex value of the color
+         */
+        public static String fromColor(String color, boolean format) {
+            color = cleanString(color);
+            for (Colors c : Colors.values()) {
+                if (c.toString().equalsIgnoreCase(color)) {
+                    return format ? format(c.getHexValue(), true) : c.getHexValue();
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will remove the color special characters from a string "^, # and ;"
+         * <p>
+         *
+         * @param string String representing the string to be cleaned
+         * @return String representing the cleaned up string
+         */
+        public static String cleanString(String string) {
+            if (string.contains("^") || string.contains("#") || string.contains(";")) {
+                return string.replaceAll("\\^|#|;", "");
+            } else {
+                return string;
+            }
+        }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will format a string for in game use
+         * <p>
+         *
+         * @param string String repenting the value to be formatted for in game
+         * @param hex    boolean representing if the value is a hex value or not
+         * @return String representing the string formmated for in game
+         */
+        public static String format(String string, boolean hex) {
+            return hex ? "^#" + string + ";" : "^" + string + ";";
+        }
+
+        @Override
+        public String toString() {
+            return "Colors{" +
+                    "hexValue='" + hexValue + '\'' +
+                    ", shortcut='" + shortcut + '\'' +
+                    "} " + super.toString();
+        }
+
+        public String getHexValue() {
+            return hexValue;
+        }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will replace shortcuts with the hex color tag
+         * <p>
+         *
+         * @param string String representing the whole entire message to be scanned for color shortcuts
+         * @return String repsenting the whole entire message with the shortcut colors replaced with hex colors for game display
+         */
+        public static String shortcutReplacement(String string) {
+            Pattern p = Pattern.compile("\\{.\\}");
+            Matcher m = p.matcher(string);
+            StringBuffer sb = new StringBuffer();
+            while (m.find()) {
+                String shortcut = m.group();
+                String replacement = Colors.fromShortcut(shortcut, true, true);
+                m.appendReplacement(sb, replacement);
+            }
+            return m.appendTail(sb).toString();
+        }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
          * Uses: This method will return a color or hex based on a shortcut.
-         * <p/>
+         * <p>
          *
          * @param shortcut String shortcut to be looked up
          * @param format   boolean should this be formatted for in game color display
@@ -284,122 +412,9 @@ public final class GameColors {
 
         /**
          * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
-         * Uses: This method will return a hex value based on a color name
-         * <p/>
-         *
-         * @param color  String representing the color name
-         * @param format boolean do you want to have it formatted for in game color display
-         * @return String representing the hex value of the color
-         */
-        public static String fromColor(String color, boolean format) {
-            color = cleanString(color);
-            for (Colors c : Colors.values()) {
-                if (c.toString().equalsIgnoreCase(color)) {
-                    return format ? format(c.getHexValue(), true) : c.getHexValue();
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
-         * Uses: This method will look up a color value based on the hex value
-         * <p/>
-         *
-         * @param hex    String representing the hex value to be looked up
-         * @param format boolean do you want to have it formatted for in game color display
-         * @return String representing the color value
-         */
-        public static String fromHex(String hex, boolean format) {
-            hex = cleanString(hex);
-            for (Colors c : Colors.values()) {
-                if (c.hexValue.equalsIgnoreCase(hex)) {
-                    return format ? format(c.toString(), false) : c.toString();
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
-         * Uses: This method will remove the color special characters from a string "^, # and ;"
-         * <p/>
-         *
-         * @param string String representing the string to be cleaned
-         * @return String representing the cleaned up string
-         */
-        public static String cleanString(String string) {
-            if (string.contains("^") || string.contains("#") || string.contains(";")) {
-                return string.replaceAll("\\^|#|;", "");
-            } else {
-                return string;
-            }
-        }
-
-        /**
-         * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
-         * Uses: This method will format a string for in game use
-         * <p/>
-         *
-         * @param string String repenting the value to be formatted for in game
-         * @param hex    boolean representing if the value is a hex value or not
-         * @return String representing the string formmated for in game
-         */
-        public static String format(String string, boolean hex) {
-            return hex ? "^#" + string + ";" : "^" + string + ";";
-        }
-
-        /**
-         * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
-         * Uses: This method will validate a color or hex value returning it if it exist in game
-         * <p/>
-         *
-         * @param string String representing the string to be validated
-         * @param format boolean do you want to have it formatted for in game color display
-         * @return String valid color string, will return null if color does not exist
-         */
-        public static String validate(String string, boolean format) {
-            int index = string.contains("#") ? 2 : 1;
-            String substring = string.substring(index, string.lastIndexOf(";"));
-            int stringLength = substring.length();
-            if ((stringLength == 3 || stringLength == 6) && string.matches(".*\\d.*")) {
-                return fromHex(substring, format);
-            } else {
-                return fromColor(substring, format);
-            }
-        }
-
-        /**
-         * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
-         * Uses: This method will replace shortcuts with the hex color tag
-         * <p/>
-         *
-         * @param string String representing the whole entire message to be scanned for color shortcuts
-         * @return String repsenting the whole entire message with the shortcut colors replaced with hex colors for game display
-         */
-        public static String shortcutReplacement(String string) {
-            Pattern p = Pattern.compile("\\{.\\}");
-            Matcher m = p.matcher(string);
-            StringBuffer sb = new StringBuffer();
-            while (m.find()) {
-                String shortcut = m.group();
-                String replacement = Colors.fromShortcut(shortcut, true, true);
-                m.appendReplacement(sb, replacement);
-            }
-            return m.appendTail(sb).toString();
-        }
-
-        /**
-         * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
+         * <p>
          * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code
-         * <p/>
+         * <p>
          * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
          *
          * @return HashSet representing all of the {@link starbounddata.color.GameColors.Colors.Color}'s available
@@ -413,13 +428,31 @@ public final class GameColors {
         }
 
         /**
+         * Recommended: For internal StarNub usage.
+         * <p>
+         * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
+         * <p>
+         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         *
+         * @param c Enumeration representing the color
+         * @return Color representing the build color
+         */
+        private static Color buildColor(Colors c) {
+            return new Color(c.toString(), c.getHexValue(), c.getShortcut());
+        }
+
+        public String getShortcut() {
+            return shortcut;
+        }
+
+        /**
          * Recommended: For Plugin Developers & Anyone else.
-         * <p/>
+         * <p>
          * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code based on a provided search term.
          * The method will return anything contains the searched text, Example: findColors("Blue") or findColors("bLuE") would return (Aliceblue, blue, blueviolet,
          * cadetblue, darkslateblue, deepskyblue, dodgerblue, lightskyblue, lightsteelblue, midnightblue, powderblue, royalblue, skyblue, slateblue, steelblue). This
          * search is case insensitive.
-         * <p/>
+         * <p>
          * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
          *
          * @param searchTerm String representing the color or colors to be searched
@@ -437,25 +470,11 @@ public final class GameColors {
             return colors;
         }
 
-        /**
-         * Recommended: For internal StarNub usage.
-         * <p/>
-         * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
-         * <p/>
-         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
-         *
-         * @param c Enumeration representing the color
-         * @return Color representing the build color
-         */
-        private static Color buildColor(Colors c) {
-            return new Color(c.toString(), c.getHexValue(), c.getShortcut());
-        }
-
         ///////////////////     REPRESENTS THE COLOR CLASS     ///////////////////
 
         /**
          * Represents a Starbound Color
-         * <p/>
+         * <p>
          *
          * @author Daniel (Underbalanced) (www.StarNub.org)
          * @since 1.0 Beta
@@ -465,6 +484,12 @@ public final class GameColors {
             private final String COLOR_NAME;
             private final String HEX_STRING;
             private final String SHORTCUT;
+
+            public Color(String COLOR_NAME, String HEX_STRING, String SHORTCUT) {
+                this.COLOR_NAME = COLOR_NAME;
+                this.HEX_STRING = HEX_STRING;
+                this.SHORTCUT = SHORTCUT;
+            }
 
             public String getCOLOR_NAME() {
                 return COLOR_NAME;
@@ -478,17 +503,11 @@ public final class GameColors {
                 return SHORTCUT;
             }
 
-            public Color(String COLOR_NAME, String HEX_STRING, String SHORTCUT) {
-                this.COLOR_NAME = COLOR_NAME;
-                this.HEX_STRING = HEX_STRING;
-                this.SHORTCUT = SHORTCUT;
-            }
-
             /**
              * Recommended: For Plugin Developers & Anyone else.
-             * <p/>
+             * <p>
              * Uses: This returns the color name formatted as such without the quotes "^COLOR;"
-             * <p/>
+             * <p>
              *
              * @return String representing the color name in, in game display format that can be used in chat or plugins
              */
@@ -498,9 +517,9 @@ public final class GameColors {
 
             /**
              * Recommended: For Plugin Developers & Anyone else.
-             * <p/>
+             * <p>
              * Uses: This returns the color hex formatted as such without the quotes "^HEX_STRING;"
-             * <p/>
+             * <p>
              *
              * @return String representing the hex string of the color in, in game display format that can be used in chat or plugins
              */
@@ -510,14 +529,23 @@ public final class GameColors {
 
             /**
              * Recommended: For Plugin Developers & Anyone else.
-             * <p/>
+             * <p>
              * Uses: This returns the color shortcut formatted as such without the quotes "{SHORTCUT}"
-             * <p/>
+             * <p>
              *
              * @return String representing the color shortcut that can be used in chat or plugins
              */
             public String formatShortcut() {
                 return "{" + SHORTCUT + "}";
+            }
+
+            @Override
+            public String toString() {
+                return "Color{" +
+                        "COLOR_NAME='" + COLOR_NAME + '\'' +
+                        ", HEX_STRING='" + HEX_STRING + '\'' +
+                        ", SHORTCUT='" + SHORTCUT + '\'' +
+                        '}';
             }
         }
     }

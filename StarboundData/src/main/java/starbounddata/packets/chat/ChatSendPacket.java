@@ -31,20 +31,15 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
  * Represents the ChatSentPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient
- * <p/>
+ * <p>
  * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class ChatSendPacket extends Packet {
-
-    public enum ChatSendChannel {
-        UNIVERSE,
-        PLANET
-    }
 
     /**
      * <br>
@@ -54,11 +49,41 @@ public class ChatSendPacket extends Packet {
      * <br>
      */
     private ChatSendChannel channel;
-
     /**
      * Message sent from the starnubclient
      */
     private String message;
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ChatSendPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CHATSENT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param channel         ChatSendChannel representing the chanel to be sent on
+     * @param message         String representing the message
+     */
+    public ChatSendPacket(ChannelHandlerContext DESTINATION_CTX, ChatSendChannel channel, String message) {
+        super(Packets.CHATSENT.getDirection(), Packets.CHATSENT.getPacketId(), null, DESTINATION_CTX);
+        this.channel = channel;
+        this.message = message;
+    }
 
     public ChatSendChannel getChannel() {
         return channel;
@@ -77,25 +102,10 @@ public class ChatSendPacket extends Packet {
     }
 
     /**
-     * @param channel String one of the following:
-     *                <br>
-     *                0 - Entire Server (Universe)
-     *                <br>
-     *                1 - World Chat (Object Sent: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
-     *                <br>
-     * @param message
-     */
-    public ChatSendPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, ChatSendChannel channel, String message) {
-        super(DIRECTION, Packets.CHATSENT.getPacketId(), null, DESTINATION_CTX);
-        this.channel = channel;
-        this.message = message;
-    }
-
-    /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -107,9 +117,9 @@ public class ChatSendPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -124,6 +134,11 @@ public class ChatSendPacket extends Packet {
         return "ChatSendPacket{" +
                 "channel=" + channel +
                 ", message='" + message + '\'' +
-                '}';
+                "} " + super.toString();
+    }
+
+    public enum ChatSendChannel {
+        UNIVERSE,
+        PLANET
     }
 }

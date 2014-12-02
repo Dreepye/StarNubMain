@@ -64,4 +64,12 @@ public class Vec2I {
         out.writeInt(this.x);
         out.writeInt(this.y);
     }
+
+    @Override
+    public String toString() {
+        return "Vec2I{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

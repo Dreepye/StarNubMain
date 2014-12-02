@@ -28,7 +28,7 @@ import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
  * Represents a Variant  which can be a byte, string, boolean, double, variant array, variant map.
- * <p/>
+ * <p>
  * This is a complex data type.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -45,14 +45,6 @@ public class Variant {
         readFromByteBuffer(in);
     }
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
     public Variant(Object value) throws Exception {
         if (!(value == null ||
                 value instanceof String ||
@@ -66,11 +58,19 @@ public class Variant {
         this.value = value;
     }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will created a {@link starbounddata.variants.Variant} from a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the bytes to be read into a {@link starbounddata.variants.Variant}
      * @return Variant representing the {@link starbounddata.variants.Variant} object
@@ -117,9 +117,9 @@ public class Variant {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
-     * <p/>
+     * <p>
      * Uses: This will write a {@link starbounddata.variants.Variant} to a {@link io.netty.buffer.ByteBuf}
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the buffer to write the variant to
      */
@@ -155,5 +155,12 @@ public class Variant {
                 kvp.getValue().writeToByteBuffer(out);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Variant{" +
+                "value=" + value +
+                '}';
     }
 }

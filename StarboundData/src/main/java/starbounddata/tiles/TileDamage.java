@@ -63,12 +63,20 @@ public class TileDamage {
     }
 
     /**
-     *
      * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this TileDamage to
      */
-    public void writeTileDamage(ByteBuf out){
+    public void writeTileDamage(ByteBuf out) {
         out.writeByte(tileDamageType.ordinal());
         out.writeFloat(amount);
+    }
+
+    @Override
+    public String toString() {
+        return "TileDamage{" +
+                "tileDamageType=" + tileDamageType +
+                ", amount=" + amount +
+                ", harvestLevel=" + harvestLevel +
+                '}';
     }
 
     public enum TileDamageType {

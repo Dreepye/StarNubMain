@@ -26,7 +26,7 @@ import java.util.HashSet;
 
 /**
  * Represents a Vec2I Array which contains 0-SomeNumber of 2 dimensional integer vector of (x, y)
- * <p/>
+ * <p>
  * Note: This Array is not a synchronized collection. This should not make a deference as only one thread should be handling this packet at a time
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -39,21 +39,23 @@ public class Vec2IArray extends ArrayList<Vec2I> {
     }
 
     /**
-     * This will create a vector array using the two vectors provided. In short this will provide a fill or remove method
-     * anything between vector 1 and vector 2 will be added or removed.
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will create a vector array using the two vectors provided. This creates vectors between the two points to form a
+     * square or rectangle using some math stuff.
      *
      * @param vector1 Vec2I representing the first vector that you want to start your array
      * @param vector2 Vec2I representing the second vector that you want to end your array
      * @throws ArrayIndexOutOfBoundsException
      */
-    public Vec2IArray(Vec2I vector1, Vec2I vector2) throws ArrayIndexOutOfBoundsException{
+    public Vec2IArray(Vec2I vector1, Vec2I vector2) throws ArrayIndexOutOfBoundsException {
         int lowX = vector1.getX() > vector2.getX() ? vector2.getX() : vector1.getX();
         int highX = vector1.getX() > vector2.getX() ? vector1.getX() : vector2.getX();
         int lowY = vector1.getY() > vector2.getY() ? vector2.getY() : vector1.getY();
         int highY = vector1.getY() > vector2.getY() ? vector1.getY() : vector2.getY();
-        while (lowX <= highX){
+        while (lowX <= highX) {
             int tempY = lowY;
-            while(tempY <= highY){
+            while (tempY <= highY) {
                 this.add(new Vec2I(lowX, tempY));
                 tempY++;
             }
@@ -64,7 +66,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
     /**
      * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
      */
-    public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException{
+    public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException {
         int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         if (arrayLength > 100) {
             throw new ArrayIndexOutOfBoundsException();
@@ -84,15 +86,29 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         }
     }
 
-    public HashSet<Vec2IArray> getVec2IGroups(int groupSize){
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will take this Vec2IArray and break it up into smaller ones. I.E, if you have 200 Vec2I in this array
+     * and set the groupSize to 50 it will return a HashSet of 4 Vec2IArrays each containing 50 Vec2Is each.
+     *
+     * @param groupSize int representing the size of each Vec2IArray
+     * @return HashSet containing Vec2IArray's
+     */
+    public HashSet<Vec2IArray> getVec2IGroups(int groupSize) {
         HashSet<Vec2IArray> groups = new HashSet<>();
-        while (this.size() > 0){
+        while (this.size() > 0) {
             Vec2IArray group = new Vec2IArray();
-            while (group.size() < groupSize && this.size() > 0){
+            while (group.size() < groupSize && this.size() > 0) {
                 group.add(this.remove(0));
             }
             groups.add(group);
         }
         return groups;
+    }
+
+    @Override
+    public String toString() {
+        return "Vec2IArray{} " + super.toString();
     }
 }

@@ -29,22 +29,15 @@ import static starbounddata.packets.StarboundBufferWriter.*;
 
 /**
  * Represents the ChatReceivedPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient
- * <p/>
+ * <p>
  * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class ChatReceivePacket extends Packet {
-
-    public enum ChatReceiveChannel {
-        PLANET,
-        UNIVERSE,
-        WHISPER,
-        COMMAND
-    }
 
     /**
      * <br>
@@ -57,26 +50,58 @@ public class ChatReceivePacket extends Packet {
      * 3 - Command
      */
     private ChatReceiveChannel channel;
-
     /**
      * ToDo: Insert expected string display
      */
     private String world;
-
     /**
      * ClientId of the sender which is assigned by the Starbound starnubserver
      */
     private int clientId;
-
     /**
      * Name of who sent the message
      */
     private String name;
-
     /**
      * Message sent from the starnubserver
      */
     private String message;
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ChatReceivePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CHATRECEIVED.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param world           String ToDo: Insert expected string display
+     * @param clientId        String clientID of the sender. *STARNUB RESERVES 5000*
+     * @param name            String name of the Sender
+     * @param message         String the message
+     */
+    public ChatReceivePacket(ChannelHandlerContext DESTINATION_CTX, ChatReceiveChannel channel, String world, long clientId, String name, String message) {
+        super(Packets.CHATRECEIVED.getDirection(), Packets.CHATRECEIVED.getPacketId(), null, DESTINATION_CTX);
+        this.channel = channel;
+        this.world = world;
+        this.clientId = (int) clientId;
+        this.name = name;
+        this.message = message;
+    }
 
     public ChatReceiveChannel getChannel() {
         return channel;
@@ -119,35 +144,10 @@ public class ChatReceivePacket extends Packet {
     }
 
     /**
-     * @param channel         String one of the following:
-     *                        <br>
-     *                        0 - Local Chat (Planet) (Object Sent: ship_d07cdd7eb5bcba7a306edcf0fe610010 or Alpha Eta Car 0368 II a)
-     *                        <br>
-     *                        1 - Entire Server (Universe)
-     *                        <br>
-     *                        2 - Whisper
-     *                        <br>
-     *                        3 - Command Results
-     * @param DESTINATION_CTX ChannelHandlerContext representing the packet destination
-     * @param world           String ToDo: Insert expected string display
-     * @param clientId        String clientID of the sender. *STARNUB RESERVES 5000*
-     * @param name            String name of the Sender
-     * @param message         String the message
-     */
-    public ChatReceivePacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, ChatReceiveChannel channel, String world, long clientId, String name, String message) {
-        super(DIRECTION, Packets.CHATRECEIVED.getPacketId(), null, DESTINATION_CTX);
-        this.channel = channel;
-        this.world = world;
-        this.clientId = (int) clientId;
-        this.name = name;
-        this.message = message;
-    }
-
-    /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -162,9 +162,9 @@ public class ChatReceivePacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -186,5 +186,12 @@ public class ChatReceivePacket extends Packet {
                 ", name='" + name + '\'' +
                 ", message='" + message + '\'' +
                 "} " + super.toString();
+    }
+
+    public enum ChatReceiveChannel {
+        PLANET,
+        UNIVERSE,
+        WHISPER,
+        COMMAND
     }
 }

@@ -33,11 +33,11 @@ import static starbounddata.packets.StarboundBufferWriter.*;
 
 /**
  * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be
  * interpreted by the starnubclient. This packet is sent to the starnubclient to notify them of connection success with all
  * of the loading data
- * <p/>
+ * <p>
  * Packet Direction: Server -> Client
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -63,6 +63,36 @@ public class ConnectResponsePacket extends Packet {
     private Variant Parameters;
     private Variant SectorConfig;
     private byte[] tempByteArray;
+
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ConnectResponsePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CONNECTIONRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+//    /**
+//     * Recommended: For internal StarNub usage.
+//     * <p/>
+//     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+//     * router this packet
+//     * <p/>
+//     *
+//     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+//     */
+//    public ConnectResponsePacket(ChannelHandlerContext DESTINATION_CTX) {
+//        super(Packets.DISCONNECTRESPONSE.getDirection(), Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
+//
+//    }
+
 
     public boolean isSuccess() {
         return success;
@@ -208,15 +238,11 @@ public class ConnectResponsePacket extends Packet {
         this.tempByteArray = tempByteArray;
     }
 
-    public ConnectResponsePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.CONNECTIONRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
-    }
-
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
@@ -245,9 +271,9 @@ public class ConnectResponsePacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -280,6 +306,6 @@ public class ConnectResponsePacket extends Packet {
                 ", Parameters=" + Parameters +
                 ", SectorConfig=" + SectorConfig +
                 ", tempByteArray=" + Arrays.toString(tempByteArray) +
-                '}';
+                "} " + super.toString();
     }
 }

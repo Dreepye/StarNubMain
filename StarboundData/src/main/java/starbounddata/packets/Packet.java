@@ -31,40 +31,39 @@ import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
 
 /**
  * Represents a basic packet that all packets should inherit.
- * <p/>
+ * <p>
  * Notes:
  * - Packet ID is a single Byte
  * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the starnubclient and starnubserver side of the socket, this is used to write network data to the session
  * - recycle represents if this packet should be recycled when handled by StarNub
- * <p/>
+ * <p>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public abstract class Packet {
 
-    public enum Direction{
-        STARBOUND_SERVER,
-        STARBOUND_CLIENT,
-        BIDIRECTIONAL,
-        NOT_USED
-    }
-
     private final Direction DIRECTION;
     private final byte PACKET_ID;
     private final ChannelHandlerContext SENDER_CTX;
     private final ChannelHandlerContext DESTINATION_CTX;
-    private boolean recycle;
+    private boolean recycle = false;
 
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This constructor is used in construction of packets to be cached on each side of the players connection (Client, Server) sides of the proxy
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param PACKET_ID       byte representing the Starbound packet id for this type of packet
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
     public Packet(Direction DIRECTION, byte PACKET_ID, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
         this.DIRECTION = DIRECTION;
         this.PACKET_ID = PACKET_ID;
         this.SENDER_CTX = SENDER_CTX;
         this.DESTINATION_CTX = DESTINATION_CTX;
-    }
-
-    public byte getPACKET_ID() {
-        return PACKET_ID;
     }
 
     public ChannelHandlerContext getSENDER_CTX() {
@@ -79,66 +78,50 @@ public abstract class Packet {
         return recycle;
     }
 
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: Setting this will cause the packet to stop being routed to event handlers and placed back into the packet pool with out
+     * being routed to the destination
+     */
     public void recycle() {
         this.recycle = true;
     }
 
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used for StarNub to reset the packets routing
+     */
     public void resetRecycle() {
         this.recycle = false;
     }
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */
     public abstract void read(ByteBuf in);
 
     /**
-     * Recommended: For internal StarNub usage.
-     * <p/>
-     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
-     *
-     * @param out ByteBuf representing the space to write out the packet reason
-     */
-    public abstract void write(ByteBuf out);
-
-    /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      */
-    public void routeToDestination(){
+    public void routeToDestination() {
         DESTINATION_CTX.writeAndFlush(packetToMessageEncoder(this), DESTINATION_CTX.voidPromise());
     }
 
     /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will send this packet to multiple people
-     *
-     * @param sendList HashSet of ChannelHandlerContext to this packet to
-     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
-     */
-    public void routeToGroup(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
-        if (ignoredList != null) {
-            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise()));
-        } else {
-            for (ChannelHandlerContext ctx : sendList){
-                ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise());
-            }
-        }
-    }
-
-    /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
+     *
      * @param packet Packet representing the packet to encode
      * @return ByteBuf representing the ByteBuf to write to socket
      */
@@ -160,13 +143,56 @@ public abstract class Packet {
         return msgOut;
     }
 
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
+     */
+    public abstract void write(ByteBuf out);
+
+    public byte getPACKET_ID() {
+        return PACKET_ID;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
+     */
+    public void routeToGroup(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
+        if (ignoredList != null) {
+            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise()));
+        } else {
+            for (ChannelHandlerContext ctx : sendList) {
+                ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise());
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return "Packet{" +
-                "PACKET_ID=" + PACKET_ID +
+                "DIRECTION=" + DIRECTION +
+                ", PACKET_ID=" + PACKET_ID +
                 ", SENDER_CTX=" + SENDER_CTX +
                 ", DESTINATION_CTX=" + DESTINATION_CTX +
                 ", recycle=" + recycle +
                 '}';
+    }
+
+    /**
+     * This represents the direction the packet travels to.
+     */
+    public enum Direction {
+        STARBOUND_SERVER,
+        STARBOUND_CLIENT,
+        BIDIRECTIONAL,
+        NOT_USED
     }
 }

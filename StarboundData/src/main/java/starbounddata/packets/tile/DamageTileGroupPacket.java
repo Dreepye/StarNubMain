@@ -31,9 +31,9 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
 
 /**
  * Represents the DamageTileGroup and methods to generate a packet data for StarNub and Plugins
- * <p/>
+ * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
- * <p/>
+ * <p>
  * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -41,17 +41,49 @@ import static starbounddata.packets.StarboundBufferWriter.writeByte;
  */
 public class DamageTileGroupPacket extends Packet {
 
-    TileDamage tileDamage;
     private Vec2IArray tilePositions;
     private TileLayer layer;
     private Vec2F sourcePosition;
+    private TileDamage tileDamage;
 
-    public DamageTileGroupPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
-        super(DIRECTION, Packets.DAMAGETILEGROUP.getPacketId(), null, DESTINATION_CTX);
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public DamageTileGroupPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.DAMAGETILEGROUP.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param tilePositions Vac2IArray representing the riles to be damaged
+     * @param layer TileLayer representing the tile layer
+     * @param sourcePosition VeC2F representing the source position
+     * @param tileDamage TileDamage representing tile damage
+     */
+    public DamageTileGroupPacket(ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
+        super(Packets.DAMAGETILEGROUP.getDirection(), Packets.DAMAGETILEGROUP.getPacketId(), null, DESTINATION_CTX);
         this.tilePositions = tilePositions;
         this.layer = layer;
         this.sourcePosition = sourcePosition;
         this.tileDamage = tileDamage;
+    }
+
+    public DamageTileGroupPacket(Direction DIRECTION, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.DAMAGETILEGROUP.getPacketId(), null, DESTINATION_CTX);
+
     }
 
     public TileDamage getTileDamage() {
@@ -70,14 +102,6 @@ public class DamageTileGroupPacket extends Packet {
         this.tilePositions = tilePositions;
     }
 
-    public TileLayer getLayer() {
-        return layer;
-    }
-
-    public void setLayer(TileLayer layer) {
-        this.layer = layer;
-    }
-
     public Vec2F getSourcePosition() {
         return sourcePosition;
     }
@@ -88,9 +112,9 @@ public class DamageTileGroupPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
-     * <p/>
+     * <p>
      * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.vectors.Vec2IArray} constructor
      *
      * @param in ByteBuf representing the reason to be read into the packet
@@ -102,7 +126,7 @@ public class DamageTileGroupPacket extends Packet {
             this.layer = TileLayer.values()[readUnsignedByte(in)];
             this.sourcePosition = new Vec2F(in);
             this.tileDamage = new TileDamage(in);
-        } catch (ArrayIndexOutOfBoundsException e){
+        } catch (ArrayIndexOutOfBoundsException e) {
             super.recycle();
             in.skipBytes(in.readableBytes());
         }
@@ -110,9 +134,9 @@ public class DamageTileGroupPacket extends Packet {
 
     /**
      * Recommended: For internal StarNub usage.
-     * <p/>
+     * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p/>
+     * <p>
      *
      * @param out ByteBuf representing the space to write out the packet reason
      */
@@ -124,9 +148,12 @@ public class DamageTileGroupPacket extends Packet {
         this.tilePositions.writeVec2IArray(out);
     }
 
-    public enum TileLayer {
-        FOREGROUND,
-        BACKGROUND
+    public TileLayer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(TileLayer layer) {
+        this.layer = layer;
     }
 
     @Override
@@ -136,6 +163,11 @@ public class DamageTileGroupPacket extends Packet {
                 ", tilePositions=" + tilePositions +
                 ", layer=" + layer +
                 ", sourcePosition=" + sourcePosition +
-                '}';
+                "} " + super.toString();
+    }
+
+    public enum TileLayer {
+        FOREGROUND,
+        BACKGROUND
     }
 }
