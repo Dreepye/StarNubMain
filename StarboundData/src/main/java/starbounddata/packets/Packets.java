@@ -36,18 +36,18 @@ import java.util.Set;
  * @since 1.0 Beta
  */
 public enum Packets {
-    PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.STARBOUND_CLIENT),
-    CONNECTIONRESPONSE("ConnectResponsePacket.class", Packet.Direction.STARBOUND_CLIENT),
-    DISCONNECTRESPONSE("ServerDisconnectPacket.class", Packet.Direction.STARBOUND_CLIENT),
+    PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
+    CONNECTIONRESPONSE("ConnectResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
+    DISCONNECTRESPONSE("ServerDisconnectPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     HANDSHAKECHALLENGE("", Packet.Direction.NOT_USED),
-    CHATRECEIVED("ChatReceivePacket.class", Packet.Direction.STARBOUND_CLIENT),
-    UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.STARBOUND_CLIENT),
+    CHATRECEIVED("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
+    UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CELESTIALRESPONSE("", Packet.Direction.NOT_USED),
-    CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.STARBOUND_SERVER),
-    CLIENTDISCONNECT("ClientDisconnectRequestPacket.class", Packet.Direction.STARBOUND_SERVER),
+    CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    CLIENTDISCONNECT("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
     WARPCOMMAND("", Packet.Direction.NOT_USED),
-    CHATSENT("ChatSendPacket.class", Packet.Direction.STARBOUND_SERVER),
+    CHATSENT("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CELESTIALREQUEST("", Packet.Direction.NOT_USED),
     CLIENTCONTEXTUPDATE("", Packet.Direction.NOT_USED),
     WORLDSTART("", Packet.Direction.NOT_USED),
@@ -63,7 +63,7 @@ public enum Packets {
     ENTITYINTERACTRESULT("", Packet.Direction.NOT_USED),
     MODIFYTILELIST("", Packet.Direction.NOT_USED),
     DAMAGETILE("", Packet.Direction.NOT_USED),
-    DAMAGETILEGROUP("DamageTileGroupPacket.class", Packet.Direction.STARBOUND_SERVER),
+    DAMAGETILEGROUP("DamageTileGroupPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     REQUESTDROP("", Packet.Direction.NOT_USED),
     SPAWNENTITY("", Packet.Direction.NOT_USED),
     ENTITYINTERACT("", Packet.Direction.NOT_USED),
@@ -111,7 +111,7 @@ public enum Packets {
         }
         HashMap<Packets, Class> packetCacheToSet = new HashMap<>();
         for (Packets packet : Packets.values()) {
-            if (!packet.classString.isEmpty() || !(packet.classString.length() < 4)) {
+            if (!packet.classString.isEmpty() || !(packet.classString.length() < 4) || packet.direction != Packet.Direction.NOT_USED) {
                 String packetName = packet.classString.substring(0, packet.classString.lastIndexOf("."));
                 Class packetPath = packetPaths.get(packetName);
                 packetCacheToSet.put(packet, packetPath);
@@ -126,6 +126,8 @@ public enum Packets {
      * Uses: This will create new packets from the packet cache and insert them into a HashMap to be used in
      * player connections.
      *
+     *
+     * @param DIRECTION       Direction representing where the packet flows
      * @param SENDER_CTX      ChannelHandlerContext the sender ChannelHandlerContext to add to the packet being created
      * @param DESTINATION_CTX ChannelHandlerContext the destination ChannelHandlerContext to add to the packet being created
      * @return HashMap the packet cache to be used in packet routing
@@ -138,6 +140,7 @@ public enum Packets {
             Constructor constructor;
             Packet packetToConstruct = null;
             if (packet.direction != DIRECTION) {
+                DIRECTION = DIRECTION == Packet.Direction.TO_STARBOUND_CLIENT ? Packet.Direction.TO_STARBOUND_SERVER : Packet.Direction.TO_STARBOUND_CLIENT;
                 try {
                     constructor = packetClass.getConstructor(new Class[]{Packet.Direction.class, ChannelHandlerContext.class, ChannelHandlerContext.class});
                     packetToConstruct = (Packet) constructor.newInstance(new Object[]{DIRECTION, SENDER_CTX, DESTINATION_CTX});

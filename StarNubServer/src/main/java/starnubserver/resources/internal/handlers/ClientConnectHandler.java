@@ -92,10 +92,8 @@ public class ClientConnectHandler extends PacketEventHandler {
     @Override
     public Packet onEvent(Packet eventData) {
         ClientConnectPacket clientConnectPacket = (ClientConnectPacket) eventData;
-
         ChannelHandlerContext clientCTX = clientConnectPacket.getSENDER_CTX();
-        CONNECTIONS.getOPEN_SOCKETS().remove(clientCTX);
-        CONNECTIONS.getOPEN_SOCKETS().remove(clientConnectPacket.getDESTINATION_CTX());
+
         StarNubProxyConnection starNubProxyConnection = (StarNubProxyConnection) CONNECTIONS.getOPEN_CONNECTIONS().remove(clientCTX);
 
         String playerName = clientConnectPacket.getPlayerName();

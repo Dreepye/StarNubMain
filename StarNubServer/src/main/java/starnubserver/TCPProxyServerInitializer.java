@@ -20,6 +20,7 @@ package starnubserver;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import starbounddata.packets.Packet;
 
 /**
  * Creates a newly configured {@link io.netty.channel.ChannelPipeline} for a new channel.
@@ -33,6 +34,6 @@ class TCPProxyServerInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addFirst(new TCPProxyServerPacketDecoder("ClientSide"));
+        ch.pipeline().addFirst(new TCPProxyServerPacketDecoder(Packet.Direction.TO_STARBOUND_CLIENT));
     }
 }

@@ -190,8 +190,8 @@ public abstract class Packet {
      * This represents the direction the packet travels to.
      */
     public enum Direction {
-        STARBOUND_SERVER,
-        STARBOUND_CLIENT,
+        TO_STARBOUND_SERVER,
+        TO_STARBOUND_CLIENT,
         BIDIRECTIONAL,
         NOT_USED
     }

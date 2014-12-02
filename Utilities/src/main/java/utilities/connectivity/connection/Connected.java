@@ -66,7 +66,7 @@ public class Connected implements ConnectionStatus {
         CONNECTION.getCLIENT_CTX().close();
         if (CONNECTION instanceof ProxyConnection){
             ProxyConnection proxyConnection = (ProxyConnection) CONNECTION;
-            proxyConnection.getSERVER_CTX().close(proxyConnection.getSERVER_CTX().voidPromise());
+            proxyConnection.getSERVER_CTX().close();
         }
         boolean connected = isConnected();
         if (!connected){

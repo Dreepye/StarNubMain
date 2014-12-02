@@ -82,7 +82,7 @@ public class ChatReceivePacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
      * router this packet

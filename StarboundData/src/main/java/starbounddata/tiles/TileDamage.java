@@ -32,6 +32,12 @@ public class TileDamage {
     private float amount;
     private int harvestLevel;
 
+    public TileDamage(TileDamageType tileDamageType, float amount, int harvestLevel) {
+        this.tileDamageType = tileDamageType;
+        this.amount = amount;
+        this.harvestLevel = harvestLevel;
+    }
+
     public TileDamage(ByteBuf in) {
         this.tileDamageType = TileDamage.TileDamageType.values()[in.readUnsignedByte()];
         this.amount = in.readFloat();

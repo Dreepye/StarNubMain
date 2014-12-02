@@ -49,7 +49,7 @@ public class Bans extends ConcurrentHashMap<String, Ban> {
      * <p>
      */
     private void banLoad() {
-        new StarNubEvent("StarNu_Bans_Loading", this);
+        new StarNubEvent("StarNub_Bans_Loading", this);
         try {
             List<Ban> bans = StarNub.getDatabaseTables().getPlayerSessionBans().getTableDao().queryForAll();
             for (Ban ban : bans) {
@@ -61,7 +61,7 @@ public class Bans extends ConcurrentHashMap<String, Ban> {
         } catch (SQLException e) {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
         }
-        new StarNubEvent("StarNu_Bans_Loaded", this);
+        new StarNubEvent("StarNub_Bans_Loaded", this);
     }
 
     /**

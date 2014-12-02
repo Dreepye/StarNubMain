@@ -18,7 +18,6 @@
 
 package starnubserver;
 
-import io.netty.util.ResourceLeakDetector;
 import org.joda.time.DateTime;
 import starnubserver.database.DatabaseTables;
 import starnubserver.events.events.StarNubEvent;
@@ -107,7 +106,7 @@ public final class StarNub {
 
     private static void start () {
         /* This Resource detector is for debugging only */
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
+//        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
 
         /* Setting Temporary Time - Measuring StarNub Start Up Time */
         DateTime starnubStarTime = DateTime.now();

@@ -190,9 +190,6 @@ public class Player extends StarNubProxyConnection {
 
     public Player(StarNubProxyConnection proxyConnection, String playerName, UUID playerUUID) {
         super(StarNub.getStarNubEventRouter(), proxyConnection.getCLIENT_CTX(), proxyConnection.getSERVER_CTX());
-        this.gameName = playerCharacter.getName();
-        this.nickName = playerCharacter.getName();
-        this.cleanNickName = playerCharacter.getCleanName();
         this.startTimeUtc = DateTime.now();
         InetAddress playerIP = proxyConnection.getClientIP();
         this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
@@ -202,7 +199,9 @@ public class Player extends StarNubProxyConnection {
             new StarNubEvent("Player_New_Character", playerCharacter);
         }
         this.playerCharacter = playerCharacter;
-
+        this.gameName = playerCharacter.getName();
+        this.nickName = playerCharacter.getName();
+        this.cleanNickName = playerCharacter.getCleanName();
         CharacterIP characterIP = new CharacterIP(playerCharacter, proxyConnection.getClientIP());
         if (!StarNub.getDatabaseTables().getCharacterIPLog().isCharacterIDAndIPComboRecorded(characterIP)) {
             StarNub.getDatabaseTables().getCharacterIPLog().create(characterIP);

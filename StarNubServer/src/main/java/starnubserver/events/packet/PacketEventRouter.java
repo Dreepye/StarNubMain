@@ -1,7 +1,8 @@
 package starnubserver.events.packet;
 
-import starnubserver.StarNub;
 import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
+import starnubserver.StarNub;
 import utilities.events.EventRouter;
 import utilities.events.EventSubscription;
 
@@ -15,6 +16,11 @@ import java.util.HashSet;
  * @since 1.0 Beta
  */
 public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Packet, Packet> {
+
+    /**
+     * This is instantiated to build out the Packets enum at start up
+     */
+    private static final Packets INSTANCE = Packets.PROTOCOLVERSION;
 
     public PacketEventRouter(){
         super();

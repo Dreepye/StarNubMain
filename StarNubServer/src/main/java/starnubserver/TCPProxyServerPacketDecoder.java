@@ -34,6 +34,7 @@ import starnubserver.events.events.StarNubEvent;
 import utilities.cache.objects.IntegerCache;
 import utilities.events.EventSubscription;
 import utilities.exceptions.CacheWrapperOperationException;
+import utilities.numbers.RandomNumber;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -61,7 +62,7 @@ import static utilities.compression.Zlib.decompress;
 class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketDecoder.DecoderState> {
 
     private ChannelHandlerContext destinationCTX;
-    private final String CONNECTION_SIDE;
+    private final Packet.Direction CONNECTION_SIDE;
     private HashMap<Byte, Packet> packetPool;
     private int vlqLength;
     private int payloadLength;
@@ -71,12 +72,12 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private StarNubProxyConnection starNubProxyConnection;
 
-    public TCPProxyServerPacketDecoder(String connectionSide) {
+    public TCPProxyServerPacketDecoder(Packet.Direction connectionSide) {
         super(DecoderState.READ_PACKET_ID );
         this.CONNECTION_SIDE = connectionSide;
     }
 
-    private TCPProxyServerPacketDecoder(String connectionSide, ChannelHandlerContext clientCTX) {
+    private TCPProxyServerPacketDecoder(Packet.Direction connectionSide, ChannelHandlerContext clientCTX) {
         super(DecoderState.READ_PACKET_ID );
         this.CONNECTION_SIDE = connectionSide;
         this.destinationCTX = clientCTX;
@@ -128,35 +129,39 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 checkpoint(DecoderState.READ_PAYLOAD);
             }
             case READ_PAYLOAD: {
-                HashSet<EventSubscription> hashSet = StarNub.getStarboundServer().getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
-                /* Handle Packet if there is an event handler for it, else do not create objects */
-                if (hashSet != null) {
-                    in.skipBytes(1+vlqLength);
-                    try {
-                        if (compressed) {
-                            packet.read(Unpooled.wrappedBuffer(1, decompress(in.readBytes(payloadLength).array())));
+                if (packet != null) {
+                    HashSet<EventSubscription> hashSet = StarNub.getStarboundServer().getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
+                    /* Handle Packet if there is an event handler for it, else do not create objects */
+                    if (hashSet != null) {
+                        in.skipBytes(1 + vlqLength);
+                        try {
+                            if (compressed) {
+                                packet.read(Unpooled.wrappedBuffer(1, decompress(in.readBytes(payloadLength).array())));
+                            } else {
+                                packet.read(in.readBytes(payloadLength));
+                            }
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            return;
+                        }
+                        for (EventSubscription<Packet> packetEventSubscription : hashSet) {
+                            if (packet.isRecycle()) {
+                                break;
+                            }
+                            packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
+                        }
+                        /* Write packet out, if not recycling */
+                        if (!packet.isRecycle()) {
+                            packet.routeToDestination();
                         } else {
-                            packet.read(in.readBytes(payloadLength));
+                            packet.resetRecycle();
                         }
-                    } catch (ArrayIndexOutOfBoundsException e){
-                        return;
-                    }
-                    for (EventSubscription<Packet> packetEventSubscription : hashSet) {
-                        if (packet.isRecycle()) {
-                            break;
-                        }
-                        packet = packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
-                    }
-                    /* Write Packet Out, if not recycling */
-                    if (!packet.isRecycle()) {
-                        packet.routeToDestination();
                     } else {
-                        packet.resetRecycle();
+                        destinationCTX.writeAndFlush(in.readSlice(1 + vlqLength + payloadLength).retain(), destinationCTX.voidPromise());
                     }
+//                    packetPool.put(packet.getPACKET_ID(), packet);
                 } else {
                     destinationCTX.writeAndFlush(in.readSlice(1 + vlqLength + payloadLength).retain(), destinationCTX.voidPromise());
                 }
-                packetPool.put(packet.getPACKET_ID(), packet);
                 checkpoint(DecoderState.READ_PACKET_ID);
                 break;
             }
@@ -176,11 +181,11 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         StarNub.getConnections().getOPEN_SOCKETS().put(ctx, System.currentTimeMillis());
-        if (CONNECTION_SIDE.equalsIgnoreCase("ServerSide")) {
+        if (CONNECTION_SIDE == Packet.Direction.TO_STARBOUND_SERVER) {
             new StarNubEvent("StarNub_Socket_Connection_Attempt_Server", ctx);
             setPacketPool(ctx);
             new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
-        } else if (CONNECTION_SIDE.equalsIgnoreCase("ClientSide")) {
+        } else if (CONNECTION_SIDE == Packet.Direction.TO_STARBOUND_CLIENT) {
             setClientConnection(ctx);
         }
     }
@@ -189,21 +194,20 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         InetAddress connectingIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress();
         IPCacheWrapper lastActiveCache = StarNub.getConnections().getINTERNAL_IP_WATCHLIST();
         IntegerCache cache = (IntegerCache) lastActiveCache.getCache(connectingIp);
-        System.out.println(cache);
+        int randomInt = RandomNumber.randInt(4000, 8000);
         if (cache != null) {
-            int newTime = cache.getInteger() + 5000;
+            int newTime = cache.getInteger() + randomInt;
             cache.setInteger(newTime);
             boolean isPastTime = cache.isPastDesignatedTimeRefreshTimeNowIfPast(newTime);
-            System.out.println(isPastTime);
+            System.out.println(isPastTime);//REMOVE
             if(!isPastTime){
-                System.out.println(newTime);
                 ctx.close();
             } else {
-                cache.setInteger(0);
+                cache.setInteger(randomInt);
                 openServerConnection(ctx);
             }
         } else {
-            lastActiveCache.addCache(connectingIp, new IntegerCache(0));
+            lastActiveCache.addCache(connectingIp, new IntegerCache(randomInt));
             openServerConnection(ctx);
         }
     }
@@ -218,7 +222,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 .option(ChannelOption.SO_RCVBUF, TCPProxyServer.getRecvBuffer())
                 .option(ChannelOption.SO_SNDBUF, TCPProxyServer.getSendBuffer())
                 .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, TCPProxyServer.getWriteHighWaterMark())
-                .handler(new TCPProxyServerPacketDecoder("ServerSide", ctx));
+                .handler(new TCPProxyServerPacketDecoder(Packet.Direction.TO_STARBOUND_SERVER, ctx));
         ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub settings", "starbound_port")));
         destinationCTX = f.channel().pipeline().firstContext();
         setPacketPool(ctx);
@@ -228,7 +232,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     @SuppressWarnings("unchecked")
     private void setPacketPool(ChannelHandlerContext ctx) {
-        packetPool = Packets.getPacketCache(ctx, destinationCTX);
+        packetPool = Packets.getPacketCache(this.CONNECTION_SIDE, ctx, destinationCTX);
     }
 
     /**
@@ -252,7 +256,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        cause.printStackTrace();
+        cause.printStackTrace(); /* Debug Print */
         closeConnection(ctx);
     }
 

@@ -5,7 +5,7 @@ Change Log:
         - Modified the decoder by adding the Variant Length Quantity equation in the method, vice making it a object (Means its not stored in the memory heap)
         - Changed all socket settings, increasing the buffer allocation and write amount, per right
 
-
+//planet who
 //EPOLL
 
 
@@ -21,8 +21,9 @@ Change Log:
                 (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit_reserved") +
                 2);
 
-
+///DDOS DOS - Thread shutdown ???
 //Warp packets delay to starbound
+// Remove exception throws as much as possble bad! - Resource usage
 
 
                 //TODO Management System - Player List, Banning, Kicking Plugin

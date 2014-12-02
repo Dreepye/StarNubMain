@@ -44,7 +44,7 @@ public class ServerDisconnectHandler extends PacketEventHandler {
     public Packet onEvent(Packet eventData) {
         ServerDisconnectPacket serverDisconnectPacket = (ServerDisconnectPacket) eventData;
         Player player = CONNECTIONS.getCONNECTED_PLAYERS().get(serverDisconnectPacket.getDESTINATION_CTX());
-        player.disconnectReason("Quit");
+        player.disconnectReason("Quit");//REMOVE
         return serverDisconnectPacket;
     }
 }

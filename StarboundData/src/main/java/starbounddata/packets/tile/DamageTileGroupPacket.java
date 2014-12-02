@@ -61,7 +61,7 @@ public class DamageTileGroupPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
      * router this packet
@@ -110,6 +110,14 @@ public class DamageTileGroupPacket extends Packet {
         this.sourcePosition = sourcePosition;
     }
 
+    public TileLayer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(TileLayer layer) {
+        this.layer = layer;
+    }
+
     /**
      * Recommended: For internal StarNub usage.
      * <p>
@@ -145,15 +153,7 @@ public class DamageTileGroupPacket extends Packet {
         this.tilePositions.writeVec2IArray(out);
         writeByte(out, (byte) this.getLayer().ordinal());
         this.sourcePosition.writeVec2F(out);
-        this.tilePositions.writeVec2IArray(out);
-    }
-
-    public TileLayer getLayer() {
-        return layer;
-    }
-
-    public void setLayer(TileLayer layer) {
-        this.layer = layer;
+        this.tileDamage.writeTileDamage(out);
     }
 
     @Override

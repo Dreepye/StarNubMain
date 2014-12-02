@@ -20,15 +20,18 @@ package starnubserver.resources.internal;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
+import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
+import starbounddata.packets.tile.DamageTileGroupPacket;
 import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
 import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.Player;
+import starnubserver.events.packet.PacketEventHandler;
 import starnubserver.events.packet.PacketEventSubscription;
 import starnubserver.resources.Operators;
 import starnubserver.resources.internal.handlers.ClientConnectHandler;
@@ -78,9 +81,18 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
         new PacketEventSubscription("StarNub", ClientConnectPacket.class, true, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
         new PacketEventSubscription("StarNub", ConnectResponsePacket.class, true, new ConnectionResponseHandler(CONNECTIONS));
         new PacketEventSubscription("StarNub", ServerDisconnectPacket.class, true, new ServerDisconnectHandler(CONNECTIONS));
+        new PacketEventSubscription("StarNub", DamageTileGroupPacket.class, true, new PacketEventHandler() {
+            @Override
+            public Packet onEvent(Packet eventData) {
+                System.out.println(eventData.toString());
+                return null;
+            }
+        });
         new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
         new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
-        new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
+        if ((boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "packet_events")) {
+            new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
+        }
 
     }
 
