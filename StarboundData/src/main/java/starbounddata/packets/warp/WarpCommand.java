@@ -5,68 +5,124 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
-import static starbounddata.packets.StarboundBufferReader.readStringVLQ;
-import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
-import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
-import static starbounddata.packets.StarboundBufferWriter.writeByte;
-
 /**
- * Created by r00t on 12/1/2014.
+ * Represents the WarpCommand and methods to generate a packet data for StarNub and Plugins
+ * <p>
+ * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
+ * <p>
+ * Packet Direction: Client -> Server
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
  */
-
 public class WarpCommand extends Packet {
 
-    /**
-     * Enum for types of warp
-     * */
+    public enum WarpType {
+        MOVE_SHIP,
+        WARP_TO_MY_SHIP,
+        WARP_TO_PLAYER_SHIP,
+        WARP_TO_PLANET,
+        WARP_TO_HOME
+    }
 
-    public enum warpType{
-        MoveShip,
-        WarptoMyShip,
-        WarptoPlayerShip,
-        WarptoPlanet,
-        Warptohome
+    private WarpType warpType;
+    private String worldCoordinate;
+    private String playerName;
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     *
+     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public WarpCommand(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.DAMAGETILEGROUP.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
-     * Variables used by Warpcommand
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     * @param warpType WarpType representing the warpType enumeration
+     * @param worldCoordinate String representing the world coordinate
+     * @param playerName String representing the layer name
      */
-    private Byte warptype;
-    private String world_coordinate;
-    private String player_name;
-
-    /**
-     * set/get Methods.
-     * @param warpType
-     */
-
-    public void setWarptype(Byte warpType){this.warptype=warpType;}
-
-    public int getWarptype() {return warptype;}
-
-    public void setPlayername(String name){this.player_name = name;}
-
-    public String getPlayername(){return player_name;}
-
-
-    public WarpCommand(ChannelHandlerContext DESTINATION_CTX, Byte warptype, String world_coordinate, String player_name){
+    public WarpCommand(ChannelHandlerContext DESTINATION_CTX, WarpType warpType, String worldCoordinate, String playerName){
         super(Packets.WARPCOMMAND.getDirection(),Packets.WARPCOMMAND.getPacketId(), null, DESTINATION_CTX);
-        this.warptype = warptype;
-        this.world_coordinate = world_coordinate;
-        this.player_name = player_name;
+        this.warpType = warpType;
+        this.worldCoordinate = worldCoordinate;
+        this.playerName = playerName;
     }
 
+    public WarpType getWarpType() {
+        return warpType;
+    }
 
+    public void setWarpType(WarpType warpType) {
+        this.warpType = warpType;
+    }
+
+    public String getWorldCoordinate() {
+        return worldCoordinate;
+    }
+
+    public void setWorldCoordinate(String worldCoordinate) {
+        this.worldCoordinate = worldCoordinate;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
+     * <p>
+     * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.vectors.Vec2IArray} constructor
+     *
+     * @param in ByteBuf representing the reason to be read into the packet
+     */
+    @Override
     public void read(ByteBuf in) {
-        this.warptype = readUnsignedByte(in);
-        this.world_coordinate = readStringVLQ(in);
-        this.player_name = readStringVLQ(in);
+        this.warpType = WarpType.values()[in.readUnsignedByte()];
+        this.worldCoordinate = readStringVLQ(in);
+        this.playerName = readStringVLQ(in);
     }
 
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p>
+     *
+     * @param out ByteBuf representing the space to write out the packet reason
+     */
+    @Override
     public void write(ByteBuf out) {
-        writeByte(out, this.warptype);
-        writeStringVLQ(out, this.world_coordinate);
-        writeStringVLQ(out, this.player_name);
+        out.writeByte(warpType.ordinal());
+        writeStringVLQ(out, this.worldCoordinate);
+        writeStringVLQ(out, this.playerName);
+    }
 
+    @Override
+    public String toString() {
+        return "WarpCommand{" +
+                "warpType=" + warpType +
+                ", worldCoordinate='" + worldCoordinate + '\'' +
+                ", playerName='" + playerName + '\'' +
+                "} " + super.toString();
     }
 }
