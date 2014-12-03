@@ -117,14 +117,14 @@ public class VLQ {
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual sVLQ field
      */
-    public static byte[] createSignedVLQ(long value) {
+    public static byte[] createSignedVLQNoObject(long value) {
         long result;
         if (value < 0) {
             result = ((-(value + 1)) << 1) | 1;
         } else {
             result = value << 1;
         }
-        return createVLQ(result);
+        return createVLQNoObject(result);
     }
 
     /**
@@ -138,7 +138,7 @@ public class VLQ {
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual VLQ field
      */
-    public static byte[] createVLQ(long value) {
+    public static byte[] createVLQNoObject(long value) {
         int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
         int numBytes = (numRelevantBits + 6) / 7;
         if (numBytes == 0)
@@ -259,13 +259,13 @@ public class VLQ {
      * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
      */
-    public static void writeSignedVLQNoObject(ByteBuf out, long value) {
+    public static void writeSignedVLQNoObjectPacketEncoder(ByteBuf out, long value) {
         if (value < 0) {
             value = ((-(value + 1)) << 1) | 1;
         } else {
             value = value << 1;
         }
-        writeVLQNoObject(out, value);
+        writeVLQNoObjectPacketEncoder(out, value);
     }
 
     /**
@@ -279,8 +279,9 @@ public class VLQ {
      * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
      */
-    public static void writeVLQNoObject(ByteBuf out, long value) {
-        int numBytes = ((64 - Long.numberOfLeadingZeros(value)) + 6) / 7;
+    public static void writeVLQNoObjectPacketEncoder(ByteBuf out, long value) {
+        int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
+        int numBytes = (numRelevantBits + 6) / 7;
         if (numBytes == 0) {
             numBytes = 1;
         }
@@ -291,6 +292,34 @@ public class VLQ {
                 curByte |= 0x80;
             }
             out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */
+            value >>>= 7;
+        }
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will write a u{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * <p>
+     * Notes: This will not create a VLQ object and should be used
+     * <p>
+     *
+     * @param out   ByteBuf in which is to be read
+     * @param value long representing the VLQ value to be written out
+     */
+    public static void writeVLQNoObject(ByteBuf out, int offSet, long value) {
+        int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
+        int numBytes = (numRelevantBits + 6) / 7;
+        if (numBytes == 0) {
+            numBytes = 1;
+        }
+        out.writerIndex(numBytes + offSet); /* Sets the write index at the number of bytes + offSet byte for */
+        for (int i = numBytes - 1; i >= 0; i--) {
+            int curByte = (int) (value & 0x7F);
+            if (i != (numBytes - 1)) {
+                curByte |= 0x80;
+            }
+            out.setByte(i + offSet, curByte); /* Sets the byte at index + offSet byte for */
             value >>>= 7;
         }
     }

@@ -85,7 +85,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
         new PacketEventSubscription("StarNub", DamageTileGroupPacket.class, true, new PacketEventHandler() {
             @Override
             public void onEvent(Packet eventData) { //DEBUG - THIS METHOD OR PACKET - Client crash after packet decode - encode // ONLY IN DEBUG
-                System.out.println(eventData.toString());
+//                System.out.println(eventData.toString());
             }
         });
         new PacketEventSubscription("StarNub", ChatSendPacket.class, true, new PacketEventHandler() {

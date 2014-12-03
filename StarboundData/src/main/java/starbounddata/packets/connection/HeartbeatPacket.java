@@ -95,7 +95,7 @@ public class HeartbeatPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        VLQ.writeSignedVLQNoObject(out, this.currentStep);
+        VLQ.writeSignedVLQNoObjectPacketEncoder(out, this.currentStep);
     }
 
     @Override

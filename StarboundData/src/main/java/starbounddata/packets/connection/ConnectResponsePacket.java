@@ -278,7 +278,7 @@ public class ConnectResponsePacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeBoolean(out, this.success);
-        VLQ.writeSignedVLQNoObject(out, this.clientId);
+        VLQ.writeSignedVLQNoObjectPacketEncoder(out, this.clientId);
         writeStringVLQ(out, this.rejectionReason);
         out.writeBytes(this.tempByteArray);
     }

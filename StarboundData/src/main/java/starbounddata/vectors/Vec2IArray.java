@@ -80,7 +80,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
      * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2IArray to
      */
     public void writeVec2IArray(ByteBuf out) {
-        VLQ.writeVLQNoObject(out, (long) this.size());
+        out.writeBytes(VLQ.createVLQNoObject((long) this.size()));
         for (Vec2I vec2I : this) {
             vec2I.writeVec2I(out);
         }

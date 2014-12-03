@@ -133,21 +133,21 @@ public class Variant {
             out.writeBoolean((Boolean) value);
         } else if (value instanceof Long) {
             out.writeByte(4);
-            VLQ.writeVLQNoObject(out, (Long) value);
+            VLQ.writeVLQNoObjectPacketEncoder(out, (Long) value);
         } else if (value instanceof String) {
             out.writeByte(5);
             Packet.writeStringVLQ(out, (String) value);
         } else if (value instanceof Variant[]) {
             out.writeByte(6);
             Variant[] array = (Variant[]) value;
-            VLQ.writeVLQNoObject(out, (long) array.length);
+            out.writeBytes(VLQ.createVLQNoObject((long) array.length));
             for (Variant anArray : array) {
                 anArray.writeToByteBuffer(out);
             }
         } else if (value instanceof Map<?, ?>) {
             out.writeByte(7);
             Map<String, Variant> dict = (Map<String, Variant>) value;
-            VLQ.writeVLQNoObject(out, (long) dict.size());
+            out.writeBytes(VLQ.createVLQNoObject((long) dict.size()));
             for (Map.Entry<String, Variant> kvp : dict.entrySet()) {
                 Packet.writeStringVLQ(out, kvp.getKey());
                 kvp.getValue().writeToByteBuffer(out);

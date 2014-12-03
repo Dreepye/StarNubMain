@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
+import static starbounddata.variants.VLQ.writeSignedVLQNoObjectPacketEncoder;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -174,7 +174,7 @@ public abstract class Packet {
         }
         msgOut.clear();
         msgOut.writeByte(PACKET_ID);
-        writeSignedVLQNoObject(msgOut, payloadLengthOut);
+        writeSignedVLQNoObjectPacketEncoder(msgOut, payloadLengthOut);
         msgOut.writeBytes(dataOut);
         return msgOut;
     }
@@ -294,7 +294,7 @@ public abstract class Packet {
      * @param bytes bytes[] value to be written to the buffer
      */
     public static void writeVLQArray(ByteBuf out, byte[] bytes) {
-        out.writeBytes(VLQ.createVLQ(bytes.length));
+        out.writeBytes(VLQ.createVLQNoObject(bytes.length));
         out.writeBytes(bytes);
     }
 

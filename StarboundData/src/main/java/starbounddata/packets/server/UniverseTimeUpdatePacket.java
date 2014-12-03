@@ -101,7 +101,7 @@ public class UniverseTimeUpdatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        VLQ.writeVLQNoObject(out, this.universeTime);
+        VLQ.writeVLQNoObjectPacketEncoder(out, this.universeTime);
     }
 
     @Override

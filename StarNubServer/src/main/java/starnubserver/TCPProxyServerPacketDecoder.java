@@ -66,7 +66,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private ChannelHandlerContext destinationCTX;
     private final Packet.Direction CONNECTION_SIDE;
-    private final HashMap<Byte, Packet> packetPool = new HashMap<>();
+    private final HashMap<Byte, Packet> PACKET_POOL = new HashMap<>();
     private int vlqLength;
     private int payloadLength;
     private boolean compressed;
@@ -105,7 +105,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             case READ_PACKET_ID: {
                 packetIDIndex = in.readerIndex();
                 byte packetId = in.getByte(packetIDIndex);
-                packet = packetPool.get(packetId);
+                packet = PACKET_POOL.get(packetId);
                 checkpoint(DecoderState.READ_VLQ);
             }
             case READ_VLQ: {
@@ -184,7 +184,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             setClientConnection(ctx);
             new StarNubEvent("StarNub_Socket_Connection_Success_Client", ctx);
         }
-        setPacketPool(ctx);
+        setPACKET_POOL(ctx);
     }
 
     private void setClientConnection(ChannelHandlerContext ctx) throws CacheWrapperOperationException {
@@ -236,7 +236,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
      * @param ctx ChannelHandlerContext representing this chanels context
      */
     @SuppressWarnings("unchecked")
-    private void setPacketPool(ChannelHandlerContext ctx) {
+    private void setPACKET_POOL(ChannelHandlerContext ctx) {
         HashMap<Packets, Class> packetClasses = Packets.getPacketClasses();
         for (Map.Entry<Packets, Class> packetsClassEntry : packetClasses.entrySet()) {
             Class packetClass = packetsClassEntry.getValue();
@@ -249,7 +249,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 try {
                     constructor = packetClass.getConstructor(new Class[]{Packet.Direction.class, ChannelHandlerContext.class, ChannelHandlerContext.class});
                     packetToConstruct = (Packet) constructor.newInstance(new Object[]{direction, ctx, destinationCTX});
-                    packetPool.put(packet.getPacketId(), packetToConstruct);
+                    PACKET_POOL.put(packet.getPacketId(), packetToConstruct);
                 } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
