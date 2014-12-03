@@ -46,14 +46,13 @@ public class ConnectionResponseHandler extends PacketEventHandler {
      * @return Packet any class representing packet can be returned
      */
     @Override
-    public Packet onEvent(Packet eventData) {
+    public void onEvent(Packet eventData) {
         ConnectResponsePacket connectResponsePacket = (ConnectResponsePacket) eventData;
-        RejectionCache rejectionCache;
+        RejectionCache rejectionCache = null;
         try {
             rejectionCache = (RejectionCache) CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().removeCache(connectResponsePacket.getDESTINATION_CTX());
         } catch (CacheWrapperOperationException e) {
             StarNub.getLogger().cFatPrint("StarNub", "CRITICAL ERROR, SESSION WILL END: " + e.getMessage());
-            return null;
         }
         Player player;
         if (rejectionCache != null) {
@@ -61,14 +60,12 @@ public class ConnectionResponseHandler extends PacketEventHandler {
             if (rejectionCache.isREJECTED()) {
                 connectResponsePacket.setSuccess(false);
                 connectResponsePacket.setRejectionReason(rejectionCache.getPACKET_MESSAGE());
-                return connectResponsePacket;
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(player.getCLIENT_CTX(), player);
-                new Thread(() -> postProcessing(player, (int) connectResponsePacket.getClientId(), rejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
-                return connectResponsePacket;
+                final RejectionCache finalRejectionCache = rejectionCache;
+                new Thread(() -> postProcessing(player, (int) connectResponsePacket.getClientId(), finalRejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
             }
         }
-        return null;
     }
 
     /**

@@ -18,7 +18,11 @@
 
 package starnubserver.cache.wrappers;
 
+import starnubserver.connections.player.session.Player;
+import starnubserver.events.starnub.StarNubEventHandler;
+import starnubserver.events.starnub.StarNubEventSubscription;
 import utilities.cache.wrappers.CacheWrapper;
+import utilities.events.types.Event;
 
 import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -71,5 +75,14 @@ public class PlayerUUIDCacheWrapper extends CacheWrapper<UUID> {
      * No Event Register required
      */
     @Override
-    public void registerEvents() {}
+    public void registerEvents() {
+        new StarNubEventSubscription("StarNub", "Player_Disconnected", true, new StarNubEventHandler<Event<String>>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onEvent(Event eventData) {
+                Player player = (Player) eventData.getEVENT_DATA();
+                getCACHE_MAP().remove(player.getPlayerCharacter().getUuid());
+            }
+        });
+    }
 }

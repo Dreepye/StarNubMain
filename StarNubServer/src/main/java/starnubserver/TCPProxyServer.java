@@ -118,7 +118,7 @@ class TCPProxyServer {
                 .childOption(ChannelOption.TCP_NODELAY, tcpNoDelay)
                 .childOption(ChannelOption.ALLOCATOR, socketBuffer)
                 .childHandler(new TCPProxyServerInitializer())
-                .bind((int) StarNub.getConfiguration().getNestedValue("starnub settings", "starnub_port"));
+                .bind((int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port"));
     }
 
     public static void shutdownNetworkThreads(){

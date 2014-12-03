@@ -24,9 +24,6 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
-import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
-import static starbounddata.packets.StarboundBufferWriter.writeByte;
-
 /**
  * Represents the ClientDisconnectRequestPacket and methods to generate a packet data for StarNub and Plugins
  * <p>
@@ -87,7 +84,7 @@ public class ClientDisconnectRequestPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.emptyByte = readUnsignedByte(in);
+        this.emptyByte = (byte) in.readUnsignedByte();
     }
 
     /**
@@ -100,7 +97,7 @@ public class ClientDisconnectRequestPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        writeByte(out, this.emptyByte);
+        out.writeByte(this.emptyByte);
     }
 
     @Override

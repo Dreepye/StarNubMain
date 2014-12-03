@@ -79,7 +79,7 @@ public abstract class EventRouter<T1, T2, T3> {
      * @param event T2 event data of sometime
      * @return T3 some data back, can be event data or boolean, anything
      */
-    public abstract T3 eventNotify(T2 event);
+    public abstract void eventNotify(T2 event);
 
     /**
      * This method must be extended and enhanced to handle events of specific data types which may vary
@@ -87,5 +87,5 @@ public abstract class EventRouter<T1, T2, T3> {
      * @param event T2 event data of sometime
      * @return T2 returns the handled event data back
      */
-    public abstract T2 handleEvent(T2 event);
+    public abstract void handleEvent(T2 event);
 }

@@ -46,7 +46,7 @@ public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
-    private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
+    private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
     private static final NameBuilder nameBuilder = new NameBuilder();// MAKE STATIC AND NOT HERE TODO
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();

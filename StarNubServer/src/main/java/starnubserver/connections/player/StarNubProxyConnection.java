@@ -20,33 +20,60 @@ package starnubserver.connections.player;
 
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.StarNub;
+import starnubserver.events.events.StarNubEvent;
 import utilities.connectivity.connection.ProxyConnection;
 import utilities.events.EventRouter;
+import utilities.events.types.StringEvent;
 
 import java.io.IOException;
 
 public class StarNubProxyConnection extends ProxyConnection {
 
-    public StarNubProxyConnection(EventRouter EVENT_ROUTER, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
+    public enum ConnectionType{
+        PLAYER,
+        PLAYER_NO_DECODING
+    }
+
+    private final ConnectionType CONNECTION_TYPE;
+
+    public StarNubProxyConnection(EventRouter EVENT_ROUTER, ConnectionType CONNECTION_TYPE, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
         super(EVENT_ROUTER, CLIENT_CTX, SERVER_CTX);
-        StarNub.getConnections().getOPEN_SOCKETS().remove(CLIENT_CTX);
+        this.CONNECTION_TYPE = CONNECTION_TYPE;
         StarNub.getConnections().getOPEN_SOCKETS().remove(SERVER_CTX);
-        if ((boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "packet_events")) {
-            StarNub.getConnections().getOPEN_CONNECTIONS().put(CLIENT_CTX, this);
-        } else {
-            boolean uuidIp = false;
+        StarNub.getConnections().getOPEN_SOCKETS().remove(CLIENT_CTX);
+        boolean limitedWrapper =
+                !(boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding") &&
+                CONNECTION_TYPE == ConnectionType.PLAYER_NO_DECODING;
+        if (limitedWrapper) {
             try {
-                uuidIp = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "whitelisted") &&
-                          StarNub.getConnections().getWHITELIST().collectionContains(getClientIP(), "uuid_ip");
+                boolean uuidIp =
+                        (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "whitelisted") &&
+                        StarNub.getConnections().getWHITELIST().collectionContains(getClientIP(), "uuid_ip");
+                if (!uuidIp) {
+                    StarNub.getConnections().getPROXY_CONNECTION().put(CLIENT_CTX, this);
+                    new StarNubEvent("Player_Connection_Success_No_Decoding", this);
+                } else {
+                    new StarNubEvent("Player_Connection_Failure_Whitelist_No_Decoding", this);
+                    this.disconnect();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (!uuidIp) {
-                StarNub.getConnections().getPROXY_CONNECTION().put(CLIENT_CTX, this);
-            } else {
-                this.disconnect();
-            }
+        } else if (CONNECTION_TYPE == ConnectionType.PLAYER) {
+            StarNub.getConnections().getOPEN_CONNECTIONS().remove(CLIENT_CTX);
+        } else {
+            StarNub.getConnections().getOPEN_CONNECTIONS().put(CLIENT_CTX, this);
         }
+    }
+
+    public ConnectionType getCONNECTION_TYPE() {
+        return CONNECTION_TYPE;
+    }
+
+    public boolean disconnectReason(String reason) {
+        boolean isConnectedCheck = super.disconnect();
+        new StringEvent("Player_Disconnect_" + reason, this);
+        return isConnectedCheck;
     }
 
     /**
@@ -58,5 +85,12 @@ public class StarNubProxyConnection extends ProxyConnection {
     public void removeConnection() {
         StarNub.getConnections().getOPEN_CONNECTIONS().remove(CLIENT_CTX);
         StarNub.getConnections().getPROXY_CONNECTION().remove(CLIENT_CTX);
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "StarNubProxyConnection{} " + super.toString();
     }
 }

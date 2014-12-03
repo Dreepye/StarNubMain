@@ -19,9 +19,9 @@
 package starnubserver.resources.internal;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.joda.time.DateTime;
 import starnubserver.Connections;
 import starnubserver.StarNubTask;
+import starnubserver.events.events.StarNubEvent;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +68,15 @@ public class OpenSockets extends ConcurrentHashMap<ChannelHandlerContext, Long> 
      * Uses: This method will purge open sockets for connections that never completed within 30 seconds.
      */
     private void purgeSockets(){
-        this.keySet().stream().filter(channelHandlerContext -> (DateTime.now().getMillis() - this.get(channelHandlerContext)) >= 30000).forEach(channelHandlerContext -> channelHandlerContext.close());
+        for (Entry<ChannelHandlerContext, Long> openSocket : this.entrySet()){
+            ChannelHandlerContext ctx = openSocket.getKey();
+            long socketAge = openSocket.getValue();
+            if ((System.currentTimeMillis() - socketAge) >= 30000){
+                ctx.close();
+                new StarNubEvent("StarNub_Open_Socket_Purged", ctx);
+                this.remove(ctx);
+            }
+        }
+
     }
 }

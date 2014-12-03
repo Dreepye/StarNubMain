@@ -78,10 +78,9 @@ public class PlayerCtxCacheWrapper extends CacheWrapper<ChannelHandlerContext> {
         new StarNubEventSubscription("StarNub", "Player_Disconnected", true, new StarNubEventHandler<Event<String>>() {
             @Override
             @SuppressWarnings("unchecked")
-            public Event onEvent(Event eventData) {
+            public void onEvent(Event eventData) {
                 Player player = (Player) eventData.getEVENT_DATA();
                 getCACHE_MAP().remove(player.getCLIENT_CTX());
-                return null;
             }
         });
     }

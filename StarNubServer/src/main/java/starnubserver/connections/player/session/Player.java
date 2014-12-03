@@ -21,7 +21,6 @@ package starnubserver.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import io.netty.channel.Channel;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import starbounddata.packets.chat.ChatReceivePacket;
@@ -34,9 +33,9 @@ import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.events.events.StarNubEvent;
 import utilities.events.types.StringEvent;
+import utilities.exceptions.CacheWrapperOperationException;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -126,11 +125,44 @@ public class Player extends StarNubProxyConnection {
      */
     private volatile boolean afk;
 
-    /**
-     * Represents the ChannelHandlerContext of who not to send a message to
-     */
+    public Player(){
+        super(null, null, null, null);
+    }
 
-    private volatile ArrayList<Channel> doNotSendMessageList;
+    public Player(StarNubProxyConnection starNubProxyConnection, String playerName, UUID playerUUID) {
+        super(StarNub.getStarNubEventRouter(), ConnectionType.PLAYER, starNubProxyConnection.getCLIENT_CTX(), starNubProxyConnection.getSERVER_CTX());
+        InetAddress playerIP = starNubProxyConnection.getClientIP();
+        try {
+            StarNub.getConnections().getINTERNAL_IP_WATCHLIST().removeCache(playerIP);
+        } catch (CacheWrapperOperationException e) {
+            e.printStackTrace();
+        }
+        this.startTimeUtc = DateTime.now();
+        this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
+        PlayerCharacter playerCharacter = StarNub.getDatabaseTables().getCharacters().getCharacterFromNameUUIDCombo(playerName, playerUUID);
+        if (playerCharacter == null) {
+            playerCharacter = new PlayerCharacter(playerName, playerUUID);
+            new StarNubEvent("Player_New_Character", playerCharacter);
+        }
+        this.playerCharacter = playerCharacter;
+        this.gameName = playerCharacter.getName();
+        this.nickName = playerCharacter.getName();
+        this.cleanNickName = playerCharacter.getCleanName();
+        CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP);
+        if (!StarNub.getDatabaseTables().getCharacterIPLog().isCharacterIDAndIPComboRecorded(characterIP)) {
+            StarNub.getDatabaseTables().getCharacterIPLog().create(characterIP);
+            new StarNubEvent("Player_Character_New_IP", playerCharacter);
+        }
+        this.account = playerCharacter.initialLogInProcessing(sessionIpString, playerUUID.toString());
+        try {
+            this.isOp = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
+        } catch (Exception e) {
+            this.isOp = false;
+        }
+        StarNub.getDatabaseTables().getPlayerSessionLog().create(this);
+        new StarNubEvent("Player_Character_New_Session", playerCharacter);
+
+    }
 
     public int getSessionID() {
         return sessionID;
@@ -148,82 +180,7 @@ public class Player extends StarNubProxyConnection {
         return endTimeUtc;
     }
 
-    public int getAccount() {
-        return account;
-    }
-
-    public PlayerCharacter getPlayerCharacter() {
-        return playerCharacter;
-    }
-
-    public long getStarboundClientId() {
-        return starboundClientId;
-    }
-
-    public String getGameName() {
-        return gameName;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public String getCleanNickName() {
-        return cleanNickName;
-    }
-
-    public boolean isOp() {
-        return isOp;
-    }
-
-    public boolean isAfk() {
-        return afk;
-    }
-
-    public ArrayList<Channel> getDoNotSendMessageList() {
-        return doNotSendMessageList;
-    }
-
-    public Player() {
-        super(null, null, null);
-    }
-
-    public Player(StarNubProxyConnection proxyConnection, String playerName, UUID playerUUID) {
-        super(StarNub.getStarNubEventRouter(), proxyConnection.getCLIENT_CTX(), proxyConnection.getSERVER_CTX());
-        this.startTimeUtc = DateTime.now();
-        InetAddress playerIP = proxyConnection.getClientIP();
-        this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
-        PlayerCharacter playerCharacter = StarNub.getDatabaseTables().getCharacters().getCharacterFromNameUUIDCombo(playerName, playerUUID);
-        if (playerCharacter == null) {
-            playerCharacter = new PlayerCharacter(playerName, playerUUID);
-            new StarNubEvent("Player_New_Character", playerCharacter);
-        }
-        this.playerCharacter = playerCharacter;
-        this.gameName = playerCharacter.getName();
-        this.nickName = playerCharacter.getName();
-        this.cleanNickName = playerCharacter.getCleanName();
-        CharacterIP characterIP = new CharacterIP(playerCharacter, proxyConnection.getClientIP());
-        if (!StarNub.getDatabaseTables().getCharacterIPLog().isCharacterIDAndIPComboRecorded(characterIP)) {
-            StarNub.getDatabaseTables().getCharacterIPLog().create(characterIP);
-            new StarNubEvent("Player_Character_New_IP", playerCharacter);
-        }
-        this.account = playerCharacter.initialLogInProcessing(sessionIpString, playerUUID.toString());
-        try {
-            this.isOp = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
-        } catch (Exception e){
-            this.isOp = false;
-        }
-        StarNub.getDatabaseTables().getPlayerSessionLog().create(this);
-        new StarNubEvent("Player_Character_New_Session", playerCharacter);
-    }
-
-    @Override
-    public void removeConnection() {
-        StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
-    }
-
     /**
-     *
      * @param endTimeUtc long allows the setting of this session when it ends
      */
     public void setEndTimeUtc(DateTime endTimeUtc) {
@@ -231,8 +188,11 @@ public class Player extends StarNubProxyConnection {
         StarNub.getDatabaseTables().getPlayerSessionLog().update(this);
     }
 
+    public int getAccount() {
+        return account;
+    }
+
     /**
-     *
      * @param account Account which this session belongs too
      */
     public void setAccount(int account) {
@@ -240,8 +200,11 @@ public class Player extends StarNubProxyConnection {
         StarNub.getDatabaseTables().getPlayerSessionLog().update(this);
     }
 
+    public long getStarboundClientId() {
+        return starboundClientId;
+    }
+
     /**
-     *
      * WARNING: Do not use this method, not for public consumption.
      *
      * @param starboundClientId int that set the Starbound Client ID
@@ -250,95 +213,94 @@ public class Player extends StarNubProxyConnection {
         this.starboundClientId = starboundClientId;
     }
 
+    public String getGameName() {
+        return gameName;
+    }
+
     public void setGameName(String gameName) {
         this.gameName = gameName;
     }
 
+    public String getNickName() {
+        return nickName;
+    }
+
     /**
-     *
      * @param nickName String set the nick name that includes colors and other characters
      */
     public void setNickName(String nickName) {
         this.nickName = nickName;
     }
 
+    public String getCleanNickName() {
+        return cleanNickName;
+    }
+
     /**
-     *
      * @param cleanNickName String to set the clean version of the nick name, colors and special characters removed
      */
     public void setCleanNickName(String cleanNickName) {
         this.cleanNickName = cleanNickName;
     }
 
-    public void setOp(boolean isOp) {
-        this.isOp = isOp;
+    public boolean isAfk() {
+        return afk;
     }
 
     /**
-     *
      * @param afk boolean to set if this session/character is ask or not
      */
     public void setAfk(boolean afk) {
         this.afk = afk;
     }
 
-    public void setDoNotSendMessageList() {
-        this.doNotSendMessageList = new ArrayList<Channel>();
+    @Override
+    public void removeConnection() {
+        StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
     }
 
-    public void reloadIgnoreList(){
-
-    }
-
-    public void addToIgnoreList(){
+    public void reloadIgnoreList() {
 
     }
 
-    public void removeFromIgnoreList(){
-
-    }
-
-    public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message){
+    public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message) {
         if (sender instanceof Player) {
 //            new ChatReceivePacket(CLIENT_CTX, channel, "", 0, msgUnknownNameBuilder(sender, tags, false), message).routeToDestination();
         }
     }
-    
-    public void sendServerChatMessage(ChatSendPacket.ChatSendChannel channel, String message){
+
+    public void sendServerChatMessage(ChatSendPacket.ChatSendChannel channel, String message) {
         new ChatSendPacket(SERVER_CTX, channel, message).routeToDestination();
     }
 
     @Override
     public boolean disconnect() {
         boolean disconnect = super.disconnect();
-        packetDisconnect();
+        disconnectCleanUp("");
         return disconnect;
     }
 
     public boolean disconnectReason(String reason) {
-        boolean disconnected = super.disconnect();
-        if (disconnected) {
+        boolean isConnectedCheck = super.disconnect();
+        if (!isConnectedCheck) {
             Player player = StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
             new StringEvent("Player_Disconnect_" + reason, player);
-            disconnectCleanUp();
-            if (!reason.equalsIgnoreCase("quit")){
-                packetDisconnect();
-            }
+            disconnectCleanUp(reason);
         }
-        return disconnected;
+        return isConnectedCheck;
     }
 
-    private void disconnectCleanUp(){
+    private void disconnectCleanUp(String reason) {
         this.setEndTimeUtc(DateTime.now());
         playerCharacter.updatePlayedTimeLastSeen();
+        if (!reason.equalsIgnoreCase("quit")) {
+            new ClientDisconnectRequestPacket(SERVER_CTX);
+            new ServerDisconnectPacket(CLIENT_CTX, "");
+        }
+
     }
 
-    private void packetDisconnect(){
-        new ClientDisconnectRequestPacket(SERVER_CTX);
-        new ServerDisconnectPacket(CLIENT_CTX,"");
-    }
-
-    public boolean hasBasePermission(Player playerSession, String basePermission){
+    public boolean hasBasePermission(Player playerSession, String basePermission) {
         if (playerSession.isOp()) {
             return true;
         } else if (playerSession.getPlayerCharacter().getAccount() != null) {
@@ -347,12 +309,24 @@ public class Player extends StarNubProxyConnection {
 //            if (groupSync.getNoAccountGroup() != null) {
 //                return groupSync.getNoAccountGroup().hasBasePermission(basePermission);
 //            } else {
-                return false;
+            return false;
 //            }
         }
     }
 
-    public boolean hasPermission(String permission, boolean checkWildCards){
+    public boolean isOp() {
+        return isOp;
+    }
+
+    public PlayerCharacter getPlayerCharacter() {
+        return playerCharacter;
+    }
+
+    public void setOp(boolean isOp) {
+        this.isOp = isOp;
+    }
+
+    public boolean hasPermission(String permission, boolean checkWildCards) {
         String[] perms;
         String perm3 = null;
         boolean fullPermission = false;
@@ -366,16 +340,8 @@ public class Player extends StarNubProxyConnection {
         return hasPermission(perms[0], perms[1], perm3, fullPermission, checkWildCards);
     }
 
-    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, boolean checkWildCards){
-        return hasPermission(pluginCommandNamePermission, commandPermission, null, false, checkWildCards);
-    }
-
-    public boolean hasPermission(String pluginCommandNamePermission, String mainArgOrVariable, String commandPermission, boolean checkWildCards){
-        return hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, true, checkWildCards);
-    }
-
     @SuppressWarnings("all")
-    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, String mainArgOrVariable, boolean fullPermission, boolean checkWildCards){
+    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, String mainArgOrVariable, boolean fullPermission, boolean checkWildCards) {
         if (this.isOp() && checkWildCards) {
             return true;
         } else if (this.getPlayerCharacter().getAccount() != null) {
@@ -384,12 +350,20 @@ public class Player extends StarNubProxyConnection {
 //            if (groupSync.getNoAccountGroup() != null) {
 //                return groupSync.getNoAccountGroup().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
 //            } else {
-                return false;
+            return false;
 //            }
         }
     }
 
-    public String getPermissionVariable(String permission){
+    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, boolean checkWildCards) {
+        return hasPermission(pluginCommandNamePermission, commandPermission, null, false, checkWildCards);
+    }
+
+    public boolean hasPermission(String pluginCommandNamePermission, String mainArgOrVariable, String commandPermission, boolean checkWildCards) {
+        return hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, true, checkWildCards);
+    }
+
+    public String getPermissionVariable(String permission) {
         String[] perms;
         try {
             perms = permission.split("\\.", 3);
@@ -400,9 +374,8 @@ public class Player extends StarNubProxyConnection {
     }
 
 
-
     @SuppressWarnings("all")
-    public String getPermissionVariable( String pluginCommandNamePermission, String commandPermission){
+    public String getPermissionVariable(String pluginCommandNamePermission, String commandPermission) {
         if (this.isOp()) {
             return "OP";
         } else if (this.getPlayerCharacter().getAccount() != null) {
@@ -411,12 +384,12 @@ public class Player extends StarNubProxyConnection {
 //            if (groupSync.getNoAccountGroup() != null) {
 //                return groupSync.getNoAccountGroup().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
 //            } else {
-                return null;
+            return null;
 //            }
         }
     }
 
-    public int getPermissionVariableInteger(Player playerSession, String permission){
+    public int getPermissionVariableInteger(Player playerSession, String permission) {
         String[] perms;
         try {
             perms = permission.split("\\.", 3);
@@ -426,7 +399,7 @@ public class Player extends StarNubProxyConnection {
         return getPermissionVariableInteger(playerSession, perms[0], perms[1]);
     }
 
-    public int getPermissionVariableInteger(Player playerSession, String pluginCommandNamePermission, String commandPermission){
+    public int getPermissionVariableInteger(Player playerSession, String pluginCommandNamePermission, String commandPermission) {
         String permissionVariable = getPermissionVariable(pluginCommandNamePermission, commandPermission);
         if (permissionVariable == null) {
             return -100001;
@@ -441,8 +414,23 @@ public class Player extends StarNubProxyConnection {
         }
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Player{" +
+                "sessionID=" + sessionID +
+                ", sessionIpString='" + sessionIpString + '\'' +
+                ", startTimeUtc=" + startTimeUtc +
+                ", endTimeUtc=" + endTimeUtc +
+                ", account=" + account +
+                ", playerCharacter=" + playerCharacter +
+                ", starboundClientId=" + starboundClientId +
+                ", gameName='" + gameName + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", cleanNickName='" + cleanNickName + '\'' +
+                ", isOp=" + isOp +
+                ", afk=" + afk +
+                "} " + super.toString();
+    }
     //remove from op
 }
 

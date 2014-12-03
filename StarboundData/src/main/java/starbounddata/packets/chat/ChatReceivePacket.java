@@ -24,9 +24,6 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
-import static starbounddata.packets.StarboundBufferReader.*;
-import static starbounddata.packets.StarboundBufferWriter.*;
-
 /**
  * Represents the ChatReceivedPacket and methods to generate a packet data for StarNub and Plugins
  * <p>
@@ -153,9 +150,9 @@ public class ChatReceivePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.channel = ChatReceiveChannel.values()[readUnsignedByte(in)];
+        this.channel = ChatReceiveChannel.values()[in.readUnsignedByte()];
         this.world = readStringVLQ(in);
-        this.clientId = readUnsignedInt(in);
+        this.clientId = in.readUnsignedByte();
         this.name = readStringVLQ(in);
         this.message = readStringVLQ(in);
     }
@@ -170,9 +167,9 @@ public class ChatReceivePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        writeByte(out, (byte) this.channel.ordinal());
+        out.writeByte(this.channel.ordinal());
         writeStringVLQ(out, this.world);
-        writeInt(out, this.clientId);
+        out.writeByte(this.clientId);
         writeStringVLQ(out, this.name);
         writeStringVLQ(out, this.message);
     }

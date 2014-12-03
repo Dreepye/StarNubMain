@@ -28,8 +28,6 @@ import starbounddata.variants.Variant;
 
 import java.util.Arrays;
 
-import static starbounddata.packets.StarboundBufferReader.*;
-import static starbounddata.packets.StarboundBufferWriter.*;
 
 /**
  * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
@@ -251,7 +249,7 @@ public class ConnectResponsePacket extends Packet {
         this.success = readBoolean(in);
         this.clientId = VLQ.readUnsignedFromBufferNoObject(in);
         this.rejectionReason = readStringVLQ(in);
-        this.tempByteArray = readAllBytes(in);
+        this.tempByteArray = in.readBytes(in.readableBytes()).array();
 //        celestialInformation = stream.readBoolean();
 //        if (celestialInformation) {
 //            orbitalLevels = stream.readUnsignedInt();
@@ -282,7 +280,7 @@ public class ConnectResponsePacket extends Packet {
         writeBoolean(out, this.success);
         VLQ.writeSignedVLQNoObject(out, this.clientId);
         writeStringVLQ(out, this.rejectionReason);
-        writeByteArray(out, this.tempByteArray);
+        out.writeBytes(this.tempByteArray);
     }
 
     @Override

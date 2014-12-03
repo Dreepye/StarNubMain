@@ -30,10 +30,11 @@ import utilities.file.yaml.YAMLWrapper;
 public class ResourceManager {
 
     private static final ResourceManager instance = new ResourceManager();
-    private static YAMLWrapper STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "", "", true, false, true, false, false);
+    private static YAMLWrapper STARNUB_RESOURCES;
 
     private ResourceManager() {
         directoryCheck();
+        STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "", "", true, false, true, false, false);
     }
 
     public static ResourceManager getInstance() {
@@ -44,8 +45,7 @@ public class ResourceManager {
         return STARNUB_RESOURCES;
     }
 
-    /**
-     * This represents a lower level method for StarNubs API.
+    /** This represents a lower level method for StarNubs API.Q
      * <p>
      * Recommended: For internal use with StarNub.
      * <p>

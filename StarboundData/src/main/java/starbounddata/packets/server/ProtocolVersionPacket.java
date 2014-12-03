@@ -23,9 +23,6 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
-import static starbounddata.packets.StarboundBufferReader.readInt;
-import static starbounddata.packets.StarboundBufferWriter.writeInt;
-
 /**
  * Represents the ProtocolVersionPacket and methods to generate a packet data for StarNub and Plugins
  * <p>
@@ -89,7 +86,7 @@ public class ProtocolVersionPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.protocolVersion = readInt(in);
+        this.protocolVersion = in.readInt();
     }
 
     /**
@@ -102,7 +99,7 @@ public class ProtocolVersionPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        writeInt(out, this.protocolVersion);
+        out.writeInt(this.protocolVersion);
     }
 
     @Override

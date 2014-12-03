@@ -60,4 +60,11 @@ public abstract class ProxyConnection extends Connection {
     }
 
     public abstract void removeConnection();
+
+    @Override
+    public String toString() {
+        return "ProxyConnection{" +
+                "SERVER_CTX=" + SERVER_CTX +
+                "} " + super.toString();
+    }
 }

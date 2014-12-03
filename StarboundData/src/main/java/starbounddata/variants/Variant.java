@@ -19,12 +19,10 @@
 package starbounddata.variants;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.packets.StarboundBufferReader;
+import starbounddata.packets.Packet;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
  * Represents a Variant  which can be a byte, string, boolean, double, variant array, variant map.
@@ -78,13 +76,13 @@ public class Variant {
      */
     public Variant readFromByteBuffer(ByteBuf in) throws Exception {
         Variant variant = new Variant();
-        byte type = StarboundBufferReader.readUnsignedByte(in);
+        byte type = (byte) in.readUnsignedByte();
         switch (type) {
             case 1:
                 variant.value = null;
                 break;
             case 2:
-                variant.value = StarboundBufferReader.readDouble(in);
+                variant.value = in.readDouble();
                 break;
             case 3:
                 variant.value = in.readBoolean();
@@ -93,7 +91,7 @@ public class Variant {
                 variant.value = VLQ.readUnsignedFromBufferNoObject(in);
                 break;
             case 5:
-                variant.value = StarboundBufferReader.readStringVLQ(in);
+                variant.value = Packet.readStringVLQ(in);
                 break;
             case 6:
                 Variant[] array = new Variant[VLQ.readUnsignedFromBufferNoObject(in)];
@@ -105,7 +103,7 @@ public class Variant {
                 Map<String, Variant> dict = new HashMap<String, Variant>();
                 int length = VLQ.readUnsignedFromBufferNoObject(in);
                 while (length-- > 0)
-                    dict.put(StarboundBufferReader.readStringVLQ(in), this.readFromByteBuffer(in));
+                    dict.put(Packet.readStringVLQ(in), this.readFromByteBuffer(in));
                 variant.value = dict;
                 break;
             default:
@@ -138,7 +136,7 @@ public class Variant {
             VLQ.writeVLQNoObject(out, (Long) value);
         } else if (value instanceof String) {
             out.writeByte(5);
-            writeStringVLQ(out, (String) value);
+            Packet.writeStringVLQ(out, (String) value);
         } else if (value instanceof Variant[]) {
             out.writeByte(6);
             Variant[] array = (Variant[]) value;
@@ -151,7 +149,7 @@ public class Variant {
             Map<String, Variant> dict = (Map<String, Variant>) value;
             VLQ.writeVLQNoObject(out, (long) dict.size());
             for (Map.Entry<String, Variant> kvp : dict.entrySet()) {
-                writeStringVLQ(out, kvp.getKey());
+                Packet.writeStringVLQ(out, kvp.getKey());
                 kvp.getValue().writeToByteBuffer(out);
             }
         }

@@ -27,8 +27,6 @@ import starbounddata.variants.Variant;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static starbounddata.packets.StarboundBufferReader.*;
-import static starbounddata.packets.StarboundBufferWriter.*;
 
 /**
  * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins

@@ -24,11 +24,6 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
-import static starbounddata.packets.StarboundBufferReader.readStringVLQ;
-import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
-import static starbounddata.packets.StarboundBufferWriter.writeByte;
-import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
-
 /**
  * Represents the ChatSentPacket and methods to generate a packet data for StarNub and Plugins
  * <p>
@@ -112,7 +107,7 @@ public class ChatSendPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         this.message = readStringVLQ(in);
-        this.channel = ChatSendChannel.values()[readUnsignedByte(in)];
+        this.channel = ChatSendChannel.values()[in.readUnsignedByte()];
     }
 
     /**
@@ -126,7 +121,7 @@ public class ChatSendPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeStringVLQ(out, this.message);
-        writeByte(out, (byte) this.channel.ordinal());
+        out.writeByte(this.channel.ordinal());
     }
 
     @Override

@@ -21,6 +21,7 @@ package starnubserver.resources.internal;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
+import starbounddata.packets.chat.ChatSendPacket;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
@@ -77,23 +78,25 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
     public Players(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
-        this.ACCEPT_REJECT  = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, StarNub.getTaskManager(), 20, concurrencyLevel, TimeUnit.MINUTES, 10, 60);
+        this.ACCEPT_REJECT  = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, StarNub.getTaskManager(), 20, concurrencyLevel, TimeUnit.MINUTES, 1, 60);
         new PacketEventSubscription("StarNub", ClientConnectPacket.class, true, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
         new PacketEventSubscription("StarNub", ConnectResponsePacket.class, true, new ConnectionResponseHandler(CONNECTIONS));
         new PacketEventSubscription("StarNub", ServerDisconnectPacket.class, true, new ServerDisconnectHandler(CONNECTIONS));
         new PacketEventSubscription("StarNub", DamageTileGroupPacket.class, true, new PacketEventHandler() {
             @Override
-            public Packet onEvent(Packet eventData) {
+            public void onEvent(Packet eventData) { //DEBUG - THIS METHOD OR PACKET - Client crash after packet decode - encode // ONLY IN DEBUG
                 System.out.println(eventData.toString());
-                return null;
+            }
+        });
+        new PacketEventSubscription("StarNub", ChatSendPacket.class, true, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) { //DEBUG - THIS METHOD OR PACKET - Client crash after packet decode - encode // ONLY IN DEBUG
+                System.out.println(eventData.toString());
             }
         });
         new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
         new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
-        if ((boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "packet_events")) {
-            new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
-        }
-
+        new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
     }
 
     public PlayerCtxCacheWrapper getACCEPT_REJECT() {

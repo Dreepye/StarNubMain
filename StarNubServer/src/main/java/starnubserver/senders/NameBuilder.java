@@ -551,7 +551,7 @@ public class NameBuilder {
             }
         }
         if (originalName){
-            playerName = player.getGameName()+ " (Nick: " + playerName + ")";
+            playerName = player.getGameName() + " (Nick: " + playerName + ")";
         }
         return playerName;
     }

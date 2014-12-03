@@ -23,8 +23,6 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
-import static starbounddata.packets.StarboundBufferReader.readStringVLQ;
-import static starbounddata.packets.StarboundBufferWriter.writeStringVLQ;
 
 /**
  * Represents the ServerDisconnectPacket and methods to generate a packet data for StarNub and Plugins

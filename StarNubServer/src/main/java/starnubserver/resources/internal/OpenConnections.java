@@ -21,6 +21,7 @@ package starnubserver.resources.internal;
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.Connections;
 import starnubserver.StarNubTask;
+import starnubserver.events.events.StarNubEvent;
 import utilities.connectivity.connection.Connection;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,7 +58,7 @@ public class OpenConnections extends ConcurrentHashMap<ChannelHandlerContext, Co
     public OpenConnections(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
-        new StarNubTask("StarNub", "StarNub - OpenConnections - Open Connection Purge", true , 15, 15, TimeUnit.SECONDS, this::connectionPurge);
+        new StarNubTask("StarNub", "StarNub - OpenConnections - Open Connection Purge", true , 30, 30, TimeUnit.SECONDS, this::connectionPurge);
     }
 
     /**
@@ -68,6 +69,14 @@ public class OpenConnections extends ConcurrentHashMap<ChannelHandlerContext, Co
      * Uses: This method will purge open connections for connections that never been associated with any task or service within 30 seconds.
      */
     private void connectionPurge(){
-        this.entrySet().stream().filter(connectionsEntry -> connectionsEntry.getValue().getCONNECTION_START_TIME() >= 30000).forEach(connectionsEntry -> this.remove(connectionsEntry.getKey()).disconnect());
+        for (Entry<ChannelHandlerContext, Connection> connectionEntry : this.entrySet()){
+            ChannelHandlerContext ctx = connectionEntry.getKey();
+            Connection connection = connectionEntry.getValue();
+            if ((System.currentTimeMillis() - connection.getCONNECTION_START_TIME()) >= 30000){
+                connection.disconnect();
+                new StarNubEvent("StarNub_Open_Connection_Purged", connection);
+                this.remove(ctx);
+            }
+        }
     }
 }

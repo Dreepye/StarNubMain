@@ -30,6 +30,6 @@ public abstract class StarNubEventHandler<T> extends EventHandler<Event<String>>
      * @return Event you are not required to return the event
      */
     @Override
-    public abstract Event<String> onEvent(Event<String> eventData);
+    public abstract void onEvent(Event<String> eventData);
 
 }

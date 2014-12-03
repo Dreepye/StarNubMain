@@ -35,8 +35,8 @@ public class StarNubEventRouter extends EventRouter<String, Event<String>, Boole
     }
 
     public void setResources(){
-        eventsQue = new ArrayBlockingQueue<>((int) StarNub.getConfiguration().getNestedValue("resources", "event_que_size"));
-        maxThreadCount = (int) StarNub.getConfiguration().getNestedValue("resources", "event_thread_count");
+        eventsQue = new ArrayBlockingQueue<>((int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "event_que_size"));
+        maxThreadCount = (int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "event_thread_count");
         currentThreads = new HashSet<>(maxThreadCount);
         shuttingDown = false;
     }
@@ -106,13 +106,13 @@ public class StarNubEventRouter extends EventRouter<String, Event<String>, Boole
         return true;
     }
 
-    public Boolean eventNotify(Event<String> event){
-        return eventsQue.add(event);
+    public void eventNotify(Event<String> event){
+        eventsQue.add(event);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Event<String> handleEvent(Event<String> event) {
+    public void handleEvent(Event<String> event) {
             String eventKey = event.getEVENT_KEY();
             HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
             if (eventSubscriptions != null){
@@ -123,6 +123,5 @@ public class StarNubEventRouter extends EventRouter<String, Event<String>, Boole
             if (!eventKey.equals("StarNub_Log_Event") && StarNub.getLogger().isLogEvent()) {
                 StarNub.getLogger().cEvePrint("StarNub", "Key: " + eventKey + ". Event Data Type: " + event.getClass().getSimpleName() + ".class. Event Data: " + event.getEVENT_DATA());
             }
-        return null;
     }
 }

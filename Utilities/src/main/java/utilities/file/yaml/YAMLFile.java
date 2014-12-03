@@ -175,7 +175,7 @@ public class YAMLFile {
     @SuppressWarnings("unchecked")
     protected Map<String, Object> loadFromDefault() throws Exception {
         if (DEFAULT_FILE_PATH instanceof String) {
-            String defaultPath = (String) DEFAULT_FILE_PATH;
+            String defaultPath = (String) DEFAULT_FILE_PATH + FILE_NAME;
             try (InputStream resourceAsStream = this.getClass().getResourceAsStream(defaultPath)) {
                 return (Map<String, Object>) new Yaml().load(resourceAsStream);
             }

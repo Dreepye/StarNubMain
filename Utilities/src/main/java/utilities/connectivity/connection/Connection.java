@@ -43,7 +43,7 @@ public abstract class Connection {
         return DISCONNECTED;
     }
 
-    protected ConnectionStatus getConnectionStatus() {
+    public ConnectionStatus getConnectionStatus() {
         return connectionStatus;
     }
 
@@ -108,6 +108,19 @@ public abstract class Connection {
         } else {
             System.out.println(eventKey + ": " +eventData);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Connection{" +
+                "DISCONNECTED=" + DISCONNECTED +
+                ", CONNECTED=" + CONNECTED +
+                ", connectionStatus=" + connectionStatus +
+                ", CLIENT_CTX=" + CLIENT_CTX +
+                ", CONNECTION_START_TIME=" + CONNECTION_START_TIME +
+                ", EVENT_ROUTER=" + EVENT_ROUTER +
+                ", EVENT_MESSAGE=" + EVENT_MESSAGE +
+                '}';
     }
 }
 

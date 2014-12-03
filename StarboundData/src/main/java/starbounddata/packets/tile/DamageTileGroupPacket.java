@@ -26,9 +26,6 @@ import starbounddata.tiles.TileDamage;
 import starbounddata.vectors.Vec2F;
 import starbounddata.vectors.Vec2IArray;
 
-import static starbounddata.packets.StarboundBufferReader.readUnsignedByte;
-import static starbounddata.packets.StarboundBufferWriter.writeByte;
-
 /**
  * Represents the DamageTileGroup and methods to generate a packet data for StarNub and Plugins
  * <p>
@@ -131,7 +128,7 @@ public class DamageTileGroupPacket extends Packet {
     public void read(ByteBuf in) {
         try {
             this.tilePositions = new Vec2IArray(in);
-            this.layer = TileLayer.values()[readUnsignedByte(in)];
+            this.layer = TileLayer.values()[in.readUnsignedByte()];
             this.sourcePosition = new Vec2F(in);
             this.tileDamage = new TileDamage(in);
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -151,7 +148,7 @@ public class DamageTileGroupPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         this.tilePositions.writeVec2IArray(out);
-        writeByte(out, (byte) this.getLayer().ordinal());
+        out.writeByte(this.layer.ordinal());
         this.sourcePosition.writeVec2F(out);
         this.tileDamage.writeTileDamage(out);
     }

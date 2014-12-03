@@ -38,9 +38,9 @@ import java.net.SocketException;
 */
 final class UDPProxyServer implements Runnable {
 
-    private final int snServerPort = (int) StarNub.getConfiguration().getNestedValue("starnub settings", "starnub_port");
+    private final int snServerPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port");
     private final String sbRemoteHost = "127.0.0.1";
-    private final int sbRemotePort = (int) StarNub.getConfiguration().getNestedValue("starnub settings", "starbound_port");
+    private final int sbRemotePort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
     private DatagramSocket ds;
 
     /**

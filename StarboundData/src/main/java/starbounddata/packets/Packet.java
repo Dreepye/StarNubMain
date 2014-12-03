@@ -21,12 +21,13 @@ package starbounddata.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.variants.VLQ;
 import utilities.compression.Zlib;
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.UUID;
 
-import static starbounddata.packets.StarboundBufferWriter.writeByte;
-import static starbounddata.packets.StarboundBufferWriter.writeByteArray;
 import static starbounddata.variants.VLQ.writeSignedVLQNoObject;
 
 /**
@@ -64,6 +65,14 @@ public abstract class Packet {
         this.PACKET_ID = PACKET_ID;
         this.SENDER_CTX = SENDER_CTX;
         this.DESTINATION_CTX = DESTINATION_CTX;
+    }
+
+    public Direction getDIRECTION() {
+        return DIRECTION;
+    }
+
+    public byte getPACKET_ID() {
+        return PACKET_ID;
     }
 
     public ChannelHandlerContext getSENDER_CTX() {
@@ -108,42 +117,6 @@ public abstract class Packet {
     public abstract void read(ByteBuf in);
 
     /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     */
-    public void routeToDestination() {
-        DESTINATION_CTX.writeAndFlush(packetToMessageEncoder(this), DESTINATION_CTX.voidPromise());
-    }
-
-    /**
-     * Recommended: For internal StarNub usage.
-     * <p>
-     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
-     * <p>
-     *
-     * @param packet Packet representing the packet to encode
-     * @return ByteBuf representing the ByteBuf to write to socket
-     */
-    private static ByteBuf packetToMessageEncoder(Packet packet) {
-        ByteBuf msgOut = PooledByteBufAllocator.DEFAULT.directBuffer();
-        packet.write(msgOut);
-        int payloadLengthOut = msgOut.readableBytes();
-        byte[] dataOut;
-        if (payloadLengthOut > 100) {
-            dataOut = Zlib.compress(msgOut.readBytes(payloadLengthOut).array());
-            payloadLengthOut = -dataOut.length;
-        } else {
-            dataOut = msgOut.readBytes(payloadLengthOut).array();
-        }
-        msgOut.clear();
-        writeByte(msgOut, packet.getPACKET_ID());
-        writeSignedVLQNoObject(msgOut, payloadLengthOut);
-        writeByteArray(msgOut, dataOut);
-        return msgOut;
-    }
-
-    /**
      * Recommended: For internal StarNub usage.
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
@@ -153,8 +126,13 @@ public abstract class Packet {
      */
     public abstract void write(ByteBuf out);
 
-    public byte getPACKET_ID() {
-        return PACKET_ID;
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     */
+    public void routeToDestination() {
+        DESTINATION_CTX.writeAndFlush(packetToMessageEncoder(), DESTINATION_CTX.voidPromise());
     }
 
     /**
@@ -167,12 +145,38 @@ public abstract class Packet {
      */
     public void routeToGroup(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
         if (ignoredList != null) {
-            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise()));
+            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise()));
         } else {
             for (ChannelHandlerContext ctx : sendList) {
-                ctx.writeAndFlush(packetToMessageEncoder(this), ctx.voidPromise());
+                ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise());
             }
         }
+    }
+
+    /**
+     * Recommended: For internal StarNub usage.
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     * <p>
+     *
+     * @return ByteBuf representing the ByteBuf to write to socket
+     */
+    private ByteBuf packetToMessageEncoder() {
+        ByteBuf msgOut = PooledByteBufAllocator.DEFAULT.directBuffer();
+        this.write(msgOut);
+        int payloadLengthOut = msgOut.readableBytes();
+        byte[] dataOut;
+        if (payloadLengthOut > 100) {
+            dataOut = Zlib.compress(msgOut.readBytes(payloadLengthOut).array());
+            payloadLengthOut = -dataOut.length;
+        } else {
+            dataOut = msgOut.readBytes(payloadLengthOut).array();
+        }
+        msgOut.clear();
+        msgOut.writeByte(PACKET_ID);
+        writeSignedVLQNoObject(msgOut, payloadLengthOut);
+        msgOut.writeBytes(dataOut);
+        return msgOut;
     }
 
     @Override
@@ -194,5 +198,116 @@ public abstract class Packet {
         TO_STARBOUND_CLIENT,
         BIDIRECTIONAL,
         NOT_USED
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will read a uuid value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index 16 bytes
+     * <p>
+     *
+     * @param in ByteBuf representing the data to be read
+     * @return uuid the uuid that was read
+     */
+    public static UUID readUUID(ByteBuf in) {
+        return UUID.nameUUIDFromBytes(in.readBytes(16).array());
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will read a VLQ and then a byte array to form a String value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by the length of the VLQ and read bytes
+     * <p>
+     *
+     * @param in ByteBuf representing the data to be read
+     * @return String the String that was read
+     */
+    public static String readStringVLQ(ByteBuf in) {
+        try {
+            return new String(readVLQArray(in), Charset.forName("UTF-8"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will read a VLQ and then a variant length of bytes from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by the length of the VLQ and read bytes
+     * <p>
+     *
+     * @param in ByteBuf representing the data to be read
+     * @return byte[] the byte[] that was read
+     */
+    public static byte[] readVLQArray(ByteBuf in) {
+        int len = VLQ.readUnsignedFromBufferNoObject(in);
+        return in.readBytes(len).array();
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will read 1 byte and form a boolean value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 1 byte
+     * <p>
+     *
+     * @param in ByteBuf representing the data to be read
+     * @return boolean the boolean that was read
+     */
+    public static boolean readBoolean(ByteBuf in) {
+        return in.readUnsignedByte() != 0;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will write a uuid value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 16 bytes
+     * <p>
+     *
+     * @param out  ByteBuf representing the buffer to be written to
+     * @param uuid uuid value to be written to the buffer
+     */
+    public static void writeUUID(ByteBuf out, UUID uuid) {
+        out.writeLong(uuid.getMostSignificantBits());
+        out.writeLong(uuid.getLeastSignificantBits());
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will write a String value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by a variant length and the number of bytes
+     * <p>
+     *
+     * @param out   ByteBuf representing the buffer to be written to
+     * @param value String value to be written to the buffer
+     */
+    public static void writeStringVLQ(ByteBuf out, String value) {
+        writeVLQArray(out, value.getBytes(Charset.forName("UTF-8")));
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will write a variant length byte[] value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by a variant length and the number of bytes
+     * <p>
+     *
+     * @param out   ByteBuf representing the buffer to be written to
+     * @param bytes bytes[] value to be written to the buffer
+     */
+    public static void writeVLQArray(ByteBuf out, byte[] bytes) {
+        out.writeBytes(VLQ.createVLQ(bytes.length));
+        out.writeBytes(bytes);
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will write a boolean value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 1 bytes
+     * <p>
+     *
+     * @param out   ByteBuf representing the buffer to be written to
+     * @param value voolean value to be written to the buffer
+     */
+    public static void writeBoolean(ByteBuf out, boolean value) {
+        out.writeByte(value ? (byte) 1 : (byte) 0);
     }
 }

@@ -77,7 +77,7 @@ public class MultiOutputLogger {
      */
     @SuppressWarnings("unchecked")
     private void setLoggingLevels() {
-        Map<String, Object> logLevels = (Map) StarNub.getConfiguration().getNestedValue("starnub settings", "log_levels");
+        Map<String, Object> logLevels = (Map) StarNub.getConfiguration().getNestedValue("advanced_settings", "log_levels");
         String illegal = "Illegal %s log level. Choose (0 - No Logging, 1 - Console Only, 2 - File Only, 3 - Console and File. Exiting StarNub....";
         for (String key : logLevels.keySet()) {
             switch (key) {
@@ -164,7 +164,7 @@ public class MultiOutputLogger {
     public void eventListenerRegistration() {
         new StarNubEventSubscription("StarNub", "StarNub_Log_Event", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logEvent) {
                     case 0: { /* Not Logging */
@@ -184,13 +184,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Debug", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logDebug) {
                     case 0: { /* Not Logging */
@@ -210,13 +209,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Chat", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logChat) {
                     case 0: { /* Not Logging */
@@ -236,13 +234,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Command", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logCommand) {
                     case 0: { /* Not Logging */
@@ -262,13 +259,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Information", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logInformation) {
                     case 0: { /* Not Logging */
@@ -288,13 +284,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Warning", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logWarning) {
                     case 0: { /* Not Logging */
@@ -314,13 +309,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Error", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logError) {
                     case 0: { /* Not Logging */
@@ -341,13 +335,12 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
 
         new StarNubEventSubscription("StarNub", "StarNub_Log_Fatal", true, new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logFatal) {
                     case 0: { /* Not Logging */
@@ -368,7 +361,6 @@ public class MultiOutputLogger {
                         break;
                     }
                 }
-                return eventData;
             }
         });
     }
@@ -383,7 +375,7 @@ public class MultiOutputLogger {
     }
 
     public void logRotateCheckAllLogs() {
-        double logSize = (double) StarNub.getConfiguration().getNestedValue("starnub settings", "log_size");
+        double logSize = (double) StarNub.getConfiguration().getNestedValue("advanced_settings", "log_size");
         this.EVENT_DEBUG_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
         this.CHAT_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
         this.COMMAND_LOGGER.logRotateNewDateFileSize(dayOfMonth, logSize, "kilobytes");
@@ -792,7 +784,7 @@ public class MultiOutputLogger {
      * @param destination String where the message is going
      */
     public void cChatPrint(Object sender, String message, Object destination) {
-        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "log_character_names");
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "log_original_character_name_with_nick_name");
         new StarNubEvent("StarNub_Log_Chat",
                 stringBuilder(
                         "StarNub",
@@ -838,7 +830,7 @@ public class MultiOutputLogger {
      * @param message String message that was sent to the command sender, the reasons for failure
      */
     public void cCommandFailurePrint(Object sender, String message) {
-        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "log_character_names");
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "log_original_character_name_with_nick_name");
         new StarNubEvent("StarNub_Log_Command",
                 stringBuilder(
                         "StarNub",
@@ -860,7 +852,7 @@ public class MultiOutputLogger {
      * @param message String representing the command that was successfully executed
      */
     public void cCommandSuccessPrint(Object sender, String message) {
-        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub settings", "log_character_names");
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "log_original_character_name_with_nick_name");
         new StarNubEvent("StarNub_Log_Command",
                 stringBuilder(
                         "StarNub",

@@ -35,8 +35,8 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
      * @return Packet the packet that was handled
      */
     @Override
-    public Packet eventNotify(Packet packet) {
-        return handleEvent(packet);
+    public void eventNotify(Packet packet) {
+        handleEvent(packet);
     }
 
     /**
@@ -49,23 +49,20 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Packet handleEvent(Packet packet){
+    public void handleEvent(Packet packet){
         HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
-        if (eventSubscriptions == null){
-            return packet;
-        } else {
+        if (eventSubscriptions != null){
             for (EventSubscription<Packet> eventSubscription : eventSubscriptions){
-                packet = eventSubscription.getEVENT_HANDLER().onEvent(packet);
+                eventSubscription.getEVENT_HANDLER().onEvent(packet);
                 try {
                     if (packet.isRecycle()) {
                         packet.recycle();
-                        return packet;
+                        return;
                     }
                 } catch (NullPointerException e){
                     StarNub.getLogger().cFatPrint("StarNub", "CRITICAL ERROR. A PLUGIN DID NOT RETURN A PACKET. THIS WILL CAUSE A CLIENT TO DISCONNECT.");
                 }
             }
-            return packet;
         }
     }
 }

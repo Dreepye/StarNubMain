@@ -41,10 +41,11 @@ public class ServerDisconnectHandler extends PacketEventHandler {
      * @return Packet any class representing packet can be returned
      */
     @Override
-    public Packet onEvent(Packet eventData) {
+    public void onEvent(Packet eventData) {
         ServerDisconnectPacket serverDisconnectPacket = (ServerDisconnectPacket) eventData;
         Player player = CONNECTIONS.getCONNECTED_PLAYERS().get(serverDisconnectPacket.getDESTINATION_CTX());
-        player.disconnectReason("Quit");//REMOVE
-        return serverDisconnectPacket;
+        if (player != null){
+            player.disconnectReason("Quit");
+        }
     }
 }

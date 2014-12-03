@@ -21,14 +21,14 @@ package starnubserver.database;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import starnubserver.StarNub;
-import starnubserver.connections.player.account.*;
-import starnubserver.connections.player.achievements.Achievement;
-import starnubserver.connections.player.achievements.CharacterAchievement;
+import starnubserver.connections.player.account.Account;
+import starnubserver.connections.player.account.AccountPermission;
+import starnubserver.connections.player.account.Settings;
 import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.groups.*;
-import starnubserver.connections.player.session.Player;
 import starnubserver.connections.player.session.Ban;
+import starnubserver.connections.player.session.Player;
 import starnubserver.database.tables.*;
 
 /**
@@ -64,10 +64,10 @@ public class DatabaseTables {
     private Accounts accounts;
     private AccountSettings accountSettings;
     private AccountPermissions accountPermissions;
-    private Achievements achievements;
+//    private Achievements achievements;
     private Characters characters;
-    private CharacterAchievements characterAchievements;
-    private CharacterIgnores characterIgnores;
+//    private CharacterAchievements characterAchievements;
+//    private CharacterIgnores characterIgnores;
     private CharacterIPLog characterIPLog;
 //    private ChatRooms chatRooms;
 //    private ChatRoomSubscriptions chatRoomSubscriptions;
@@ -115,13 +115,13 @@ public class DatabaseTables {
         this.accountPermissions = accountPermissions;
     }
 
-    public Achievements getAchievements() {
-        return achievements;
-    }
-
-    public void setAchievements(Achievements achievements) {
-        this.achievements = achievements;
-    }
+//    public Achievements getAchievements() {
+//        return achievements;
+//    }
+//
+//    public void setAchievements(Achievements achievements) {
+//        this.achievements = achievements;
+//    }
 
     public Characters getCharacters() {
         return characters;
@@ -131,21 +131,21 @@ public class DatabaseTables {
         this.characters = characters;
     }
 
-    public CharacterAchievements getCharacterAchievements() {
-        return characterAchievements;
-    }
-
-    public void setCharacterAchievements(CharacterAchievements characterAchievements) {
-        this.characterAchievements = characterAchievements;
-    }
-
-    public CharacterIgnores getCharacterIgnores() {
-        return characterIgnores;
-    }
-
-    public void setCharacterIgnores(CharacterIgnores characterIgnores) {
-        this.characterIgnores = characterIgnores;
-    }
+//    public CharacterAchievements getCharacterAchievements() {
+//        return characterAchievements;
+//    }
+//
+//    public void setCharacterAchievements(CharacterAchievements characterAchievements) {
+//        this.characterAchievements = characterAchievements;
+//    }
+//
+//    public CharacterIgnores getCharacterIgnores() {
+//        return characterIgnores;
+//    }
+//
+//    public void setCharacterIgnores(CharacterIgnores characterIgnores) {
+//        this.characterIgnores = characterIgnores;
+//    }
 
     public CharacterIPLog getCharacterIPLog() {
         return characterIPLog;
@@ -257,10 +257,10 @@ public class DatabaseTables {
         accounts = new Accounts(connection, 0, Account.class, Integer.class);
         accountSettings = new AccountSettings(connection, 0, Settings.class, String.class);
         accountPermissions = new AccountPermissions(connection, 0, AccountPermission.class, Integer.class);
-        achievements = new Achievements(connection, 0, Achievement.class, Integer.class);
+//        achievements = new Achievements(connection, 0, Achievement.class, Integer.class);
         characters = new Characters(connection, 0, PlayerCharacter.class, Integer.class);
-        characterAchievements = new CharacterAchievements(connection, 0, CharacterAchievement.class, Integer.class);
-        characterIgnores = new CharacterIgnores(connection, 0, CharacterIgnore.class, Integer.class);
+//        characterAchievements = new CharacterAchievements(connection, 0, CharacterAchievement.class, Integer.class);
+//        characterIgnores = new CharacterIgnores(connection, 0, CharacterIgnore.class, Integer.class);
         characterIPLog = new CharacterIPLog(connection, 0, CharacterIP.class, Integer.class);
 //        chatRooms = new ChatRooms(connection, 0, ChatRoom.class, Integer.class);
 //        chatRoomSubscriptions = new ChatRoomSubscriptions(connection, 0, ChatRoomSubscription.class, Integer.class);

@@ -32,6 +32,6 @@ public abstract class PacketEventHandler extends EventHandler<Packet> {
      * @return Packet any class representing packet can be returned
      */
     @Override
-    public abstract Packet onEvent(Packet eventData);
+    public abstract void onEvent(Packet eventData);
 
 }

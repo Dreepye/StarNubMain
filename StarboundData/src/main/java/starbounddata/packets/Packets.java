@@ -18,13 +18,9 @@
 
 package starbounddata.packets;
 
-import io.netty.channel.ChannelHandlerContext;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -95,6 +91,10 @@ public enum Packets {
         this.direction = direction;
     }
 
+    public static HashMap<Packets, Class> getPacketClasses() {
+        return packetClasses;
+    }
+
     /**
      * Recommended: For internal StarNub usage.
      * <p>
@@ -118,39 +118,6 @@ public enum Packets {
             }
         }
         return packetCacheToSet;
-    }
-
-    /**
-     * Recommended: For internal StarNub usage.
-     * <p>
-     * Uses: This will create new packets from the packet cache and insert them into a HashMap to be used in
-     * player connections.
-     *
-     *
-     * @param DIRECTION       Direction representing where the packet flows
-     * @param SENDER_CTX      ChannelHandlerContext the sender ChannelHandlerContext to add to the packet being created
-     * @param DESTINATION_CTX ChannelHandlerContext the destination ChannelHandlerContext to add to the packet being created
-     * @return HashMap the packet cache to be used in packet routing
-     */
-    public static HashMap<Byte, Packet> getPacketCache(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        HashMap<Byte, Packet> packetPool = new HashMap<>();
-        for (Map.Entry<Packets, Class> packetsClassEntry : packetClasses.entrySet()) {
-            Class packetClass = packetsClassEntry.getValue();
-            Packets packet = packetsClassEntry.getKey();
-            Constructor constructor;
-            Packet packetToConstruct = null;
-            if (packet.direction != DIRECTION) {
-                DIRECTION = DIRECTION == Packet.Direction.TO_STARBOUND_CLIENT ? Packet.Direction.TO_STARBOUND_SERVER : Packet.Direction.TO_STARBOUND_CLIENT;
-                try {
-                    constructor = packetClass.getConstructor(new Class[]{Packet.Direction.class, ChannelHandlerContext.class, ChannelHandlerContext.class});
-                    packetToConstruct = (Packet) constructor.newInstance(new Object[]{DIRECTION, SENDER_CTX, DESTINATION_CTX});
-                } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                packetPool.put(packet.getPacketId(), packetToConstruct);
-            }
-        }
-        return packetPool;
     }
 
     public byte getPacketId() {

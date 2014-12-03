@@ -18,13 +18,10 @@
 
 package starnubserver.connections.player.account;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import starnubserver.StarNub;
-import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
 import starnubserver.connections.player.groups.Tag;
@@ -35,11 +32,6 @@ public class Settings {
 
     @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS")
     private volatile String accountSettings;
-
-//
-//    @DatabaseField(foreign = true,  foreignAutoRefresh = true, columnName = "DEFAULT_CHAT_ROOM")
-//    private volatile ChatRoom defaultChatRoom;
-
 
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_1")
     private volatile Tag chatPrefix1;
@@ -59,14 +51,6 @@ public class Settings {
 
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = "BLOCK_WHISPERS")
     private volatile boolean whisperBlocking;
-
-
-    @ForeignCollectionField(eager = true, maxEagerLevel = 3)
-    private volatile ForeignCollection<CharacterIgnore> characterIgnores;
-
-
-//    @ForeignCollectionField(eager = true, maxEagerLevel = 3)
-//    private volatile ForeignCollection<ChatRoomSubscription> chatRoomSubscriptions;
 
 
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = "APPEAR_OFFLINE")
@@ -97,9 +81,6 @@ public class Settings {
         return whisperBlocking;
     }
 
-    public ForeignCollection<CharacterIgnore> getCharacterIgnores() {
-        return characterIgnores;
-    }
 
 //    public ForeignCollection<ChatRoomSubscription> getChatRoomSubscriptions() {
 //        return chatRoomSubscriptions;
@@ -143,16 +124,6 @@ public class Settings {
     public void setAppearOffline(boolean appearOffline) {
         this.appearOffline = appearOffline;
         StarNub.getDatabaseTables().getAccountSettings().update(this);
-    }
-
-    public void addIgnoredCharacter(PlayerCharacter playerCharacter){
-        if (StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, playerCharacter) == null) {
-            this.characterIgnores.add(new CharacterIgnore(this, playerCharacter));
-        }
-    }
-
-    public void removeIgnoredCharacter(PlayerCharacter playerCharacter){
-        this.characterIgnores.remove(StarNub.getDatabaseTables().getCharacterIgnores().getIgnoredCharacter(this, playerCharacter));
     }
 
 //    public void addChatRoomSubscription(ChatRoom chatRoom){

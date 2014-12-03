@@ -64,7 +64,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         /* Register and event handler to notify player if they were kicked for a reserved player */
         new StarNubEventSubscription("StarNub", "Player_Connected", new StarNubEventHandler<Event<String>>() {
             @Override
-            public Event<String> onEvent(Event<String> eventData) {
+            public void onEvent(Event<String> eventData) {
                 Player player = (Player) eventData.getEVENT_DATA();
                 TimeCache timeCache = null;
                 try {
@@ -76,7 +76,6 @@ public class ClientConnectHandler extends PacketEventHandler {
                     player.sendChatMessage("StarNub", ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "You were disconnected to make room for a player" +
                             "who has a Reserved Server Slot.");
                 }
-                return null;
             }
         });
     }
@@ -90,57 +89,62 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @return Packet any class representing packet can be returned
      */
     @Override
-    public Packet onEvent(Packet eventData) {
+    public void onEvent(Packet eventData) {
         ClientConnectPacket clientConnectPacket = (ClientConnectPacket) eventData;
         ChannelHandlerContext clientCTX = clientConnectPacket.getSENDER_CTX();
 
-        StarNubProxyConnection starNubProxyConnection = (StarNubProxyConnection) CONNECTIONS.getOPEN_CONNECTIONS().remove(clientCTX);
+        StarNubProxyConnection starnubProxyConnection = (StarNubProxyConnection) StarNub.getConnections().getOPEN_CONNECTIONS().get(clientCTX);
 
         String playerName = clientConnectPacket.getPlayerName();
         UUID playerUUID = clientConnectPacket.getUuid();
 
-        Player player = new Player(starNubProxyConnection, playerName, playerUUID);
+        Player player = new Player(starnubProxyConnection, playerName, playerUUID);
 
         String header =
-                "^#f5f5f5;-== " + StarNub.getConfiguration().getNestedValue("starnub info", "server_name") + " ==-\n" +
+                "^#f5f5f5;-== " + StarNub.getConfiguration().getNestedValue("starnub_info", "server_name") + " ==-\n" +
                         "^#f5f5f5;-= Powered by StarNub.org =- \n\n";
         String footer =
-                "\n\n^#f5f5f5;For information visit: ^#990000;" + StringUtils.remove((String) StarNub.getConfiguration().getNestedValue("starnub info", "server_url"), "http://");
+                "\n\n^#f5f5f5;For information visit: ^#990000;" + StringUtils.remove((String) StarNub.getConfiguration().getNestedValue("starnub_info", "server_url"), "http://");
 
         RejectionCache rejectionCache = null;
 
         /* Server Restarting Check */
         rejectionCache = restartingCheck(player, header, footer);
         if (rejectionCache != null) {
-            return addToRejections(rejectionCache, clientConnectPacket);
+            addToRejections(rejectionCache, clientConnectPacket);
+            return;
         }
 
         /* Player Whitelist Check */
         rejectionCache = whitelist(player, header, footer);
         if (rejectionCache != null) {
-            return addToRejections(rejectionCache, clientConnectPacket);
+            addToRejections(rejectionCache, clientConnectPacket);
+            return;
         }
 
         /* Player Ban Check */
         rejectionCache = bannedCheck(player, header, footer);
         if (rejectionCache != null) {
-            return addToRejections(rejectionCache, clientConnectPacket);
+            addToRejections(rejectionCache, clientConnectPacket);
+            return;
         }
 
         /* Already Logged On */
         rejectionCache = alreadyLoggedOn(player, header, footer);
         if (rejectionCache != null) {
-            return addToRejections(rejectionCache, clientConnectPacket);
+            addToRejections(rejectionCache, clientConnectPacket);
+            return;
         }
 
         /* Server Full Check */
         rejectionCache = serverFull(player, header, footer);
         if (rejectionCache != null) {
-            return addToRejections(rejectionCache, clientConnectPacket);
+            addToRejections(rejectionCache, clientConnectPacket);
+            return;
         }
 
         /* Allow Connection */
-        return addToRejections(new RejectionCache(false, player), clientConnectPacket);
+        addToRejections(new RejectionCache(false, player), clientConnectPacket);
     }
 
     /**
@@ -157,7 +161,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         ChannelHandlerContext clientCTX = player.getCLIENT_CTX();
         player.getPlayerCharacter().setLastSeen(DateTime.now());
         new StarNubEvent("Player_Connection_Attempt", this);
-        StarNub.getLogger().cDebPrint("StarNub", "A Player is attempting to connect to the network on IP: " + player.getSessionIpString() + ".");
+        StarNub.getLogger().cDebPrint("StarNub", "A player named "+ player.getPlayerCharacter().getCleanName() +" is attempting to connect to the server on IP: " + player.getSessionIpString() + ".");
         try {
             CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().addCache(clientCTX, rejectionCache);
         } catch (CacheWrapperOperationException e) {
@@ -196,7 +200,7 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @return RejectionCache or null depending if we need to reject this player
      */
     private RejectionCache whitelist(Player player, String header, String footer) {
-        if ((boolean) (StarNub.getConfiguration().getNestedValue("starnub settings", "whitelisted"))) {
+        if ((boolean) (StarNub.getConfiguration().getNestedValue("starnub_settings", "whitelisted"))) {
             String playerIP = player.getSessionIpString();
             String playerUUID = player.getPlayerCharacter().getUuid().toString();
             boolean ipWhitelisted = false;
@@ -262,7 +266,7 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @param footer rejection footer
      * @return RejectionCache or null depending if we need to reject this player
      */
-    private RejectionCache alreadyLoggedOn(Player player, String header, String footer) {
+    private RejectionCache alreadyLoggedOn(Player player, String header, String footer) { //DEBUG - THIS METHOD - Does not disconnect on second attempt
         UUID uuid = player.getPlayerCharacter().getUuid();
         boolean isOnline = CONNECTIONS.getCONNECTED_PLAYERS().isOnline("StarNub", uuid);
         if (isOnline) {
@@ -295,8 +299,8 @@ public class ClientConnectHandler extends PacketEventHandler {
      */
     private RejectionCache serverFull(Player player, String header, String footer) {
         int currentPlayerCount = CONNECTIONS.getCONNECTED_PLAYERS().size();
-        int playerLimit = (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit");
-        int vipLimit = (int) StarNub.getConfiguration().getNestedValue("resources", "player_limit_reserved");
+        int playerLimit = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit");
+        int vipLimit = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit_reserved");
         int combinedCount = playerLimit + vipLimit;
         if (currentPlayerCount >= playerLimit) {
             String reason;

@@ -9,5 +9,5 @@ package utilities.events;
  */
 public abstract class EventHandler<T> {
 
-    public abstract T onEvent(T eventData);
+    public abstract void onEvent(T eventData);
 }

@@ -26,7 +26,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
-import starnubserver.connections.player.achievements.CharacterAchievement;
 import starnubserver.connections.player.session.Ban;
 import utilities.strings.StringUtilities;
 
@@ -112,12 +111,6 @@ public class PlayerCharacter {
     @ForeignCollectionField(eager = true)
     private volatile ForeignCollection<CharacterIP> associatedIps;
 
-    /**
-     * Represents the characters achievements that have been earned
-     */
-
-    @ForeignCollectionField(eager = true)
-    private volatile ForeignCollection<CharacterAchievement> characterAchievements;
 
     /**
      * Constructor for database purposes
@@ -154,10 +147,6 @@ public class PlayerCharacter {
 
     public ForeignCollection<CharacterIP> getAssociatedIps() {
         return associatedIps;
-    }
-
-    public ForeignCollection<CharacterAchievement> getCharacterAchievements() {
-        return characterAchievements;
     }
 
     public Ban getBan() {

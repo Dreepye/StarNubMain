@@ -96,7 +96,8 @@ public class Ban {
     /**
      * Constructor for database purposes
      */
-    public Ban(){}
+    public Ban() {
+    }
 
     public String getImposerName() {
         return imposerName;
@@ -120,7 +121,8 @@ public class Ban {
 
     /**
      * This method is for setting a ban restriction
-     * @param restrictedIdentifier String Represents the banIdentifier which can be a IP or uuid
+     *
+     * @param restrictedIdentifier   String Represents the banIdentifier which can be a IP or uuid
      * @param dateRestrictionExpires long Represents the time the restriction will be removed
      */
     public void setBan(String restrictedIdentifier, String imposerName, String reason, Account imposerAccount, DateTime dateRestrictionExpires) {
@@ -137,6 +139,13 @@ public class Ban {
 //        return banId;
 ////    }
 
+    public void addBan() {
+        StarNub.getDatabaseTables().getPlayerSessionBans().createOrUpdate(this);
+        StarNub.getLogger().cInfoPrint("StarNub", "A ban was added for " + characterName + ".");
+        new StarNubEvent("StarNu_Ban_Added", this);
+        StarNub.getConnections().getBANS().put(this.banIdentifier, this);
+    }
+
     public String getCharacterName() {
         return characterName;
     }
@@ -145,17 +154,10 @@ public class Ban {
         return banIdentifier;
     }
 
-    public void removeBan(){
+    public void removeBan() {
         StarNub.getDatabaseTables().getPlayerSessionBans().delete(this);
         StarNub.getLogger().cInfoPrint("StarNub", "A ban was removed for " + characterName + ".");
         new StarNubEvent("StarNu_Ban_Removed", this);
         StarNub.getConnections().getBANS().remove(this.banIdentifier);
-    }
-
-    public void addBan(){
-        StarNub.getDatabaseTables().getPlayerSessionBans().createOrUpdate(this);
-        StarNub.getLogger().cInfoPrint("StarNub", "A ban was added for " + characterName + ".");
-        new StarNubEvent("StarNu_Ban_Added", this);
-        StarNub.getConnections().getBANS().put(this.banIdentifier, this);
     }
 }
