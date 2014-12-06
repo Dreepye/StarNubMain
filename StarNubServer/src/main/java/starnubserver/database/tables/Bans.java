@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2014 www.StarNub.org - Underbalanced
  *
- * This utilities.file is part of org.starnub a Java Wrapper for Starbound.
+ * This file is part of org.starnub a Java Wrapper for Starbound.
  *
  * This above mentioned StarNub software is free software:
  * you can redistribute it and/or modify it under the terms
@@ -19,24 +19,25 @@
 package starnubserver.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
-import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.connections.player.generic.Ban;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
 
+
 /**
- * Represents PlayerSessionLog Table that extends the TableWrapper class
+ * Represents Bans Table that extends the TableWrapper class
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PlayerSessionLog extends TableWrapper<PlayerSession, Integer> {
+public class Bans extends TableWrapper<Ban, Integer> {
 
-    public PlayerSessionLog(Class<PlayerSession> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public Bans(Class<Ban> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(typeParameterDBClass, typeParameterIDClass);
     }
 
-    public PlayerSessionLog(ConnectionSource connectionSource, int oldVersion, Class<PlayerSession> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
+    public Bans(ConnectionSource connectionSource, int oldVersion, Class<Ban> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
         super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
     }
 

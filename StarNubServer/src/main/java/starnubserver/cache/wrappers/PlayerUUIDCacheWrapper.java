@@ -18,7 +18,7 @@
 
 package starnubserver.cache.wrappers;
 
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import utilities.cache.wrappers.CacheWrapper;
@@ -80,8 +80,8 @@ public class PlayerUUIDCacheWrapper extends CacheWrapper<UUID> {
             @Override
             @SuppressWarnings("unchecked")
             public void onEvent(Event eventData) {
-                Player player = (Player) eventData.getEVENT_DATA();
-                getCACHE_MAP().remove(player.getPlayerCharacter().getUuid());
+                PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
+                getCACHE_MAP().remove(playerSession.getPlayerCharacter().getUuid());
             }
         });
     }

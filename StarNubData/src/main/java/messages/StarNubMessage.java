@@ -20,31 +20,33 @@ package messages;
 
 public class StarNubMessage implements java.io.Serializable {
 
-    public enum Direction {
-        CENTRAL_SERVER,
-        STARNUB_SERVER
-    }
-
     public enum Type {
-        LICENSE,
-        SERVER_MESSAGE,
-        STARNUB_BROADCAST,
-        BAN
+        LICENSE_CHECK,
+        LICENSE_CHECK_ACCEPT,
+        LICENSE_CHECK_UNLICENSED,
+        LICENSE_CHECK_DENY,
+        COUNT_CHECK,
+        COUNT_ACCEPT,
+        COUNT_DENY,
+        BAN_ADD,
+        BAN_REMOVE,
+        BAN_UPDATE
     }
 
-    private final Direction DIRECTION;
     private final Type TYPE;
 
-    public StarNubMessage(Direction DIRECTION, Type TYPE) {
-        this.DIRECTION = DIRECTION;
+    public StarNubMessage(Type TYPE) {
         this.TYPE = TYPE;
-    }
-
-    public Direction getDIRECTION() {
-        return DIRECTION;
     }
 
     public Type getTYPE() {
         return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "StarNubMessage{" +
+                "TYPE=" + TYPE +
+                '}';
     }
 }

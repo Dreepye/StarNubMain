@@ -33,20 +33,18 @@ import java.util.concurrent.Executors;
 
 public class TCPServer {
 
-    private static NioEventLoopGroup connectionBossGroup;
-
-    private static NioEventLoopGroup connectionWorkerGroup;
+    private NioEventLoopGroup connectionBossGroup;
+    private NioEventLoopGroup connectionWorkerGroup;
 
     public TCPServer(String connectThreadName, String workerThreadName) {
         connectionBossGroup = new NioEventLoopGroup(1, Executors.newCachedThreadPool(new NamedThreadFactory(connectThreadName)));
         connectionWorkerGroup = new NioEventLoopGroup(1, Executors.newCachedThreadPool(new NamedThreadFactory(workerThreadName)));
-
     }
 
 
-    public static Channel start(int port, ChannelInitializer<SocketChannel> channelInitializer) {
+    public Channel start(int port, ChannelInitializer<SocketChannel> channelInitializer) {
         ServerBootstrap sb = new ServerBootstrap();
-        sb.group(connectionBossGroup, new NioEventLoopGroup())
+        sb.group(connectionBossGroup, connectionWorkerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.SO_KEEPALIVE, true)
@@ -55,7 +53,7 @@ public class TCPServer {
 
     }
 
-    public static void shutdown() {
+    public void shutdown() {
         if (connectionBossGroup != null) {
             connectionBossGroup.shutdownGracefully();
             connectionBossGroup = null;

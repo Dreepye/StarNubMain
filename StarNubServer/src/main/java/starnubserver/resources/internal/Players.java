@@ -20,19 +20,15 @@ package starnubserver.resources.internal;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
-import starbounddata.packets.Packet;
-import starbounddata.packets.chat.ChatSendPacket;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
-import starbounddata.packets.tile.DamageTileGroupPacket;
 import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
 import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import starnubserver.connections.player.character.PlayerCharacter;
-import starnubserver.connections.player.session.Player;
-import starnubserver.events.packet.PacketEventHandler;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventSubscription;
 import starnubserver.resources.Operators;
 import starnubserver.resources.internal.handlers.ClientConnectHandler;
@@ -51,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
+public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSession> {
 
     private final Connections CONNECTIONS;
     private final PlayerCtxCacheWrapper ACCEPT_REJECT;
@@ -82,18 +78,6 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
         new PacketEventSubscription("StarNub", ClientConnectPacket.class, true, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
         new PacketEventSubscription("StarNub", ConnectResponsePacket.class, true, new ConnectionResponseHandler(CONNECTIONS));
         new PacketEventSubscription("StarNub", ServerDisconnectPacket.class, true, new ServerDisconnectHandler(CONNECTIONS));
-        new PacketEventSubscription("StarNub", DamageTileGroupPacket.class, true, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) { //DEBUG - THIS METHOD OR PACKET - Client crash after packet decode - encode // ONLY IN DEBUG
-//                System.out.println(eventData.toString());
-            }
-        });
-        new PacketEventSubscription("StarNub", ChatSendPacket.class, true, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) { //DEBUG - THIS METHOD OR PACKET - Client crash after packet decode - encode // ONLY IN DEBUG
-                System.out.println(eventData.toString());
-            }
-        });
         new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
         new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
         new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
@@ -116,7 +100,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * <p>
      */
     public void connectedPlayerPlayedTimeUpdate(){
-        for (Player players : this.values()) {
+        for (PlayerSession players : this.values()) {
             PlayerCharacter playerCharacter = players.getPlayerCharacter();
             playerCharacter.updatePlayedTimeLastSeen();
         }
@@ -130,10 +114,10 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * <p>
      */
     public void connectedPlayerLostConnectionCheck() {
-        for (Map.Entry<ChannelHandlerContext, Player> playerEntry : this.entrySet()){
-            Player player = playerEntry.getValue();
-            if (!player.isConnected()){
-                player.disconnectReason("Connection_Lost");
+        for (Map.Entry<ChannelHandlerContext, PlayerSession> playerEntry : this.entrySet()){
+            PlayerSession playerSession = playerEntry.getValue();
+            if (!playerSession.isConnected()){
+                playerSession.disconnectReason("Connection_Lost");
             }
         }
     }
@@ -157,9 +141,9 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param playerIdentifier Object that represent a player and it can take many forms
      * @return Player which represents the player that was retrieved by the provided playerIdentifier
      */
-    public Player getOnlinePlayerByAnyIdentifier(Object playerIdentifier) {
-        if (playerIdentifier instanceof Player) {
-            return (Player) playerIdentifier;
+    public PlayerSession getOnlinePlayerByAnyIdentifier(Object playerIdentifier) {
+        if (playerIdentifier instanceof PlayerSession) {
+            return (PlayerSession) playerIdentifier;
         } else if (playerIdentifier instanceof String) {
             String identifierString = (String) playerIdentifier;
             if (isStarNubId(identifierString)) {
@@ -221,10 +205,10 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param uuid uuid which represents the playerIdentifier
      * @return Player which represents the player that was retrieved by the provided uuid
      */
-    private Player playerByUUID(UUID uuid) {
-        for (Player playerSession : this.values()){
-            if (playerSession.getPlayerCharacter().getUuid().equals(uuid)) {
-                return playerSession;
+    private PlayerSession playerByUUID(UUID uuid) {
+        for (PlayerSession playerSessionSession : this.values()){
+            if (playerSessionSession.getPlayerCharacter().getUuid().equals(uuid)) {
+                return playerSessionSession;
             }
         }
         return null;
@@ -238,10 +222,10 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param ip InetAddress which represents the playerIdentifier
      * @return Player which represents the player that was retrieved by the provided InetAddress
      */
-    private Player playerByIP(InetAddress ip) {
-        for (Player playerSession : this.values()){
-            if (playerSession.getClientIP().equals(ip)) {
-                return playerSession;
+    private PlayerSession playerByIP(InetAddress ip) {
+        for (PlayerSession playerSessionSession : this.values()){
+            if (playerSessionSession.getClientIP().equals(ip)) {
+                return playerSessionSession;
             }
         }
         return null;
@@ -256,12 +240,12 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param identifierString String which represents the playerIdentifier
      * @return Player which represents the player that was retrieved by the provided String
      */
-    private Player playerByName(String identifierString) {
-        for (Player playerSession : this.values()){
-            if (playerSession.getPlayerCharacter().getName().equalsIgnoreCase(identifierString) || playerSession.getPlayerCharacter().getCleanName().equalsIgnoreCase(identifierString) ||
-                    playerSession.getNickName().equalsIgnoreCase(identifierString) || playerSession.getCleanNickName().equalsIgnoreCase(identifierString) ||
-                    playerSession.getGameName().equalsIgnoreCase(identifierString)) {
-                return playerSession;
+    private PlayerSession playerByName(String identifierString) {
+        for (PlayerSession playerSessionSession : this.values()){
+            if (playerSessionSession.getPlayerCharacter().getName().equalsIgnoreCase(identifierString) || playerSessionSession.getPlayerCharacter().getCleanName().equalsIgnoreCase(identifierString) ||
+                    playerSessionSession.getNickName().equalsIgnoreCase(identifierString) || playerSessionSession.getCleanNickName().equalsIgnoreCase(identifierString) ||
+                    playerSessionSession.getGameName().equalsIgnoreCase(identifierString)) {
+                return playerSessionSession;
             }
         }
         return null;
@@ -277,10 +261,10 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param starboundClientId Integer which represents the playerIdentifier
      * @return Player which represents the player that was retrieved by the provided Integer
      */
-    private Player playerByStarboundClientID(int starboundClientId) {
-        for (Player playerSession : this.values()){
-            if (playerSession.getStarboundClientId() == starboundClientId) {
-                return playerSession;
+    private PlayerSession playerByStarboundClientID(int starboundClientId) {
+        for (PlayerSession playerSessionSession : this.values()){
+            if (playerSessionSession.getStarboundClientId() == starboundClientId) {
+                return playerSessionSession;
             }
         }
         return null;
@@ -295,10 +279,10 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param starnubClientId Integer which represents the playerIdentifier
      * @return Player which represents the player that was retrieved by the provided Integer
      */
-    private Player playerByStarNubClientID(int starnubClientId) {
-        for (Player playerSession : this.values()){
-            if (playerSession.getAccount() == starnubClientId) {
-                return playerSession;
+    private PlayerSession playerByStarNubClientID(int starnubClientId) {
+        for (PlayerSession playerSessionSession : this.values()){
+            if (playerSessionSession.getAccount() == starnubClientId) {
+                return playerSessionSession;
             }
         }
         return null;
@@ -314,40 +298,40 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
      * @param ctx ChannelHandlerContext which represents the playerIdentifier
      * @return Player which represents the player that was retrieved by the provided ChannelHandlerContext
      */
-    private Player playerByCTX(ChannelHandlerContext ctx) {
-        for (Player playerSession : this.values()){
-            if (playerSession.getCLIENT_CTX() == ctx || playerSession.getSERVER_CTX() == ctx) {
-                return playerSession;
+    private PlayerSession playerByCTX(ChannelHandlerContext ctx) {
+        for (PlayerSession playerSessionSession : this.values()){
+            if (playerSessionSession.getCLIENT_CTX() == ctx || playerSessionSession.getSERVER_CTX() == ctx) {
+                return playerSessionSession;
             }
         }
         return null;
     }
 
     public boolean isOnline(Object sender, Object playerIdentifier) {
-        Player playerSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        return playerSession != null && canSeePlayer(sender, playerSession);
+        PlayerSession playerSessionSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        return playerSessionSession != null && canSeePlayer(sender, playerSessionSession);
     }
 
     public boolean canSeePlayerAnyIdentifier(Object sender, Object playerIdentifier){
-        Player playerSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        return playerSession != null && canSeePlayer(sender, playerSession);
+        PlayerSession playerSessionSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        return playerSessionSession != null && canSeePlayer(sender, playerSessionSession);
     }
 
     public ArrayList<Boolean> canSeePlayerIsHiddenCanSeeAnyIdentifier(Object sender, Object playerIdentifier){
-        Player playerSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        if (playerSession == null) {
+        PlayerSession playerSessionSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
+        if (playerSessionSession == null) {
             return canSeeHashSetBuilder(false, false);
         }
-        return canSeePlayerIsHiddenCanSee(sender, playerSession);
+        return canSeePlayerIsHiddenCanSee(sender, playerSessionSession);
     }
 
-    public boolean canSeePlayer(Object sender, Player playerSession){
-        if (sender instanceof Player) {
-            Player senderSession = getOnlinePlayerByAnyIdentifier(sender);
+    public boolean canSeePlayer(Object sender, PlayerSession playerSessionSession){
+        if (sender instanceof PlayerSession) {
+            PlayerSession senderSession = getOnlinePlayerByAnyIdentifier(sender);
             if (senderSession.hasPermission("starnubserver.bypass.appearoffline", true)) {
                 return true;
-            } else if (playerSession.getPlayerCharacter().getAccount() != null) {
-                return !playerSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
+            } else if (playerSessionSession.getPlayerCharacter().getAccount() != null) {
+                return !playerSessionSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
             } else {
                 return true;
             }
@@ -356,14 +340,14 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
         }
     }
 
-    public ArrayList<Boolean> canSeePlayerIsHiddenCanSee(Object senderSession, Player playerSession) {
+    public ArrayList<Boolean> canSeePlayerIsHiddenCanSee(Object senderSession, PlayerSession playerSessionSession) {
         boolean appearOffline = false;
-        if (playerSession.getPlayerCharacter().getAccount() != null) {
-            appearOffline = playerSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
+        if (playerSessionSession.getPlayerCharacter().getAccount() != null) {
+            appearOffline = playerSessionSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
         }
 
-        if (senderSession instanceof Player) {
-            Player sender = getOnlinePlayerByAnyIdentifier(senderSession);
+        if (senderSession instanceof PlayerSession) {
+            PlayerSession sender = getOnlinePlayerByAnyIdentifier(senderSession);
             boolean canSeePlayer = true;
             if (appearOffline) {
                 canSeePlayer = sender.hasPermission("starnubserver.bypass.appearoffline", true);
@@ -414,8 +398,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
         String token;
         String tokenShowStarboundId = "";
         String tokenShowStarNubId = "";
-        for (Player playerSession : this.values()) {
-            ArrayList<Boolean> appearance = canSeePlayerIsHiddenCanSee(sender, playerSession);
+        for (PlayerSession playerSessionSession : this.values()) {
+            ArrayList<Boolean> appearance = canSeePlayerIsHiddenCanSee(sender, playerSessionSession);
             String hiddenToken = "";
             if (appearance.get(0)) {
                 hiddenToken = " (H)";
@@ -423,11 +407,11 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
 
             if (appearance.get(1)) {
                 if (showStarboundId) {
-                    tokenShowStarboundId = Long.toString(playerSession.getStarboundClientId());
+                    tokenShowStarboundId = Long.toString(playerSessionSession.getStarboundClientId());
                 }
                 if (showStarNubId) {
-                    if (playerSession.getAccount() > 0) {
-                        tokenShowStarNubId = Integer.toString(playerSession.getAccount()) + "S";
+                    if (playerSessionSession.getAccount() > 0) {
+                        tokenShowStarNubId = Integer.toString(playerSessionSession.getAccount()) + "S";
                     } else {
                         tokenShowStarNubId = "NA";
                     }
@@ -439,7 +423,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, Player> {
                     token = tokenShowStarboundId + tokenShowStarNubId;
                 }
                 token = "(" + token + ")";
-                sortedPlayers.add(playerSession.getCleanNickName() + hiddenToken + " " + token);
+                sortedPlayers.add(playerSessionSession.getCleanNickName() + hiddenToken + " " + token);
             }
         }
         Collections.sort(sortedPlayers);

@@ -29,7 +29,7 @@ import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starnubserver.cache.wrappers.IPCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.StarNubEvent;
 import utilities.cache.objects.IntegerCache;
 import utilities.events.EventSubscription;
@@ -291,9 +291,9 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         StarNubProxyConnection starNubProxyConnection = StarNub.getConnections().getStarNubProxyConnection(ctx);
         if (starNubProxyConnection == null){
             ctx.close();
-        } else if (starNubProxyConnection instanceof Player){
-            Player player = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(ctx);
-            player.disconnectReason("Closed_By_Handler");
+        } else if (starNubProxyConnection instanceof PlayerSession){
+            PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(ctx);
+            playerSession.disconnectReason("Closed_By_Handler");
         } else {
             starNubProxyConnection.disconnectReason("Closed_By_Handler_No_Decoding");
         }

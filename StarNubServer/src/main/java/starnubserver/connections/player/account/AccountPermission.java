@@ -21,40 +21,54 @@ package starnubserver.connections.player.account;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starnubserver.StarNub;
 
+/**
+ * This class represents an account permission.
+ * <p>
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ *
+ */
 @DatabaseTable(tableName = "ACCOUNT_PERMISSIONS")
 public class AccountPermission {
 
-    /**
-     * Represents a character permission id
-     */
-    @DatabaseField(generatedId =true, columnName = "PERMISSION_ID")
-    private int permissionId;
 
-    /**
-     * Represents a starnubId that the permission is attached to
-     */
+    @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "PERMISSION_ID")
+    private volatile int permissionId;
 
-    @DatabaseField(dataType = DataType.INTEGER, uniqueCombo = true, columnName = "STARNUB_ID")
-    private int starnubId;
-
-    /**
-     * Represents a permission which is assigned to the starnubdId
-     */
+    @DatabaseField(uniqueCombo = true, columnName = "STARNUB_ID")
+    private volatile Account starnubId;
 
     @DatabaseField(dataType = DataType.STRING, uniqueCombo = true, columnName = "PERMISSION")
-    private String permission;
+    private volatile String permission;
 
     /**
      * Constructor for database purposes
      */
     public AccountPermission(){}
 
+    /**
+     * This will create a account permission
+     *
+     * @param starnubId Account representing the account belong to this permission
+     * @param permission String representing the permission
+     * @param createEntry boolean representing if a database entry should be made
+     */
+    public AccountPermission(Account starnubId, String permission, boolean createEntry) {
+        this.starnubId = starnubId;
+        this.permission = permission;
+        if (createEntry){
+            StarNub.getDatabaseTables().getAccountPermissions().createOrUpdate(this);
+        }
+    }
+
     public int getPermissionId() {
         return permissionId;
     }
 
-    public int getStarnubId() {
+    public Account getStarnubId() {
         return starnubId;
     }
 
@@ -62,13 +76,12 @@ public class AccountPermission {
         return permission;
     }
 
-    /**
-     * Constructor used in adding, removing or updating a permission for an account
-     * @param starnubId
-     * @param permission
-     */
-    public AccountPermission(int starnubId, String permission) {
-        this.starnubId = starnubId;
-        this.permission = permission;
+    @Override
+    public String toString() {
+        return "AccountPermission{" +
+                "permissionId=" + permissionId +
+                ", starnubId=" + starnubId +
+                ", permission='" + permission + '\'' +
+                '}';
     }
 }

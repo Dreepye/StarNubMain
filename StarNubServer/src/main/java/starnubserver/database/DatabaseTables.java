@@ -26,9 +26,9 @@ import starnubserver.connections.player.account.AccountPermission;
 import starnubserver.connections.player.account.Settings;
 import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.connections.player.generic.*;
 import starnubserver.connections.player.groups.*;
-import starnubserver.connections.player.session.Ban;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.*;
 
 /**
@@ -49,7 +49,6 @@ public class DatabaseTables {
      */
     private DatabaseTables(){
         setConnection();
-        setTableWrappers();
     }
 
     /**
@@ -61,27 +60,24 @@ public class DatabaseTables {
     }
 
     private ConnectionSource connection;
-    private Accounts accounts;
-    private AccountSettings accountSettings;
-    private AccountPermissions accountPermissions;
-//    private Achievements achievements;
-    private Characters characters;
-//    private CharacterAchievements characterAchievements;
-//    private CharacterIgnores characterIgnores;
-    private CharacterIPLog characterIPLog;
-//    private ChatRooms chatRooms;
-//    private ChatRoomSubscriptions chatRoomSubscriptions;
-    private Groups groups;
-    private GroupAssignments groupAssignments;
-    private GroupInheritances groupInheritances;
-    private GroupPermissions groupPermissions;
-    private PlayerSessionLog playerSessionLog;
-    private PlayerSessionRestrictions playerSessionRestrictions;
-    private Tags tags;
 
-    {
-
-    }
+    private Accounts accounts = new Accounts(connection, 0, Account.class, Integer.class);
+    private AccountSettings accountSettings =  new AccountSettings(connection, 0, Settings.class, String.class);
+    private AccountPermissions accountPermissions = new AccountPermissions(connection, 0, AccountPermission.class, Integer.class);
+    private Characters characters = new Characters(connection, 0, PlayerCharacter.class, Integer.class);
+    private Bans bans = new Bans(connection, 0, Ban.class, Integer.class);
+    private BansHistory bansHistory = new BansHistory(connection, 0, BanHistory.class, Integer.class);
+    private CharacterIPLog characterIPLog = new CharacterIPLog(connection, 0, CharacterIP.class, Integer.class);
+    private Disables disables = new Disables(connection, 0, Disabled.class, String.class);
+    private DisablesHistory disablesHistory = new DisablesHistory(connection, 0, DisabledHistory.class, String.class);
+    private Groups groups = new Groups(connection, 0, Group.class, String.class);
+    private GroupAssignments groupAssignments = new GroupAssignments(connection, 0, GroupAssignment.class, Integer.class);
+    private GroupInheritances groupInheritances = new GroupInheritances(connection, 0, GroupInheritance.class, Integer.class);
+    private GroupPermissions groupPermissions = new GroupPermissions(connection, 0, GroupPermission.class, Integer.class);
+    private PlayerSessionLog playerSessionLog = new PlayerSessionLog(connection, 0, PlayerSession.class, Integer.class);
+    private PlayerSessionRestrictions playerSessionRestrictions = new PlayerSessionRestrictions(connection, 0, Ban.class, Integer.class);
+    private StaffEntries staffEntries = new StaffEntries(connection, 0, StaffEntry.class, Integer.class);
+    private Tags tags = new Tags(connection, 0, Tag.class, Integer.class);
 
     public ConnectionSource getConnection() {
         return connection;
@@ -115,14 +111,6 @@ public class DatabaseTables {
         this.accountPermissions = accountPermissions;
     }
 
-//    public Achievements getAchievements() {
-//        return achievements;
-//    }
-//
-//    public void setAchievements(Achievements achievements) {
-//        this.achievements = achievements;
-//    }
-
     public Characters getCharacters() {
         return characters;
     }
@@ -131,21 +119,21 @@ public class DatabaseTables {
         this.characters = characters;
     }
 
-//    public CharacterAchievements getCharacterAchievements() {
-//        return characterAchievements;
-//    }
-//
-//    public void setCharacterAchievements(CharacterAchievements characterAchievements) {
-//        this.characterAchievements = characterAchievements;
-//    }
-//
-//    public CharacterIgnores getCharacterIgnores() {
-//        return characterIgnores;
-//    }
-//
-//    public void setCharacterIgnores(CharacterIgnores characterIgnores) {
-//        this.characterIgnores = characterIgnores;
-//    }
+    public Bans getBans() {
+        return bans;
+    }
+
+    public void setBans(Bans bans) {
+        this.bans = bans;
+    }
+
+    public BansHistory getBansHistory() {
+        return bansHistory;
+    }
+
+    public void setBansHistory(BansHistory bansHistory) {
+        this.bansHistory = bansHistory;
+    }
 
     public CharacterIPLog getCharacterIPLog() {
         return characterIPLog;
@@ -155,21 +143,21 @@ public class DatabaseTables {
         this.characterIPLog = characterIPLog;
     }
 
-//    public ChatRooms getChatRooms() {
-//        return chatRooms;
-//    }
-//
-//    public void setChatRooms(ChatRooms chatRooms) {
-//        this.chatRooms = chatRooms;
-//    }
-//
-//    public ChatRoomSubscriptions getChatRoomSubscriptions() {
-//        return chatRoomSubscriptions;
-//    }
-//
-//    public void setChatRoomSubscriptions(ChatRoomSubscriptions chatRoomSubscriptions) {
-//        this.chatRoomSubscriptions = chatRoomSubscriptions;
-//    }
+    public Disables getDisables() {
+        return disables;
+    }
+
+    public void setDisables(Disables disables) {
+        this.disables = disables;
+    }
+
+    public DisablesHistory getDisablesHistory() {
+        return disablesHistory;
+    }
+
+    public void setDisablesHistory(DisablesHistory disablesHistory) {
+        this.disablesHistory = disablesHistory;
+    }
 
     public Groups getGroups() {
         return groups;
@@ -211,12 +199,20 @@ public class DatabaseTables {
         this.playerSessionLog = playerSessionLog;
     }
 
-    public PlayerSessionRestrictions getPlayerSessionBans() {
+    public PlayerSessionRestrictions getPlayerSessionRestrictions() {
         return playerSessionRestrictions;
     }
 
     public void setPlayerSessionRestrictions(PlayerSessionRestrictions playerSessionRestrictions) {
         this.playerSessionRestrictions = playerSessionRestrictions;
+    }
+
+    public StaffEntries getStaffEntries() {
+        return staffEntries;
+    }
+
+    public void setStaffEntries(StaffEntries staffEntries) {
+        this.staffEntries = staffEntries;
     }
 
     public Tags getTags() {
@@ -254,22 +250,6 @@ public class DatabaseTables {
     }
 
     public void setTableWrappers(){
-        accounts = new Accounts(connection, 0, Account.class, Integer.class);
-        accountSettings = new AccountSettings(connection, 0, Settings.class, String.class);
-        accountPermissions = new AccountPermissions(connection, 0, AccountPermission.class, Integer.class);
-//        achievements = new Achievements(connection, 0, Achievement.class, Integer.class);
-        characters = new Characters(connection, 0, PlayerCharacter.class, Integer.class);
-//        characterAchievements = new CharacterAchievements(connection, 0, CharacterAchievement.class, Integer.class);
-//        characterIgnores = new CharacterIgnores(connection, 0, CharacterIgnore.class, Integer.class);
-        characterIPLog = new CharacterIPLog(connection, 0, CharacterIP.class, Integer.class);
-//        chatRooms = new ChatRooms(connection, 0, ChatRoom.class, Integer.class);
-//        chatRoomSubscriptions = new ChatRoomSubscriptions(connection, 0, ChatRoomSubscription.class, Integer.class);
-        groups = new Groups(connection, 0, Group.class, String.class);
-        groupAssignments = new GroupAssignments(connection, 0, GroupAssignment.class, Integer.class);
-        groupInheritances = new GroupInheritances(connection, 0, GroupInheritance.class, Integer.class);
-        groupPermissions = new GroupPermissions(connection, 0, GroupPermission.class, Integer.class);
-        playerSessionLog = new PlayerSessionLog(connection, 0, Player.class, Integer.class);
-        playerSessionRestrictions = new PlayerSessionRestrictions(connection, 0, Ban.class, Integer.class);
-        tags = new Tags(connection, 0, Tag.class, Integer.class);
+
     }
 }

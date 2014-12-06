@@ -19,7 +19,7 @@
 package starnubserver.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
-import starnubserver.connections.player.session.Ban;
+import starnubserver.connections.player.generic.Ban;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;

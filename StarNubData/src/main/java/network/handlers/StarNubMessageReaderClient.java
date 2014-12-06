@@ -18,24 +18,24 @@
 
 package network.handlers;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.serialization.ClassResolver;
-import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.channel.SimpleChannelInboundHandler;
+import messages.StarNubMessage;
 
+public class StarNubMessageReaderClient extends SimpleChannelInboundHandler<StarNubMessage> {
 
-public  class StarNubMessageDecoder extends ObjectDecoder {
-    
-    public StarNubMessageDecoder(ClassResolver classResolver) {
-        super(classResolver);
-    }
-
-    public StarNubMessageDecoder(int maxObjectSize, ClassResolver classResolver) {
-        super(maxObjectSize, classResolver);
-    }
+//    private final EventRouter EVENT_ROUTER;
+//
+//    public StarNubMessageReaderClient(EventRouter EVENT_ROUTER) {
+//        this.EVENT_ROUTER = EVENT_ROUTER;
+//    }
 
     @Override
-    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        return super.decode(ctx, in);
+    @SuppressWarnings("unchecked")
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, StarNubMessage starNubMessage) throws Exception {
+        System.out.println(starNubMessage);
+        switch(starNubMessage.getTYPE()){
+
+        }
     }
 }

@@ -20,7 +20,7 @@ package starnubserver.senders;
 
 import starnubserver.StarNub;
 import starnubserver.connections.player.account.Settings;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 
 /**
  * Represents StarNubs MessageSender, This instance will also contain an instance of game colors
@@ -484,12 +484,12 @@ public class NameBuilder {
      */
     private String nameBuilder (Object nameToBuild, boolean console, boolean color, boolean playerTags, boolean originalName){
         String nameString = "";
-        if (nameToBuild instanceof Player) {
-            Player player = (Player) nameToBuild;
+        if (nameToBuild instanceof PlayerSession) {
+            PlayerSession playerSession = (PlayerSession) nameToBuild;
             if (console) {
-                nameString = cPlayerNameBuilderFinal(player, playerTags, originalName);
+                nameString = cPlayerNameBuilderFinal(playerSession, playerTags, originalName);
             } else {
-                nameString = msgPlayerNameBuilderFinal(player, playerTags, originalName);
+                nameString = msgPlayerNameBuilderFinal(playerSession, playerTags, originalName);
             }
         } else if (nameToBuild instanceof String){
             String string = (String) nameToBuild;
@@ -516,18 +516,18 @@ public class NameBuilder {
      * and then formulates many possibilities.
      * <p>
      *
-     * @param player Player representing the name we are building
+     * @param playerSession Player representing the name we are building
      * @param playerTags boolean do we need to include player tags
      * @param originalName boolean do we need to include the ordinal name
      * @return String built player name
      */
-    public String msgPlayerNameBuilderFinal(Player player, boolean playerTags, boolean originalName){
-        String playerName = StarNub.getStarboundServer().getGameColors().getDefaultNameColor() +  player.getNickName();
+    public String msgPlayerNameBuilderFinal(PlayerSession playerSession, boolean playerTags, boolean originalName){
+        String playerName = StarNub.getStarboundServer().getGameColors().getDefaultNameColor() +  playerSession.getNickName();
         if (playerTags) {
             String prefix = "";
             String suffix = "";
-            if (player.getPlayerCharacter().getAccount() != null) {
-                Settings sett = player.getPlayerCharacter().getAccount().getAccountSettings();
+            if (playerSession.getPlayerCharacter().getAccount() != null) {
+                Settings sett = playerSession.getPlayerCharacter().getAccount().getAccountSettings();
                 if (sett.getChatPrefix1() != null) {
                     prefix = sett.getChatPrefix1().getColorTag();
                 }
@@ -551,7 +551,7 @@ public class NameBuilder {
             }
         }
         if (originalName){
-            playerName = player.getGameName() + " (Nick: " + playerName + ")";
+            playerName = playerSession.getGameName() + " (Nick: " + playerName + ")";
         }
         return playerName;
     }
@@ -563,18 +563,18 @@ public class NameBuilder {
      * and then formulates many possibilities.
      * <p>
      *
-     * @param player Player representing the name we are building
+     * @param playerSession Player representing the name we are building
      * @param playerTags boolean do we need to include player tags
      * @param originalName boolean do we need to include the ordinal name
      * @return String built player name
      */
-    public String cPlayerNameBuilderFinal(Player player, boolean playerTags, boolean originalName){
-        String playerName = player.getCleanNickName();
+    public String cPlayerNameBuilderFinal(PlayerSession playerSession, boolean playerTags, boolean originalName){
+        String playerName = playerSession.getCleanNickName();
         if (playerTags) {
             String prefix = "";
             String suffix = "";
-            if (player.getPlayerCharacter().getAccount() != null) {
-                Settings sett = player.getPlayerCharacter().getAccount().getAccountSettings();
+            if (playerSession.getPlayerCharacter().getAccount() != null) {
+                Settings sett = playerSession.getPlayerCharacter().getAccount().getAccountSettings();
                 if (sett.getChatPrefix1() != null) {
                     prefix = sett.getChatPrefix1().getCleanTag();
                 }
@@ -598,7 +598,7 @@ public class NameBuilder {
             }
         }
         if (originalName){
-            playerName = player.getPlayerCharacter().getCleanName() + " (Nick: " + playerName + ")";
+            playerName = playerSession.getPlayerCharacter().getCleanName() + " (Nick: " + playerName + ")";
         }
         return playerName;
     }

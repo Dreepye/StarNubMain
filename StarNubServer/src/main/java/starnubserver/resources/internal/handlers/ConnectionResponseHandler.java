@@ -24,7 +24,7 @@ import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.cache.objects.RejectionCache;
 import starnubserver.connections.player.character.PlayerCharacter;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.packet.PacketEventHandler;
 import utilities.exceptions.CacheWrapperOperationException;
@@ -54,16 +54,16 @@ public class ConnectionResponseHandler extends PacketEventHandler {
         } catch (CacheWrapperOperationException e) {
             StarNub.getLogger().cFatPrint("StarNub", "CRITICAL ERROR, SESSION WILL END: " + e.getMessage());
         }
-        Player player;
+        PlayerSession playerSession;
         if (rejectionCache != null) {
-            player = rejectionCache.getPLAYER();
+            playerSession = rejectionCache.getPLAYERSession();
             if (rejectionCache.isREJECTED()) {
                 connectResponsePacket.setSuccess(false);
                 connectResponsePacket.setRejectionReason(rejectionCache.getPACKET_MESSAGE());
             } else {
-                CONNECTIONS.getCONNECTED_PLAYERS().put(player.getCLIENT_CTX(), player);
+                CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCLIENT_CTX(), playerSession);
                 final RejectionCache finalRejectionCache = rejectionCache;
-                new Thread(() -> postProcessing(player, (int) connectResponsePacket.getClientId(), finalRejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
+                new Thread(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
             }
         }
     }
@@ -73,49 +73,49 @@ public class ConnectionResponseHandler extends PacketEventHandler {
      * <p>
      * Uses: This will handle post processing of this connection
      *
-     * @param player Player representing the player being post processed
+     * @param playerSession Player representing the player being post processed
      * @param starboundClientId int representing the starbound starnubclient id
      * @param rejectionCache RejectionCache representing the reason for rejection
      */
-    private void postProcessing(Player player, int starboundClientId, RejectionCache rejectionCache) {
-        PlayerCharacter playerCharacter = player.getPlayerCharacter();
+    private void postProcessing(PlayerSession playerSession, int starboundClientId, RejectionCache rejectionCache) {
+        PlayerCharacter playerCharacter = playerSession.getPlayerCharacter();
         String characterName = playerCharacter.getCleanName();
         if (!rejectionCache.isREJECTED()) {
-            player.setStarboundClientId(starboundClientId);
-            new StarNubEvent("Player_Connected", player);
+            playerSession.setStarboundClientId(starboundClientId);
+            new StarNubEvent("Player_Connected", playerSession);
         } else {
             RejectionCache.Reason rejectionReason = rejectionCache.getREJECTION_REASON();
             switch (rejectionReason) {
                 case RESTARTING: {
-                    rejectedProcess(player, "Player_Connection_Failure_Server_Restarting", "A player tried to log into the network while its preparing to restart: ");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Server_Restarting", "A player tried to log into the network while its preparing to restart: ");
                     break;
                 }
                 case WHITELIST: {
-                    rejectedProcess(player, "Player_Connection_Failure_Whitelist", "A Player tried connecting while the network is whitelisted on IP: ");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Whitelist", "A Player tried connecting while the network is whitelisted on IP: ");
                     break;
                 }
                 case TEMPORARY_BANNED: {
-                    rejectedProcess(player, "Player_Connection_Failure_Banned_Temporary", "A temporary banned Player tried connecting to the network on IP: ");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Banned_Temporary", "A temporary banned Player tried connecting to the network on IP: ");
                     break;
                 }
                 case BANNED: {
-                    rejectedProcess(player, "Player_Connection_Failure_Banned_Permanent", "A permanently banned Player tried connecting to the network on IP:  ");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Banned_Permanent", "A permanently banned Player tried connecting to the network on IP:  ");
                     break;
                 }
                 case ALREADY_LOGGED_IN: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Already_Online", "A Player tried to log in to the network with the same character multiple times. Character: " + characterName + ". on IP:");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Character_Already_Online", "A Player tried to log in to the network with the same character multiple times. Character: " + characterName + ". on IP:");
                     break;
                 }
                 case SERVER_FULL: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full", "A Player tried to log in to the network while it was full and is not a reserved player. Character: " + characterName + ". on IP:");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Character_Server_Full", "A Player tried to log in to the network while it was full and is not a reserved player. Character: " + characterName + ". on IP:");
                     break;
                 }
                 case SERVER_FULL_NO_VIP: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full_No_Vip", "A Player tried to log in to the network while it was full and is a reserved player, but no reserved slots are free. Character: " + characterName + ". on IP:");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Character_Server_Full_No_Vip", "A Player tried to log in to the network while it was full and is a reserved player, but no reserved slots are free. Character: " + characterName + ". on IP:");
                     break;
                 }
                 case SERVER_FULL_NO_VIP_KICK: {
-                    rejectedProcess(player, "Player_Connection_Failure_Character_Server_Full_No_Vip_Kick", "A Player tried to log in to the network while it was full and is a reserved kick player, but no reserved slots or reserved kick slots are free. Character: " + characterName + ". on IP:");
+                    rejectedProcess(playerSession, "Player_Connection_Failure_Character_Server_Full_No_Vip_Kick", "A Player tried to log in to the network while it was full and is a reserved kick player, but no reserved slots or reserved kick slots are free. Character: " + characterName + ". on IP:");
                     break;
                 }
             }
@@ -127,14 +127,14 @@ public class ConnectionResponseHandler extends PacketEventHandler {
      * <p>
      * Uses: This will handle post processing of this connection
      *
-     * @param player Player representing the player being post processed
+     * @param playerSession Player representing the player being post processed
      * @param eventKey String representing the event key for the event
      * @param consoleMessage String representing the console message to print
      */
-    private void rejectedProcess(Player player, String eventKey, String consoleMessage) {
-        new StarNubEvent(eventKey, player);
-        StarNub.getLogger().cWarnPrint("StarNub", consoleMessage + player.getSessionIpString());
-        player.disconnect();
+    private void rejectedProcess(PlayerSession playerSession, String eventKey, String consoleMessage) {
+        new StarNubEvent(eventKey, playerSession);
+        StarNub.getLogger().cWarnPrint("StarNub", consoleMessage + playerSession.getSessionIpString());
+        playerSession.disconnect();
     }
 }
 

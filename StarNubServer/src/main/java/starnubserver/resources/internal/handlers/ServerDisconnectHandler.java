@@ -21,7 +21,7 @@ package starnubserver.resources.internal.handlers;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubserver.Connections;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventHandler;
 
 public class ServerDisconnectHandler extends PacketEventHandler {
@@ -43,9 +43,9 @@ public class ServerDisconnectHandler extends PacketEventHandler {
     @Override
     public void onEvent(Packet eventData) {
         ServerDisconnectPacket serverDisconnectPacket = (ServerDisconnectPacket) eventData;
-        Player player = CONNECTIONS.getCONNECTED_PLAYERS().get(serverDisconnectPacket.getDESTINATION_CTX());
-        if (player != null){
-            player.disconnectReason("Quit");
+        PlayerSession playerSession = CONNECTIONS.getCONNECTED_PLAYERS().get(serverDisconnectPacket.getDESTINATION_CTX());
+        if (playerSession != null){
+            playerSession.disconnectReason("Quit");
         }
     }
 }

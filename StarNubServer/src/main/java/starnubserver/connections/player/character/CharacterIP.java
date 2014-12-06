@@ -22,29 +22,28 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.apache.commons.lang3.StringUtils;
+import starnubserver.StarNub;
 
 import java.lang.*;
 import java.net.InetAddress;
 
+/**
+ * This class represents a character ip log entry
+ * <p>
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ *
+ */
 @DatabaseTable(tableName = "CHARACTER_IP_LOG")
 public class CharacterIP {
 
-    /**
-     * Represents a an ID for a character id and IP pair
-     */
-
     @DatabaseField(generatedId = true, columnName = "IP_LOG_ID")
-    private int characterIDIPPairid;
+    private int characterIPLogId;
 
-    /**
-     * Represents the character that was seen with a specific IP
-     */
-    @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, foreignAutoRefresh = true, columnName = "CHARACTER_ID")
+    @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, columnName = "CHARACTER_ID")
     private PlayerCharacter playerCharacter;
 
-    /**
-     * Represents this Characters IP in a string used for the database storage, cannot store InetAddress
-     */
     @DatabaseField(dataType = DataType.STRING, canBeNull = false,  uniqueCombo = true, columnName = "IP")
     private String sessionIpString;
 
@@ -53,35 +52,64 @@ public class CharacterIP {
      */
     public CharacterIP(){}
 
-    public int getCharacterIDIPPairid() {
-        return characterIDIPPairid;
+    /**
+     * Constructor used in adding, removing or updating a object in the database table character_ip_log
+     *
+     * @param playerCharacter PlayerCharacter of the character that was seen with this ip
+     * @param sessionIpString String representing the IP Address as a string
+     */
+    public CharacterIP(PlayerCharacter playerCharacter, String sessionIpString, boolean createEntry) {
+        this.playerCharacter = playerCharacter;
+        this.sessionIpString = sessionIpString;
+        if (createEntry){
+            StarNub.getDatabaseTables().getCharacterIPLog().createOrUpdate(this);
+        }
+    }
+
+    /**
+     * Constructor used in adding, removing or updating a object in the database table character_ip_log
+     *
+     * @param playerCharacter PlayerCharacter of the character that was seen with this ip
+     * @param sessionIp InetAddress representing the IP Address
+     */
+    public CharacterIP(PlayerCharacter playerCharacter, InetAddress sessionIp, boolean createEntry) {
+        this.playerCharacter = playerCharacter;
+        this.sessionIpString = StringUtils.remove(sessionIp.toString(), "/");
+        if (createEntry){
+            StarNub.getDatabaseTables().getCharacterIPLog().createOrUpdate(this);
+        }
+    }
+
+    public int getCharacterIPLogId() {
+        return characterIPLogId;
+    }
+
+    public void setCharacterIPLogId(int characterIPLogId) {
+        this.characterIPLogId = characterIPLogId;
     }
 
     public PlayerCharacter getPlayerCharacter() {
         return playerCharacter;
     }
 
+    public void setPlayerCharacter(PlayerCharacter playerCharacter) {
+        this.playerCharacter = playerCharacter;
+    }
+
     public String getSessionIpString() {
         return sessionIpString;
     }
 
-    /**
-     * Constructor used in adding, removing or updating a object in the database table character_ip_log
-     * @param playerCharacter PlayerCharacter of the character that was seen with this ip
-     * @param sessionIpString String representing the IP Address as a string
-     */
-    public CharacterIP(PlayerCharacter playerCharacter, String sessionIpString) {
-        this.playerCharacter = playerCharacter;
+    public void setSessionIpString(String sessionIpString) {
         this.sessionIpString = sessionIpString;
     }
 
-    /**
-     * Constructor used in adding, removing or updating a object in the database table character_ip_log
-     * @param playerCharacter PlayerCharacter of the character that was seen with this ip
-     * @param sessionIp InetAddress representing the IP Address
-     */
-    public CharacterIP(PlayerCharacter playerCharacter, InetAddress sessionIp) {
-        this.playerCharacter = playerCharacter;
-        this.sessionIpString = StringUtils.remove(sessionIp.toString(), "/");
+    @Override
+    public String toString() {
+        return "CharacterIP{" +
+                "characterIPLogId=" + characterIPLogId +
+                ", playerCharacter=" + playerCharacter +
+                ", sessionIpString='" + sessionIpString + '\'' +
+                '}';
     }
 }

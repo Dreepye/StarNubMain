@@ -40,146 +40,42 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * Represents a StarNub account. Accounts are crucial. They are require for StarNub.
- * This will explain how the account system works...
+ * This class represents a StarNub account.
  * <p>
- * When a player logs into the starbounddata.packets.starbounddata.packets.starnubserver, that is a character the {@link starnubserver.connections.player.character.PlayerCharacter}
- * class represents this that character gets attached to a {@link starnubserver.connections.player.session.Player} session, the Player
- * class represents the session of a character while online. Now the character/player can choose to create an account. This account
- * then hold their personal server settings and preferences, like ignore list, starbounddata.packets.chat rooms they were in, ect ect. This Account class
- * also hold the groups the player is apart of, the permissions they have and a list of all the other characters associated with
- * this Account. This is how a user is abel to switch characters but maintain all of the data previously started on another character.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
+ *
  */
 @DatabaseTable(tableName = "ACCOUNTS")
 public class Account {
 
-    /**
-     * Represents the accounts unique StarNub ID which is used in other database tables
-     */
-
     @DatabaseField(generatedId = true, columnName = "STARNUB_ID")
     private volatile int starnubId;
 
-    /**
-     * Represents the account name associated with the starnubclient id
-     */
-
     @DatabaseField(dataType = DataType.STRING, columnName = "ACCOUNT_NAME")
     private volatile String accountName;
-
-    /**
-     * Represents the account password associated with the account id and name
-     */
 
     @DatabaseField(dataType = DataType.STRING, columnName = "PASSWORD")
     private volatile String accountPassword;
 
     /**
-     * Represents the account password associated with the account id and name
+     * Used with DANKS CMS
      */
-
     @DatabaseField(dataType = DataType.STRING, columnName = "SALT")
     private volatile String accountSalt;
-
-    /**
-     * This holds the account settings and preferences
-     */
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "SETTINGS_ID")
     private volatile Settings accountSettings;
 
-    /**
-     * Represents the start time in UTC from when the Player starbounddata.packets.connection was completely excepted
-     */
-
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_LOGIN")
     private volatile DateTime lastLogin;
 
-    /**
-     * Represents the groups associated to this account
-     */
+    @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
+    private volatile ForeignCollection<PlayerCharacter> characters;
 
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
     private volatile ForeignCollection<GroupAssignment> groups;
-
-    /**
-     * Represents the characters associated to this account
-     */
-
-    @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
-    private volatile ForeignCollection<PlayerCharacter> playerCharacters;
-
-    /**
-     * This represents whether an account has been disabled or not
-     * <p>
-     */
-
-    @DatabaseField(dataType = DataType.BOOLEAN, canBeNull = true, columnName = "DISABLED")
-    private volatile boolean disbaled;
-
-    /**
-     * Represents the time the account was disabled
-     */
-
-    @DatabaseField(dataType = DataType.DATE_TIME, columnName = "DISABLED_DATE")
-    private volatile DateTime dateDisabled;
-
-    /**
-     * This reason the account was disabled
-     */
-
-    @DatabaseField(dataType = DataType.STRING, canBeNull = true, columnName = "DISABLED_REASON")
-    private volatile String disabledReason;
-
-    /**
-     * Represents the time the account will no longer be disabled
-     */
-
-    @DatabaseField(dataType = DataType.DATE_TIME, columnName = "DISABLED_EXPIRE_DATE")
-    private volatile DateTime dateRestrictionExpires;
-
-    /**
-     * Represents who disabled the account as a String
-     */
-
-    @DatabaseField(dataType = DataType.STRING, columnName = "IMPOSER_NAME")
-    private volatile String imposerName;
-
-    /**
-     * Represents who disabled this as a Account
-     */
-
-    @DatabaseField(foreign = true, columnName = "IMPOSER_STARNUB_ID")
-    private volatile Account imposerAccount;
-
-    /**
-     * Represents the permissions an account has. They are stored in a tree for mate.
-     * <p>
-     * Example: commandname -|
-     *                          -sub_permissions
-     *                                            - commands
-     *
-     * starnubserver.whisper.pm
-     * starnubserver.whisper.msg
-     * starnubserver.whisper.w
-     * starnubserver.whisper.whisper
-     * Where "starnubserver" is the command name, "whisper" is the sub permission, pm, msg, w, whisper are the commands that can be
-     * used to invoke the whisper command. If an account only has starnubserver.whisper.pm, then only /sn pm, /starnubserver pm or /pm would
-     * work. In this ConcurrentHashMap.... ConcurrentHashMap<{commandname}ConcurrentHashMap<subpermission, ArrayList<commands>>>
-     * <p>
-     * Lets take the above commands and a few more and show that the tree would look like. starboundmanager.kick.kick, starboundmanager.admin.broadcast,
-     * starboundmanager.admin.killplayer, someplugin.chatness.chatcolors
-     * starnubserver -|
-     *          |-whisper |- List containing (w, msg, pm, whisper)
-     * starboundmanager -|
-     *            |- kick  |- List containing kick
-     *            |- admin |- List containing broadcast, killplayer
-     * someplugin -|
-     *             |- chatness |- chatcolors
-     */
 
     private ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> permissions;
 
@@ -187,6 +83,38 @@ public class Account {
      * Constructor for database purposes
      */
     public Account() {}
+
+    /**
+     * Constructor used in account creation. Once the account is created, the account name cannot be changed.
+     *
+     * @param accountName String representing the account name
+     * @param accountPassword String representing the password
+     */
+    public Account(PlayerCharacter player, String accountName, String accountPassword) {
+        this.accountName = accountName;
+//        this.accountSettings = new Settings(accountName, StarNub.getStarboundServer().getServerChat().getChatRoomByName("Universe"));
+        this.lastLogin = DateTime.now();
+        try {
+            this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
+        } catch (Exception e) {
+//            StarNub.getMessageSender().playerMessage("StarNub", player,"There was a critical error in creating your account. Something " +
+//                    "went wrong with your password, please contact a administrator.");
+        }
+        try {
+            this.groups = StarNub.getDatabaseTables().getAccounts().getTableDao().getEmptyForeignCollection("GROUP_ASSIGNMENTS");
+        } catch (SQLException e) {
+            StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
+        }
+        StarNub.getDatabaseTables().getAccounts().createIfNotExist(this);
+//        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
+//            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
+//            if (((String) group.get("type")).equalsIgnoreCase("default")) {
+//                getAndAddGroup(groupName);
+//            }
+//        }
+        loadPermissions();
+        setUpdateTagsMainGroups();
+    }
 
     public int getStarnubId() {
         return starnubId;
@@ -242,38 +170,6 @@ public class Account {
 
     public ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> getPermissions() {
         return permissions;
-    }
-
-    /**
-     * Constructor used in account creation. Once the account is created, the account name cannot be changed.
-     *
-     * @param accountName String representing the account name
-     * @param accountPassword String representing the password
-     */
-    public Account(PlayerCharacter player, String accountName, String accountPassword) {
-        this.accountName = accountName;
-//        this.accountSettings = new Settings(accountName, StarNub.getStarboundServer().getServerChat().getChatRoomByName("Universe"));
-        this.lastLogin = DateTime.now();
-        try {
-            this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
-        } catch (Exception e) {
-//            StarNub.getMessageSender().playerMessage("StarNub", player,"There was a critical error in creating your account. Something " +
-//                    "went wrong with your password, please contact a administrator.");
-        }
-        try {
-            this.groups = StarNub.getDatabaseTables().getAccounts().getTableDao().getEmptyForeignCollection("GROUP_ASSIGNMENTS");
-        } catch (SQLException e) {
-            StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
-        }
-        StarNub.getDatabaseTables().getAccounts().createIfNotExist(this);
-//        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
-//            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
-//            if (((String) group.get("type")).equalsIgnoreCase("default")) {
-//                getAndAddGroup(groupName);
-//            }
-//        }
-        loadPermissions();
-        setUpdateTagsMainGroups();
     }
 
     public void getAndAddGroup(String groupToGet){

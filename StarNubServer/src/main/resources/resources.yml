@@ -87,6 +87,11 @@ file: ['starnub_configuration.yml', 'StarNub/'],
         "fatal": 3
     },
     "resources": {
+      "central_server": {
+        "license": "none",
+        "addresses": ['central1.starnub.org', 'central2.starnub.org'],
+        "port": 666
+        },
         "event_thread_count": 2,
         "event_que_size": 128,
         "scheduled_task_thread_count": 2

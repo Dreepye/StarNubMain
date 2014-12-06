@@ -20,10 +20,7 @@ package utilities.connectivity.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -39,21 +36,14 @@ public class TCPClient {
         workerGroup = new NioEventLoopGroup(1, Executors.newCachedThreadPool(new NamedThreadFactory(threadName)));
     }
 
-    public Channel connect(String ipAddress, int port, ChannelInitializer<SocketChannel> channelInitializer) {
-        try {
-            Bootstrap b = new Bootstrap()
-                    .group(workerGroup)
-                    .channel(NioSocketChannel.class)
-                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                    .option(ChannelOption.SO_KEEPALIVE, true)
-                    .handler(channelInitializer);
-            return b.connect(ipAddress, port).sync().channel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            workerGroup.shutdownGracefully();
-        }
-        return null;
+    public ChannelFuture connect(String ipAddress, int port, ChannelInitializer<SocketChannel> channelInitializer) {
+        Bootstrap b = new Bootstrap()
+                .group(workerGroup)
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(channelInitializer);
+        return b.connect(ipAddress, port);
     }
 
     public void shutdown() {

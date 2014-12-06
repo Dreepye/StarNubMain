@@ -26,6 +26,13 @@
     <issueManagement>
         <url>http://www.starnub.org</url>
     </issueManagement>
+    <distributionManagement>
+        <repository>
+            <id>centralserver</id>
+            <name>StarNub Central Server</name>
+            <url>file:///H:/Back Up/Servers/Programming/deployed_artifacts</url>
+        </repository>
+    </distributionManagement>
     <build>
         <finalName>starnubserver</finalName>
         <plugins>
@@ -48,7 +55,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>dependency-starnubserver.jars/</classpathPrefix>
-                            <mainClass>org.StarNub</mainClass>
+                            <mainClass>starnubserver.StarNub</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -220,6 +227,7 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
         </dependency>
+        <!--<STARNUB MODULE DEPENDENCIES>-->
         <dependency>
             <groupId>org.starnub</groupId>
             <artifactId>utilities</artifactId>
@@ -235,6 +243,12 @@
             <artifactId>starbounddata</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.starnub</groupId>
+            <artifactId>starnubdata</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <!--<STARNUB MODULE DEPENDENCIES>-->
         <!--<DEVELOPER SETTING>-->
         <dependency>
             <groupId>org.slf4j</groupId>

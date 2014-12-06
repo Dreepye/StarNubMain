@@ -18,20 +18,16 @@
 
 package messages;
 
-import java.util.UUID;
+public class StarNubMessageLicense extends StarNubMessage {
 
-public class StarNubUUIDBan extends StarNubBan {
+    private final String KEY;
 
-    private final UUID UUID;
-
-    public StarNubUUIDBan(Direction DIRECTION, Type TYPE, BanIdentifier BAN_IDENTIFIER, BanRequest BAN_REQUEST, java.util.UUID UUID) {
-        super(DIRECTION, TYPE, BAN_IDENTIFIER, BAN_REQUEST);
-        this.UUID = UUID;
+    public StarNubMessageLicense(Type TYPE, String KEY) {
+        super(TYPE);
+        this.KEY = KEY;
     }
 
-    public UUID getUUID() {
-        return UUID;
+    public String getKEY() {
+        return KEY;
     }
-
-
 }

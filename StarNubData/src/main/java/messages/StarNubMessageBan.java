@@ -16,18 +16,27 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package network.handlers;
+package messages;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 
-import java.io.Serializable;
 
-public class StarNubMessageEncoder extends ObjectEncoder {
+public class StarNubMessageBan extends StarNubMessage {
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Serializable msg, ByteBuf out) throws Exception {
-        super.encode(ctx, msg, out);
+//    private final Ban BAN;
+//
+    public StarNubMessageBan(Type TYPE) {
+        super(TYPE);
+//        this.BAN = BAN;
     }
+//
+//    public Ban getBAN() {
+//        return BAN;
+////    }
+//
+//    @Override
+//    public String toString() {
+//        return "StarNubMessageBan{" +
+//                "BAN=" + BAN +
+//                "} " + super.toString();
+//    }
 }

@@ -18,6 +18,11 @@
 
 package starnubserver;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import network.StarNubMessageClientInitializer;
 import org.joda.time.DateTime;
 import starnubserver.database.DatabaseTables;
 import starnubserver.events.events.StarNubEvent;
@@ -28,6 +33,9 @@ import starnubserver.resources.Configuration;
 import starnubserver.resources.ResourceManager;
 import starnubserver.senders.NameBuilder;
 import utilities.concurrency.task.TaskManager;
+import utilities.connectivity.client.TCPClient;
+
+import javax.net.ssl.SSLException;
 
 /**
  * Represents the StarNubs core.
@@ -46,6 +54,7 @@ public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
+    private static final TCPClient tcpClient = new TCPClient("StarNub - Central Client - Worker Thread");
     private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
     private static final NameBuilder nameBuilder = new NameBuilder();// MAKE STATIC AND NOT HERE TODO
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
@@ -55,6 +64,8 @@ public final class StarNub {
     private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
     private static final Connections connections = Connections.getInstance();
+
+    private static Channel tcpClientChannel;
 
     public static Connections getConnections() {
         return connections;
@@ -100,6 +111,16 @@ public final class StarNub {
         return taskManager;
     }
 
+    public static void connectToCentralServer(String host, int port) throws SSLException {
+        final SslContext SSL_CTX = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
+        ChannelFuture channelFuture = tcpClient.connect(host, port, new StarNubMessageClientInitializer(SSL_CTX, host, port));
+        tcpClientChannel = channelFuture.channel();
+    }
+
+    public static void disconnectFromCentralServer(){
+        tcpClient.shutdown();
+    }
+
     public static void main(String[] args) {
         start();
     }
@@ -107,6 +128,22 @@ public final class StarNub {
     private static void start () {
         /* This Resource detector is for debugging only */
 //        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
+//        try {
+//            connectToCentralServer("127.0.0.1", 666);
+//        } catch (SSLException e) {
+//            e.printStackTrace();
+//        }
+//        ThreadSleep.timerSeconds(10);
+//        Ban ban = new Ban();
+//        ban.setBan("127.0.0.1", "Poop", "Test", new DateTime());
+//        for (int i = 0; i < 10; i++) {
+//            StarNubMessage starNubMessage = new StarNubMessageBan(
+//                    StarNubMessage.Type.BAN_ADD,
+//                    ban
+//            );
+//            System.out.println(starNubMessage);
+//            tcpClientChannel.writeAndFlush(starNubMessage);
+//        }
 
         /* Setting Temporary Time - Measuring StarNub Start Up Time */
         DateTime starnubStarTime = DateTime.now();

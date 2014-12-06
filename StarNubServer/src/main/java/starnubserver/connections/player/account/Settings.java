@@ -25,12 +25,12 @@ import starnubserver.StarNub;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
 import starnubserver.connections.player.groups.Tag;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
 public class Settings {
 
-    @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS")
+    @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS_ID")
     private volatile String accountSettings;
 
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_1")
@@ -155,21 +155,21 @@ public class Settings {
     }
 
     public void availableTags(Object sender, Object playerIdentifier){
-        Player playerSession = null;
+        PlayerSession playerSessionSession = null;
 //        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        if (playerSession == null) {
+        if (playerSessionSession == null) {
 //            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when looking up available Tags.");
             return;
         }
-        if (playerSession.getPlayerCharacter().getAccount() == null) {
+        if (playerSessionSession.getPlayerCharacter().getAccount() == null) {
 //            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
             return;
         }
         String availableTags = "Available Tags: ";
-        for (GroupAssignment groupAssignment : playerSession.getPlayerCharacter().getAccount().getGroups()) {
+        for (GroupAssignment groupAssignment : playerSessionSession.getPlayerCharacter().getAccount().getGroups()) {
             Group group = groupAssignment.getGroup();
             String groupTag = group.getTag().getName();
-            if (sender instanceof Player) {
+            if (sender instanceof PlayerSession) {
                 groupTag = group.getTag().getColor()+groupTag;
                 availableTags = availableTags + buildTagFinal(groupTag) + ", ";
             } else {
@@ -181,7 +181,7 @@ public class Settings {
         } catch (StringIndexOutOfBoundsException e) {
             /* Do nothing no players are online */
         }
-        if (sender instanceof Player) {
+        if (sender instanceof PlayerSession) {
 //            StarNub.getMessageSender().playerMessage("StarNub", sender, availableTags);
         } else {
             StarNub.getLogger().cInfoPrint("StarNub", availableTags);
@@ -189,13 +189,13 @@ public class Settings {
     }
 
     public void setPreffixOrSuffix(Object sender, Object playerIdentifier, boolean prefix, int position, String prefixOrSuffix){
-        Player playerSession =null;
+        PlayerSession playerSessionSession =null;
 //        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        if (playerSession == null) {
+        if (playerSessionSession == null) {
 //            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when trying to set Tags.");
             return;
         }
-        if (playerSession.getPlayerCharacter().getAccount() == null) {
+        if (playerSessionSession.getPlayerCharacter().getAccount() == null) {
 //            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
             return;
         }
@@ -205,7 +205,7 @@ public class Settings {
         if (prefixOrSuffix.contains("[")) {
             prefixOrSuffix =  prefixOrSuffix.replace("[", "");
         }
-        for (GroupAssignment groupAssignment : playerSession.getPlayerCharacter().getAccount().getGroups()) {
+        for (GroupAssignment groupAssignment : playerSessionSession.getPlayerCharacter().getAccount().getGroups()) {
             Group group = groupAssignment.getGroup();
             String groupTag = group.getTag().getName();
             if (groupTag.equalsIgnoreCase(prefixOrSuffix)) {

@@ -30,8 +30,8 @@ import starnubserver.StarNub;
 import starnubserver.cache.objects.RejectionCache;
 import starnubserver.cache.wrappers.PlayerUUIDCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
-import starnubserver.connections.player.session.Ban;
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.generic.Ban;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.packet.PacketEventHandler;
 import starnubserver.events.starnub.StarNubEventHandler;
@@ -65,15 +65,15 @@ public class ClientConnectHandler extends PacketEventHandler {
         new StarNubEventSubscription("StarNub", "Player_Connected", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
-                Player player = (Player) eventData.getEVENT_DATA();
+                PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
                 TimeCache timeCache = null;
                 try {
-                    timeCache = RESERVED_KICKED.removeCache(player.getPlayerCharacter().getUuid());
+                    timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
                 } catch (CacheWrapperOperationException e) {
                     StarNub.getLogger().cFatPrint("StarNub", e.getMessage());
                 }
                 if (timeCache != null) {
-                    player.sendChatMessage("StarNub", ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "You were disconnected to make room for a player" +
+                    playerSession.sendChatMessage("StarNub", ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "You were disconnected to make room for a player" +
                             "who has a Reserved Server Slot.");
                 }
             }
@@ -98,7 +98,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         String playerName = clientConnectPacket.getPlayerName();
         UUID playerUUID = clientConnectPacket.getUuid();
 
-        Player player = new Player(starnubProxyConnection, playerName, playerUUID);
+        PlayerSession playerSession = new PlayerSession(starnubProxyConnection, playerName, playerUUID);
 
         String header =
                 "^#f5f5f5;-== " + StarNub.getConfiguration().getNestedValue("starnub_info", "server_name") + " ==-\n" +
@@ -109,42 +109,42 @@ public class ClientConnectHandler extends PacketEventHandler {
         RejectionCache rejectionCache = null;
 
         /* Server Restarting Check */
-        rejectionCache = restartingCheck(player, header, footer);
+        rejectionCache = restartingCheck(playerSession, header, footer);
         if (rejectionCache != null) {
             addToRejections(rejectionCache, clientConnectPacket);
             return;
         }
 
         /* Player Whitelist Check */
-        rejectionCache = whitelist(player, header, footer);
+        rejectionCache = whitelist(playerSession, header, footer);
         if (rejectionCache != null) {
             addToRejections(rejectionCache, clientConnectPacket);
             return;
         }
 
         /* Player Ban Check */
-        rejectionCache = bannedCheck(player, header, footer);
+        rejectionCache = bannedCheck(playerSession, header, footer);
         if (rejectionCache != null) {
             addToRejections(rejectionCache, clientConnectPacket);
             return;
         }
 
         /* Already Logged On */
-        rejectionCache = alreadyLoggedOn(player, header, footer);
+        rejectionCache = alreadyLoggedOn(playerSession, header, footer);
         if (rejectionCache != null) {
             addToRejections(rejectionCache, clientConnectPacket);
             return;
         }
 
         /* Server Full Check */
-        rejectionCache = serverFull(player, header, footer);
+        rejectionCache = serverFull(playerSession, header, footer);
         if (rejectionCache != null) {
             addToRejections(rejectionCache, clientConnectPacket);
             return;
         }
 
         /* Allow Connection */
-        addToRejections(new RejectionCache(false, player), clientConnectPacket);
+        addToRejections(new RejectionCache(false, playerSession), clientConnectPacket);
     }
 
     /**
@@ -157,11 +157,11 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @return ClientConnectPacket must be returned to be sent back into the stream
      */
     private ClientConnectPacket addToRejections(RejectionCache rejectionCache, ClientConnectPacket clientConnectPacket) {
-        Player player = rejectionCache.getPLAYER();
-        ChannelHandlerContext clientCTX = player.getCLIENT_CTX();
-        player.getPlayerCharacter().setLastSeen(DateTime.now());
+        PlayerSession playerSession = rejectionCache.getPLAYERSession();
+        ChannelHandlerContext clientCTX = playerSession.getCLIENT_CTX();
+        playerSession.getPlayerCharacter().updateLastSeen(DateTime.now());
         new StarNubEvent("Player_Connection_Attempt", this);
-        StarNub.getLogger().cDebPrint("StarNub", "A player named "+ player.getPlayerCharacter().getCleanName() +" is attempting to connect to the server on IP: " + player.getSessionIpString() + ".");
+        StarNub.getLogger().cDebPrint("StarNub", "A player named "+ playerSession.getPlayerCharacter().getCleanName() +" is attempting to connect to the server on IP: " + playerSession.getSessionIpString() + ".");
         try {
             CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().addCache(clientCTX, rejectionCache);
         } catch (CacheWrapperOperationException e) {
@@ -175,15 +175,15 @@ public class ClientConnectHandler extends PacketEventHandler {
      * <p>
      * Uses: This checks to see if the network is restarting
      *
-     * @param player Player player session
+     * @param playerSession Player player session
      * @param header rejection header
      * @param footer rejection footer
      * @return RejectionCache or null depending if we need to reject this player
      */
-    private RejectionCache restartingCheck(Player player, String header, String footer) {
+    private RejectionCache restartingCheck(PlayerSession playerSession, String header, String footer) {
         if (StarNub.getStarboundServer().getStarboundManager().getStatus() instanceof Starting) {
             String reason = "\n^#f5f5f5;Starbound is restarting, please come back in a few minutes.\n";
-            return new RejectionCache(true, RejectionCache.Reason.RESTARTING, header + reason + footer, player);
+            return new RejectionCache(true, RejectionCache.Reason.RESTARTING, header + reason + footer, playerSession);
         } else {
             return null;
         }
@@ -194,15 +194,15 @@ public class ClientConnectHandler extends PacketEventHandler {
      * <p>
      * Uses: This checks to see if the network is whitelisted and is the player on it
      *
-     * @param player Player player session
+     * @param playerSession Player player session
      * @param header rejection header
      * @param footer rejection footer
      * @return RejectionCache or null depending if we need to reject this player
      */
-    private RejectionCache whitelist(Player player, String header, String footer) {
+    private RejectionCache whitelist(PlayerSession playerSession, String header, String footer) {
         if ((boolean) (StarNub.getConfiguration().getNestedValue("starnub_settings", "whitelisted"))) {
-            String playerIP = player.getSessionIpString();
-            String playerUUID = player.getPlayerCharacter().getUuid().toString();
+            String playerIP = playerSession.getSessionIpString();
+            String playerUUID = playerSession.getPlayerCharacter().getUuid().toString();
             boolean ipWhitelisted = false;
             boolean uuidWhitelisted = false;
             try {
@@ -217,7 +217,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                 return null;
             } else {
                 String reason = "\n^#f5f5f5;This network is whitelisted.\n";
-                return new RejectionCache(true, RejectionCache.Reason.WHITELIST, header + reason + footer, player);
+                return new RejectionCache(true, RejectionCache.Reason.WHITELIST, header + reason + footer, playerSession);
             }
         } else {
             return null;
@@ -229,28 +229,28 @@ public class ClientConnectHandler extends PacketEventHandler {
      * <p>
      * Uses: This checks to see if the player is banned or not by uuid and ip
      *
-     * @param player Player player session
+     * @param playerSession Player player session
      * @param header rejection header
      * @param footer rejection footer
      * @return RejectionCache or null depending if we need to reject this player
      */
-    private RejectionCache bannedCheck(Player player, String header, String footer) {
-        Ban ban = player.getPlayerCharacter().getBan();
+    private RejectionCache bannedCheck(PlayerSession playerSession, String header, String footer) {
+        Ban ban = playerSession.getPlayerCharacter().getBan();
         if (ban != null) {
             DateTime dateRestrictionExpires = ban.getDateRestrictionExpires();
             String reason;
             RejectionCache.Reason bannedReason = null;
             if (dateRestrictionExpires == null) {
                 reason =
-                        "\n^#f5f5f5;You have been permanently banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDateRestricted());
+                        "\n^#f5f5f5;You have been permanently banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDateBanned());
                 bannedReason = RejectionCache.Reason.BANNED;
             } else {
                 reason =
-                        "^#f5f5f5;You have been temporarily banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDateRestricted()) +
+                        "^#f5f5f5;You have been temporarily banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDateBanned()) +
                                 "\n^#f5f5f5;You will be automatically unbanned on: \n^#990000;" + DateAndTimes.getFormattedDate("MMMM dd, yyyy '@' HH:mm '- Server Time'", dateRestrictionExpires);
                 bannedReason = RejectionCache.Reason.TEMPORARY_BANNED;
             }
-            return new RejectionCache(true, bannedReason, header + reason + footer, player);
+            return new RejectionCache(true, bannedReason, header + reason + footer, playerSession);
         } else {
             return null;
         }
@@ -261,24 +261,24 @@ public class ClientConnectHandler extends PacketEventHandler {
      * <p>
      * Uses: This checks to see if the player is logged in already, the first time they cannot connect, the second they disconnect the current player
      *
-     * @param player Player player session
+     * @param playerSession Player player session
      * @param header rejection header
      * @param footer rejection footer
      * @return RejectionCache or null depending if we need to reject this player
      */
-    private RejectionCache alreadyLoggedOn(Player player, String header, String footer) { //DEBUG - THIS METHOD - Does not disconnect on second attempt
-        UUID uuid = player.getPlayerCharacter().getUuid();
+    private RejectionCache alreadyLoggedOn(PlayerSession playerSession, String header, String footer) { //DEBUG - THIS METHOD - Does not disconnect on second attempt
+        UUID uuid = playerSession.getPlayerCharacter().getUuid();
         boolean isOnline = CONNECTIONS.getCONNECTED_PLAYERS().isOnline("StarNub", uuid);
         if (isOnline) {
             try {
                 if (ALREADY_LOGGED_ON.getCache(uuid) != null) {
-                    Player playerDisconnect = CONNECTIONS.getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(uuid);
-                    playerDisconnect.disconnectReason("Same_Character_Login");
+                    PlayerSession playerSessionDisconnect = CONNECTIONS.getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(uuid);
+                    playerSessionDisconnect.disconnectReason("Same_Character_Login");
                     ALREADY_LOGGED_ON.removeCache(uuid);
                 } else {
                     ALREADY_LOGGED_ON.addCache(uuid, new TimeCache());
                     String reason = "\n^#f5f5f5;You are already logged into this Server with this character. Please try again.";
-                    return new RejectionCache(true, RejectionCache.Reason.ALREADY_LOGGED_IN, header + reason + footer, player);
+                    return new RejectionCache(true, RejectionCache.Reason.ALREADY_LOGGED_IN, header + reason + footer, playerSession);
                 }
             } catch (CacheWrapperOperationException e) {
                 StarNub.getLogger().cFatPrint("StarNub", e.getMessage());
@@ -292,12 +292,12 @@ public class ClientConnectHandler extends PacketEventHandler {
      * <p>
      * Uses: This checks to see if the network is full. Reserved Kick can will kick regular players first, then reserved players. Reserved plays can only ick regular players
      *
-     * @param player Player player session
+     * @param playerSession Player player session
      * @param header rejection header
      * @param footer rejection footer
      * @return RejectionCache or null depending if we need to reject this player
      */
-    private RejectionCache serverFull(Player player, String header, String footer) {
+    private RejectionCache serverFull(PlayerSession playerSession, String header, String footer) {
         int currentPlayerCount = CONNECTIONS.getCONNECTED_PLAYERS().size();
         int playerLimit = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit");
         int vipLimit = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit_reserved");
@@ -308,36 +308,36 @@ public class ClientConnectHandler extends PacketEventHandler {
             boolean spaceMade = false;
             TimeCache timeCache = null;
             try {
-                timeCache = RESERVED_KICKED.removeCache(player.getPlayerCharacter().getUuid());
+                timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
             } catch (CacheWrapperOperationException e) {
                 e.printStackTrace();
             }
             if (timeCache != null) {
                 previousKick = "\n^#f5f5f5;You were previously Kicked to make room for a player with a reserved Slot.";
             }
-            if (player.hasPermission("starnubinternals.reserved.kick", true)) {
-                for (Player playerToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
+            if (playerSession.hasPermission("starnubinternals.reserved.kick", true)) {
+                for (PlayerSession playerSessionToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
                     if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                         spaceMade = true;
                         break;
-                    } else if (!playerToKick.hasPermission("starnubinternals.reserved", true) || !playerToKick.hasPermission("starnubinternals.reserved.kick", true)) {
-                        player.disconnectReason("Reserved_Kick");
+                    } else if (!playerSessionToKick.hasPermission("starnubinternals.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
+                        playerSession.disconnectReason("Reserved_Kick");
                         try {
-                            RESERVED_KICKED.addCache(playerToKick.getPlayerCharacter().getUuid(), new TimeCache());
+                            RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                         } catch (CacheWrapperOperationException e) {
                             e.printStackTrace();
                         }
                     }
                 }
                 if (!spaceMade) {
-                    for (Player playerToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
+                    for (PlayerSession playerSessionToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
                         if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                             spaceMade = true;
                             break;
-                        } else if (!playerToKick.hasPermission("starnubinternals.reserved.kick", true)) {
-                            player.disconnectReason("Reserved_Kick");
+                        } else if (!playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
+                            playerSession.disconnectReason("Reserved_Kick");
                             try {
-                                RESERVED_KICKED.addCache(playerToKick.getPlayerCharacter().getUuid(), new TimeCache());
+                                RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                             } catch (CacheWrapperOperationException e) {
                                 e.printStackTrace();
                             }
@@ -346,17 +346,17 @@ public class ClientConnectHandler extends PacketEventHandler {
                 }
                 if (!spaceMade) {
                     reason = "^#f5f5f5;This network is full and no more VIP slots are available.";
-                    return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP_KICK, header + reason + footer, player);
+                    return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP_KICK, header + reason + footer, playerSession);
                 }
-            } else if (player.hasPermission("starnubinternals.reserved", true)) {
-                for (Player playerToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
+            } else if (playerSession.hasPermission("starnubinternals.reserved", true)) {
+                for (PlayerSession playerSessionToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
                     if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                         spaceMade = true;
                         break;
-                    } else if (!playerToKick.hasPermission("starnubinternals.reserved", true) || !playerToKick.hasPermission("starnubinternals.reserved.kick", true)) {
-                        player.disconnectReason("Reserved_Kick");
+                    } else if (!playerSessionToKick.hasPermission("starnubinternals.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
+                        playerSession.disconnectReason("Reserved_Kick");
                         try {
-                            RESERVED_KICKED.addCache(playerToKick.getPlayerCharacter().getUuid(), new TimeCache());
+                            RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                         } catch (CacheWrapperOperationException e) {
                             e.printStackTrace();
                         }
@@ -364,11 +364,11 @@ public class ClientConnectHandler extends PacketEventHandler {
                 }
                 if (!spaceMade) {
                     reason = "^#f5f5f5;This network is full and no more VIP slots are available." + previousKick;
-                    return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP, header + reason + footer, player);
+                    return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP, header + reason + footer, playerSession);
                 }
             } else {
                 reason = "^#f5f5f5;This network is full and you do not have permission to enter." + previousKick;
-                return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL, header + reason + footer, player);
+                return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL, header + reason + footer, playerSession);
             }
         }
         return null;

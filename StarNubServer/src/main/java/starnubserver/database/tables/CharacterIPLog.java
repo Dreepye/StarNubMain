@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -120,7 +121,7 @@ public class CharacterIPLog extends TableWrapper<CharacterIP, Integer> {
         return associatedIps;
     }
 
-    public List<CharacterIP> getCharactersAssociatedIPList(PlayerCharacter playerCharacter){
+    public List<CharacterIP> getCharacterIpLogs(PlayerCharacter playerCharacter){
         try {
             return getTableDao().queryBuilder().where()
                     .eq("CHARACTER_ID", playerCharacter)
@@ -129,5 +130,27 @@ public class CharacterIPLog extends TableWrapper<CharacterIP, Integer> {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
         }
         return null;
+    }
+
+    public List<CharacterIP> getCharacterIpLogs(String ip){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .eq("IP", ip)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public HashSet<CharacterIP> getAllCharactersAllIpsList(PlayerCharacter playerCharacter){
+        List<CharacterIP> characterIPs = getCharacterIpLogs(playerCharacter);
+        HashSet<CharacterIP> characterIPHashSet = new HashSet<>();
+        characterIPHashSet.addAll(characterIPs);
+        for (CharacterIP characterIP : characterIPs){
+            List<CharacterIP> characterIPsSub = getCharacterIpLogs(characterIP.getSessionIpString());
+            characterIPHashSet.addAll(characterIPsSub);
+        }
+        return characterIPHashSet;
     }
 }

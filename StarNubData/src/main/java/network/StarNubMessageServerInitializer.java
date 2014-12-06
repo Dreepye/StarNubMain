@@ -23,35 +23,30 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import io.netty.handler.ssl.SslContext;
 import messages.StarNubMessage;
-import network.handlers.StarNubMessageReaderClient;
+import network.handlers.StarNubMessageReaderServer;
 
-
-public class StarNubMessageClientInitializer extends ChannelInitializer<SocketChannel> {
+public class StarNubMessageServerInitializer extends ChannelInitializer<SocketChannel> {
 
 //    private final EventRouter EVENT_ROUTER;
 //
-//    public StarNubMessageClientInitializer(EventRouter EVENT_ROUTER) {
+//    public StarNubMessageServerInitializer(EventRouter EVENT_ROUTER) {
 //        this.EVENT_ROUTER = EVENT_ROUTER;
 //    }
-    private final SslContext SSL_CTX;
-    private final String HOST;
-    private final int PORT;
 
-    public StarNubMessageClientInitializer(SslContext SSL_CTX, String HOST, int PORT) {
-        this.SSL_CTX = SSL_CTX;
-        this.HOST = HOST;
-        this.PORT = PORT;
-    }
+//    private final SslContext SSL_CTX;
+//
+//    public StarNubMessageServerInitializer() {
+//        this.SSL_CTX = SSL_CTX;
+//    }
 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
-//        SslContext sslContext = SslContext.newClientContext(new File("c_pub.pem"));
+//        SslContext sslContext = SslContext.newServerContext(new File("c_priv.pem"), new File("s.pem"), "secret");
 //        SSLEngine sslEngine = sslContext.newEngine(ch.alloc());
 //        ch.pipeline().addFirst(new SslHandler(sslEngine));
         ch.pipeline().addFirst(new ObjectDecoder(ClassResolvers.weakCachingResolver(StarNubMessage.class.getClassLoader())));
         ch.pipeline().addFirst(new ObjectEncoder());
-        ch.pipeline().addLast(new StarNubMessageReaderClient());
+        ch.pipeline().addLast(new StarNubMessageReaderServer());
     }
 }

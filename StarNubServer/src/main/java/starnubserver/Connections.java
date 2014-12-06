@@ -19,7 +19,7 @@ package starnubserver;/*
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.cache.wrappers.IPCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
-import starnubserver.resources.Bans;
+import starnubserver.resources.BansList;
 import starnubserver.resources.Whitelist;
 import starnubserver.resources.internal.OpenConnections;
 import starnubserver.resources.internal.OpenSockets;
@@ -59,7 +59,7 @@ public class Connections {
 
     private final IPCacheWrapper INTERNAL_IP_WATCHLIST = new IPCacheWrapper("StarNub", "StarNub - Internal IP Watch List", true, StarNub.getTaskManager(), 5000, 500, TimeUnit.MINUTES, 60, 120);
     private final Whitelist WHITELIST = new Whitelist(StarNub.getResourceManager().getStarnubResources());
-    private final Bans BANS = new Bans();
+    private final BansList BANSList = new BansList();
     private final OpenSockets OPEN_SOCKETS = new OpenSockets(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
     private final OpenConnections OPEN_CONNECTIONS = new OpenConnections(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
     private final ProxyConnections PROXY_CONNECTION = new ProxyConnections(this, getExpectedPlayers(), 1.0f, getExpectedConnectsPercentage() );//Elements, expected Threads
@@ -69,8 +69,8 @@ public class Connections {
         return WHITELIST;
     }
 
-    public Bans getBANS() {
-        return BANS;
+    public BansList getBANSList() {
+        return BANSList;
     }
 
     public OpenSockets getOPEN_SOCKETS() {

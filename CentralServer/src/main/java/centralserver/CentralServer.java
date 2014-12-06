@@ -18,5 +18,30 @@
 
 package centralserver;
 
-public class CentralServer {
+
+import network.StarNubMessageServerInitializer;
+import utilities.connectivity.server.TCPServer;
+
+public final class CentralServer {
+
+    private static TCPServer tcpServer = new TCPServer("StarNub - Central - Connection Thread", "StarNub - Central - Worker Thread");
+
+
+    //Event Router, with threading
+    //Server. channels
+    //Serial Loading
+    //Serial Binding
+
+
+    //client will get hash, check hash on numbers, then open another connection to verify count before starting
+
+    public static void main(String[] args) {
+        try {
+//            SelfSignedCertificate ssc = new SelfSignedCertificate();
+//            SslContext sslCtx = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
+            tcpServer.start(666, new StarNubMessageServerInitializer());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

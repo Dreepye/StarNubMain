@@ -21,7 +21,7 @@ package starnubserver.resources;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
-import starnubserver.connections.player.session.Ban;
+import starnubserver.connections.player.generic.Ban;
 import starnubserver.events.events.StarNubEvent;
 
 import java.sql.SQLException;
@@ -30,16 +30,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class Bans extends ConcurrentHashMap<String, Ban> {
+public class BansList extends ConcurrentHashMap<String, Ban> {
 
 
 
     /**
      * Creates a new, empty map with the default initial table size (16).
      */
-    public Bans() {
+    public BansList() {
         banLoad();
-        new StarNubTask("StarNub", "StarNub - Bans - Auto Purge", true , 30, 30, TimeUnit.SECONDS, this::banPurge);
+        new StarNubTask("StarNub", "StarNub - Bans - Auto Purge", true , 1, 1, TimeUnit.MINUTES, this::banPurge);
     }
 
     /**
@@ -51,7 +51,7 @@ public class Bans extends ConcurrentHashMap<String, Ban> {
     private void banLoad() {
         new StarNubEvent("StarNub_Bans_Loading", this);
         try {
-            List<Ban> bans = StarNub.getDatabaseTables().getPlayerSessionBans().getTableDao().queryForAll();
+            List<Ban> bans = StarNub.getDatabaseTables().getBans().getTableDao().queryForAll();
             for (Ban ban : bans) {
                 ban = banPurgeCheck(ban);
                 if (ban != null){
@@ -73,10 +73,10 @@ public class Bans extends ConcurrentHashMap<String, Ban> {
      */
     private Ban banPurgeCheck(Ban ban) {
         new StarNubEvent("StarNub_Bans_Purging", this);
-        if (ban.getDateRestrictionExpires() != null && ban.getDateRestrictionExpires().isBeforeNow()) {
-            StarNub.getDatabaseTables().getPlayerSessionBans().delete(ban);
-            StarNub.getLogger().cInfoPrint("StarNub", "A temporary ban has expired and was removed for " + ban.getCharacterName() + ".");
-            new StarNubEvent("StarNu_Ban_Purged_Expired", ban);
+        if (ban.getDateExpires() != null && ban.getDateExpires().isBeforeNow()) {
+            ban.removeBan();
+            StarNub.getLogger().cInfoPrint("StarNub", "A temporary ban has expired and was removed for " + ban.getPlayerCharacter().getCleanName() + ".");
+            new StarNubEvent("StarNun_Ban_Purged_Expired", ban);
             return null;
         }
         return ban;

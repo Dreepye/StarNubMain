@@ -18,7 +18,7 @@
 
 package starnubserver.cache.objects;
 
-import starnubserver.connections.player.session.Player;
+import starnubserver.connections.player.session.PlayerSession;
 import utilities.cache.objects.TimeCache;
 
 /**
@@ -43,20 +43,20 @@ public class RejectionCache extends TimeCache {
     private final boolean REJECTED;
     private final Reason REJECTION_REASON;
     private final String PACKET_MESSAGE;
-    private final Player PLAYER;
+    private final PlayerSession PLAYERSession;
 
-    public RejectionCache(boolean REJECTED, Player PLAYER) {
+    public RejectionCache(boolean REJECTED, PlayerSession PLAYERSession) {
         this.REJECTED = REJECTED;
         this.REJECTION_REASON = null;
         this.PACKET_MESSAGE = null;
-        this.PLAYER = PLAYER;
+        this.PLAYERSession = PLAYERSession;
     }
 
-    public RejectionCache(boolean REJECTED, Reason REJECTION_REASON, String PACKET_MESSAGE, Player PLAYER) {
+    public RejectionCache(boolean REJECTED, Reason REJECTION_REASON, String PACKET_MESSAGE, PlayerSession PLAYERSession) {
         this.REJECTED = REJECTED;
         this.REJECTION_REASON = REJECTION_REASON;
         this.PACKET_MESSAGE = PACKET_MESSAGE;
-        this.PLAYER = PLAYER;
+        this.PLAYERSession = PLAYERSession;
     }
 
     public boolean isREJECTED() {
@@ -71,7 +71,7 @@ public class RejectionCache extends TimeCache {
         return PACKET_MESSAGE;
     }
 
-    public Player getPLAYER() {
-        return PLAYER;
+    public PlayerSession getPLAYERSession() {
+        return PLAYERSession;
     }
 }

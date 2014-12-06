@@ -18,23 +18,41 @@
 
 package network.handlers;
 
-import events.event.CentralEvent;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import messages.StarNubMessage;
-import utilities.events.EventRouter;
+import messages.StarNubMessageBan;
 
-public class StarNubMessageReader extends SimpleChannelInboundHandler<StarNubMessage> {
+public class StarNubMessageReaderServer extends SimpleChannelInboundHandler<StarNubMessage> {
 
-    private final EventRouter EVENT_ROUTER;
-
-    public StarNubMessageReader(EventRouter EVENT_ROUTER) {
-        this.EVENT_ROUTER = EVENT_ROUTER;
-    }
+//    private final EventRouter EVENT_ROUTER;
+//
+//    public StarNubMessageReaderServer(EventRouter EVENT_ROUTER) {
+//        this.EVENT_ROUTER = EVENT_ROUTER;
+//    }
 
     @Override
     @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, StarNubMessage starNubMessage) throws Exception {
-        EVENT_ROUTER.eventNotify(new CentralEvent(starNubMessage.getTYPE(), starNubMessage));
+
+        System.out.println("I got a message");
+        System.out.println(starNubMessage);
+        StarNubMessageBan starNubMessageBan = (StarNubMessageBan) starNubMessage;
+        System.out.println(starNubMessageBan.toString());
+//        EVENT_ROUTER.eventNotify(new CentralEvent(starNubMessage.getTYPE(), starNubMessage));
+    }
+
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        super.handlerAdded(ctx);
+        System.out.println("Test");
+    }
+
+
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
     }
 }
