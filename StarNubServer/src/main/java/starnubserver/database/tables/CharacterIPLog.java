@@ -22,8 +22,10 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
+import starnubserver.connections.player.character.CharacterIP;
+import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
-import starnubserver.connections.player.character.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -41,12 +43,20 @@ import java.util.List;
  */
 public class CharacterIPLog extends TableWrapper<CharacterIP, Integer> {
 
-    public CharacterIPLog(Class<CharacterIP> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final CharacterIPLog instance = new CharacterIPLog();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private CharacterIPLog(){
+        super(DatabaseConnection.getConnection(), 0, CharacterIP.class, Integer.class);
     }
 
-    public CharacterIPLog(ConnectionSource connectionSource, int oldVersion, Class<CharacterIP> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static CharacterIPLog getInstance() {
+        return instance;
     }
 
     @Override

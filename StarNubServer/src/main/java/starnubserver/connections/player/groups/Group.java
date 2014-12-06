@@ -24,12 +24,16 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import starnubserver.StarNub;
+import starnubserver.database.tables.GroupInheritances;
+import starnubserver.database.tables.GroupPermissions;
+import starnubserver.database.tables.Groups;
 
 import java.sql.SQLException;
 
 @DatabaseTable(tableName = "GROUPS")
 public class Group {
 
+    private final static Groups GROUPS_DB = Groups.getInstance();
 
     @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = "GROUP_NAME")
     private volatile String name;
@@ -86,16 +90,16 @@ public class Group {
         this.ladderName = ladderName;
         this.ladderRank = ladderRank;
         try {
-            this.permissions = StarNub.getDatabaseTables().getGroups().getTableDao().getEmptyForeignCollection("PERMISSIONS");
+            this.permissions = GROUPS_DB.getTableDao().getEmptyForeignCollection("PERMISSIONS");
         } catch (SQLException e) {
             StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
         }
         try {
-            this.inheritedGroups = StarNub.getDatabaseTables().getGroups().getTableDao().getEmptyForeignCollection("INHERITED_GROUPS");
+            this.inheritedGroups = GROUPS_DB.getTableDao().getEmptyForeignCollection("INHERITED_GROUPS");
         } catch (SQLException e) {
             StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add group inheritance to a Group.");
         }
-        StarNub.getDatabaseTables().getGroups().createOrUpdate(this);
+        GROUPS_DB.createOrUpdate(this);
     }
 
     public void setGroup(String name, String tagName, String tagColor, String ladderName, int ladderRank) {
@@ -103,41 +107,41 @@ public class Group {
         this.tag = new Tag("group", tagName, tagColor);
         this.ladderName = ladderName;
         this.ladderRank = ladderRank;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void setName(String name) {
         this.name = name;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void setTag(Tag tag) {
         this.tag = tag;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void setLadderName(String ladderName) {
         this.ladderName = ladderName;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void setLadderRank(int ladderRank) {
         this.ladderRank = ladderRank;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void setInheritedGroups(ForeignCollection<GroupInheritance> inheritedGroups) {
         this.inheritedGroups = inheritedGroups;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void setPermissions(ForeignCollection<GroupPermission> permissions) {
         this.permissions = permissions;
-        StarNub.getDatabaseTables().getGroups().update(this);
+        GROUPS_DB.update(this);
     }
 
     public void addGroupPermission(String permission){
-        if (StarNub.getDatabaseTables().getGroupPermissions().getGroupPermission(this, permission) == null) {
+        if (GroupPermissions.getInstance().getGroupPermission(this, permission) == null) {
             this.permissions.add(new GroupPermission(this, permission));
         }
     }
@@ -151,13 +155,13 @@ public class Group {
     }
 
     public void addGroupInheritance(Group inherited){
-        if (StarNub.getDatabaseTables().getGroupInheritances().getGroupInheritance(this, inherited) == null) {
+        if (GroupInheritances.getInstance().getGroupInheritance(this, inherited) == null) {
             this.inheritedGroups.add(new GroupInheritance(this, inherited));
         }
     }
 
     public void removeGroupInheritance(Group inherited){
-        this.inheritedGroups.remove(StarNub.getDatabaseTables().getGroupInheritances().getGroupInheritance(this, inherited));
+        this.inheritedGroups.remove(GroupInheritances.getInstance().getGroupInheritance(this, inherited));
     }
 
     public void removeGroupInheritance(GroupInheritance inherited){

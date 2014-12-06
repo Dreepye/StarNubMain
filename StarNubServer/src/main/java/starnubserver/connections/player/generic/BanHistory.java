@@ -22,8 +22,8 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
-import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.database.tables.BansHistory;
 import starnubserver.events.events.StarNubEvent;
 
 import java.io.Serializable;
@@ -38,6 +38,8 @@ import java.io.Serializable;
  */
 @DatabaseTable(tableName = "BANS_HISTORY")
 public class BanHistory implements Serializable {
+
+    private final static BansHistory BANS_HISTORY_DB = BansHistory.getInstance();
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "BAN_ID")
     private int banEntryId;
@@ -78,7 +80,7 @@ public class BanHistory implements Serializable {
         this.staffEntry = ban.getStaffEntry();
         this.dateRemoved = DateTime.now();
         if (createEntry) {
-            StarNub.getDatabaseTables().getBansHistory().createOrUpdate(this);
+            BANS_HISTORY_DB.createOrUpdate(this);
             new StarNubEvent("StarNub_Ban_History_Updated", this);
         }
     }

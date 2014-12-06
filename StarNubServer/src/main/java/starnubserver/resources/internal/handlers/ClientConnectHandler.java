@@ -235,18 +235,18 @@ public class ClientConnectHandler extends PacketEventHandler {
      * @return RejectionCache or null depending if we need to reject this player
      */
     private RejectionCache bannedCheck(PlayerSession playerSession, String header, String footer) {
-        Ban ban = playerSession.getPlayerCharacter().getBan();
+        Ban ban = CONNECTIONS.getBANSList().banGet(playerSession);
         if (ban != null) {
-            DateTime dateRestrictionExpires = ban.getDateRestrictionExpires();
+            DateTime dateRestrictionExpires = ban.getDateExpires();
             String reason;
             RejectionCache.Reason bannedReason = null;
             if (dateRestrictionExpires == null) {
                 reason =
-                        "\n^#f5f5f5;You have been permanently banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDateBanned());
+                        "\n^#f5f5f5;You have been permanently banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDate());
                 bannedReason = RejectionCache.Reason.BANNED;
             } else {
                 reason =
-                        "^#f5f5f5;You have been temporarily banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDateBanned()) +
+                        "^#f5f5f5;You have been temporarily banned: \n^#990000; Since " + DateAndTimes.getFormattedDate("MMMM dd, yyyy", ban.getDate()) +
                                 "\n^#f5f5f5;You will be automatically unbanned on: \n^#990000;" + DateAndTimes.getFormattedDate("MMMM dd, yyyy '@' HH:mm '- Server Time'", dateRestrictionExpires);
                 bannedReason = RejectionCache.Reason.TEMPORARY_BANNED;
             }

@@ -24,6 +24,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
+import starnubserver.database.tables.Disables;
 import starnubserver.events.events.StarNubEvent;
 
 /**
@@ -36,6 +37,8 @@ import starnubserver.events.events.StarNubEvent;
  */
 @DatabaseTable(tableName = "DISABLES")
 public class Disabled {
+
+    private final static Disables DISABLES_DB = Disables.getInstance();
 
     @DatabaseField(dataType = DataType.STRING, columnName = "ACCOUNT_NAME")
     private String accountNameId;
@@ -73,7 +76,7 @@ public class Disabled {
         this.dateExpires = dateExpires;
         this.staffEntry = staffEntry;
         if (createEntry){
-            StarNub.getDatabaseTables().getDisables().createOrUpdate(this);
+            DISABLES_DB.createOrUpdate(this);
         }
     }
 
@@ -118,14 +121,14 @@ public class Disabled {
     }
 
     public void addDisable() {
-        StarNub.getDatabaseTables().getDisables().createOrUpdate(this);
+        DISABLES_DB.createOrUpdate(this);
         StarNub.getLogger().cInfoPrint("StarNub", "Account was disabled. Account Name:  " + accountNameId + ".");
         new StarNubEvent("StarNub_Account_Disabled", this);
     }
 
     public void removeDisable() {
         new DisabledHistory(this, true);
-        StarNub.getDatabaseTables().getDisables().delete(this);
+        DISABLES_DB.delete(this);
         StarNub.getLogger().cInfoPrint("StarNub", "Account was re-instated. Account Name:  " + accountNameId + ".");
         new StarNubEvent("StarNub_Account_Enabled", this);
     }

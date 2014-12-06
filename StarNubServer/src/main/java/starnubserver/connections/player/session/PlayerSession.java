@@ -21,6 +21,7 @@ package starnubserver.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import generic.BanType;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import starbounddata.packets.chat.ChatReceivePacket;
@@ -29,8 +30,12 @@ import starbounddata.packets.connection.ClientDisconnectRequestPacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubserver.StarNub;
 import starnubserver.connections.player.StarNubProxyConnection;
+import starnubserver.connections.player.account.Account;
 import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.connections.player.generic.Ban;
+import starnubserver.connections.player.generic.StaffEntry;
+import starnubserver.database.tables.PlayerSessionLog;
 import starnubserver.events.events.StarNubEvent;
 import utilities.events.types.StringEvent;
 import utilities.exceptions.CacheWrapperOperationException;
@@ -139,27 +144,19 @@ public class PlayerSession extends StarNubProxyConnection {
         }
         this.startTimeUtc = DateTime.now();
         this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
-        PlayerCharacter playerCharacter = StarNub.getDatabaseTables().getCharacters().getCharacterFromNameUUIDCombo(playerName, playerUUID);
-        if (playerCharacter == null) {
-            playerCharacter = new PlayerCharacter(playerName, playerUUID);
-            new StarNubEvent("Player_New_Character", playerCharacter);
-        }
-        this.playerCharacter = playerCharacter;
+        this.playerCharacter = PlayerCharacter.getPlayerCharacter(playerName, playerUUID);
         this.gameName = playerCharacter.getName();
         this.nickName = playerCharacter.getName();
         this.cleanNickName = playerCharacter.getCleanName();
-        CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP);
-        if (!StarNub.getDatabaseTables().getCharacterIPLog().isCharacterIDAndIPComboRecorded(characterIP)) {
-            StarNub.getDatabaseTables().getCharacterIPLog().create(characterIP);
-            new StarNubEvent("Player_Character_New_IP", playerCharacter);
-        }
+        CharacterIP.logCharacterIp(playerCharacter, playerIP);
+
         this.account = playerCharacter.initialLogInProcessing(sessionIpString, playerUUID.toString());
         try {
             this.isOp = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
         } catch (Exception e) {
             this.isOp = false;
         }
-        StarNub.getDatabaseTables().getPlayerSessionLog().create(this);
+        PlayerSessionLog.getInstance().create(this);
         new StarNubEvent("Player_Character_New_Session", playerCharacter);
 
     }
@@ -185,7 +182,7 @@ public class PlayerSession extends StarNubProxyConnection {
      */
     public void setEndTimeUtc(DateTime endTimeUtc) {
         this.endTimeUtc = endTimeUtc;
-        StarNub.getDatabaseTables().getPlayerSessionLog().update(this);
+        PlayerSessionLog.getInstance().update(this);
     }
 
     public int getAccount() {
@@ -197,7 +194,7 @@ public class PlayerSession extends StarNubProxyConnection {
      */
     public void setAccount(int account) {
         this.account = account;
-        StarNub.getDatabaseTables().getPlayerSessionLog().update(this);
+        PlayerSessionLog.getInstance().update(this);
     }
 
     public long getStarboundClientId() {
@@ -259,8 +256,35 @@ public class PlayerSession extends StarNubProxyConnection {
         StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
     }
 
-    public void reloadIgnoreList() {
+    public void addBan(Account staffAccount, String staffDescription, BanType banType, DateTime dateExpires){
+        StaffEntry staffEntry = new StaffEntry(staffAccount, staffDescription, true);
+        switch (banType){
+            case IP: {
+                new Ban(playerCharacter, sessionIpString, DateTime.now(), dateExpires, staffEntry, true);
+                break;
+            }
+            case UUID: {
+                new Ban(playerCharacter, playerCharacter.getUuid().toString(), DateTime.now(), dateExpires, staffEntry, true);
+                break;
+            }
+            case  ALL_IPS: {
 
+                break;
+            }
+            case ALL_UUIDS: {
+
+                break;
+            }
+            case ALL: {
+
+                break;
+            }
+        }
+        this.disconnectReason("Banned");
+    }
+
+    public static void removeBan(PlayerCharacter playerCharacter){
+        StarNub.getConnections().getBANSList().banRemoval(playerCharacter);
     }
 
     public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message) {
@@ -413,6 +437,8 @@ public class PlayerSession extends StarNubProxyConnection {
             }
         }
     }
+
+
 
     @Override
     public String toString() {

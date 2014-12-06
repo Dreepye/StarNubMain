@@ -21,7 +21,10 @@ package starnubserver.resources;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
+import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.generic.Ban;
+import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.database.tables.Bans;
 import starnubserver.events.events.StarNubEvent;
 
 import java.sql.SQLException;
@@ -51,7 +54,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     private void banLoad() {
         new StarNubEvent("StarNub_Bans_Loading", this);
         try {
-            List<Ban> bans = StarNub.getDatabaseTables().getBans().getTableDao().queryForAll();
+            List<Ban> bans = Bans.getInstance().getTableDao().queryForAll();
             for (Ban ban : bans) {
                 ban = banPurgeCheck(ban);
                 if (ban != null){
@@ -63,6 +66,19 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
         }
         new StarNubEvent("StarNub_Bans_Loaded", this);
     }
+
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This is used to automatically remove any restrictions that have expired
+     * <p>
+     */
+    public void banPurge(){
+        for (Map.Entry<String, Ban> banEntry : this.entrySet()){
+            banPurgeCheck(banEntry.getValue());
+        }
+    }
+
 
     /**
      * Recommended: For internal use with StarNub.
@@ -82,19 +98,10 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
         return ban;
     }
 
-    /**
-     * Recommended: For internal use with StarNub.
-     * <p>
-     * Uses: This is used to automatically remove any restrictions that have expired
-     * <p>
-     */
-    public void banPurge(){
-        for (Map.Entry<String, Ban> banEntry : this.entrySet()){
-            Ban ban = banPurgeCheck(banEntry.getValue());
-            if (ban == null){
-                this.remove(banEntry.getKey());
-            }
-        }
+    public void banRemoval(PlayerCharacter playerCharacter){
+        this.values().stream().filter(ban -> playerCharacter.getCharacterId() == ban.getPlayerCharacter().getCharacterId()).forEach(ban -> {
+            this.remove(ban.getBanIdentifier());
+        });
     }
 
     /**
@@ -137,6 +144,23 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
             return ban;
         } else {
             return this.get(uuid);
+        }
+    }
+
+    /**
+     * Recommended: For internal use with StarNub.
+     * <p>
+     * Uses: This is used to check when a player logs in, if they are restrictions or not
+     * <p>
+     * @param playerSession PlayerSession representing the players session who we want to check for a ban
+     * @return boolean returns true if this ip or uuid is banned
+     */
+    public Ban banGet(PlayerSession playerSession){
+        Ban ban = this.get(playerSession.getSessionIpString());
+        if (ban != null){
+            return ban;
+        } else {
+            return this.get(playerSession.getPlayerCharacter().getUuid());
         }
     }
 }

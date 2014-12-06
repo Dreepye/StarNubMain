@@ -25,6 +25,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.connections.player.account.AccountPermission;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -38,12 +39,20 @@ import java.util.List;
  */
 public class AccountPermissions extends TableWrapper<AccountPermission, Integer> {
 
-    public AccountPermissions(Class<AccountPermission> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final AccountPermissions instance = new AccountPermissions();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private AccountPermissions(){
+        super(DatabaseConnection.getConnection(), 0, AccountPermission.class, Integer.class);
     }
 
-    public AccountPermissions(ConnectionSource connectionSource, int oldVersion, Class<AccountPermission> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static AccountPermissions getInstance() {
+        return instance;
     }
 
     @Override

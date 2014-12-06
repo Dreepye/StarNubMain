@@ -20,6 +20,7 @@ package starnubserver.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
 import starnubserver.connections.player.groups.Tag;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -33,12 +34,20 @@ import java.sql.SQLException;
  */
 public class Tags extends TableWrapper<Tag, Integer> {
 
-    public Tags(Class<Tag> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final Tags instance = new Tags();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private Tags(){
+        super(DatabaseConnection.getConnection(), 0, Tag.class, Integer.class);
     }
 
-    public Tags(ConnectionSource connectionSource, int oldVersion, Class<Tag> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static Tags getInstance() {
+        return instance;
     }
 
     @Override

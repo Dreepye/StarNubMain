@@ -21,9 +21,12 @@ package starnubserver.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starnubserver.database.tables.GroupPermissions;
 
 @DatabaseTable(tableName = "GROUP_PERMISSIONS")
 public class GroupPermission {
+
+    private final static GroupPermissions GROUP_PERMISSIONS_DB = GroupPermissions.getInstance();
 
     /**
      * Represents a group permissions id

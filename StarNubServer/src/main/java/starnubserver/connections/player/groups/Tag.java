@@ -21,11 +21,12 @@ package starnubserver.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starnubserver.StarNub;
+import starnubserver.database.tables.Tags;
 
 @DatabaseTable(tableName = "TAGS")
 public class Tag {
 
+    private final static Tags TAGS_DB = Tags.getInstance();
 
     @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = "TAG")
     private volatile String name;
@@ -56,22 +57,22 @@ public class Tag {
         this.typeOfTag = typeOfTag;
         this.name = name;
 //        this.color = StarNub.getMessageSender().getGameColors().validateColor(color);
-        StarNub.getDatabaseTables().getTags().createOrUpdate(this);
+        TAGS_DB.createOrUpdate(this);
     }
 
     public void setTypeOfTag(String typeOfTag) {
         this.typeOfTag = typeOfTag;
-        StarNub.getDatabaseTables().getTags().update(this);
+        TAGS_DB.update(this);
     }
 
     public void setName(String tag) {
         this.name = tag;
-        StarNub.getDatabaseTables().getTags().update(this);
+        TAGS_DB.update(this);
     }
 
     public void setColor(String color) {
         this.color = color;
-        StarNub.getDatabaseTables().getTags().update(this);
+        TAGS_DB.update(this);
     }
 
     public String getCleanTagNoBrackets(){

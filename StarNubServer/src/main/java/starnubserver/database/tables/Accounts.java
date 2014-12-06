@@ -27,6 +27,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 import utilities.crypto.PasswordHash;
 
@@ -42,13 +43,22 @@ import java.util.List;
  */
 public class Accounts extends TableWrapper<Account, Integer> {
 
-    public Accounts(Class<Account> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final Accounts instance = new Accounts();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private Accounts(){
+        super(DatabaseConnection.getConnection(), 0, Account.class, Integer.class);
     }
 
-    public Accounts(ConnectionSource connectionSource, int oldVersion, Class<Account> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static Accounts getInstance() {
+        return instance;
     }
+
 
     @Override
     public void tableUpdater(ConnectionSource connection, int oldVersion) throws SQLException{

@@ -22,9 +22,13 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import starnubserver.connections.player.account.Account;
+import starnubserver.database.tables.Characters;
+import starnubserver.database.tables.GroupAssignments;
 
 @DatabaseTable(tableName = "GROUP_ASSIGNMENTS")
 public class GroupAssignment {
+
+    private final static GroupAssignments GROUP_ASSIGNMENTS_DB = GroupAssignments.getInstance();
 
     /**
      * Represents a group assignment id

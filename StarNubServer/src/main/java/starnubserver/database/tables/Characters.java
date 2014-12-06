@@ -27,6 +27,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -42,12 +43,20 @@ import java.util.UUID;
  */
 public class Characters extends TableWrapper<PlayerCharacter, Integer> {
 
-    public Characters(Class<PlayerCharacter> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final Characters instance = new Characters();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private Characters(){
+        super(DatabaseConnection.getConnection(), 0, PlayerCharacter.class, Integer.class);
     }
 
-    public Characters(ConnectionSource connectionSource, int oldVersion, Class<PlayerCharacter> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static Characters getInstance() {
+        return instance;
     }
 
     @Override

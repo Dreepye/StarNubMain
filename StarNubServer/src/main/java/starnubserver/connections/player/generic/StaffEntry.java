@@ -21,8 +21,8 @@ package starnubserver.connections.player.generic;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
+import starnubserver.database.tables.StaffEntries;
 
 /**
  * This class represents a staff entry to be used with various classes
@@ -34,6 +34,8 @@ import starnubserver.connections.player.account.Account;
  */
 @DatabaseTable(tableName = "STAFF_ENTRIES")
 public class StaffEntry {
+
+    private final static StaffEntries STAFF_ENTRIES_DB = StaffEntries.getInstance();
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "ENTRY_ID")
     private volatile int staffEntryId;
@@ -60,7 +62,7 @@ public class StaffEntry {
         this.staffAccount = staffAccount;
         this.staffDescription = staffDescription;
         if (createEntry){
-            StarNub.getDatabaseTables().getStaffEntries().createOrUpdate(this);
+            STAFF_ENTRIES_DB.createOrUpdate(this);
         }
     }
 

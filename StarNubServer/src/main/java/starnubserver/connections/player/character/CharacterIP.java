@@ -22,9 +22,9 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.apache.commons.lang3.StringUtils;
-import starnubserver.StarNub;
+import starnubserver.database.tables.CharacterIPLog;
+import starnubserver.events.events.StarNubEvent;
 
-import java.lang.*;
 import java.net.InetAddress;
 
 /**
@@ -37,6 +37,8 @@ import java.net.InetAddress;
  */
 @DatabaseTable(tableName = "CHARACTER_IP_LOG")
 public class CharacterIP {
+
+    private final static CharacterIPLog CHARACTER_IP_LOG_DB = CharacterIPLog.getInstance();
 
     @DatabaseField(generatedId = true, columnName = "IP_LOG_ID")
     private int characterIPLogId;
@@ -62,7 +64,7 @@ public class CharacterIP {
         this.playerCharacter = playerCharacter;
         this.sessionIpString = sessionIpString;
         if (createEntry){
-            StarNub.getDatabaseTables().getCharacterIPLog().createOrUpdate(this);
+            CHARACTER_IP_LOG_DB.createOrUpdate(this);
         }
     }
 
@@ -76,7 +78,15 @@ public class CharacterIP {
         this.playerCharacter = playerCharacter;
         this.sessionIpString = StringUtils.remove(sessionIp.toString(), "/");
         if (createEntry){
-            StarNub.getDatabaseTables().getCharacterIPLog().createOrUpdate(this);
+            CHARACTER_IP_LOG_DB.createOrUpdate(this);
+        }
+    }
+
+    public static void logCharacterIp(PlayerCharacter playerCharacter, InetAddress playerIP){
+        CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP, false);
+        if (!CHARACTER_IP_LOG_DB.isCharacterIDAndIPComboRecorded(characterIP)) {
+            CharacterIPLog.getInstance().create(characterIP);
+            new StarNubEvent("Player_Character_New_IP", characterIP);
         }
     }
 

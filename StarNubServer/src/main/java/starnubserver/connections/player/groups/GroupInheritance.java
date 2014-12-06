@@ -21,9 +21,13 @@ package starnubserver.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starnubserver.database.tables.Characters;
+import starnubserver.database.tables.GroupInheritances;
 
 @DatabaseTable(tableName = "GROUP_INHERITANCE")
 public class GroupInheritance {
+
+    private final static GroupInheritances GROUP_INHERITANCES_DB = GroupInheritances.getInstance();
 
     /**
      * Represents a group inheritance id

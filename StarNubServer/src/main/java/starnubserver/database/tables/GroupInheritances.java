@@ -27,6 +27,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupInheritance;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -40,12 +41,20 @@ import java.util.List;
  */
 public class GroupInheritances extends TableWrapper<GroupInheritance, Integer> {
 
-    public GroupInheritances(Class<GroupInheritance> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final GroupInheritances instance = new GroupInheritances();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private GroupInheritances(){
+        super(DatabaseConnection.getConnection(), 0, GroupInheritance.class, Integer.class);
     }
 
-    public GroupInheritances(ConnectionSource connectionSource, int oldVersion, Class<GroupInheritance> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static GroupInheritances getInstance() {
+        return instance;
     }
 
     @Override

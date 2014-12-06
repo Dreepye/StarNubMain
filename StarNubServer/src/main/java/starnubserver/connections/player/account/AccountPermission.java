@@ -21,7 +21,7 @@ package starnubserver.connections.player.account;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starnubserver.StarNub;
+import starnubserver.database.tables.AccountPermissions;
 
 /**
  * This class represents an account permission.
@@ -34,6 +34,7 @@ import starnubserver.StarNub;
 @DatabaseTable(tableName = "ACCOUNT_PERMISSIONS")
 public class AccountPermission {
 
+    private final static AccountPermissions ACCOUNT_PERMISSIONS_DB = AccountPermissions.getInstance();
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "PERMISSION_ID")
     private volatile int permissionId;
@@ -60,7 +61,7 @@ public class AccountPermission {
         this.starnubId = starnubId;
         this.permission = permission;
         if (createEntry){
-            StarNub.getDatabaseTables().getAccountPermissions().createOrUpdate(this);
+            ACCOUNT_PERMISSIONS_DB.createOrUpdate(this);
         }
     }
 

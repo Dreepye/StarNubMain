@@ -26,9 +26,13 @@ import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
 import starnubserver.connections.player.groups.Tag;
 import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.database.tables.AccountSettings;
+import starnubserver.database.tables.Groups;
 
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
 public class Settings {
+
+    private final static AccountSettings ACCOUNT_SETTINGS_DB = AccountSettings.getInstance();
 
     @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS_ID")
     private volatile String accountSettings;
@@ -93,37 +97,37 @@ public class Settings {
     public Settings(String accountSettings) {
         this.accountSettings = accountSettings;
 //        this.defaultChatRoom = defaultChatRoom;
-        StarNub.getDatabaseTables().getAccountSettings().createIfNotExist(this);
+        ACCOUNT_SETTINGS_DB.createIfNotExist(this);
     }
 
     public void setChatPrefix1(Tag chatPrefix1) {
         this.chatPrefix1 = chatPrefix1;
-        StarNub.getDatabaseTables().getAccountSettings().update(this);
+        ACCOUNT_SETTINGS_DB.update(this);
     }
 
     public void setChatPrefix2(Tag chatPrefix2) {
         this.chatPrefix2 = chatPrefix2;
-        StarNub.getDatabaseTables().getAccountSettings().update(this);
+        ACCOUNT_SETTINGS_DB.update(this);
     }
 
     public void setChatSuffix1(Tag chatSuffix1) {
         this.chatSuffix1 = chatSuffix1;
-        StarNub.getDatabaseTables().getAccountSettings().update(this);
+        ACCOUNT_SETTINGS_DB.update(this);
     }
 
     public void setChatSuffix2(Tag chatSuffix2) {
         this.chatSuffix2 = chatSuffix2;
-        StarNub.getDatabaseTables().getAccountSettings().update(this);
+        ACCOUNT_SETTINGS_DB.update(this);
     }
 
     public void setWhisperBlocking(boolean whisperBlocking) {
         this.whisperBlocking = whisperBlocking;
-        StarNub.getDatabaseTables().getAccountSettings().update(this);
+        ACCOUNT_SETTINGS_DB.update(this);
     }
 
     public void setAppearOffline(boolean appearOffline) {
         this.appearOffline = appearOffline;
-        StarNub.getDatabaseTables().getAccountSettings().update(this);
+        ACCOUNT_SETTINGS_DB.update(this);
     }
 
 //    public void addChatRoomSubscription(ChatRoom chatRoom){
@@ -245,7 +249,7 @@ public class Settings {
     }
 
     public Group getGroupFromTag(Tag tag){
-        return StarNub.getDatabaseTables().getGroups().getGroupByTag(tag);
+        return Groups.getInstance().getGroupByTag(tag);
     }
 
 

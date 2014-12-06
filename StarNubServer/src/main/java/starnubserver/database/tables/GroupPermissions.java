@@ -27,6 +27,7 @@ import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupPermission;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -40,12 +41,20 @@ import java.util.List;
  */
 public class GroupPermissions extends TableWrapper<GroupPermission, Integer> {
 
-    public GroupPermissions(Class<GroupPermission> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final GroupPermissions instance = new GroupPermissions();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private GroupPermissions(){
+        super(DatabaseConnection.getConnection(), 0, GroupPermission.class, Integer.class);
     }
 
-    public GroupPermissions(ConnectionSource connectionSource, int oldVersion, Class<GroupPermission> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static GroupPermissions getInstance() {
+        return instance;
     }
 
     @Override

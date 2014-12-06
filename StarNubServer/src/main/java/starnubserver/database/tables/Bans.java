@@ -20,6 +20,7 @@ package starnubserver.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
 import starnubserver.connections.player.generic.Ban;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -33,12 +34,20 @@ import java.sql.SQLException;
  */
 public class Bans extends TableWrapper<Ban, Integer> {
 
-    public Bans(Class<Ban> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final Bans instance = new Bans();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private Bans(){
+        super(DatabaseConnection.getConnection(), 0, Ban.class, Integer.class);
     }
 
-    public Bans(ConnectionSource connectionSource, int oldVersion, Class<Ban> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static Bans getInstance() {
+        return instance;
     }
 
     @Override

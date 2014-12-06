@@ -20,6 +20,7 @@ package starnubserver.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
 import starnubserver.connections.player.generic.DisabledHistory;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -33,12 +34,20 @@ import java.sql.SQLException;
  */
 public class DisablesHistory extends TableWrapper<DisabledHistory, String> {
 
-    public DisablesHistory(Class<DisabledHistory> typeParameterDBClass, Class<String> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final DisablesHistory instance = new DisablesHistory();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private DisablesHistory(){
+        super(DatabaseConnection.getConnection(), 0, DisabledHistory.class, String.class);
     }
 
-    public DisablesHistory(ConnectionSource connectionSource, int oldVersion, Class<DisabledHistory> typeParameterDBClass, Class<String> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static DisablesHistory getInstance() {
+        return instance;
     }
 
     @Override

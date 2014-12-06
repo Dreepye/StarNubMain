@@ -24,7 +24,6 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import network.StarNubMessageClientInitializer;
 import org.joda.time.DateTime;
-import starnubserver.database.DatabaseTables;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventRouter;
 import starnubserver.logger.MultiOutputLogger;
@@ -60,7 +59,6 @@ public final class StarNub {
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
-    private static final DatabaseTables databaseTables = DatabaseTables.getInstance();
     private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
     private static final Connections connections = Connections.getInstance();
@@ -89,10 +87,6 @@ public final class StarNub {
 
     public static StarNubVersion getVersionInstance() {
         return versionInstance;
-    }
-
-    public static DatabaseTables getDatabaseTables() {
-        return databaseTables;
     }
 
     public static StarNubEventRouter getStarNubEventRouter() {

@@ -3,6 +3,10 @@ package starnubserver.connections.player.groups;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
+import starnubserver.database.tables.GroupInheritances;
+import starnubserver.database.tables.GroupPermissions;
+import starnubserver.database.tables.Groups;
+import starnubserver.database.tables.Tags;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -50,7 +54,7 @@ public enum GroupSync {
 
     private void deleteDBGroupsTags(){
         try {
-            List<Group> groupsInDb = StarNub.getDatabaseTables().getGroups().getTableDao().queryForAll();
+            List<Group> groupsInDb = Groups.getInstance().getTableDao().queryForAll();
             for (Group groupDb : groupsInDb) {
                 if (!groups.containsKey(groupDb.getName())) {
                     for (GroupInheritance groupInheritance : groupDb.getInheritedGroups()) {
@@ -59,7 +63,7 @@ public enum GroupSync {
                     for (GroupPermission groupPermission : groupDb.getPermissions()) {
                         groupDb.getPermissions().remove(groupPermission);
                     }
-                    StarNub.getDatabaseTables().getGroups().delete(groupDb);
+                    Groups.getInstance().delete(groupDb);
                 }
             }
         } catch (SQLException e) {
@@ -69,10 +73,10 @@ public enum GroupSync {
 
     private void deleteDBTags(){
         try {
-            List<Tag> tagsInDb = StarNub.getDatabaseTables().getTags().getTableDao().queryForAll();
+            List<Tag> tagsInDb = Tags.getInstance().getTableDao().queryForAll();
             for (Tag tag : tagsInDb){
                 if (!groups.containsKey(tag.getName())) {
-                    StarNub.getDatabaseTables().getTags().delete(tag);
+                    Tags.getInstance().delete(tag);
                 }
             }
         } catch (SQLException e) {
@@ -82,10 +86,10 @@ public enum GroupSync {
 
     private void cleanPermissions(){
         try {
-            List<GroupPermission> permissionsClean = StarNub.getDatabaseTables().getGroupPermissions().getTableDao().queryForAll();
+            List<GroupPermission> permissionsClean = GroupPermissions.getInstance().getTableDao().queryForAll();
             for (GroupPermission groupPermission : permissionsClean){
                 if (groupPermission.getGroup() == null){
-                    StarNub.getDatabaseTables().getGroupPermissions().delete(groupPermission);
+                    GroupPermissions.getInstance().delete(groupPermission);
                 }
             }
         } catch (SQLException e) {
@@ -102,13 +106,13 @@ public enum GroupSync {
                     (String) ((Map) ((Map) groups.get(groupName)).get("group_ranking")).get("name"),
                     (int) ((Map) ((Map) groups.get(groupName)).get("group_ranking")).get("rank")
             );
-            StarNub.getDatabaseTables().getGroups().createIfNotExist(newGroup);
+            Groups.getInstance().createIfNotExist(newGroup);
             newGroup.getPermissions().addAll(permissionsUpdate(newGroup, (Object) ((Map) groups.get(groupName)).get("permissions")));
         }
         /* We already loaded the groups and the permission's, but now we need to load inheritances last */
         for (String groupName : groups.keySet()) {
             /* Part one is the group from the DB, Part two is the groups to inherit */
-            Group groupDb = StarNub.getDatabaseTables().getGroups().getGroupByName(groupName);
+            Group groupDb = Groups.getInstance().getGroupByName(groupName);
             groupDb.getInheritedGroups().addAll(groupInheritancesUpdate(groupDb, ((Map) groups.get(groupName)).get("inherited_groups")));
         }
     }
@@ -130,13 +134,13 @@ public enum GroupSync {
         } else if (permissionsObject instanceof List){
             permissionsHashSet.addAll((List) permissionsObject);
         }
-        List<GroupPermission> permissionInDb = StarNub.getDatabaseTables().getGroupPermissions().getGroupPermissions(group);
+        List<GroupPermission> permissionInDb = GroupPermissions.getInstance().getGroupPermissions(group);
         for (GroupPermission groupPermission : permissionInDb){
             String permission = groupPermission.getPermission();
             if(permissionsHashSet.contains(permission)){
                 permissionsHashSet.remove(permission);
             } else {
-                StarNub.getDatabaseTables().getGroupPermissions().delete(groupPermission);
+                GroupPermissions.getInstance().delete(groupPermission);
             }
         }
         for (String stringPermission : permissionsHashSet){
@@ -159,9 +163,9 @@ public enum GroupSync {
         }
         for (String groupString : groupHashSet) {
             if (!(groupString.equalsIgnoreCase("none"))) {
-                List<GroupInheritance> singleGroupInheritanceList = StarNub.getDatabaseTables().getGroupInheritances().getGroupInheritance(group);
+                List<GroupInheritance> singleGroupInheritanceList = GroupInheritances.getInstance().getGroupInheritance(group);
                 if (singleGroupInheritanceList.size() == 0) {
-                    Group groupExist = StarNub.getDatabaseTables().getGroups().getGroupByName(groupString);
+                    Group groupExist = Groups.getInstance().getGroupByName(groupString);
                     if (groupExist != null) {
                         groupInheritances.add(new GroupInheritance(group, groupExist));
                     }
@@ -170,14 +174,14 @@ public enum GroupSync {
                         Group groupToBeInherited = singleGroupInheritance.getInheritedGroup();
                         if (groupToBeInherited != null) {
                             if (!groupToBeInherited.getName().equalsIgnoreCase(groupString)) {
-                                Group groupExist = StarNub.getDatabaseTables().getGroups().getGroupByName(groupString);
+                                Group groupExist = Groups.getInstance().getGroupByName(groupString);
                                 if (groupExist != null) {
                                     groupInheritances.add(new GroupInheritance(group, groupExist));
                                 }
                             }
                         } else {
-                            StarNub.getDatabaseTables().getGroupInheritances().delete(singleGroupInheritance);
-                            Group groupExist = StarNub.getDatabaseTables().getGroups().getGroupByName(groupString);
+                            GroupInheritances.getInstance().delete(singleGroupInheritance);
+                            Group groupExist = Groups.getInstance().getGroupByName(groupString);
                             if (groupExist != null) {
                                 groupInheritances.add(new GroupInheritance(group, groupExist));
                             }
@@ -194,9 +198,9 @@ public enum GroupSync {
     }
 
     private void groupInheritance(Group mainGroup, String groupInherited) {
-        Group inheritedGroupFromDB = StarNub.getDatabaseTables().getGroups().getGroupByName(groupInherited);
+        Group inheritedGroupFromDB = Groups.getInstance().getGroupByName(groupInherited);
         if (inheritedGroupFromDB != null) {
-            GroupInheritance groupInheritance = StarNub.getDatabaseTables().getGroupInheritances().getGroupInheritance(mainGroup, inheritedGroupFromDB);
+            GroupInheritance groupInheritance = GroupInheritances.getInstance().getGroupInheritance(mainGroup, inheritedGroupFromDB);
             if (groupInheritance == null) {
                 mainGroup.addGroupInheritance(inheritedGroupFromDB);
             }

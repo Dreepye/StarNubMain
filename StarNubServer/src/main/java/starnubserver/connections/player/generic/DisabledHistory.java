@@ -22,8 +22,8 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
+import starnubserver.database.tables.DisablesHistory;
 import starnubserver.events.events.StarNubEvent;
 
 /**
@@ -36,6 +36,8 @@ import starnubserver.events.events.StarNubEvent;
  */
 @DatabaseTable(tableName = "DISABLES_HISTORY")
 public class DisabledHistory {
+
+    private final static DisablesHistory DISABLES_HISTORY_DB = DisablesHistory.getInstance();
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "DISABLED_ID")
     private int disabledHistoryId;
@@ -69,7 +71,7 @@ public class DisabledHistory {
         this.staffEntry = disabled.getStaffEntry();
         this.dateRemoved = DateTime.now();
         if (createEntry){
-            StarNub.getDatabaseTables().getDisablesHistory().createOrUpdate(this);
+            DISABLES_HISTORY_DB.createOrUpdate(this);
             new StarNubEvent("StarNub_Account_Disabled_History_Updated", this);
         }
     }

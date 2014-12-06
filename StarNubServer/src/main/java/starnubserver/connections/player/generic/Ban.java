@@ -24,6 +24,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.database.tables.Bans;
 import starnubserver.events.events.StarNubEvent;
 
 import java.io.Serializable;
@@ -38,6 +39,8 @@ import java.io.Serializable;
  */
 @DatabaseTable(tableName = "BANS")
 public class Ban implements Serializable {
+
+    private final static Bans BANS_DB = Bans.getInstance();
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "BAN_ID")
     private volatile int banEntryId;
@@ -65,8 +68,7 @@ public class Ban implements Serializable {
      */
     public Ban() {}
 
-    public Ban(int banEntryId, PlayerCharacter playerCharacter, String banIdentifier, DateTime date, DateTime dateExpires, StaffEntry staffEntry, boolean createEntry) {
-        this.banEntryId = banEntryId;
+    public Ban(PlayerCharacter playerCharacter, String banIdentifier, DateTime date, DateTime dateExpires, StaffEntry staffEntry, boolean createEntry) {
         this.playerCharacter = playerCharacter;
         this.banIdentifier = banIdentifier;
         this.date = date;
@@ -126,7 +128,7 @@ public class Ban implements Serializable {
     }
 
     public void addBan() {
-        StarNub.getDatabaseTables().getBans().createOrUpdate(this);
+        BANS_DB.createOrUpdate(this);
         StarNub.getLogger().cInfoPrint("StarNub", "A ban was added for " + playerCharacter.getCleanName() + ".");
         new StarNubEvent("StarNub_Ban_Added", this);
         StarNub.getConnections().getBANSList().put(this.banIdentifier, this);
@@ -134,7 +136,7 @@ public class Ban implements Serializable {
 
     public void removeBan() {
         new BanHistory(this, true);
-        StarNub.getDatabaseTables().getBans().delete(this);
+        BANS_DB.delete(this);
         StarNub.getLogger().cInfoPrint("StarNub", "A ban was removed for " + playerCharacter.getCleanName() + ".");
         new StarNubEvent("StarNub_Ban_Removed", this);
         StarNub.getConnections().getBANSList().remove(this.banIdentifier);

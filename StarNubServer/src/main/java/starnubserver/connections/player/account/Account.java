@@ -30,6 +30,10 @@ import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
 import starnubserver.connections.player.groups.GroupInheritance;
 import starnubserver.connections.player.groups.GroupPermission;
+import starnubserver.database.tables.AccountPermissions;
+import starnubserver.database.tables.Accounts;
+import starnubserver.database.tables.GroupAssignments;
+import starnubserver.database.tables.Groups;
 import utilities.crypto.PasswordHash;
 
 import java.sql.SQLException;
@@ -49,6 +53,8 @@ import java.util.stream.Collectors;
  */
 @DatabaseTable(tableName = "ACCOUNTS")
 public class Account {
+
+    private final static Accounts ACCOUNTS_DB = Accounts.getInstance();
 
     @DatabaseField(generatedId = true, columnName = "STARNUB_ID")
     private volatile int starnubId;
@@ -101,11 +107,11 @@ public class Account {
 //                    "went wrong with your password, please contact a administrator.");
         }
         try {
-            this.groups = StarNub.getDatabaseTables().getAccounts().getTableDao().getEmptyForeignCollection("GROUP_ASSIGNMENTS");
+            this.groups = ACCOUNTS_DB.getTableDao().getEmptyForeignCollection("GROUP_ASSIGNMENTS");
         } catch (SQLException e) {
             StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
         }
-        StarNub.getDatabaseTables().getAccounts().createIfNotExist(this);
+        ACCOUNTS_DB.createIfNotExist(this);
 //        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
 //            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
 //            if (((String) group.get("type")).equalsIgnoreCase("default")) {
@@ -140,40 +146,13 @@ public class Account {
         return lastLogin;
     }
 
-    public ForeignCollection<PlayerCharacter> getPlayerCharacters() {
-        return playerCharacters;
-    }
-
-    public boolean isDisbaled() {
-        return disbaled;
-    }
-
-    public DateTime getDateDisabled() {
-        return dateDisabled;
-    }
-
-    public String getDisabledReason() {
-        return disabledReason;
-    }
-
-    public DateTime getDateRestrictionExpires() {
-        return dateRestrictionExpires;
-    }
-
-    public String getImposerName() {
-        return imposerName;
-    }
-
-    public Account getImposerAccount() {
-        return imposerAccount;
-    }
 
     public ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> getPermissions() {
         return permissions;
     }
 
     public void getAndAddGroup(String groupToGet){
-        Group group = StarNub.getDatabaseTables().getGroups().getGroupByName(groupToGet);
+        Group group = Groups.getInstance().getGroupByName(groupToGet);
         this.groups.add(new GroupAssignment(this, group));
     }
 
@@ -183,7 +162,7 @@ public class Account {
         } catch (Exception e) {
             return false;
         }
-        return StarNub.getDatabaseTables().getAccounts().update(this);
+        return ACCOUNTS_DB.update(this);
     }
 
     public void setAccountSalt(String accountSalt) {
@@ -192,7 +171,7 @@ public class Account {
 
     public boolean setLastLogin(DateTime lastLogin) {
         this.lastLogin = lastLogin;
-        return StarNub.getDatabaseTables().getAccounts().update(this);
+        return ACCOUNTS_DB.update(this);
     }
 
     public void setPermissions(ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> permissions) {
@@ -201,7 +180,7 @@ public class Account {
 
     public void addPermission(String permission) {
         addPermissionToMap(permission);
-        StarNub.getDatabaseTables().getAccountPermissions().createIfNotExist(new AccountPermission(this.starnubId, permission));
+        new AccountPermission(this, permission, true);
     }
 
     public void deletePermission(String permission){
@@ -222,8 +201,8 @@ public class Account {
         } else if (permissionBreak.length == 1){
             permissions.remove(permissionBreak[0]);
         }
-        AccountPermission accountPermission = StarNub.getDatabaseTables().getAccountPermissions().getAccountPermission(this.starnubId, permission);
-        StarNub.getDatabaseTables().getAccountPermissions().delete(accountPermission);
+        AccountPermission accountPermission = AccountPermissions.getInstance().getAccountPermission(this.starnubId, permission);
+        AccountPermissions.getInstance().delete(accountPermission);
     }
 
     public void reloadPermissions() {
@@ -235,7 +214,7 @@ public class Account {
         permissions = new ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>>();
         LinkedHashSet<String> permissionsToLoad = new LinkedHashSet<String>();
         /* Load account permissions first */
-        List<AccountPermission> accountPermissionList = StarNub.getDatabaseTables().getAccountPermissions().getAccountPermissions(this.starnubId);
+        List<AccountPermission> accountPermissionList = AccountPermissions.getInstance().getAccountPermissions(this.starnubId);
         permissionsToLoad.addAll(accountPermissionList.stream().map(AccountPermission::getPermission).collect(Collectors.toList()));
         /* Group assignment then recursively all inherited groups */
         LinkedHashSet<String> groupPermissions = new LinkedHashSet<String>();
@@ -264,7 +243,7 @@ public class Account {
     private LinkedHashSet<Group> recursiveGroupAdd(ForeignCollection<GroupInheritance> groupInheritances){
         LinkedHashSet<Group> uniqueGroups = new LinkedHashSet<Group>();
         for (GroupInheritance groupInheritance : groupInheritances) {
-            StarNub.getDatabaseTables().getGroups().refresh(groupInheritance.getInheritedGroup());
+            Groups.getInstance().refresh(groupInheritance.getInheritedGroup());
             Group group = groupInheritance.getInheritedGroup();
             uniqueGroups.add(group);
             uniqueGroups.addAll(recursiveGroupAdd(group.getInheritedGroups()));
@@ -393,14 +372,14 @@ public class Account {
 
     @SuppressWarnings("unchecked")
     public void addGroupAssignment(Group group){
-        if (StarNub.getDatabaseTables().getGroupAssignments().getGroupAssignments(this, group) == null) {
+        if (GroupAssignments.getInstance().getGroupAssignments(this, group) == null) {
             this.groups.add(new GroupAssignment(this, group));
         }
     }
 
     @SuppressWarnings("unchecked")
     public void removeGroupAssignment(Group group){
-        this.groups.remove(StarNub.getDatabaseTables().getGroupAssignments().getGroupAssignments(this, group));
+        this.groups.remove(GroupAssignments.getInstance().getGroupAssignments(this, group));
     }
 
     public void refreshGroupAssignments(){
@@ -421,28 +400,28 @@ public class Account {
             boolean sx2Null = accountSettings.getChatSuffix2() == null;
             boolean px12Used = !px1Null & !px2Null;
             if (!px1Null && accountSettings.getChatPrefix1().getTypeOfTag().equalsIgnoreCase("group")) {
-                Group tagGroup = StarNub.getDatabaseTables().getGroups().getGroupByName(accountSettings.getChatPrefix1().getName());
+                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatPrefix1().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatPrefix1(group.getTag());
                     return;
                 }
             }
             if (!px2Null && accountSettings.getChatPrefix2().getTypeOfTag().equalsIgnoreCase("group")) {
-                Group tagGroup = StarNub.getDatabaseTables().getGroups().getGroupByName(accountSettings.getChatPrefix2().getName());
+                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatPrefix2().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatPrefix2(group.getTag());
                     return;
                 }
             }
             if (!sx1Null && accountSettings.getChatSuffix1().getTypeOfTag().equalsIgnoreCase("group")) {
-                Group tagGroup = StarNub.getDatabaseTables().getGroups().getGroupByName(accountSettings.getChatSuffix1().getName());
+                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatSuffix1().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatSuffix1(group.getTag());
                     return;
                 }
             }
             if (!sx2Null && accountSettings.getChatSuffix2().getTypeOfTag().equalsIgnoreCase("group")) {
-                Group tagGroup = StarNub.getDatabaseTables().getGroups().getGroupByName(accountSettings.getChatSuffix2().getName());
+                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatSuffix2().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatSuffix2(group.getTag());
                     return;

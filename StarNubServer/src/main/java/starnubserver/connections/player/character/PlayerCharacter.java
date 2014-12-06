@@ -23,9 +23,10 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
-import starnubserver.connections.player.generic.Ban;
+import starnubserver.database.tables.Accounts;
+import starnubserver.database.tables.Characters;
+import starnubserver.events.events.StarNubEvent;
 import utilities.strings.StringUtilities;
 
 import java.util.List;
@@ -46,6 +47,7 @@ import java.util.UUID;
 @DatabaseTable(tableName = "CHARACTERS")
 public class PlayerCharacter {
 
+    private final static Characters CHARACTERS_DB = Characters.getInstance();
 
     @DatabaseField(generatedId = true, columnName = "CHARACTER_ID")
     private volatile int characterId;
@@ -58,9 +60,6 @@ public class PlayerCharacter {
 
     @DatabaseField(dataType = DataType.UUID, uniqueCombo=true, columnName = "UUID")
     private volatile UUID uuid;
-
-    @DatabaseField(canBeNull = true, foreign = true,  columnName = "BAN")
-    private volatile Ban ban;
 
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_SEEN")
     private volatile DateTime lastSeen;
@@ -90,9 +89,19 @@ public class PlayerCharacter {
         this.cleanName = StringUtilities.completeClean(name);
         this.uuid = uuid;
         this.lastSeen = DateTime.now();
-        this.ban = null;
         if (createEntry){
-            StarNub.getDatabaseTables().getCharacters().createOrUpdate(this);
+            CHARACTERS_DB.createOrUpdate(this);
+        }
+    }
+
+    public static PlayerCharacter getPlayerCharacter(String name, UUID uuid){
+        PlayerCharacter playerCharacter = Characters.getInstance().getCharacterFromNameUUIDCombo(name, uuid);
+        if (playerCharacter != null) {
+            return playerCharacter;
+        } else {
+            playerCharacter = new PlayerCharacter(name, uuid, true);
+            new StarNubEvent("Player_New_Character", playerCharacter);
+            return playerCharacter;
         }
     }
 
@@ -128,14 +137,6 @@ public class PlayerCharacter {
         this.uuid = uuid;
     }
 
-    public Ban getBan() {
-        return ban;
-    }
-
-    public void setBan(Ban ban) {
-        this.ban = ban;
-    }
-
     public DateTime getLastSeen() {
         return lastSeen;
     }
@@ -154,18 +155,18 @@ public class PlayerCharacter {
 
     public void updateLastSeen(DateTime lastSeen) {
         this.lastSeen = DateTime.now();
-        StarNub.getDatabaseTables().getCharacters().update(this);
+        CHARACTERS_DB.update(this);
     }
 
     public void updatePlayedTimeLastSeen() {
         this.lastSeen = DateTime.now();
         this.playedTime = this.getPlayedTime()+(DateTime.now().getMillis()-lastSeen.getMillis());
-        StarNub.getDatabaseTables().getCharacters().update(this);
+        CHARACTERS_DB.update(this);
     }
 
     public void setPlayedTime(long playedTime) {
         this.playedTime = playedTime;
-        StarNub.getDatabaseTables().getCharacters().update(this);
+        CHARACTERS_DB.update(this);
     }
 
     /**
@@ -174,7 +175,7 @@ public class PlayerCharacter {
      */
     public void setAccount(Account account) {
         this.account = account;
-        StarNub.getDatabaseTables().getCharacters().update(this);
+        CHARACTERS_DB.update(this);
     }
 
     public void setAssociatedIps(ForeignCollection<CharacterIP> associatedIps) {
@@ -188,20 +189,10 @@ public class PlayerCharacter {
             accountId = account.getStarnubId();
             this.account.setLastLogin(DateTime.now());
             this.account.loadPermissions();
-            StarNub.getDatabaseTables().getAccounts().update(this.account);
+            Accounts.getInstance().update(this.account);
         }
-        StarNub.getDatabaseTables().getCharacters().createOrUpdate(this);
-        this.ban = StarNub.getConnections().getBANSList().banGet(ip, uuid);
+        CHARACTERS_DB.createOrUpdate(this);
         return accountId;
     }
-
-    public void removeBan(){
-
-    }
-
-    public void addBan(){
-
-    }
-
 
 }

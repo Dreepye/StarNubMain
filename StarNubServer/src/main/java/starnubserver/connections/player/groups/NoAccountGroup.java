@@ -1,6 +1,7 @@
 package starnubserver.connections.player.groups;
 
-import starnubserver.StarNub;
+import starnubserver.database.tables.GroupPermissions;
+import starnubserver.database.tables.Groups;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public class NoAccountGroup {
 //                noAccountGroup = groupName;
 //            }
 //        }
-        Group group = StarNub.getDatabaseTables().getGroups().getGroupByName(noAccountGroup);
+        Group group = Groups.getInstance().getGroupByName(noAccountGroup);
         loadPermissions(group);
         this.name = group.getLadderName();
         this.tag = group.getTag();
@@ -104,14 +105,14 @@ public class NoAccountGroup {
         String noAccountGroup = null;
 
 //                = (String) ((Map)StarNub.getConfiguration().getConfiguration().get("groups")).get("no_account_group");
-        Group group = StarNub.getDatabaseTables().getGroups().getGroupByName(noAccountGroup);
+        Group group = Groups.getInstance().getGroupByName(noAccountGroup);
         loadPermissions(group);
     }
 
     public void loadPermissions(Group group){
         permissions = new ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>>();
         HashSet<String> permissionsToLoad = new HashSet<String>();
-        List<GroupPermission> groupPermissionList = StarNub.getDatabaseTables().getGroupPermissions().getGroupPermissions(group);
+        List<GroupPermission> groupPermissionList = GroupPermissions.getInstance().getGroupPermissions(group);
         permissionsToLoad.addAll(groupPermissionList.stream().map(GroupPermission::getPermission).collect(Collectors.toList()));
         HashSet<GroupPermission> groupAssignmentHashSet = new HashSet<>();
         permissionsToLoad.addAll(groupAssignmentHashSet.stream().map(GroupPermission::getPermission).collect(Collectors.toList()));

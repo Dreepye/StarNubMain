@@ -27,6 +27,7 @@ import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
+import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
@@ -39,12 +40,20 @@ import java.sql.SQLException;
  */
 public class GroupAssignments extends TableWrapper<GroupAssignment, Integer> {
 
-    public GroupAssignments(Class<GroupAssignment> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(typeParameterDBClass, typeParameterIDClass);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final GroupAssignments instance = new GroupAssignments();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private GroupAssignments(){
+        super(DatabaseConnection.getConnection(), 0, GroupAssignment.class, Integer.class);
     }
 
-    public GroupAssignments(ConnectionSource connectionSource, int oldVersion, Class<GroupAssignment> typeParameterDBClass, Class<Integer> typeParameterIDClass) {
-        super(connectionSource, oldVersion, typeParameterDBClass, typeParameterIDClass);
+    public static GroupAssignments getInstance() {
+        return instance;
     }
 
     @Override
