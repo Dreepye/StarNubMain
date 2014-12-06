@@ -34,7 +34,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will not work unless the network is stopped and is called from that method, if starting this will return true
      * this will transition the state to running or stopped
@@ -68,7 +68,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -90,7 +90,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This cannot be used while the network is starting
      *
@@ -106,7 +106,7 @@ public class Starting extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This cannot be used when the network is stopped
      *

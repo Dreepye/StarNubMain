@@ -24,6 +24,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.StaffEntries;
 
+import java.io.Serializable;
+
 /**
  * This class represents a staff entry to be used with various classes
  * <p>
@@ -33,7 +35,7 @@ import starnubserver.database.tables.StaffEntries;
  *
  */
 @DatabaseTable(tableName = "STAFF_ENTRIES")
-public class StaffEntry {
+public class StaffEntry implements Serializable{
 
     private final static StaffEntries STAFF_ENTRIES_DB = StaffEntries.getInstance();
 

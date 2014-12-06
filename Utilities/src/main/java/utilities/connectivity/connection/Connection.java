@@ -94,7 +94,7 @@ public abstract class Connection {
     public abstract void removeConnection();
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will either print to console or send events
      *

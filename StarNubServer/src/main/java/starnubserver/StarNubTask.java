@@ -67,7 +67,7 @@ public class StarNubTask extends ScheduledTask {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      *
      * Uses: This will schedule a one time task then insert this task into the task list
      *
@@ -81,7 +81,7 @@ public class StarNubTask extends ScheduledTask {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      *
      * Uses: This will schedule a repeating task then insert this task into the task list
      *
@@ -96,7 +96,7 @@ public class StarNubTask extends ScheduledTask {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      *
      * Uses: This will schedule a repeating task with a fixed delay then insert this task into the task list
      *
@@ -125,7 +125,7 @@ public class StarNubTask extends ScheduledTask {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      *
      * Uses: This will insert this task into the task list
      */

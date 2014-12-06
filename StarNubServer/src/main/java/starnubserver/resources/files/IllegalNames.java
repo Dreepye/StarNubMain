@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources;
+package starnubserver.resources.files;
 
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.file.yaml.YAMLWrapper;
@@ -24,24 +24,24 @@ import utilities.file.yaml.YAMLWrapper;
 import java.io.IOException;
 
 /**
- * Represents StarNubs Operators instance extending YAMLWrapper
+ * Represents StarNubs IllegalNames instance extending YAMLWrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Operators extends YAMLWrapper {
+public class IllegalNames extends YAMLWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      *
      * @param starnubResources YAMLWrapper containing starnubserver resources
      */
-    public Operators(YAMLWrapper starnubResources) {
+    public IllegalNames(YAMLWrapper starnubResources) {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "operators", "file"),
-                starnubResources.getNestedValue("operators", "map"),
-                (String) starnubResources.getListNestedValue(1, "operators", "file"),
+                (String) starnubResources.getListNestedValue(0, "illegal_names", "file"),
+                starnubResources.getNestedValue("illegal_names", "map"),
+                (String) starnubResources.getListNestedValue(1, "illegal_names", "file"),
                 false,
                 true,
                 true,
@@ -51,35 +51,35 @@ public class Operators extends YAMLWrapper {
     }
 
     /**
-     * This method will add a value to your operators
+     * This method will add a value to your IllegalNames
      *
      * @param value the Object that you would like to add to your list or set
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
-    public boolean addToOperators(Object value) throws IOException, CollectionDoesNotExistException {
-        return super.addToCollection(value, "uuids");
+    public boolean addToIllegalNames(Object value) throws IOException, CollectionDoesNotExistException {
+        return super.addToCollection(value, "names");
     }
 
     /**
-     * This method will remove a value to your operators
+     * This method will remove a value to your IllegalNames
      *
      * @param value the Object that you would like to remove to your list or set
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
-    public boolean removeFromOperators(Object value) throws IOException {
-        return super.removeFromCollection(value, "uuids");
+    public boolean removeFromIllegalNames(Object value) throws IOException {
+        return super.removeFromCollection(value, "names");
     }
 
     /**
-     * This method will check to see if a  your operators has a specific value
+     * This method will check to see if a  your IllegalNames has a specific value
      *
      * @param value Object to check the list or set for
      * @return boolean if the item was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
-    public boolean operatorsContains(Object value) throws IOException, NullPointerException {
-        return super.collectionContains(value, "uuids");
+    public boolean illegalNamesContains(Object value) throws IOException, NullPointerException {
+        return super.collectionContains(value, "names");
     }
 }

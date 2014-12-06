@@ -46,7 +46,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used to load restrictions from the database into memory
      * <p>
@@ -68,7 +68,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used to automatically remove any restrictions that have expired
      * <p>
@@ -81,7 +81,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
 
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is the actual restriction purging method
      * <p>
@@ -105,7 +105,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used to check when a player logs in, if they are restrictions or not
      * <p>
@@ -118,7 +118,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will check a single identifier for a ban
      * <p>
@@ -130,7 +130,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used to check when a player logs in, if they are restrictions or not
      * <p>
@@ -148,7 +148,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used to check when a player logs in, if they are restrictions or not
      * <p>

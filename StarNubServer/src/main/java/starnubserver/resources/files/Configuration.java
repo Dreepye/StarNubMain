@@ -16,11 +16,9 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources;
+package starnubserver.resources.files;
 
 import utilities.file.yaml.YAMLWrapper;
-
-import java.io.InputStream;
 
 /**
  * Represents StarNubs Configuration instance extending YAMLWrapper
@@ -28,14 +26,19 @@ import java.io.InputStream;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PluginConfiguration extends YAMLWrapper {
+public class Configuration extends YAMLWrapper {
 
-    public PluginConfiguration(String pluginName, String fileName, InputStream defaultPath, String diskPath) {
+    /**
+     * This will construct a YAML file, YAML dumper, YAML auto dumper
+     *
+     * @param starnubResources YAMLWrapper containing starnubserver resources
+     */
+    public Configuration(YAMLWrapper starnubResources) {
         super(
-                pluginName,
-                fileName,
-                defaultPath,
-                diskPath,
+                "StarNub",
+                (String) starnubResources.getListNestedValue(0, "default_configuration", "file"),
+                starnubResources.getNestedValue("default_configuration", "map"),
+                (String) starnubResources.getListNestedValue(1, "default_configuration", "file"),
                 false,
                 true,
                 true,

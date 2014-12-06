@@ -16,29 +16,26 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources;
+package starnubserver.resources.files;
 
 import utilities.file.yaml.YAMLWrapper;
 
+import java.io.InputStream;
+
 /**
- * Represents StarNubs GroupsVerifyDump instance extending YAMLWrapper
+ * Represents StarNubs Configuration instance extending YAMLWrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class GroupsVerifyDump extends YAMLWrapper {
+public class PluginConfiguration extends YAMLWrapper {
 
-    /**
-     * This will construct a YAML file, YAML dumper, YAML auto dumper
-     *
-     * @param starnubResources YAMLWrapper containing starnubserver resources
-     */
-    public GroupsVerifyDump(YAMLWrapper starnubResources) {
+    public PluginConfiguration(String pluginName, String fileName, InputStream defaultPath, String diskPath) {
         super(
-                "StarNub",
-                (String) starnubResources.getListNestedValue(0, "default_groups_configuration", "file"),
-                starnubResources.getNestedValue("default_groups_configuration", "map"),
-                (String) starnubResources.getListNestedValue(1, "default_groups_configuration", "file"),
+                pluginName,
+                fileName,
+                defaultPath,
+                diskPath,
                 false,
                 true,
                 true,

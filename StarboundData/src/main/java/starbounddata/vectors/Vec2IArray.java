@@ -56,7 +56,8 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         while (lowX <= highX) {
             int tempY = lowY;
             while (tempY <= highY) {
-                this.add(new Vec2I(lowX, tempY));
+                Vec2I vec2I = new Vec2I(lowX, tempY);
+                this.add(vec2I);
                 tempY++;
             }
             lowX++;
@@ -72,7 +73,8 @@ public class Vec2IArray extends ArrayList<Vec2I> {
             throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {
-            this.add(new Vec2I(in));
+            Vec2I vec2I = new Vec2I(in);
+            this.add(vec2I);
         }
     }
 

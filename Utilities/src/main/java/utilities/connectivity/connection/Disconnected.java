@@ -33,7 +33,7 @@ public class Disconnected implements ConnectionStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will not work if the connection is disconnected
      *
@@ -45,7 +45,7 @@ public class Disconnected implements ConnectionStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will not work if the connection is disconnected
      *

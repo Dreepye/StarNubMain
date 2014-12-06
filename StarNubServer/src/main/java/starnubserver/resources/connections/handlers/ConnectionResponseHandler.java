@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.internal.handlers;
+package starnubserver.resources.connections.handlers;
 
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ConnectResponsePacket;
@@ -38,7 +38,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: Handles Server Connection Response Packets which are replies to the Connection Attempts. Step 2 of 2 (ClientConnectPacket is Part 1).
      *
@@ -69,7 +69,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This will handle post processing of this connection
      *
@@ -123,7 +123,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This will handle post processing of this connection
      *

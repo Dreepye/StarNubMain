@@ -16,21 +16,24 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.internal;
+package starnubserver.resources.connections;
 
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.Connections;
-import utilities.connectivity.connection.ProxyConnection;
+import starnubserver.StarNubTask;
+import starnubserver.events.events.StarNubEvent;
+import utilities.connectivity.connection.Connection;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Represents StarNubTask instance
+ * Represents OpenConnections instance. These connections have no purpose yet and they will be purged after a set time.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class ProxyConnections extends ConcurrentHashMap<ChannelHandlerContext, ProxyConnection> {
+public class OpenConnections extends ConcurrentHashMap<ChannelHandlerContext, Connection> {
 
     private final Connections CONNECTIONS;
 
@@ -41,7 +44,7 @@ public class ProxyConnections extends ConcurrentHashMap<ChannelHandlerContext, P
      * updating threads ({@code concurrencyLevel}).
      *
      * @param initialCapacity  the initial capacity. The implementation
-     *                         performs internal sizing to accommodate this many elements,
+     *                         performs connections sizing to accommodate this many elements,
      *                         given the specified load factor.
      * @param loadFactor       the load factor (table density) for
      *                         establishing the initial table size
@@ -52,8 +55,28 @@ public class ProxyConnections extends ConcurrentHashMap<ChannelHandlerContext, P
      *                                            negative or the load factor or concurrencyLevel are
      *                                            nonpositive
      */
-    public ProxyConnections(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
+    public OpenConnections(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
+        new StarNubTask("StarNub", "StarNub - OpenConnections - Open Connection Purge", true , 30, 30, TimeUnit.SECONDS, this::connectionPurge);
+    }
+
+    /**
+     * This represents a lower level method for StarNubs API.
+     * <p>
+     * Recommended: For connections use with StarNub.
+     * <p>
+     * Uses: This method will purge open connections for connections that never been associated with any task or service within 30 seconds.
+     */
+    private void connectionPurge(){
+        for (Entry<ChannelHandlerContext, Connection> connectionEntry : this.entrySet()){
+            ChannelHandlerContext ctx = connectionEntry.getKey();
+            Connection connection = connectionEntry.getValue();
+            if ((System.currentTimeMillis() - connection.getCONNECTION_START_TIME()) >= 30000){
+                connection.disconnect();
+                new StarNubEvent("StarNub_Open_Connection_Purged", connection);
+                this.remove(ctx);
+            }
+        }
     }
 }

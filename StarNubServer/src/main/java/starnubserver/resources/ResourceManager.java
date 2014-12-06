@@ -47,7 +47,7 @@ public class ResourceManager {
 
     /** This represents a lower level method for StarNubs API.Q
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will check to make sure StarNub and SubDirectories
      * are created or exist.

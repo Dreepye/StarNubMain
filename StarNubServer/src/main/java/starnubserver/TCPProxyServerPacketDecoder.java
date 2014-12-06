@@ -228,7 +228,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This will create new packets from the packet cache and insert them into a HashMap Packet Pool to be used in
      * this sockets connection.

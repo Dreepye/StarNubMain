@@ -165,7 +165,7 @@ class Yylex {
     private static final int ZZ_PUSHBACK_2BIG = 2;
     /* error messages for the codes above */
     private static final String ZZ_ERROR_MSG[] = {
-            "Unkown internal scanner error",
+            "Unkown connections scanner error",
             "Error: could not match input",
             "Error: pushback value was too large"
     };
@@ -396,8 +396,8 @@ class Yylex {
      * Resets the scanner to read from a new input stream.
      * Does not close the old reader.
      * <p>
-     * All internal variables are reset, the old input stream
-     * <b>cannot</b> be reused (internal buffer is discarded and lost).
+     * All connections variables are reset, the old input stream
+     * <b>cannot</b> be reused (connections buffer is discarded and lost).
      * Lexical state is set to <tt>ZZ_INITIAL</tt>.
      *
      * @param reader the new input stream

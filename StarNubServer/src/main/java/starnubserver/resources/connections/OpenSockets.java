@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.internal;
+package starnubserver.resources.connections;
 
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.Connections;
@@ -43,7 +43,7 @@ public class OpenSockets extends ConcurrentHashMap<ChannelHandlerContext, Long> 
      * updating threads ({@code concurrencyLevel}).
      *
      * @param initialCapacity  the initial capacity. The implementation
-     *                         performs internal sizing to accommodate this many elements,
+     *                         performs connections sizing to accommodate this many elements,
      *                         given the specified load factor.
      * @param loadFactor       the load factor (table density) for
      *                         establishing the initial table size
@@ -63,7 +63,7 @@ public class OpenSockets extends ConcurrentHashMap<ChannelHandlerContext, Long> 
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will purge open sockets for connections that never completed within 30 seconds.
      */

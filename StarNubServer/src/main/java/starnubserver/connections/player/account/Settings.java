@@ -29,8 +29,10 @@ import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.AccountSettings;
 import starnubserver.database.tables.Groups;
 
+import java.io.Serializable;
+
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
-public class Settings {
+public class Settings implements Serializable {
 
     private final static AccountSettings ACCOUNT_SETTINGS_DB = AccountSettings.getInstance();
 
@@ -51,10 +53,6 @@ public class Settings {
 
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_SUFFIX_2")
     private volatile Tag chatSuffix2;
-
-
-    @DatabaseField(dataType = DataType.BOOLEAN, columnName = "BLOCK_WHISPERS")
-    private volatile boolean whisperBlocking;
 
 
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = "APPEAR_OFFLINE")
@@ -81,9 +79,6 @@ public class Settings {
         return chatSuffix2;
     }
 
-    public boolean isWhisperBlocking() {
-        return whisperBlocking;
-    }
 
 
 //    public ForeignCollection<ChatRoomSubscription> getChatRoomSubscriptions() {
@@ -117,11 +112,6 @@ public class Settings {
 
     public void setChatSuffix2(Tag chatSuffix2) {
         this.chatSuffix2 = chatSuffix2;
-        ACCOUNT_SETTINGS_DB.update(this);
-    }
-
-    public void setWhisperBlocking(boolean whisperBlocking) {
-        this.whisperBlocking = whisperBlocking;
         ACCOUNT_SETTINGS_DB.update(this);
     }
 

@@ -6,6 +6,7 @@ import starnubserver.StarNubTask;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
+import starnubserver.resources.NameBuilder;
 import utilities.events.types.Event;
 import utilities.strings.StringUtilities;
 import utilities.time.DateAndTimes;
@@ -28,7 +29,8 @@ import java.util.concurrent.TimeUnit;
 public class MultiOutputLogger {
 
 
-    private static final MultiOutputLogger instance = new MultiOutputLogger();
+    private final static MultiOutputLogger instance = new MultiOutputLogger();
+    private final static NameBuilder NAME_BUILDER = NameBuilder.getInstance();
 
     private final FileLog EVENT_DEBUG_LOGGER;
     private volatile int logEvent = 0;
@@ -70,7 +72,7 @@ public class MultiOutputLogger {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This represents what items shall not be logged by StarNub.
      * <p>
@@ -789,8 +791,8 @@ public class MultiOutputLogger {
                 stringBuilder(
                         "StarNub",
                         " Chat",
-                        "[" + StarNub.getNameBuilder().cUnknownNameBuilder(sender, true, charName) + " -> " +
-                                StarNub.getNameBuilder().cUnknownNameBuilder(destination, true, charName) + "]: "
+                        "[" + NAME_BUILDER.cUnknownNameBuilder(sender, true, charName) + " -> " +
+                                NAME_BUILDER.cUnknownNameBuilder(destination, true, charName) + "]: "
                                 + StringUtilities.removeColors(message)));
     }
 
@@ -819,7 +821,7 @@ public class MultiOutputLogger {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will print a "Command-Fail" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
@@ -835,13 +837,13 @@ public class MultiOutputLogger {
                 stringBuilder(
                         "StarNub",
                         " Command-Fail",
-                        StarNub.getNameBuilder().cUnknownNameBuilder(sender, true, charName) + " -> " + message));
+                        NAME_BUILDER.cUnknownNameBuilder(sender, true, charName) + " -> " + message));
     }
 
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will print a "Command-Success" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
@@ -857,7 +859,7 @@ public class MultiOutputLogger {
                 stringBuilder(
                         "StarNub",
                         " Command-Success",
-                        StarNub.getNameBuilder().cUnknownNameBuilder(sender, true, charName) + " -> " + message));
+                        NAME_BUILDER.cUnknownNameBuilder(sender, true, charName) + " -> " + message));
     }
 
     /**
@@ -931,20 +933,20 @@ public class MultiOutputLogger {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is the final console print method, this prints to standard error
      * <p>
      */
 
     private String stringBuilder(Object sender, String type, String message) {
-        return timeStamp() + "[" + StarNub.getNameBuilder().cNonPlayerNameBuild(sender) + type + "]: " + message;
+        return timeStamp() + "[" + NAME_BUILDER.cNonPlayerNameBuild(sender) + type + "]: " + message;
     }
 
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will return a current time stamp based on a 24 hour clock
      * <p>

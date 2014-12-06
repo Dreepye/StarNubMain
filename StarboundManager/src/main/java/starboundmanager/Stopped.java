@@ -32,7 +32,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to start the Starbound process and transition the state to starting
      *
@@ -49,7 +49,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -62,7 +62,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This cannot be used while the network is stopped
      *
@@ -78,7 +78,7 @@ public class Stopped extends StarboundStatus{
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This cannot be used with the network is stopped
      *

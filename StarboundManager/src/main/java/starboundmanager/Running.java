@@ -32,7 +32,7 @@ public class Running extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will not work because the network is already running
      *
@@ -49,7 +49,7 @@ public class Running extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive
      *
@@ -71,7 +71,7 @@ public class Running extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to see if the Starbound network is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes. This will transition the state to unresponsive
@@ -97,7 +97,7 @@ public class Running extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to stop the Starbound process by transition the status to stopping and then calling the stop method of the stopping
      * status

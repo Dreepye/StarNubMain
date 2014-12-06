@@ -49,7 +49,7 @@ public class StarNubVersion {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will set and get StarNubVersion Singleton instance
      *

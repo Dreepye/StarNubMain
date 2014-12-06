@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.internal.handlers;
+package starnubserver.resources.connections.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +81,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: Handles Client Connection Packets for connection attempts. Step 1 of 2 (ConnectionResponsePacket is Part 2).
      *
@@ -148,7 +148,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This will process a rejected cache and packet
      *
@@ -171,7 +171,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This checks to see if the network is restarting
      *
@@ -190,7 +190,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This checks to see if the network is whitelisted and is the player on it
      *
@@ -225,7 +225,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This checks to see if the player is banned or not by uuid and ip
      *
@@ -257,7 +257,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This checks to see if the player is logged in already, the first time they cannot connect, the second they disconnect the current player
      *
@@ -288,7 +288,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This checks to see if the network is full. Reserved Kick can will kick regular players first, then reserved players. Reserved plays can only ick regular players
      *

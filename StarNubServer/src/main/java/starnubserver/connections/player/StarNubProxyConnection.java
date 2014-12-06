@@ -77,7 +77,7 @@ public class StarNubProxyConnection extends ProxyConnection {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will automatically schedule a one time task and it can be canceled by calling removeTask()
      */

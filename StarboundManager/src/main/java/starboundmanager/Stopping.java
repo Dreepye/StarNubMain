@@ -34,7 +34,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will not work while the network is stopping
      *
@@ -51,7 +51,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -64,7 +64,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This cannot be used while the network is stopping
      *
@@ -80,7 +80,7 @@ public class Stopping extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to stop the Starbound process and transition it to unresponsive if we were unable to stop it
      * or stopped if the process was stopped

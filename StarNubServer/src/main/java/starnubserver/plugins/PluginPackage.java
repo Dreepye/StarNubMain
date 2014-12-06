@@ -21,7 +21,7 @@ package starnubserver.plugins;
 import starnubserver.StarNub;
 import starnubserver.events.events.ThreadEvent;
 import starnubserver.plugins.runnable.StarNubRunnable;
-import starnubserver.resources.PluginConfiguration;
+import starnubserver.resources.files.PluginConfiguration;
 import utilities.file.utility.GetFileSize;
 
 import java.io.File;

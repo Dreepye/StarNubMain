@@ -25,7 +25,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will not work while the network is in an unresponsive state
      *
@@ -42,7 +42,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to see if the Starbound process is alive, but depending on the current status may or may not work
      *
@@ -55,7 +55,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This cannot be used while the network is unresponsive
      *
@@ -71,7 +71,7 @@ public class Unresponsive extends StarboundStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to stopped and enable you to use the start method in the stopped status
      *

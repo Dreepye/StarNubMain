@@ -20,11 +20,11 @@ import io.netty.channel.ChannelHandlerContext;
 import starnubserver.cache.wrappers.IPCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.resources.BansList;
-import starnubserver.resources.Whitelist;
-import starnubserver.resources.internal.OpenConnections;
-import starnubserver.resources.internal.OpenSockets;
-import starnubserver.resources.internal.Players;
-import starnubserver.resources.internal.ProxyConnections;
+import starnubserver.resources.files.Whitelist;
+import starnubserver.resources.connections.OpenConnections;
+import starnubserver.resources.connections.OpenSockets;
+import starnubserver.resources.connections.Players;
+import starnubserver.resources.connections.ProxyConnections;
 
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +47,7 @@ public class Connections {
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This will set and get Connections Singleton instance
      ** @return Connections Singleton Instance

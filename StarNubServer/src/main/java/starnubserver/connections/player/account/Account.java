@@ -36,6 +36,7 @@ import starnubserver.database.tables.GroupAssignments;
 import starnubserver.database.tables.Groups;
 import utilities.crypto.PasswordHash;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -52,7 +53,7 @@ import java.util.stream.Collectors;
  *
  */
 @DatabaseTable(tableName = "ACCOUNTS")
-public class Account {
+public class Account implements Serializable{
 
     private final static Accounts ACCOUNTS_DB = Accounts.getInstance();
 
@@ -121,6 +122,21 @@ public class Account {
         loadPermissions();
         setUpdateTagsMainGroups();
     }
+
+    public Account getAccount(){
+
+
+        int accountId = 0;
+        if (this.account != null) {
+            accountId = account.getStarnubId();
+            this.account.setLastLogin(DateTime.now());
+            this.account.loadPermissions();
+            Accounts.getInstance().update(this.account);
+        }
+        CHARACTERS_DB.createOrUpdate(this);
+    }
+
+
 
     public int getStarnubId() {
         return starnubId;

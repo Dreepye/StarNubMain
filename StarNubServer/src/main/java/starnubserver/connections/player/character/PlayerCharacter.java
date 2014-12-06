@@ -18,18 +18,16 @@
 
 package starnubserver.connections.player.character;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.connections.player.account.Account;
-import starnubserver.database.tables.Accounts;
 import starnubserver.database.tables.Characters;
 import starnubserver.events.events.StarNubEvent;
 import utilities.strings.StringUtilities;
 
-import java.util.List;
+import java.io.Serializable;
 import java.util.UUID;
 
 
@@ -45,7 +43,7 @@ import java.util.UUID;
  *
  */
 @DatabaseTable(tableName = "CHARACTERS")
-public class PlayerCharacter {
+public class PlayerCharacter implements Serializable {
 
     private final static Characters CHARACTERS_DB = Characters.getInstance();
 
@@ -69,8 +67,6 @@ public class PlayerCharacter {
 
     @DatabaseField(canBeNull = true, foreign = true, columnName = "STARNUB_ID")
     private volatile Account account;
-
-    private volatile List<CharacterIP> associatedIpsCharacters;
 
     /**
      * Constructor for database purposes
@@ -109,40 +105,20 @@ public class PlayerCharacter {
         return characterId;
     }
 
-    public void setCharacterId(int characterId) {
-        this.characterId = characterId;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getCleanName() {
         return cleanName;
     }
 
-    public void setCleanName(String cleanName) {
-        this.cleanName = cleanName;
-    }
-
     public UUID getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
     public DateTime getLastSeen() {
         return lastSeen;
-    }
-
-    public void setLastSeen(DateTime lastSeen) {
-        this.lastSeen = lastSeen;
     }
 
     public long getPlayedTime() {
@@ -164,11 +140,6 @@ public class PlayerCharacter {
         CHARACTERS_DB.update(this);
     }
 
-    public void setPlayedTime(long playedTime) {
-        this.playedTime = playedTime;
-        CHARACTERS_DB.update(this);
-    }
-
     /**
      *
      * @param account Account which this character will belong too
@@ -177,22 +148,4 @@ public class PlayerCharacter {
         this.account = account;
         CHARACTERS_DB.update(this);
     }
-
-    public void setAssociatedIps(ForeignCollection<CharacterIP> associatedIps) {
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public int initialLogInProcessing(String ip, String uuid){
-        int accountId = 0;
-        if (this.account != null) {
-            accountId = account.getStarnubId();
-            this.account.setLastLogin(DateTime.now());
-            this.account.loadPermissions();
-            Accounts.getInstance().update(this.account);
-        }
-        CHARACTERS_DB.createOrUpdate(this);
-        return accountId;
-    }
-
 }

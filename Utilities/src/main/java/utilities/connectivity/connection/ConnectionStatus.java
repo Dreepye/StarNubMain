@@ -27,7 +27,7 @@ package utilities.connectivity.connection;
 public interface ConnectionStatus {
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will see if the connection is still alive
      *
@@ -36,7 +36,7 @@ public interface ConnectionStatus {
     public boolean isConnected();
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to disconnect this connection
      *

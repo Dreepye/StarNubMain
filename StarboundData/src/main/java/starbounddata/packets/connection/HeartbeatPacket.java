@@ -40,7 +40,7 @@ public class HeartbeatPacket extends Packet {
     private long currentStep;
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This is used to pre-construct packets for a specific side of a connection
      * <p>
@@ -54,7 +54,7 @@ public class HeartbeatPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
      * router this packet

@@ -40,7 +40,7 @@ public class StarboundProcess implements Runnable {
     protected boolean STREAM_CONSOLE_PRINT;
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will build a new Starbound Process
      *
@@ -80,7 +80,7 @@ public class StarboundProcess implements Runnable {
     }
 
     /**
-     * Depending on the internal settings the stream will be discarded or used
+     * Depending on the connections settings the stream will be discarded or used
      * to print console messages and provide basic player management functions.
      */
     @SuppressWarnings("unchecked")

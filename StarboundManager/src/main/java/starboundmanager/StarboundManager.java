@@ -70,7 +70,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will return the Stopped Status
      *
@@ -81,7 +81,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will return the Starting Status
      *
@@ -92,7 +92,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will return the Running Status
      *
@@ -103,7 +103,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will return the Stopping Status
      *
@@ -114,7 +114,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will return the Unresponsive Status
      *
@@ -137,7 +137,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal.
+     * Recommended: For connections.
      * <p>
      * Uses: This will set the Starbound Server status
      *
@@ -159,7 +159,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will set the Starbound Server version
      *
@@ -205,7 +205,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will set the Starbound Server version
      *
@@ -317,7 +317,7 @@ public class StarboundManager extends StarboundServerExe {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will either print to console or send events
      *

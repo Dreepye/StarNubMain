@@ -112,8 +112,8 @@
                                     <shadedPattern>org.slf4j</shadedPattern>
                                 </relocation>
                                 <!--<relocation>-->
-                                <!--<pattern>org.projectreactor</pattern>-->
-                                <!--<shadedPattern>org.projectreactor</shadedPattern>-->
+                                    <!--<pattern>org.projectreactor</pattern>-->
+                                    <!--<shadedPattern>org.projectreactor</shadedPattern>-->
                                 <!--</relocation>-->
                                 <relocation>
                                     <pattern>org.yaml</pattern>
@@ -131,10 +131,10 @@
                                     <pattern>commons-lang</pattern>
                                     <shadedPattern>commons-lang</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>com.h2database</pattern>
-                                    <shadedPattern>com.h2database</shadedPattern>
-                                </relocation>
+                                <!--<relocation>-->
+                                    <!--<pattern>com.h2database</pattern>-->
+                                    <!--<shadedPattern>com.h2database</shadedPattern>-->
+                                <!--</relocation>-->
                                 <relocation>
                                     <pattern>mysql</pattern>
                                     <shadedPattern>mysql</shadedPattern>

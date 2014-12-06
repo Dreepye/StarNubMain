@@ -20,7 +20,7 @@ package starnubserver.plugins;
 
 import starnubserver.StarNub;
 import starnubserver.plugins.runnable.StarNubRunnable;
-import starnubserver.resources.PluginConfiguration;
+import starnubserver.resources.files.PluginConfiguration;
 import utilities.dircectories.DirectoryCheckCreate;
 
 import java.io.File;
@@ -45,7 +45,7 @@ enum JavaPluginPreload {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is where all the magic happens for loading a plugin.
      * This method loads and insure the plugin is within standards and will not have issues
@@ -180,7 +180,7 @@ enum JavaPluginPreload {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is where StarNub checks for dependencies. If it has a dependicy we will
      * attempt to load the dependancies first
@@ -211,7 +211,7 @@ enum JavaPluginPreload {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is where StarNub attempts to load the dependencies that were found.
      * <p>

@@ -33,7 +33,7 @@ import java.net.Socket;
 public class StarboundQuery {
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This method will query the address and port with a specific socket time out.
      * It will return the Starbound version number

@@ -28,9 +28,8 @@ import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventRouter;
 import starnubserver.logger.MultiOutputLogger;
 import starnubserver.plugins.PluginManager;
-import starnubserver.resources.Configuration;
 import starnubserver.resources.ResourceManager;
-import starnubserver.senders.NameBuilder;
+import starnubserver.resources.files.Configuration;
 import utilities.concurrency.task.TaskManager;
 import utilities.connectivity.client.TCPClient;
 
@@ -55,7 +54,6 @@ public final class StarNub {
     private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
     private static final TCPClient tcpClient = new TCPClient("StarNub - Central Client - Worker Thread");
     private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
-    private static final NameBuilder nameBuilder = new NameBuilder();// MAKE STATIC AND NOT HERE TODO
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
@@ -75,10 +73,6 @@ public final class StarNub {
 
     public static Configuration getConfiguration() {
         return configuration;
-    }
-
-    public static NameBuilder getNameBuilder() {
-        return nameBuilder;
     }
 
     public static MultiOutputLogger getLogger() {

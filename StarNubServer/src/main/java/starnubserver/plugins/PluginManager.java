@@ -87,7 +87,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used to prepare this singleton for use.
      * <p>
@@ -102,7 +102,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This is used on initial start up to load plugins plugins, print failures
      * and then enable the plugins. It will also dump the info files for the plugins
@@ -120,7 +120,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method well scan for "jars" inside of StarNub/Plugins and attempt to open them and look for a plugin.yml
      * If we cannot load the plugin.yml then it may not be a plugin or a correctly made plugin.
@@ -165,7 +165,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method well set the unloaded plugins ConcurrentHashMap
      * <p>
@@ -244,7 +244,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will remove a plugin from the unloaded list
      * <p>
@@ -461,7 +461,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will save to disk each plugins plugin.yml and commands.yml so
      * starbounddata.packets.starbounddata.packets.starnubserver owners can get further information about the plugin and commands.
@@ -508,7 +508,7 @@ public class PluginManager {
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will return a string with all of the loaded plugins with version number.
      * <p>

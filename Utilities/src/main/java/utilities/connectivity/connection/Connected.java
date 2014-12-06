@@ -33,7 +33,7 @@ public class Connected implements ConnectionStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will see if the connection is still alive
      *
@@ -55,7 +55,7 @@ public class Connected implements ConnectionStatus {
     }
 
     /**
-     * Recommended: For internal use.
+     * Recommended: For connections use.
      * <p>
      * Uses: This will attempt to disconnect this connection
      *

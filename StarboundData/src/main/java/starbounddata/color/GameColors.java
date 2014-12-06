@@ -428,7 +428,7 @@ public final class GameColors {
         }
 
         /**
-         * Recommended: For internal StarNub usage.
+         * Recommended: For connections StarNub usage.
          * <p>
          * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
          * <p>

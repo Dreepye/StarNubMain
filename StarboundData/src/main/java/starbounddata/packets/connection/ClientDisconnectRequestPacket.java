@@ -39,7 +39,7 @@ public class ClientDisconnectRequestPacket extends Packet {
     private byte emptyByte;
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This is used to pre-construct packets for a specific side of a connection
      * <p>
@@ -53,7 +53,7 @@ public class ClientDisconnectRequestPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
      * router this packet
@@ -75,7 +75,7 @@ public class ClientDisconnectRequestPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
@@ -88,7 +88,7 @@ public class ClientDisconnectRequestPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>

@@ -18,6 +18,6 @@
 
 /**
  * starnubserver.resources is the package contains the ResourceManager Singleton and the YAMLWrapper Resources used in
- * managing internal StarNub Data
+ * managing connections StarNub Data
  */
 package starnubserver.resources;

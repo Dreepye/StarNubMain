@@ -27,9 +27,9 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
-     * Uses: This is used for internal Packet Event Handling.
+     * Uses: This is used for connections Packet Event Handling.
      *
      * @param packet Packet representing the packet to be handled
      * @return Packet the packet that was handled
@@ -40,9 +40,9 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
-     * Uses: This is used for internal Packet Event Handling.
+     * Uses: This is used for connections Packet Event Handling.
      *
      * @param packet Packet representing the packet to be handled
      * @return Packet the packet that was handled

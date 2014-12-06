@@ -19,7 +19,7 @@
 package starnubserver.plugins;
 
 import starnubserver.plugins.runnable.StarNubRunnable;
-import starnubserver.resources.PluginConfiguration;
+import starnubserver.resources.files.PluginConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -51,7 +51,7 @@ public abstract class Packet {
     private boolean recycle = false;
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This constructor is used in construction of packets to be cached on each side of the players connection (Client, Server) sides of the proxy
      *
@@ -98,7 +98,7 @@ public abstract class Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This is used for StarNub to reset the packets routing
      */
@@ -107,7 +107,7 @@ public abstract class Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
@@ -117,7 +117,7 @@ public abstract class Packet {
     public abstract void read(ByteBuf in);
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>
@@ -154,7 +154,7 @@ public abstract class Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>

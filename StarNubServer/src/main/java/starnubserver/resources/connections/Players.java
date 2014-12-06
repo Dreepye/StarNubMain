@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.internal;
+package starnubserver.resources.connections;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
@@ -30,10 +30,10 @@ import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventSubscription;
-import starnubserver.resources.Operators;
-import starnubserver.resources.internal.handlers.ClientConnectHandler;
-import starnubserver.resources.internal.handlers.ConnectionResponseHandler;
-import starnubserver.resources.internal.handlers.ServerDisconnectHandler;
+import starnubserver.resources.files.Operators;
+import starnubserver.resources.connections.handlers.ClientConnectHandler;
+import starnubserver.resources.connections.handlers.ConnectionResponseHandler;
+import starnubserver.resources.connections.handlers.ServerDisconnectHandler;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -60,7 +60,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      * updating threads ({@code concurrencyLevel}).
      *
      * @param initialCapacity  the initial capacity. The implementation
-     *                         performs internal sizing to accommodate this many elements,
+     *                         performs connections sizing to accommodate this many elements,
      *                         given the specified load factor.
      * @param loadFactor       the load factor (table density) for
      *                         establishing the initial table size
@@ -92,7 +92,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will go through each online player, and update the database Played time counter as well
      * as the last seen Date. This ensures that the time is accurate in case of critical crash of the starbounddata.packets.starbounddata.packets.starnubserver tool
@@ -107,7 +107,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will go through each online player, and insure they are still connect.
      * If not it will send a player lost starbounddata.packets.connection message and remove them from the database.
@@ -123,7 +123,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will print all of the online players out in a debug message if turned on
      * <p>
@@ -177,7 +177,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to check is a string represents a starnubserver id.
      * <p>
@@ -198,7 +198,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to get a Player by a uuid from getOnlinePlayerByAnyIdentifier() method.
      * <p>
@@ -215,7 +215,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to get a Player by a InetAddress from getOnlinePlayerByAnyIdentifier() method.
      * <p>
@@ -232,7 +232,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to get a Player by a name in String form which is not as reliable as another identifier might be
      * from getOnlinePlayerByAnyIdentifier() method.
@@ -252,7 +252,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to get a Player by a Starbound ID from getOnlinePlayerByAnyIdentifier() method, this
      * method is reliable for sessions, but keep in mind this Starbound ID changes when a player disconnects and reconnects
@@ -271,7 +271,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     /**
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to get a Player by a StarNub ID from getOnlinePlayerByAnyIdentifier() method, this
      * StarNub ID is tied to the players account they use to log into for groups, permissions, ect.
@@ -281,7 +281,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      */
     private PlayerSession playerByStarNubClientID(int starnubClientId) {
         for (PlayerSession playerSessionSession : this.values()){
-            if (playerSessionSession.getAccount() == starnubClientId) {
+            if (playerSessionSession.getPlayerCharacter().getAccount().getStarnubId() == starnubClientId) {
                 return playerSessionSession;
             }
         }
@@ -291,7 +291,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     /**
      * This represents a lower level method for StarNubs API.
      * <p>
-     * Recommended: For internal use with StarNub.
+     * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method is used to get a Player by a ChannelHandlerContext from getOnlinePlayerByAnyIdentifier() method.
      * <p>

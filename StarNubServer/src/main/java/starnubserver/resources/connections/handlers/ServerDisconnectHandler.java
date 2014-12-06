@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.internal.handlers;
+package starnubserver.resources.connections.handlers;
 
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ServerDisconnectPacket;
@@ -33,7 +33,7 @@ public class ServerDisconnectHandler extends PacketEventHandler {
     }
 
     /**
-     * Recommended: For internal use with StarNub
+     * Recommended: For connections use with StarNub
      * <p>
      * Uses: This is used to clean up player connections
      *

@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources;
+package starnubserver.resources.files;
 
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.file.yaml.YAMLWrapper;

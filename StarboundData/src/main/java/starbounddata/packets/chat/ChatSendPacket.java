@@ -50,7 +50,7 @@ public class ChatSendPacket extends Packet {
     private String message;
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This is used to pre-construct packets for a specific side of a connection
      * <p>
@@ -97,7 +97,7 @@ public class ChatSendPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
@@ -111,7 +111,7 @@ public class ChatSendPacket extends Packet {
     }
 
     /**
-     * Recommended: For internal StarNub usage.
+     * Recommended: For connections StarNub usage.
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>
