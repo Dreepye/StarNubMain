@@ -18,6 +18,7 @@
 
 package starnubserver.resources.files;
 
+import starnubserver.resources.ResourceManager;
 import utilities.file.yaml.YAMLWrapper;
 
 /**
@@ -29,21 +30,31 @@ import utilities.file.yaml.YAMLWrapper;
 public class Configuration extends YAMLWrapper {
 
     /**
-     * This will construct a YAML file, YAML dumper, YAML auto dumper
-     *
-     * @param starnubResources YAMLWrapper containing starnubserver resources
+     * Represents the only instance of this class - Singleton Pattern
      */
-    public Configuration(YAMLWrapper starnubResources) {
+    private static final Configuration instance = new Configuration();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    public Configuration() {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "default_configuration", "file"),
-                starnubResources.getNestedValue("default_configuration", "map"),
-                (String) starnubResources.getListNestedValue(1, "default_configuration", "file"),
+                (String) ResourceManager.getInstance().getListNestedValue(0, "default_configuration", "file"),
+                ResourceManager.getInstance().getNestedValue("default_configuration", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "default_configuration", "file"),
                 false,
                 true,
                 true,
                 true,
                 true
         );
+    }
+
+    /**
+     * This returns this Singleton - Singleton Pattern
+     */
+    public static Configuration getInstance() {
+        return instance;
     }
 }

@@ -35,6 +35,7 @@ import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.generic.Ban;
 import starnubserver.connections.player.generic.StaffEntry;
+import starnubserver.connections.player.groups.NoAccountGroup;
 import starnubserver.database.tables.Accounts;
 import starnubserver.database.tables.CharacterIPLog;
 import starnubserver.database.tables.Characters;
@@ -68,6 +69,7 @@ import java.util.UUID;
 public class PlayerSession extends StarNubProxyConnection {
 
     private final static PlayerSessionLog PLAYER_SESSION_LOG_DB = PlayerSessionLog.getInstance();
+    private final static NoAccountGroup NO_ACCOUNT_GROUP = NoAccountGroup.getInstance();
     private final static NameBuilder NAME_BUILDER = NameBuilder.getInstance();
 
     @DatabaseField(generatedId = true, columnName = "SESSION_ID")

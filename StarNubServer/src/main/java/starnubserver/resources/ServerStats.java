@@ -28,17 +28,12 @@ import utilities.file.yaml.YAMLWrapper;
  */
 public class ServerStats extends YAMLWrapper {
 
-    /**
-     * This will construct a YAML file, YAML dumper, YAML auto dumper
-     *
-     * @param starnubResources YAMLWrapper containing starnubserver resources
-     */
-    public ServerStats(YAMLWrapper starnubResources) {
+    public ServerStats() {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "server_stats", "file"),
-                starnubResources.getNestedValue("server_stats", "map"),
-                (String) starnubResources.getListNestedValue(1, "server_stats", "file"),
+                (String) ResourceManager.getInstance().getListNestedValue(0, "server_stats", "file"),
+                ResourceManager.getInstance().getNestedValue("server_stats", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "server_stats", "file"),
                 false,
                 true,
                 true,

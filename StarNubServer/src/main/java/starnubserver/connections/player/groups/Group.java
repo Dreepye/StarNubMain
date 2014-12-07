@@ -28,153 +28,142 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
+import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.GroupInheritances;
 import starnubserver.database.tables.GroupPermissions;
 import starnubserver.database.tables.Groups;
 
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
 
 @DatabaseTable(tableName = "GROUPS")
 public class Group {
 
     private final static Groups GROUPS_DB = Groups.getInstance();
 
-    @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = "GROUP_NAME")
+    /* COLUMN NAMES */
+    private final String GROUP_NAME_ID_COLUMN = "GROUP_NAME_ID";
+    private final String TAG_ID_COLUMN = "TAG_ID";
+    private final String LADDER_NAME_COLUMN = "LADDER_NAME";
+    private final String LADDER_RANK_COLUMN = "LADDER_RANK";
+
+    @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = GROUP_NAME_ID_COLUMN)
     private volatile String name;
 
+    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, columnName = TAG_ID_COLUMN)
+    private volatile Tag tag;
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, columnName = "TAG")
-    private Tag tag;
-
-    @DatabaseField(dataType = DataType.STRING, columnName = "LADDER_NAME")
+    @DatabaseField(dataType = DataType.STRING, columnName = LADDER_NAME_COLUMN)
     private volatile String ladderName;
 
-
-    @DatabaseField(dataType = DataType.INTEGER, columnName = "LADDER_RANK")
+    @DatabaseField(dataType = DataType.INTEGER, columnName = LADDER_RANK_COLUMN)
     private volatile int ladderRank;
 
+    private final HashSet<Group> INHERITED_GROUPS = new HashSet<>();
 
-    @ForeignCollectionField(eager = true, columnName = "INHERITED_GROUPS")
-    ForeignCollection<GroupInheritance> inheritedGroups;
+    private final HashSet<String> GROUP_PERMISSIONS = new HashSet<>();
 
-
-    @ForeignCollectionField(eager = true, columnName = "PERMISSIONS")
-    ForeignCollection<GroupPermission> permissions;
-
+    /**
+     * Constructor for database purposes
+     */
     public Group(){}
+
+    /**
+     * This will construct a new Group and Tag
+     *
+     * @param name String name of the group
+     * @param tag Tag the tag to be built
+     * @param ladderName String ladder name
+     * @param ladderRank int ladder rank
+     * @param createEntry boolean representing if a database entry should be made
+     */
+    public Group(String name, Tag tag, String ladderName, int ladderRank, boolean createEntry) {
+        this.name = name;
+        this.tag = tag;
+        this.ladderName = ladderName;
+        this.ladderRank = ladderRank;
+        if (createEntry) {
+            GROUPS_DB.createOrUpdate(this);
+        }
+    }
+
+    public void initializeGroup(){
+
+    }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Tag getTag() {
         return tag;
     }
 
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
     public String getLadderName() {
         return ladderName;
+    }
+
+    public void setLadderName(String ladderName) {
+        this.ladderName = ladderName;
     }
 
     public int getLadderRank() {
         return ladderRank;
     }
 
-    public ForeignCollection<GroupInheritance> getInheritedGroups() {
-        return inheritedGroups;
-    }
-
-    public ForeignCollection<GroupPermission> getPermissions() {
-        return permissions;
-    }
-
-    public Group(String name, Tag tag, String ladderName, int ladderRank) {
-        this.name = name;
-        this.tag = tag;
-        this.ladderName = ladderName;
-        this.ladderRank = ladderRank;
-        try {
-            this.permissions = GROUPS_DB.getTableDao().getEmptyForeignCollection("PERMISSIONS");
-        } catch (SQLException e) {
-            StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
-        }
-        try {
-            this.inheritedGroups = GROUPS_DB.getTableDao().getEmptyForeignCollection("INHERITED_GROUPS");
-        } catch (SQLException e) {
-            StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add group inheritance to a Group.");
-        }
-        GROUPS_DB.createOrUpdate(this);
-    }
-
-    public void setGroup(String name, String tagName, String tagColor, String ladderName, int ladderRank) {
-        this.name = name;
-        this.tag = new Tag("group", tagName, tagColor);
-        this.ladderName = ladderName;
-        this.ladderRank = ladderRank;
-        GROUPS_DB.update(this);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        GROUPS_DB.update(this);
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
-        GROUPS_DB.update(this);
-    }
-
-    public void setLadderName(String ladderName) {
-        this.ladderName = ladderName;
-        GROUPS_DB.update(this);
-    }
-
     public void setLadderRank(int ladderRank) {
         this.ladderRank = ladderRank;
-        GROUPS_DB.update(this);
     }
 
-    public void setInheritedGroups(ForeignCollection<GroupInheritance> inheritedGroups) {
-        this.inheritedGroups = inheritedGroups;
-        GROUPS_DB.update(this);
+    public HashSet<Group> getINHERITED_GROUPS() {
+        return INHERITED_GROUPS;
     }
 
-    public void setPermissions(ForeignCollection<GroupPermission> permissions) {
-        this.permissions = permissions;
-        GROUPS_DB.update(this);
+    public HashSet<String> getGROUP_PERMISSIONS() {
+        return GROUP_PERMISSIONS;
     }
 
-    public void addGroupPermission(String permission){
-        if (GroupPermissions.getInstance().getGroupPermission(this, permission) == null) {
-            this.permissions.add(new GroupPermission(this, permission));
-        }
+    /* DB Methods */
+
+    public Group getTagFromDbById(String groupName){
+        return GROUPS_DB.getById(groupName);
     }
 
-    public void removeGroupPermissions(String permission){
-        for (GroupPermission groupPermission : permissions) {
-            if (groupPermission.getPermission().equalsIgnoreCase(permission)) {
-                this.permissions.remove(groupPermission);
+    public List<Group> getMatchingGroupsById(String groupName){
+        return GROUPS_DB.getAllSimilar(GROUP_NAME_ID_COLUMN, groupName);
+    }
+
+    public List<Group> getMatchingGroupsByLadder(String ladderName){
+        return GROUPS_DB.getAllSimilar(LADDER_NAME_COLUMN, ladderName);
+    }
+
+    public List<Group> getMatchingGroupsByIdSimiliarLadder(String groupName, String ladderName){
+        return GROUPS_DB.getMatchingColumn1AllSimilarColumn2(GROUP_NAME_ID_COLUMN, groupName, LADDER_NAME_COLUMN, ladderName);
+    }
+
+    public void deleteFromDatabase(boolean completePurge){
+        deleteFromDatabase(this, completePurge);
+    }
+
+    public static void deleteFromDatabase(Group group, boolean completePurge){
+        if (completePurge){
+            group.getTag().deleteFromDatabase();
+            List<GroupPermission> groupPermissions = GroupPermissions.getInstance().getAllExact("GROUP", group);
+            for (GroupPermission groupPermission : groupPermissions){
+                groupPermission.deleteFromDatabase();
             }
         }
+        GROUPS_DB.delete(group);
     }
-
-    public void addGroupInheritance(Group inherited){
-        if (GroupInheritances.getInstance().getGroupInheritance(this, inherited) == null) {
-            this.inheritedGroups.add(new GroupInheritance(this, inherited));
-        }
-    }
-
-    public void removeGroupInheritance(Group inherited){
-        this.inheritedGroups.remove(GroupInheritances.getInstance().getGroupInheritance(this, inherited));
-    }
-
-    public void removeGroupInheritance(GroupInheritance inherited){
-        for (GroupInheritance group : inheritedGroups) {
-            if (inherited.getGroupInheritanceId() == group.getGroupInheritanceId())
-                this.inheritedGroups.remove(group);
-        }
-    }
-
-
 
 
     public Group getGroupByName(String groupName) {

@@ -487,6 +487,11 @@ public class Account implements Serializable{
         }
     }
 
+    //purge account
+
+    //purge overage
+
+    //static purge
 
     public void getTagList(){
 //        LinkedHashSet<Group> groupHashSet = new LinkedHashSet<Group>();

@@ -30,6 +30,7 @@ import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventSubscription;
+import starnubserver.resources.files.GroupsManagement;
 import starnubserver.resources.files.Operators;
 import starnubserver.resources.connections.handlers.ClientConnectHandler;
 import starnubserver.resources.connections.handlers.ConnectionResponseHandler;
@@ -51,7 +52,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 
     private final Connections CONNECTIONS;
     private final PlayerCtxCacheWrapper ACCEPT_REJECT;
-    private final Operators OPERATORS = new Operators(StarNub.getResourceManager().getStarnubResources());
+    private final Operators OPERATORS = Operators.getInstance();
+    private final GroupsManagement GROUP_MANAGEMENT = GroupsManagement.getInstance();
 
     /**
      * Creates a new, empty map with an initial table size based on

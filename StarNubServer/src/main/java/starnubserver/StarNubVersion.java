@@ -18,6 +18,7 @@
 
 package starnubserver;
 
+import starnubserver.resources.ResourceManager;
 import utilities.file.yaml.YAMLWrapper;
 
 import java.util.ArrayList;
@@ -35,71 +36,60 @@ public class StarNubVersion {
      */
     private static final StarNubVersion instance = new StarNubVersion();
 
-    private static String PHASE;
-    private static double VERSION;
-    private static String PHASE_VERSION;
-    private static ArrayList<String> LANGUAGES;
-    private static double SIZE_MBS;
-    private static String DESCRIPTION;
+    private final String PHASE;
+    private final double VERSION;
+    private final String PHASE_VERSION;
+    private final ArrayList<String> LANGUAGES;
+    private final double SIZE_MBS;
+    private final String DESCRIPTION;
 
     /**
      * This constructor is private - Singleton Pattern
      */
     private StarNubVersion() {
+        YAMLWrapper starnubVersionYaml = new YAMLWrapper(
+                "StarNub",
+                (String) ResourceManager.getInstance().getListNestedValue(0, "starnub_version", "file"),
+                ResourceManager.getInstance().getNestedValue("starnub_version", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "starnub_version", "file")
+        );
+        PHASE = (String) starnubVersionYaml.getValue("phase");
+        VERSION = (double) starnubVersionYaml.getValue("version");
+        PHASE_VERSION = PHASE + "-" + Double.toString(VERSION);
+        LANGUAGES = (ArrayList<String>) starnubVersionYaml.getValue("languages");
+        SIZE_MBS = (double) starnubVersionYaml.getValue("size");
+        DESCRIPTION = (String) starnubVersionYaml.getValue("description");
     }
 
     /**
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This will set and get StarNubVersion Singleton instance
-     *
-     * @param starnubResources YAMLWrapper containing the resources
-     * @return StarNubVersion Singleton Instance
+     * This constructor is private - Singleton Pattern
      */
     @SuppressWarnings("unchecked")
-    public static StarNubVersion getInstance(YAMLWrapper starnubResources) {
-        if (PHASE == null) {
-            YAMLWrapper starnubVersion = new YAMLWrapper(
-                    "StarNub",
-                    (String) starnubResources.getListNestedValue(0, "starnub_version", "file"),
-                    starnubResources.getNestedValue("starnub_version", "map"),
-                    (String) starnubResources.getListNestedValue(1, "starnub_version", "file")
-            );
-            PHASE = (String) starnubVersion.getValue("phase");
-            VERSION = (double) starnubVersion.getValue("version");
-            PHASE_VERSION = PHASE + "-" + Double.toString(VERSION);
-            LANGUAGES = (ArrayList<String>) starnubVersion.getValue("languages");
-            SIZE_MBS = (double) starnubVersion.getValue("size");
-            DESCRIPTION = (String) starnubVersion.getValue("description");
-        }
+    private static StarNubVersion getInstance() {
         return instance;
     }
 
-    public static StarNubVersion getInstance() {
-        return instance;
-    }
-
-    public static String getPHASE() {
+    public String getPHASE() {
         return PHASE;
     }
 
-    public static double getVERSION() {
+    public double getVERSION() {
         return VERSION;
     }
 
-    public static String getPhaseVersion() {
+    public String getPHASE_VERSION() {
         return PHASE_VERSION;
     }
 
-    public static ArrayList<String> getLANGUAGES() {
+    public ArrayList<String> getLANGUAGES() {
         return LANGUAGES;
     }
 
-    public static double getSizeMbs() {
+    public double getSIZE_MBS() {
         return SIZE_MBS;
     }
 
-    public static String getDESCRIPTION() {
+    public String getDESCRIPTION() {
         return DESCRIPTION;
     }
 
@@ -116,5 +106,17 @@ public class StarNubVersion {
                 + "                   StarNub " + PHASE + "\n"
                 + "                   Version " + VERSION + "\n"
                 + "=======================================================\n";
+    }
+
+    @Override
+    public String toString() {
+        return "StarNubVersion{" +
+                "PHASE='" + PHASE + '\'' +
+                ", VERSION=" + VERSION +
+                ", PHASE_VERSION='" + PHASE_VERSION + '\'' +
+                ", LANGUAGES=" + LANGUAGES +
+                ", SIZE_MBS=" + SIZE_MBS +
+                ", DESCRIPTION='" + DESCRIPTION + '\'' +
+                '}';
     }
 }

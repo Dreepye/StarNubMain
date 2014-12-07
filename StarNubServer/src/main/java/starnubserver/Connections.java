@@ -58,7 +58,7 @@ public class Connections {
     }
 
     private final IPCacheWrapper INTERNAL_IP_WATCHLIST = new IPCacheWrapper("StarNub", "StarNub - Internal IP Watch List", true, StarNub.getTaskManager(), 5000, 500, TimeUnit.MINUTES, 60, 120);
-    private final Whitelist WHITELIST = new Whitelist(StarNub.getResourceManager().getStarnubResources());
+    private final Whitelist WHITELIST = Whitelist.getInstance();
     private final BansList BANSList = new BansList();
     private final OpenSockets OPEN_SOCKETS = new OpenSockets(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
     private final OpenConnections OPEN_CONNECTIONS = new OpenConnections(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads

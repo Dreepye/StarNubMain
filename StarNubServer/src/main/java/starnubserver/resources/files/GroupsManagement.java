@@ -1,48 +1,86 @@
-package starnubserver.connections.player.groups;
+/*
+ * Copyright (C) 2014 www.StarNub.org - Underbalanced
+ *
+ * This file is part of org.starnub a Java Wrapper for Starbound.
+ *
+ * This above mentioned StarNub software is free software:
+ * you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free
+ * Software Foundation, either version  3 of the License, or
+ * any later version. This above mentioned CodeHome software
+ * is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+ * the GNU General Public License for more details. You should
+ * have received a copy of the GNU General Public License in
+ * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+package starnubserver.resources.files;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
+import starnubserver.connections.player.groups.*;
 import starnubserver.database.tables.GroupInheritances;
 import starnubserver.database.tables.GroupPermissions;
 import starnubserver.database.tables.Groups;
 import starnubserver.database.tables.Tags;
+import starnubserver.resources.ResourceManager;
+import utilities.file.yaml.YAMLWrapper;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public enum GroupSync {
-    INSTANCE;
+/**
+ * Represents StarNubs GroupsVerifyDump instance extending YAMLWrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class GroupsManagement extends YAMLWrapper {
 
-    private Map<String, Object> groups;
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final GroupsManagement instance = new GroupsManagement();
 
+    private final ConcurrentHashMap<String, Group> GROUPS = new ConcurrentHashMap<>();
 
-    private NoAccountGroup noAccountGroup;
-
-    public Map<String, Object> getGroups() {
-        return groups;
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    public GroupsManagement() {
+        super(
+                "StarNub",
+                (String) ResourceManager.getInstance().getListNestedValue(0, "default_groups_configuration", "file"),
+                ResourceManager.getInstance().getNestedValue("default_groups_configuration", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "default_groups_configuration", "file"),
+                false,
+                true,
+                true,
+                true,
+                true
+        );
+        StarNub.getLogger().cErrPrint("StarNub", groupSynchronizeFileToDB());
     }
 
-    public NoAccountGroup getNoAccountGroup() {
-        return noAccountGroup;
+    /**
+     * This returns this Singleton - Singleton Pattern
+     */
+    public static GroupsManagement getInstance() {
+        return instance;
     }
 
-    // This will synchronize groups from utilities.file to DB
-    public void groupSynchronizeFileToDB(Object sender){
-        loadGroupsFromDisk();
-        if (this.groups == null){
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "The groups from utilities.file could not be synchronized with the" +
-//                    "Database groups, make sure that the StarNub/groups.yml utilities.file exist and that their is no YAML syntax errors.");
-            return;
+    public String groupSynchronizeFileToDB(){
+        if (getDATA().isEmpty()){
+            return "The groups from utilities.file could not be synchronized with the Database groups, make sure that the StarNub/groups.yml utilities.file exist and that their is no YAML syntax errors.");
         }
         synchronizeGroupsFileToDB();
-    }
-
-    public void loadGroupsFromDisk(){
-//        this.groups = new YamlLoader().filePathYamlLoader("StarNub/groups.yml");
     }
 
     private void synchronizeGroupsFileToDB(){
@@ -52,11 +90,15 @@ public enum GroupSync {
         addDBGroups();
     }
 
+    private void
+
+
+
     private void deleteDBGroupsTags(){
         try {
             List<Group> groupsInDb = Groups.getInstance().getTableDao().queryForAll();
             for (Group groupDb : groupsInDb) {
-                if (!groups.containsKey(groupDb.getName())) {
+                if (!this.getDATA().containsKey(groupDb.getName())) {
                     for (GroupInheritance groupInheritance : groupDb.getInheritedGroups()) {
                         groupDb.getInheritedGroups().remove(groupInheritance);
                     }
@@ -242,5 +284,4 @@ public enum GroupSync {
 //            }
 //        }
     }
-
 }

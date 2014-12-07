@@ -18,6 +18,7 @@
 
 package starnubserver.resources.files;
 
+import starnubserver.resources.ResourceManager;
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.file.yaml.YAMLWrapper;
 
@@ -32,22 +33,32 @@ import java.io.IOException;
 public class IllegalNames extends YAMLWrapper {
 
     /**
-     * This will construct a YAML file, YAML dumper, YAML auto dumper
-     *
-     * @param starnubResources YAMLWrapper containing starnubserver resources
+     * Represents the only instance of this class - Singleton Pattern
      */
-    public IllegalNames(YAMLWrapper starnubResources) {
+    private static final IllegalNames instance = new IllegalNames();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    public IllegalNames() {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "illegal_names", "file"),
-                starnubResources.getNestedValue("illegal_names", "map"),
-                (String) starnubResources.getListNestedValue(1, "illegal_names", "file"),
+                (String) ResourceManager.getInstance().getListNestedValue(0, "illegal_names", "file"),
+                ResourceManager.getInstance().getNestedValue("illegal_names", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "illegal_names", "file"),
                 false,
                 true,
                 true,
                 true,
                 true
         );
+    }
+
+    /**
+     * This returns this Singleton - Singleton Pattern
+     */
+    public static IllegalNames getInstance() {
+        return instance;
     }
 
     /**

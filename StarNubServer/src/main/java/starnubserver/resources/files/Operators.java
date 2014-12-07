@@ -18,6 +18,7 @@
 
 package starnubserver.resources.files;
 
+import starnubserver.resources.ResourceManager;
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.file.yaml.YAMLWrapper;
 
@@ -33,22 +34,32 @@ import java.util.UUID;
 public class Operators extends YAMLWrapper {
 
     /**
-     * This will construct a YAML file, YAML dumper, YAML auto dumper
-     *
-     * @param starnubResources YAMLWrapper containing starnubserver resources
+     * Represents the only instance of this class - Singleton Pattern
      */
-    public Operators(YAMLWrapper starnubResources) {
+    private static final Operators instance = new Operators();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    public Operators( ) {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "operators", "file"),
-                starnubResources.getNestedValue("operators", "map"),
-                (String) starnubResources.getListNestedValue(1, "operators", "file"),
+                (String) ResourceManager.getInstance().getListNestedValue(0, "operators", "file"),
+                ResourceManager.getInstance().getNestedValue("operators", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "operators", "file"),
                 false,
                 true,
                 true,
                 true,
                 true
         );
+    }
+
+    /**
+     * This returns this Singleton - Singleton Pattern
+     */
+    public static Operators getInstance() {
+        return instance;
     }
 
     /**

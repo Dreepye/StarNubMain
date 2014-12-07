@@ -27,22 +27,26 @@ import utilities.file.yaml.YAMLWrapper;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class ResourceManager {
+public class ResourceManager extends YAMLWrapper{
 
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
     private static final ResourceManager instance = new ResourceManager();
-    private static YAMLWrapper STARNUB_RESOURCES;
 
+    /**
+     * This constructor is private - Singleton Pattern
+     */
     private ResourceManager() {
+        super("StarNub", "resources.yml", "", "", true, false, true, false, false);
         directoryCheck();
-        STARNUB_RESOURCES = new YAMLWrapper("StarNub", "resources.yml", "", "", true, false, true, false, false);
     }
 
+    /**
+     * This returns this Singleton - Singleton Pattern
+     */
     public static ResourceManager getInstance() {
         return instance;
-    }
-
-    public YAMLWrapper getStarnubResources() {
-        return STARNUB_RESOURCES;
     }
 
     /** This represents a lower level method for StarNubs API.Q

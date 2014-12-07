@@ -41,7 +41,7 @@ public class GroupPermission {
      * Represents a group permissions id
      */
 
-    @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = "GROUP_PERMISSIONS_ID")
+    @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = "GROUP_PERMISSION_ID")
     private volatile int groupPermissionsId;
 
     /**

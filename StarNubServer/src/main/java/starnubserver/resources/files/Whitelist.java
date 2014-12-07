@@ -18,6 +18,7 @@
 
 package starnubserver.resources.files;
 
+import starnubserver.resources.ResourceManager;
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.file.yaml.YAMLWrapper;
 
@@ -32,22 +33,31 @@ import java.io.IOException;
 public class Whitelist extends YAMLWrapper {
 
     /**
-     * This will construct a YAML file, YAML dumper, YAML auto dumper
-     *
-     * @param starnubResources YAMLWrapper containing starnubserver resources
+     * Represents the only instance of this class - Singleton Pattern
      */
-    public Whitelist(YAMLWrapper starnubResources) {
+    private static final Whitelist instance = new Whitelist();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    public Whitelist( ) {
         super(
                 "StarNub",
-                (String) starnubResources.getListNestedValue(0, "whitelist", "file"),
-                starnubResources.getNestedValue("whitelist", "map"),
-                (String) starnubResources.getListNestedValue(1, "whitelist", "file"),
+                (String) ResourceManager.getInstance().getListNestedValue(0, "whitelist", "file"),
+                ResourceManager.getInstance().getNestedValue("whitelist", "map"),
+                (String) ResourceManager.getInstance().getListNestedValue(1, "whitelist", "file"),
                 false,
                 true,
                 true,
                 true,
                 true
         );
+    }
+    /**
+     * This returns this Singleton - Singleton Pattern
+     */
+    public static Whitelist getInstance() {
+        return instance;
     }
 
     /**

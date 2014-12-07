@@ -51,12 +51,12 @@ import javax.net.ssl.SSLException;
 public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
-    private static final Configuration configuration = new Configuration(resourceManager.getStarnubResources());
+    private static final Configuration configuration = Configuration.getInstance();
     private static final TCPClient tcpClient = new TCPClient("StarNub - Central Client - Worker Thread");
     private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
     private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
-    private static final StarNubVersion versionInstance = StarNubVersion.getInstance(resourceManager.getStarnubResources());
+    private static final StarNubVersion versionInstance = StarNubVersion.getInstance();
     private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
     private static final Connections connections = Connections.getInstance();

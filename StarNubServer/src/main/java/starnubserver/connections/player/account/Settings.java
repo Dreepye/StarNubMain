@@ -145,24 +145,6 @@ public class Settings implements Serializable {
         ACCOUNT_SETTINGS_DB.update(this);
     }
 
-    public String buildTagFinal(String tag) {
-//        String tagStartEndColor = (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start_end_color");
-//        return tagStartEndColor +
-//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start") +
-//               tag +
-//               tagStartEndColor +
-//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_end") +
-//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver starbounddata.packets.chat")).get("global_name_color");
-        return tag;
-    }
-
-    public String buildTagNoColor(String tag){
-//        return (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start") +
-//               tag +
-//               (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_end");
-        return tag;
-    }
-
     public void availableTags(Object sender, Object playerIdentifier){
         PlayerSession playerSessionSession = null;
 //        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
