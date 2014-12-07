@@ -18,18 +18,12 @@
 
 package starnubserver.database.tables;
 
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.AccountPermission;
 import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Represents AccountPermission Table that extends the TableWrapper class
@@ -58,34 +52,5 @@ public class AccountPermissions extends TableWrapper<AccountPermission, Integer>
     @Override
     public void tableUpdater(ConnectionSource connection, int oldVersion) throws SQLException {
 
-    }
-
-    public List<AccountPermission> getAccountPermissions(int starnubId){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .eq("STARNUB_ID", starnubId)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
-    }
-
-    public AccountPermission getAccountPermission(int starnubId, String permissionString) {
-        AccountPermission permission = null;
-        try {
-            QueryBuilder<AccountPermission, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<AccountPermission, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("STARNUB_ID", starnubId)
-                    .and()
-                    .like("PERMISSION", permissionString);
-            PreparedQuery<AccountPermission> preparedQuery = queryBuilder.prepare();
-            permission = getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return permission;
     }
 }

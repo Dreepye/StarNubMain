@@ -20,20 +20,12 @@
 
 package starnubserver.database.tables;
 
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
 import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
-import utilities.crypto.PasswordHash;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents Accounts Table that extends the TableWrapper class
@@ -71,50 +63,4 @@ public class Accounts extends TableWrapper<Account, Integer> {
 //            updateTable("ALTER TABLE `ACCOUNTS` ADD COLUMN `IMPOSER_STARNUB_ID` INT;");
         }
     }
-
-    public Account getAccountByName(String accountName) {
-        try {
-            QueryBuilder<Account, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<Account, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .like("ACCOUNT_NAME", accountName);
-            PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
-    }
-
-    public Account getAccount(String accountName, String password){
-        List<Account> accountList = new ArrayList<>();
-        try {
-            accountList = getTableDao().queryBuilder().where()
-                    .like("ACCOUNT_NAME", accountName)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        if (accountList.size() == 0) {
-            return null;
-        }
-        PasswordHash passwordHash = new PasswordHash();
-        boolean matchingHashPass = false;
-        for (Account account : accountList) {
-            try {
-                matchingHashPass = passwordHash.check(password, account.getAccountPassword());
-            } catch (Exception e) {
-                StarNub.getLogger().cErrPrint("StarNub", "StarNub had a critical error trying to determine if a password hash from " +
-                        "an account matched the input.");
-            }
-            if (matchingHashPass) {
-                return account;
-            }
-        }
-        return null;
-    }
-
-
-
 }

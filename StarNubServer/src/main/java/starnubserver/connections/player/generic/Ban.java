@@ -24,6 +24,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.Bans;
 import starnubserver.events.events.StarNubEvent;
 
@@ -129,15 +130,19 @@ public class Ban implements Serializable {
 
     public void addBan() {
         BANS_DB.createOrUpdate(this);
-        StarNub.getLogger().cInfoPrint("StarNub", "A ban was added for " + playerCharacter.getCleanName() + ".");
+        StarNub.getLogger().cInfoPrint("StarNub", "A ban was added for " + playerCharacter.getCleanName() + ". Ban Identifier: " + this.banIdentifier + ".");
         new StarNubEvent("StarNub_Ban_Added", this);
         StarNub.getConnections().getBANSList().put(this.banIdentifier, this);
+        PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(this.banIdentifier);
+        if (playerSession != null){
+            playerSession.disconnectReason("Banned");
+        }
     }
 
     public void removeBan() {
         new BanHistory(this, true);
         BANS_DB.delete(this);
-        StarNub.getLogger().cInfoPrint("StarNub", "A ban was removed for " + playerCharacter.getCleanName() + ".");
+        StarNub.getLogger().cInfoPrint("StarNub", "A ban was removed for " + playerCharacter.getCleanName() + ". Ban Identifier: " + this.banIdentifier + ".");
         new StarNubEvent("StarNub_Ban_Removed", this);
         StarNub.getConnections().getBANSList().remove(this.banIdentifier);
     }

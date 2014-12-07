@@ -22,7 +22,11 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.database.tables.GroupInheritances;
 import starnubserver.database.tables.GroupPermissions;
@@ -41,7 +45,6 @@ public class Group {
 
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, columnName = "TAG")
     private Tag tag;
-
 
     @DatabaseField(dataType = DataType.STRING, columnName = "LADDER_NAME")
     private volatile String ladderName;
@@ -168,6 +171,39 @@ public class Group {
         for (GroupInheritance group : inheritedGroups) {
             if (inherited.getGroupInheritanceId() == group.getGroupInheritanceId())
                 this.inheritedGroups.remove(group);
+        }
+    }
+
+
+
+
+    public Group getGroupByName(String groupName) {
+        try {
+            QueryBuilder<Group, String> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<Group, String> where = queryBuilder.where();
+            queryBuilder.where()
+                    .like("GROUP_NAME", groupName);
+            PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public Group getGroupByTag(Tag groupTag) {
+        try {
+            QueryBuilder<Group, String> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<Group, String> where = queryBuilder.where();
+            queryBuilder.where()
+                    .eq("TAG", groupTag);
+            PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
         }
     }
 }

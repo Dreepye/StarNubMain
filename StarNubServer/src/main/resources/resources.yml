@@ -106,6 +106,8 @@ default_groups_configuration: {
     map: {
     "owner": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "#F58LLB",
           "look": "Owner"
         },
@@ -123,6 +125,8 @@ default_groups_configuration: {
       },
     "admin": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "crimson",
           "look": "Admin"
         },
@@ -140,6 +144,8 @@ default_groups_configuration: {
       },
     "communitymanager": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "#LC9C87",
           "look": "CM"
         },
@@ -165,6 +171,8 @@ default_groups_configuration: {
       },
     "moderator": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "#007CDB",
           "look": "Moderator"
         },
@@ -186,6 +194,8 @@ default_groups_configuration: {
       },
     "trustee": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "#ED5034",
           "look": "Trustee"
         },
@@ -206,6 +216,8 @@ default_groups_configuration: {
       },
     "citizen": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "green",
           "look": "Citizen"
         },
@@ -223,6 +235,8 @@ default_groups_configuration: {
       },
     "outcast": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "gray",
           "look": "Outcast"
         },
@@ -242,6 +256,8 @@ default_groups_configuration: {
       },
     "visitor": {
         "tag": {
+          "brackets": [ '[', ']' ],
+          "bracket_color": "#FFFF00",
           "color": "gray",
           "look": "Visitor"
         },

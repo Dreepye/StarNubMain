@@ -20,9 +20,18 @@ package starnubserver.connections.player.groups;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import starnubserver.StarNub;
 import starnubserver.database.tables.Characters;
 import starnubserver.database.tables.GroupInheritances;
+
+import java.sql.SQLException;
+import java.util.List;
 
 @DatabaseTable(tableName = "GROUP_INHERITANCE")
 public class GroupInheritance {
@@ -75,5 +84,45 @@ public class GroupInheritance {
     public GroupInheritance(Group mainGroup, Group inheritedGroup) {
         this.mainGroup = mainGroup;
         this.inheritedGroup = inheritedGroup;
+    }
+
+
+    public GroupInheritance getGroupInheritance (Group group, Group inherited) {
+        GroupInheritance groupAssignment = null;
+        try {
+            QueryBuilder<GroupInheritance, Integer> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<GroupInheritance, Integer> where = queryBuilder.where();
+            queryBuilder.where()
+                    .eq("MAIN_GROUP", group)
+                    .and()
+                    .eq("INHERITED_GROUP", inherited);
+            PreparedQuery<GroupInheritance> preparedQuery = queryBuilder.prepare();
+            groupAssignment = getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return groupAssignment;
+    }
+    public List<GroupInheritance> getGroupInheritance(Group mainGroupId){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .eq("MAIN_GROUP", mainGroupId)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public void deleteGroupInheritance(Group mainGroupId){
+        try {
+            DeleteBuilder<GroupInheritance, Integer> deleteBuilder =
+                    getTableDao().deleteBuilder();
+            deleteBuilder.where().eq("MAIN_GROUP", mainGroupId);
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
     }
 }

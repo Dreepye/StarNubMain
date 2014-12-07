@@ -21,92 +21,173 @@ package starnubserver.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starbounddata.color.GameColors;
 import starnubserver.database.tables.Tags;
+
+import java.util.List;
 
 @DatabaseTable(tableName = "TAGS")
 public class Tag {
 
     private final static Tags TAGS_DB = Tags.getInstance();
 
-    @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = "TAG")
+    /* COLUMN NAMES */
+    private final String TAG_ID_COLUMN = "TAG_ID";
+    private final String COLOR_COLUMN = "COLOR";
+    private final String TYPE_COLUMN = "TYPE";
+    private final String LEFT_BRACKET_COLUMN = "LEFT_BRACKET";
+    private final String RIGHT_BRACKET_COLUMN = "RIGHT_BRACKET";
+    private final String BRACKET_COLOR_COLUMN = "BRACKET_COLOR";
+
+    @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = TAG_ID_COLUMN)
     private volatile String name;
 
-
-    @DatabaseField(dataType = DataType.STRING, columnName = "TAG_COLOR")
+    @DatabaseField(dataType = DataType.STRING, columnName = COLOR_COLUMN)
     private volatile String color;
 
+    @DatabaseField(dataType = DataType.STRING, columnName = TYPE_COLUMN)
+    private volatile String type;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = "TYPE")
-    private volatile String typeOfTag;
+    @DatabaseField(dataType = DataType.STRING, columnName = LEFT_BRACKET_COLUMN)
+    private volatile String leftBracket;
+
+    @DatabaseField(dataType = DataType.STRING, columnName = RIGHT_BRACKET_COLUMN)
+    private volatile String rightBracket;
+
+    @DatabaseField(dataType = DataType.STRING, columnName = BRACKET_COLOR_COLUMN)
+    private volatile String bracketColor;
+
+    private volatile String builtGameTag;
+
+    private volatile String builtConsoleTag;
 
     public Tag(){}
 
+    public void refreshTag() {
+        TAGS_DB.refresh(this);
+    }
+
+    public Tag(String name, String color, String type, String leftBracket, String rightBracket, String bracketColor) {
+        this.name = name;
+        this.type = type;
+        this.color = GameColors.Colors.validate(color, true);
+        this.leftBracket = leftBracket;
+        this.rightBracket = rightBracket;
+        this.bracketColor = bracketColor;
+        setTagCache();
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        setTagCache();
     }
 
     public String getColor() {
         return color;
     }
 
-    public String getTypeOfTag() {
-        return typeOfTag;
+    public void setColor(String color) {
+        this.color = color;
+        setTagCache();
     }
 
-    public Tag(String typeOfTag, String name, String color) {
-        this.typeOfTag = typeOfTag;
-        this.name = name;
-//        this.color = StarNub.getMessageSender().getGameColors().validateColor(color);
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+        setTagCache();
+    }
+
+    public String getLeftBracket() {
+        return leftBracket;
+    }
+
+    public void setLeftBracket(String leftBracket) {
+        this.leftBracket = leftBracket;
+        setTagCache();
+    }
+
+    public String getRightBracket() {
+        return rightBracket;
+    }
+
+    public void setRightBracket(String rightBracket) {
+        this.rightBracket = rightBracket;
+        setTagCache();
+    }
+
+    public String getBracketColor() {
+        return bracketColor;
+    }
+
+    public void setBracketColor(String bracketColor) {
+        this.bracketColor = bracketColor;
+        setTagCache();
+    }
+
+    public String getBuiltGameTag() {
+        return builtGameTag;
+    }
+
+    public String getBuiltConsoleTag() {
+        return builtConsoleTag;
+    }
+
+    private void setTagCache(){
+        this.builtConsoleTag = rightBracket + name + leftBracket;
+        this.builtGameTag =
+                bracketColor + leftBracket +
+                color + name +
+                bracketColor + rightBracket +
+                GameColors.getInstance().getDefaultChatColor();
         TAGS_DB.createOrUpdate(this);
     }
 
-    public void setTypeOfTag(String typeOfTag) {
-        this.typeOfTag = typeOfTag;
-        TAGS_DB.update(this);
+    public Tag getTagFromDbById(String tagName){
+        return TAGS_DB.getById(tagName);
     }
 
-    public void setName(String tag) {
-        this.name = tag;
-        TAGS_DB.update(this);
+    public List<Tag> getMatchingTagsById(String tagName){
+        return TAGS_DB.getAllSimilar(TAG_ID_COLUMN, tagName);
     }
 
-    public void setColor(String color) {
-        this.color = color;
-        TAGS_DB.update(this);
+    public List<Tag> getMatchingTagsByColor(String color){
+        return TAGS_DB.getAllSimilar(COLOR_COLUMN, color);
     }
 
-    public String getCleanTagNoBrackets(){
-        return buildTag(false, false);
+    public List<Tag> getMatchingTagsByType(String type){
+        return TAGS_DB.getAllSimilar(TYPE_COLUMN, type);
     }
 
-    public String getCleanTag(){
-        return buildTag(true, false);
+    public List<Tag> getMatchingTagsByIdSimiliarType(String tagName, String type){
+        return TAGS_DB.getMatchingColumn1AllSimilarColumn2(TAG_ID_COLUMN, tagName, TYPE_COLUMN, type);
     }
 
-    public String getColorTagNoBrackets(){
-        return buildTag(false, true);
+    public void deleteFromDatabase(){
+        deleteFromDatabase(this);
     }
 
-    public String getColorTag(){
-        return buildTag(true, true);
+    public static void deleteFromDatabase(Tag tag){
+        TAGS_DB.delete(tag);
     }
 
-    private String buildTag(boolean brackets, boolean color){
-        String tagString = name;
-        if (color) {
-           tagString = this.color + tagString;
-        }
-        if (brackets) {
-//            Map conf = (Map) StarNub.getConfiguration().getConfiguration().get("groups");
-//            String start = (String) conf.get("bracket_start");
-//            String end = (String) conf.get("bracket_end");
-//            if (color) {
-////                String bracketColor = StarNub.getMessageSender().getGameColors().getBracketColor();
-//                start = bracketColor + start;
-//                end = bracketColor + end;
-//            }
-//            tagString = start + tagString + end;
-        }
-        return tagString;
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "name='" + name + '\'' +
+                ", color='" + color + '\'' +
+                ", type='" + type + '\'' +
+                ", leftBracket='" + leftBracket + '\'' +
+                ", rightBracket='" + rightBracket + '\'' +
+                ", bracketColor='" + bracketColor + '\'' +
+                ", builtGameTag='" + builtGameTag + '\'' +
+                ", builtConsoleTag='" + builtConsoleTag + '\'' +
+                '}';
     }
 }

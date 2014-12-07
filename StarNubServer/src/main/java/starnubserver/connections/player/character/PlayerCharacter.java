@@ -18,24 +18,33 @@
 
 package starnubserver.connections.player.character;
 
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
+import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.Characters;
 import starnubserver.events.events.StarNubEvent;
 import utilities.strings.StringUtilities;
 
 import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
 /**
  * StarNub's PlayerCharacter represents a character that belongs
  * to a player. We named it PlayerCharacter due to issues with
- * com.java having a Character class. We did not want to confuse
- * Plugin developers or API users.
+ * com.java having a Character class. We did not want to confuse or
+ *  have Plugin developers or API users using the wrong class.
  * <p>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -93,6 +102,7 @@ public class PlayerCharacter implements Serializable {
     public static PlayerCharacter getPlayerCharacter(String name, UUID uuid){
         PlayerCharacter playerCharacter = Characters.getInstance().getCharacterFromNameUUIDCombo(name, uuid);
         if (playerCharacter != null) {
+            playerCharacter.getAccount().refreshAccount(true, true);
             return playerCharacter;
         } else {
             playerCharacter = new PlayerCharacter(name, uuid, true);
@@ -147,5 +157,113 @@ public class PlayerCharacter implements Serializable {
     public void setAccount(Account account) {
         this.account = account;
         CHARACTERS_DB.update(this);
+    }
+
+    public PlayerCharacter getCharacterFromNameUUIDCombo(String nameString, UUID UUID) {
+        try {
+            QueryBuilder<PlayerCharacter, Integer> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<PlayerCharacter, Integer> where = queryBuilder.where();
+            queryBuilder.where()
+                    .eq("NAME", nameString)
+                    .and()
+                    .eq("uuid", UUID);
+            PreparedQuery<PlayerCharacter> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public PlayerCharacter getCharacterFromCleanNameCombo(String nameString) {
+        PlayerCharacter playerCharacter = null;
+        try {
+            QueryBuilder<PlayerCharacter, Integer> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<PlayerCharacter, Integer> where = queryBuilder.where();
+            queryBuilder.where()
+                    .like("CLEAN_NAME", nameString);
+            PreparedQuery<PlayerCharacter> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public List<PlayerCharacter> getCharacterByName(String characterString){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .like("CLEAN_NAME", characterString)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public List<PlayerCharacter> getCharactersListFromStarnubId(int starnubId) {
+        try {
+            return getTableDao().queryForEq("STARNUB_ID", starnubId);
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public ArrayList<Integer> getCharacterIDsListFromStarnubId(int starnubId){
+        try {
+            /* Get UUIDs with that match the Starnub ID */
+            GenericRawResults<Object[]> rawResults = getTableDao().queryRaw("select CHARACTER_ID from CHARACTERS where STARNUB_ID = " + starnubId, new DataType[] { DataType.INTEGER });
+            /* Get results of the query */
+            List<Object[]> results = rawResults.getResults();
+            ArrayList<Integer> characterIdList = new ArrayList<Integer>();
+            for (Object[] result : results) {
+                for (Object objectResult : result) {
+                    if (!characterIdList.contains(objectResult)) {
+                        characterIdList.add((Integer) objectResult);
+                    }
+                }
+            }
+            return characterIdList;
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public ArrayList<UUID> getCharactersUUIDListFromStarnubId(int starnubId) {
+        try {
+            /* Get UUIDs with that match the Starnub ID */
+            GenericRawResults<Object[]> rawResults = getTableDao().queryRaw("select uuid from CHARACTERS where STARNUB_ID = "+ starnubId, new DataType[] { DataType.UUID });
+            /* Get results of the query */
+            List<Object[]> results = rawResults.getResults();
+            ArrayList<UUID> uuidList = new ArrayList<UUID>();
+            for (Object[] result : results) {
+                for (Object objectResult : result) {
+                    if (!uuidList.contains(objectResult)) {
+                        uuidList.add((UUID) objectResult);
+                    }
+                }
+            }
+            return uuidList;
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerCharacter{" +
+                "characterId=" + characterId +
+                ", name='" + name + '\'' +
+                ", cleanName='" + cleanName + '\'' +
+                ", uuid=" + uuid +
+                ", lastSeen=" + lastSeen +
+                ", playedTime=" + playedTime +
+                ", account=" + account +
+                '}';
     }
 }

@@ -41,7 +41,7 @@ public final class GameColors {
     private volatile String defaultChatColor;
     private volatile String defaultServerNameColor;
     private volatile String defaultServerChatColor;
-    private volatile String bracketColor;
+    private final String STARBOUND_CHAT_DEFAULT = Colors.validate("#FFFF00", true);
 
     /**
      * Must be private to ensure integrity of the singleton pattern
@@ -57,23 +57,19 @@ public final class GameColors {
     }
 
     public String getDefaultNameColor() {
-        return defaultNameColor;
+        return defaultNameColor != null ? defaultNameColor : STARBOUND_CHAT_DEFAULT;
     }
 
     public String getDefaultChatColor() {
-        return defaultChatColor;
+        return defaultChatColor != null ? defaultChatColor : STARBOUND_CHAT_DEFAULT;
     }
 
     public String getDefaultServerNameColor() {
-        return defaultServerNameColor;
+        return defaultServerNameColor != null ? defaultServerNameColor : STARBOUND_CHAT_DEFAULT;
     }
 
     public String getDefaultServerChatColor() {
-        return defaultServerChatColor;
-    }
-
-    public String getBracketColor() {
-        return bracketColor;
+        return defaultServerChatColor != null ? defaultServerChatColor : STARBOUND_CHAT_DEFAULT;
     }
 
     /**
@@ -83,11 +79,10 @@ public final class GameColors {
      * <p>
      */
     public void setColors(String defaultNameColor, String defaultChatColor, String defaultServerNameColor, String defaultServerChatColor, String bracketColor) {
-        this.defaultNameColor = defaultNameColor;
-        this.defaultChatColor = defaultChatColor;
-        this.defaultServerNameColor = defaultServerNameColor;
-        this.defaultServerChatColor = defaultServerChatColor;
-        this.bracketColor = bracketColor;
+        this.defaultNameColor = Colors.validate(defaultNameColor, true);
+        this.defaultChatColor = Colors.validate(defaultChatColor, true);
+        this.defaultServerNameColor = Colors.validate(defaultServerNameColor, true);
+        this.defaultServerChatColor = Colors.validate(defaultServerChatColor, true);
     }
 
     @Override
@@ -97,7 +92,7 @@ public final class GameColors {
                 ", defaultChatColor='" + defaultChatColor + '\'' +
                 ", defaultServerNameColor='" + defaultServerNameColor + '\'' +
                 ", defaultServerChatColor='" + defaultServerChatColor + '\'' +
-                ", bracketColor='" + bracketColor + '\'' +
+                ", STARBOUND_CHAT_DEFAULT='" + STARBOUND_CHAT_DEFAULT + '\'' +
                 '}';
     }
 

@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Tags extends TableWrapper<Tag, Integer> {
+public class Tags extends TableWrapper<Tag, String> {
 
     /**
      * Represents the only instance of this class - Singleton Pattern
@@ -43,7 +43,7 @@ public class Tags extends TableWrapper<Tag, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private Tags(){
-        super(DatabaseConnection.getConnection(), 0, Tag.class, Integer.class);
+        super(DatabaseConnection.getConnection(), 0, Tag.class, String.class);
     }
 
     public static Tags getInstance() {

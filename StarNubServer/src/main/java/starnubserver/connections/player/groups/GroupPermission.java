@@ -20,8 +20,17 @@ package starnubserver.connections.player.groups;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import starnubserver.StarNub;
+import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.database.tables.GroupPermissions;
+
+import java.sql.SQLException;
+import java.util.List;
 
 @DatabaseTable(tableName = "GROUP_PERMISSIONS")
 public class GroupPermission {
@@ -74,5 +83,48 @@ public class GroupPermission {
     public GroupPermission(Group group, String permission) {
         this.group = group;
         this.permission = permission;
+    }
+
+
+
+
+    public GroupPermission getGroupPermission (Group group, String permission) {
+        GroupPermission groupAssignment = null;
+        try {
+            QueryBuilder<GroupPermission, Integer> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<GroupPermission, Integer> where = queryBuilder.where();
+            queryBuilder.where()
+                    .eq("GROUP", group)
+                    .and()
+                    .eq("PERMISSION", permission);
+            PreparedQuery<GroupPermission> preparedQuery = queryBuilder.prepare();
+            groupAssignment = getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return groupAssignment;
+    }
+
+    public List<GroupPermission> getGroupPermissions(PlayerCharacter groupId){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .eq("GROUP", groupId)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public List<GroupPermission> getGroupPermissions(Group groupId){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .eq("GROUP", groupId)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
     }
 }

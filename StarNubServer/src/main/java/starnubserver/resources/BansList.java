@@ -21,7 +21,6 @@ package starnubserver.resources;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
-import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.generic.Ban;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.Bans;
@@ -98,10 +97,9 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
         return ban;
     }
 
-    public void banRemoval(PlayerCharacter playerCharacter){
-        this.values().stream().filter(ban -> playerCharacter.getCharacterId() == ban.getPlayerCharacter().getCharacterId()).forEach(ban -> {
-            this.remove(ban.getBanIdentifier());
-        });
+    public void banRemoval(String banIdentifier){
+        Ban ban = this.get(banIdentifier);
+        ban.removeBan();
     }
 
     /**
@@ -162,5 +160,17 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
         } else {
             return this.get(playerSession.getPlayerCharacter().getUuid());
         }
+    }
+
+    /**
+     * Recommended: For connections use with StarNub.
+     * <p>
+     * Uses: This is used to check when a player logs in, if they are restrictions or not
+     * <p>
+     * @param anyIdentifier String representing the uuid or ip to remove from the ban list
+     * @return boolean returns true if this ip or uuid is banned
+     */
+    public Ban banGet(String anyIdentifier){
+        return this.get(anyIdentifier);
     }
 }

@@ -207,60 +207,123 @@ public class PlayerSession extends StarNubProxyConnection {
     }
 
     public void addBan(Account staffAccount, String staffDescription, BanType banType, DateTime dateExpires){
+        addBan(this, staffAccount, staffDescription, banType, dateExpires);
+    }
+
+    public static void addBan(PlayerSession playerSession, Account staffAccount, String staffDescription, BanType banType, DateTime dateExpires){
+        PlayerCharacter playerCharacter = playerSession.playerCharacter;
+        String sessionIpString = playerSession.sessionIpString;
+        String identifier = sessionIpString;
+        String uuidString = playerCharacter.getUuid().toString();
         StaffEntry staffEntry = new StaffEntry(staffAccount, staffDescription, true);
         switch (banType){
             case IP: {
-                new Ban(playerCharacter, sessionIpString, DateTime.now(), dateExpires, staffEntry, true);
                 break;
             }
             case UUID: {
-                new Ban(playerCharacter, playerCharacter.getUuid().toString(), DateTime.now(), dateExpires, staffEntry, true);
+                identifier = uuidString;
                 break;
             }
             case ALL_IPS: {
-                ipBanAll(staffEntry, dateExpires);
+                ipBanAll(playerCharacter, staffEntry, dateExpires);
                 break;
             }
             case ALL_UUIDS: {
-                uuidBanAll(staffEntry, dateExpires);
+                identifier = uuidString;
+                uuidBanAll(sessionIpString, staffEntry, dateExpires);
+                break;
+            }
+            case IP_ALL_UUIDS: {
+                uuidBanAll(sessionIpString, staffEntry, dateExpires);
                 break;
             }
             case ALL: {
-                ipBanAll(staffEntry, dateExpires);
-                uuidBanAll(staffEntry, dateExpires);
+                ipBanAll(playerCharacter, staffEntry, dateExpires);
+                uuidBanAll(sessionIpString, staffEntry, dateExpires);
                 break;
             }
         }
-        this.disconnectReason("Banned");
+        new Ban(playerCharacter, identifier, DateTime.now(), dateExpires, staffEntry, true);
     }
 
-    private void ipBanAll(StaffEntry staffEntry, DateTime dateExpires){
-        new Ban(playerCharacter, sessionIpString, DateTime.now(), dateExpires, staffEntry, true);
-        List<CharacterIP> characterIPs = getIpsByCharacters();
+    private static void ipBanAll(PlayerCharacter playerCharacter, StaffEntry staffEntry, DateTime dateExpires){
+        List<CharacterIP> characterIPs = getIpsByCharacters(playerCharacter);
         for (CharacterIP characterIP : characterIPs){
             new Ban(characterIP.getPlayerCharacter(), characterIP.getSessionIpString(), DateTime.now(), dateExpires, staffEntry, true);
         }
     }
 
-    private void uuidBanAll(StaffEntry staffEntry, DateTime dateExpires){
-        new Ban(playerCharacter, playerCharacter.getUuid().toString(), DateTime.now(), dateExpires, staffEntry, true);
-        List<CharacterIP> characterIPs = getCharactersByIP();
+    private static void uuidBanAll(String sessionIpString, StaffEntry staffEntry, DateTime dateExpires){
+        List<CharacterIP> characterIPs = getCharactersByIP(sessionIpString);
         for (CharacterIP characterIP : characterIPs){
             Characters.getInstance().refresh(characterIP.getPlayerCharacter());
-            PlayerCharacter playerCharacter = characterIP.getPlayerCharacter();
-            new Ban(playerCharacter, playerCharacter.getUuid().toString(), DateTime.now(), dateExpires, staffEntry, true);
+            PlayerCharacter playerCharacter2 = characterIP.getPlayerCharacter();
+            new Ban(playerCharacter2, playerCharacter2.getUuid().toString(), DateTime.now(), dateExpires, staffEntry, true);
         }
     }
 
-    public static void removeBan(PlayerCharacter playerCharacter){
-        StarNub.getConnections().getBANSList().banRemoval(playerCharacter);
+    public void removeBan(BanType banType){
+        removeBan(this, banType);
     }
 
-    public List<CharacterIP> getCharactersByIP() {
+    public static void removeBan(PlayerSession playerSession, BanType banType){
+        PlayerCharacter playerCharacter = playerSession.playerCharacter;
+        String sessionIpString = playerSession.sessionIpString;
+        String identifier = sessionIpString;
+        String uuidString = playerCharacter.getUuid().toString();
+        switch (banType){
+            case IP: {
+                break;
+            }
+            case UUID: {
+                identifier = uuidString;
+                break;
+            }
+            case ALL_IPS: {
+                ipBanRemoveAll(playerCharacter);
+                break;
+            }
+            case ALL_UUIDS: {
+                identifier = uuidString;
+                uuidBanRemoveAll(sessionIpString);
+                break;
+            }
+            case IP_ALL_UUIDS: {
+                uuidBanRemoveAll(sessionIpString);
+                break;
+            }
+            case ALL: {
+                ipBanRemoveAll(playerCharacter);
+                uuidBanRemoveAll(sessionIpString);
+                break;
+            }
+        }
+        StarNub.getConnections().getBANSList().banRemoval(identifier);
+    }
+
+    private static void ipBanRemoveAll(PlayerCharacter playerCharacter){
+        List<CharacterIP> characterIPs = getIpsByCharacters(playerCharacter);
+        for (CharacterIP characterIP : characterIPs){
+            String sessionIpString = characterIP.getSessionIpString();
+            StarNub.getConnections().getBANSList().banRemoval(sessionIpString);
+        }
+    }
+
+    private static void uuidBanRemoveAll(String sessionIpString){
+        List<CharacterIP> characterIPs = getCharactersByIP(sessionIpString);
+        for (CharacterIP characterIP : characterIPs){
+            Characters.getInstance().refresh(characterIP.getPlayerCharacter());
+            PlayerCharacter playerCharacter2 = characterIP.getPlayerCharacter();
+            String uuid = playerCharacter2.getUuid().toString();
+            StarNub.getConnections().getBANSList().banRemoval(uuid);
+        }
+    }
+
+    public static List<CharacterIP> getCharactersByIP(String sessionIpString) {
         return CharacterIPLog.getInstance().getCharacterIpLogs(sessionIpString);
     }
 
-    public List<CharacterIP> getIpsByCharacters(){
+    public static List<CharacterIP> getIpsByCharacters(PlayerCharacter playerCharacter){
         return CharacterIPLog.getInstance().getCharacterIpLogs(playerCharacter);
     }
 
@@ -306,6 +369,13 @@ public class PlayerSession extends StarNubProxyConnection {
         }
 
     }
+
+
+
+
+
+
+
 
     public boolean hasBasePermission(PlayerSession playerSessionSession, String basePermission) {
         if (playerSessionSession.isOp()) {
@@ -412,7 +482,9 @@ public class PlayerSession extends StarNubProxyConnection {
         }
     }
 
+    public static void retreiveSession(PlayerCharacter playerCharacter){
 
+    }
 
     @Override
     public String toString() {

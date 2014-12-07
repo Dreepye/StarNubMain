@@ -18,14 +18,7 @@
 
 package starnubserver.database.tables;
 
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
-import starnubserver.connections.player.account.Account;
-import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
 import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
@@ -59,24 +52,5 @@ public class GroupAssignments extends TableWrapper<GroupAssignment, Integer> {
     @Override
     public void tableUpdater(ConnectionSource connection, int oldVersion) throws SQLException {
 
-    }
-
-
-    public GroupAssignment getGroupAssignments (Account account, Group group) {
-        GroupAssignment groupAssignment = null;
-        try {
-            QueryBuilder<GroupAssignment, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<GroupAssignment, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("ACCOUNT_SETTINGS_ID", account)
-                    .and()
-                    .eq("GROUP", group);
-            PreparedQuery<GroupAssignment> preparedQuery = queryBuilder.prepare();
-            groupAssignment = getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return groupAssignment;
     }
 }

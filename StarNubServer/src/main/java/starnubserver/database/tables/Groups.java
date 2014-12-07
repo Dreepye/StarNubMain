@@ -18,14 +18,8 @@
 
 package starnubserver.database.tables;
 
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
 import starnubserver.connections.player.groups.Group;
-import starnubserver.connections.player.groups.Tag;
 import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 
@@ -60,35 +54,4 @@ public class Groups extends TableWrapper<Group, String> {
     public void tableUpdater(ConnectionSource connection, int oldVersion) throws SQLException {
 
     }
-
-    public Group getGroupByName(String groupName) {
-        try {
-            QueryBuilder<Group, String> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<Group, String> where = queryBuilder.where();
-            queryBuilder.where()
-                    .like("GROUP_NAME", groupName);
-            PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
-    }
-
-    public Group getGroupByTag(Tag groupTag) {
-        try {
-            QueryBuilder<Group, String> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<Group, String> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("TAG", groupTag);
-            PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
-    }
-
 }

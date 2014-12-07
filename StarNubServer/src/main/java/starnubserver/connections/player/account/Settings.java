@@ -31,68 +31,72 @@ import starnubserver.database.tables.Groups;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a staff entry to be used with various classes
+ * <p>
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ *
+ */
 @DatabaseTable(tableName = "ACCOUNT_SETTINGS")
 public class Settings implements Serializable {
 
     private final static AccountSettings ACCOUNT_SETTINGS_DB = AccountSettings.getInstance();
 
-    @DatabaseField(id = true, dataType = DataType.STRING, columnName = "ACCOUNT_SETTINGS_ID")
+    /* COLUMN NAMES */
+    private final String ACCOUNT_SETTINGS_ID_COLUMN = "ACCOUNT_SETTINGS_ID";
+    private final String CHAT_PREFIX_1_COLUMN = "CHAT_PREFIX_1";
+    private final String CHAT_PREFIX_2_COLUMN = "CHAT_PREFIX_2";
+    private final String CHAT_SUFFIX_1_COLUMN = "CHAT_SUFFIX_1";
+    private final String CHAT_SUFFIX_2_COLUMN = "CHAT_SUFFIX_2";
+    private final String APPEAR_OFFLINE_COLUMN = "APPEAR_OFFLINE";
+
+    @DatabaseField(id = true, dataType = DataType.STRING, columnName = ACCOUNT_SETTINGS_ID_COLUMN)
     private volatile String accountSettings;
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_1")
+    @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_PREFIX_1_COLUMN)
     private volatile Tag chatPrefix1;
 
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_PREFIX_2")
+    @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_PREFIX_2_COLUMN)
     private volatile Tag chatPrefix2;
 
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_SUFFIX_1")
+    @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_SUFFIX_1_COLUMN)
     private volatile Tag chatSuffix1;
 
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "CHAT_SUFFIX_2")
+    @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_SUFFIX_2_COLUMN)
     private volatile Tag chatSuffix2;
 
 
-    @DatabaseField(dataType = DataType.BOOLEAN, columnName = "APPEAR_OFFLINE")
+    @DatabaseField(dataType = DataType.BOOLEAN, columnName = APPEAR_OFFLINE_COLUMN)
     private volatile boolean appearOffline;
 
     public Settings(){}
 
+    public Settings(String accountSettings) {
+        this.accountSettings = accountSettings;
+        ACCOUNT_SETTINGS_DB.createIfNotExist(this);
+    }
+
+    public void refreshSettings(boolean tags) {
+        ACCOUNT_SETTINGS_DB.refresh(this);
+        if (tags) {
+            chatPrefix1.refreshTag();
+            chatPrefix2.refreshTag();
+            chatSuffix1.refreshTag();
+            chatSuffix2.refreshTag();
+        }
+    }
+
     public String getAccountSettings() {
         return accountSettings;
     }
+
     public Tag getChatPrefix1() {
         return chatPrefix1;
-    }
-
-    public Tag getChatPrefix2() {
-        return chatPrefix2;
-    }
-
-    public Tag getChatSuffix1() {
-        return chatSuffix1;
-    }
-
-    public Tag getChatSuffix2() {
-        return chatSuffix2;
-    }
-
-
-
-//    public ForeignCollection<ChatRoomSubscription> getChatRoomSubscriptions() {
-//        return chatRoomSubscriptions;
-//    }
-
-    public boolean isAppearOffline() {
-        return appearOffline;
-    }
-
-    public Settings(String accountSettings) {
-        this.accountSettings = accountSettings;
-//        this.defaultChatRoom = defaultChatRoom;
-        ACCOUNT_SETTINGS_DB.createIfNotExist(this);
     }
 
     public void setChatPrefix1(Tag chatPrefix1) {
@@ -100,9 +104,17 @@ public class Settings implements Serializable {
         ACCOUNT_SETTINGS_DB.update(this);
     }
 
+    public Tag getChatPrefix2() {
+        return chatPrefix2;
+    }
+
     public void setChatPrefix2(Tag chatPrefix2) {
         this.chatPrefix2 = chatPrefix2;
         ACCOUNT_SETTINGS_DB.update(this);
+    }
+
+    public Tag getChatSuffix1() {
+        return chatSuffix1;
     }
 
     public void setChatSuffix1(Tag chatSuffix1) {
@@ -110,25 +122,28 @@ public class Settings implements Serializable {
         ACCOUNT_SETTINGS_DB.update(this);
     }
 
+    public Tag getChatSuffix2() {
+        return chatSuffix2;
+    }
+
     public void setChatSuffix2(Tag chatSuffix2) {
         this.chatSuffix2 = chatSuffix2;
         ACCOUNT_SETTINGS_DB.update(this);
     }
 
-    public void setAppearOffline(boolean appearOffline) {
-        this.appearOffline = appearOffline;
+    public boolean isAppearOffline() {
+        return appearOffline;
+    }
+
+    public void makeAppearOffline() {
+        this.appearOffline = true;
         ACCOUNT_SETTINGS_DB.update(this);
     }
 
-//    public void addChatRoomSubscription(ChatRoom chatRoom){
-//        if (StarNub.getDatabaseTables().getChatRoomSubscriptions().getChatRoomSubscription(this, chatRoom) == null) {
-//            this.chatRoomSubscriptions.add(new ChatRoomSubscription(this, chatRoom));
-//        }
-//    }
-//
-//    public void removeChatRoomSubscription(ChatRoom chatRoom){
-//        this.chatRoomSubscriptions.remove(StarNub.getDatabaseTables().getChatRoomSubscriptions().getChatRoomSubscription(this, chatRoom));
-//    }
+    public void removeAppearOffline() {
+        this.appearOffline = false;
+        ACCOUNT_SETTINGS_DB.update(this);
+    }
 
     public String buildTagFinal(String tag) {
 //        String tagStartEndColor = (String) ((Map) StarNub.getConfiguration().getConfiguration().get("groups")).get("tag_start_end_color");
@@ -248,5 +263,6 @@ public class Settings implements Serializable {
 
 
     }
+
 
 }

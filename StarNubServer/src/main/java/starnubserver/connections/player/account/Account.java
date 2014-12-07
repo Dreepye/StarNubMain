@@ -22,7 +22,11 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
@@ -57,13 +61,21 @@ public class Account implements Serializable{
 
     private final static Accounts ACCOUNTS_DB = Accounts.getInstance();
 
-    @DatabaseField(generatedId = true, columnName = "STARNUB_ID")
+    /* COLUMN NAMES */
+    private final String STARNUB_ID_COLUMN = "STARNUB_ID";
+    private final String NAME_COLUMN = "NAME";
+    private final String PASSWORD_COLUMN = "PASSWORD";
+    private final String SALT_COULMN = "SALT";
+    private final String SETTINGS_ID_COLUMN = "SETTINGS_ID";
+    private final String LAST_LOGIN_COLUMN = "LAST_LOGIN";
+
+    @DatabaseField(generatedId = true, columnName = STARNUB_ID_COLUMN)
     private volatile int starnubId;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = "ACCOUNT_NAME")
+    @DatabaseField(dataType = DataType.STRING, columnName = NAME_COLUMN)
     private volatile String accountName;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = "PASSWORD")
+    @DatabaseField(dataType = DataType.STRING, columnName = PASSWORD_COLUMN)
     private volatile String accountPassword;
 
     /**
@@ -78,7 +90,7 @@ public class Account implements Serializable{
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_LOGIN")
     private volatile DateTime lastLogin;
 
-    @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
+    @ForeignCollectionField(eager = true, columnName = "CHARACTERS")
     private volatile ForeignCollection<PlayerCharacter> characters;
 
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
@@ -123,20 +135,40 @@ public class Account implements Serializable{
         setUpdateTagsMainGroups();
     }
 
-    public Account getAccount(){
-
-
-        int accountId = 0;
-        if (this.account != null) {
-            accountId = account.getStarnubId();
-            this.account.setLastLogin(DateTime.now());
-            this.account.loadPermissions();
-            Accounts.getInstance().update(this.account);
+    public Account getAccount(String accountName, String password){
+        List<Account> accountList = ACCOUNTS_DB.getAllSimilar()
+        try {
+            accountList = getTableDao().queryBuilder().where()
+                    .like("ACCOUNT_NAME", accountName)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
         }
-        CHARACTERS_DB.createOrUpdate(this);
+        if (accountList.size() == 0) {
+            return null;
+        }
+        PasswordHash passwordHash = new PasswordHash();
+        boolean matchingHashPass = false;
+        for (Account account : accountList) {
+            try {
+                matchingHashPass = passwordHash.check(password, account.getAccountPassword());
+            } catch (Exception e) {
+                StarNub.getLogger().cErrPrint("StarNub", "StarNub had a critical error trying to determine if a password hash from " +
+                        "an account matched the input.");
+            }
+            if (matchingHashPass) {
+                return account;
+            }
+        }
+        return null;
     }
 
-
+    public void refreshAccount(boolean settings, boolean tags) {
+        ACCOUNTS_DB.refresh(this);
+        if (settings) {
+            accountSettings.refreshSettings(tags);
+        }
+    }
 
     public int getStarnubId() {
         return starnubId;
@@ -415,28 +447,28 @@ public class Account implements Serializable{
             boolean sx1Null = accountSettings.getChatSuffix1() == null;
             boolean sx2Null = accountSettings.getChatSuffix2() == null;
             boolean px12Used = !px1Null & !px2Null;
-            if (!px1Null && accountSettings.getChatPrefix1().getTypeOfTag().equalsIgnoreCase("group")) {
+            if (!px1Null && accountSettings.getChatPrefix1().getType().equalsIgnoreCase("group")) {
                 Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatPrefix1().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatPrefix1(group.getTag());
                     return;
                 }
             }
-            if (!px2Null && accountSettings.getChatPrefix2().getTypeOfTag().equalsIgnoreCase("group")) {
+            if (!px2Null && accountSettings.getChatPrefix2().getType().equalsIgnoreCase("group")) {
                 Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatPrefix2().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatPrefix2(group.getTag());
                     return;
                 }
             }
-            if (!sx1Null && accountSettings.getChatSuffix1().getTypeOfTag().equalsIgnoreCase("group")) {
+            if (!sx1Null && accountSettings.getChatSuffix1().getType().equalsIgnoreCase("group")) {
                 Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatSuffix1().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatSuffix1(group.getTag());
                     return;
                 }
             }
-            if (!sx2Null && accountSettings.getChatSuffix2().getTypeOfTag().equalsIgnoreCase("group")) {
+            if (!sx2Null && accountSettings.getChatSuffix2().getType().equalsIgnoreCase("group")) {
                 Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatSuffix2().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatSuffix2(group.getTag());
@@ -461,6 +493,48 @@ public class Account implements Serializable{
 //        groupAssignmentHashSet.addAll(groups);
 //
 //        groupAssignmentHashSet.addAll(recursiveGroupInheritanceList(groups));
+    }
+    public Account getAccountByName(String accountName) {
+        try {
+            QueryBuilder<Account, Integer> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<Account, Integer> where = queryBuilder.where();
+            queryBuilder.where()
+                    .like("ACCOUNT_NAME", accountName);
+            PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public Account getAccount(String accountName, String password){
+        List<Account> accountList = new ArrayList<>();
+        try {
+            accountList = getTableDao().queryBuilder().where()
+                    .like("ACCOUNT_NAME", accountName)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        if (accountList.size() == 0) {
+            return null;
+        }
+        PasswordHash passwordHash = new PasswordHash();
+        boolean matchingHashPass = false;
+        for (Account account : accountList) {
+            try {
+                matchingHashPass = passwordHash.check(password, account.getAccountPassword());
+            } catch (Exception e) {
+                StarNub.getLogger().cErrPrint("StarNub", "StarNub had a critical error trying to determine if a password hash from " +
+                        "an account matched the input.");
+            }
+            if (matchingHashPass) {
+                return account;
+            }
+        }
+        return null;
     }
 
 }

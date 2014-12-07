@@ -20,7 +20,12 @@ package starnubserver.connections.player.groups;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.Characters;
 import starnubserver.database.tables.GroupAssignments;
@@ -76,5 +81,25 @@ public class GroupAssignment {
     public GroupAssignment(Account starnubId, Group group) {
         this.starnubId = starnubId;
         this.group = group;
+    }
+
+
+
+    public GroupAssignment getGroupAssignments (Account account, Group group) {
+        GroupAssignment groupAssignment = null;
+        try {
+            QueryBuilder<GroupAssignment, Integer> queryBuilder =
+                    getTableDao().queryBuilder();
+            Where<GroupAssignment, Integer> where = queryBuilder.where();
+            queryBuilder.where()
+                    .eq("ACCOUNT_SETTINGS_ID", account)
+                    .and()
+                    .eq("GROUP", group);
+            PreparedQuery<GroupAssignment> preparedQuery = queryBuilder.prepare();
+            groupAssignment = getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return groupAssignment;
     }
 }

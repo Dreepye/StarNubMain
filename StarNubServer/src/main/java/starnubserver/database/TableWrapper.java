@@ -2,12 +2,15 @@ package starnubserver.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public abstract class TableWrapper<T1, T2> {
 
@@ -48,7 +51,7 @@ public abstract class TableWrapper<T1, T2> {
             try {
                 tableDao = DaoManager.createDao(connection, typeParameterDBClass);
             } catch (SQLException e) {
-                e.printStackTrace();
+                StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
             }
         }
         try {
@@ -58,7 +61,7 @@ public abstract class TableWrapper<T1, T2> {
                 tableUpdater(connection, oldVersion);
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
         }
     }
 
@@ -72,7 +75,7 @@ public abstract class TableWrapper<T1, T2> {
                 /*  We don't care if it was a duplicate column so we will ignore this StackTrace */
                 return;
             } else {
-                e.printStackTrace();
+                StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
             }
         }
     }
@@ -137,22 +140,80 @@ public abstract class TableWrapper<T1, T2> {
         }
     }
 
-    /** //TODO
-     * setDao(starbounddata.packets.connection);
-     * try {
-     * if (oldVersion < 2) {
-     * // we added the age column in version 2
-     * tableDao.executeRaw("ALTER TABLE `account` ADD COLUMN age INTEGER;");
-     * }
-     * if (oldVersion < 3) {
-     * // we added the weight column in version 3
-     * tableDao.executeRaw("ALTER TABLE `account` ADD COLUMN weight INTEGER;");
-     * }
-     * } catch (SQLException e){
-     * e.printStackTrace();
-     * }
-     * @param starbounddata.packets.connection Connection starbounddata.packets.connection source, should be provided
-     * @param oldVersion int older starbounddata.packets.starbounddata.packets.starnubserver version should be provided
-     */
+    public T1 getById(T2 id) {
+        try {
+            return getTableDao().queryForId(id);
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
 
+    public List<T1> getAllExact(String columnName, Object searchTerm){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .eq(columnName, searchTerm)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public T1 getMatchingColumn1FirstSimilarColumn2(String columnName1, Object searchTerm1, String columnName2, Object searchTerm2) {
+        try {
+            QueryBuilder<T1, T2> queryBuilder =
+                    getTableDao().queryBuilder();
+            queryBuilder.where()
+                    .eq(columnName1, searchTerm1)
+                    .and()
+                    .like(columnName2, searchTerm2);
+            PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public List<T1> getMatchingColumn1AllSimilarColumn2(String columnName1, Object searchTerm1, String columnName2, Object searchTerm2) {
+        try {
+            QueryBuilder<T1, T2> queryBuilder =
+                    getTableDao().queryBuilder();
+            queryBuilder.where()
+                    .eq(columnName1, searchTerm1)
+                    .and()
+                    .like(columnName2, searchTerm2);
+            PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
+            return getTableDao().query(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public T1 getFirstSimilar(String columnName, Object searchTerm) {
+        try {
+            QueryBuilder<T1, T2> queryBuilder =
+                    getTableDao().queryBuilder();
+            queryBuilder.where()
+                    .like(columnName, searchTerm);
+            PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public List<T1> getAllSimilar(String columnName, Object searchTerm){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .like(columnName, searchTerm)
+                    .query();
+        } catch (SQLException e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
 }
