@@ -22,6 +22,7 @@ public enum BanType {
     IP,
     UUID,
     BOTH,
+    IP_ALL_UUIDS,
     ALL_IPS,
     ALL_UUIDS,
     ALL

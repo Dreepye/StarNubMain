@@ -149,6 +149,34 @@ public abstract class TableWrapper<T1, T2> {
         }
     }
 
+    public T1 getFirstExact(String columnName, Object searchTerm) {
+        try {
+            QueryBuilder<T1, T2> queryBuilder =
+                    getTableDao().queryBuilder();
+            queryBuilder.where()
+                    .eq(columnName, searchTerm);
+            PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
+    public T1 getFirstSimilar(String columnName, Object searchTerm) {
+        try {
+            QueryBuilder<T1, T2> queryBuilder =
+                    getTableDao().queryBuilder();
+            queryBuilder.where()
+                    .like(columnName, searchTerm);
+            PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
+            return getTableDao().queryForFirst(preparedQuery);
+        } catch (Exception e) {
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            return null;
+        }
+    }
+
     public List<T1> getAllExact(String columnName, Object searchTerm){
         try {
             return getTableDao().queryBuilder().where()
@@ -186,20 +214,6 @@ public abstract class TableWrapper<T1, T2> {
                     .like(columnName2, searchTerm2);
             PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
             return getTableDao().query(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
-    }
-
-    public T1 getFirstSimilar(String columnName, Object searchTerm) {
-        try {
-            QueryBuilder<T1, T2> queryBuilder =
-                    getTableDao().queryBuilder();
-            queryBuilder.where()
-                    .like(columnName, searchTerm);
-            PreparedQuery<T1> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
         } catch (Exception e) {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
             return null;

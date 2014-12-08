@@ -113,7 +113,8 @@ public class PlayerSession extends StarNubProxyConnection {
         this.gameName = playerCharacter.getName();
         this.nickName = playerCharacter.getName();
         this.cleanNickName = playerCharacter.getCleanName();
-        CharacterIP.logCharacterIp(playerCharacter, playerIP);
+        CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP, false);
+        characterIP.logCharacterIp();
         try {
             this.isOp = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
         } catch (Exception e) {
@@ -226,16 +227,21 @@ public class PlayerSession extends StarNubProxyConnection {
                 identifier = uuidString;
                 break;
             }
+            case BOTH: {
+                new Ban(playerCharacter, identifier, DateTime.now(), dateExpires, staffEntry, true);
+                identifier = uuidString;
+                break;
+            }
+            case IP_ALL_UUIDS: {
+                uuidBanAll(sessionIpString, staffEntry, dateExpires);
+                break;
+            }
             case ALL_IPS: {
                 ipBanAll(playerCharacter, staffEntry, dateExpires);
                 break;
             }
             case ALL_UUIDS: {
                 identifier = uuidString;
-                uuidBanAll(sessionIpString, staffEntry, dateExpires);
-                break;
-            }
-            case IP_ALL_UUIDS: {
                 uuidBanAll(sessionIpString, staffEntry, dateExpires);
                 break;
             }

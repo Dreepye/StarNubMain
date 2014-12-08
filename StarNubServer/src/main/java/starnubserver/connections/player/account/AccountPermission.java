@@ -48,7 +48,7 @@ public class AccountPermission implements Serializable {
     /* COLUMN NAMES */
     private final String PERMISSION_ID_COLUMN = "PERMISSION_ID";
     private final String STARNUB_ID_COLUMN = "STARNUB_ID";
-    private final String PERMISSION = "PERMISSION";
+    private final String PERMISSION_COLUMN = "PERMISSION_COLUMN";
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = PERMISSION_ID_COLUMN)
     private volatile int permissionId;
@@ -56,7 +56,7 @@ public class AccountPermission implements Serializable {
     @DatabaseField(uniqueCombo = true, columnName = STARNUB_ID_COLUMN)
     private volatile Account starnubId;
 
-    @DatabaseField(dataType = DataType.STRING, uniqueCombo = true, columnName = PERMISSION)
+    @DatabaseField(dataType = DataType.STRING, uniqueCombo = true, columnName = PERMISSION_COLUMN)
     private volatile String permission;
 
     /**
@@ -111,7 +111,7 @@ public class AccountPermission implements Serializable {
             queryBuilder.where()
                     .eq("STARNUB_ID", starnubId)
                     .and()
-                    .like("PERMISSION", permissionString);
+                    .like("PERMISSION_COLUMN", permissionString);
             PreparedQuery<AccountPermission> preparedQuery = queryBuilder.prepare();
             permission = getTableDao().queryForFirst(preparedQuery);
         } catch (Exception e) {

@@ -20,46 +20,49 @@ package starnubserver.connections.player.groups;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
-import starnubserver.database.tables.Characters;
 import starnubserver.database.tables.GroupAssignments;
+
+import java.util.List;
 
 @DatabaseTable(tableName = "GROUP_ASSIGNMENTS")
 public class GroupAssignment {
 
     private final static GroupAssignments GROUP_ASSIGNMENTS_DB = GroupAssignments.getInstance();
 
-    /**
-     * Represents a group assignment id
-     */
+    /* COLUMN NAMES */
+    private final String GROUP_ASSIGNMENT_ID_COLUMN = "GROUP_ASSIGNMENT_ID";
+    private final String STARNUB_ID_COLUMN = "STARNUB_ID";
+    private final String GROUP_ID_COLUMN = "GROUP_ID";
 
-    @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = "GROUP_ASSIGNMENT_ID")
+    @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = GROUP_ASSIGNMENT_ID_COLUMN)
     private volatile int groupAssignmentId;
 
-    /**
-     * Represents the starnubId which has an associated group
-     */
-
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "STARNUB_ID")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = STARNUB_ID_COLUMN)
     private volatile Account starnubId;
 
-    /**
-     * Represents this Players IP ina string mainly used for the database
-     */
-
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "GROUP")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = GROUP_ID_COLUMN)
     private volatile Group group;
 
     /**
      * Constructor for database purposes
      */
     public GroupAssignment(){}
+
+    /**
+     * Constructor used in adding, removing or updating a group assignment for a account
+     * @param starnubId int representing the account id
+     * @param group int representing the group id
+     * @param createEntry boolean representing if a database entry should be made
+     */
+    public GroupAssignment(Account starnubId, Group group, boolean createEntry) {
+        this.starnubId = starnubId;
+        this.group = group;
+        if(createEntry){
+            GROUP_ASSIGNMENTS_DB.createOrUpdate(this);
+        }
+    }
 
     public int getGroupAssignmentId() {
         return groupAssignmentId;
@@ -69,37 +72,48 @@ public class GroupAssignment {
         return starnubId;
     }
 
+    public void setStarnubId(Account starnubId) {
+        this.starnubId = starnubId;
+        GROUP_ASSIGNMENTS_DB.update(this);
+    }
+
     public Group getGroup() {
         return group;
     }
 
-    /**
-     * Constructor used in adding, removing or updating a group assignment for a account
-     * @param starnubId int representing the account id
-     * @param group int representing the group id
-     */
-    public GroupAssignment(Account starnubId, Group group) {
-        this.starnubId = starnubId;
+    public void setGroup(Group group) {
         this.group = group;
+        GROUP_ASSIGNMENTS_DB.update(this);
     }
 
+    /* DB METHODS */
 
+    public GroupAssignment getGroupAssigmentByGroupFirstMatch(Account account, Group group) {
+        return GROUP_ASSIGNMENTS_DB.getMatchingColumn1FirstSimilarColumn2(STARNUB_ID_COLUMN, account, GROUP_ID_COLUMN, group);
+    }
 
-    public GroupAssignment getGroupAssignments (Account account, Group group) {
-        GroupAssignment groupAssignment = null;
-        try {
-            QueryBuilder<GroupAssignment, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<GroupAssignment, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("ACCOUNT_SETTINGS_ID", account)
-                    .and()
-                    .eq("GROUP", group);
-            PreparedQuery<GroupAssignment> preparedQuery = queryBuilder.prepare();
-            groupAssignment = getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return groupAssignment;
+    public List<GroupAssignment> getGroupAssigmentByAccount(Account account){
+        return GROUP_ASSIGNMENTS_DB.getAllExact(STARNUB_ID_COLUMN, account);
+    }
+
+    public List<GroupAssignment> getGroupAssigmentByGroup(Group group){
+        return GROUP_ASSIGNMENTS_DB.getAllExact(GROUP_ID_COLUMN, group);
+    }
+
+    public void deleteFromDatabase(){
+        deleteFromDatabase(this);
+    }
+
+    public static void deleteFromDatabase(GroupAssignment groupAssignment){
+        GROUP_ASSIGNMENTS_DB.delete(groupAssignment);
+    }
+
+    @Override
+    public String toString() {
+        return "GroupAssignment{" +
+                "groupAssignmentId=" + groupAssignmentId +
+                ", starnubId=" + starnubId +
+                ", group=" + group +
+                '}';
     }
 }

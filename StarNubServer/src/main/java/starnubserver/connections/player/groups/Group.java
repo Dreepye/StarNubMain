@@ -18,22 +18,13 @@
 
 package starnubserver.connections.player.groups;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
-import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.GroupInheritances;
 import starnubserver.database.tables.GroupPermissions;
 import starnubserver.database.tables.Groups;
 
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -88,10 +79,6 @@ public class Group {
         }
     }
 
-    public void initializeGroup(){
-
-    }
-
     public String getName() {
         return name;
     }
@@ -132,10 +119,59 @@ public class Group {
         return GROUP_PERMISSIONS;
     }
 
+    public void setINHERITED_GROUPS(){
+
+    }
+
+    public void setGROUP_PERMISSIONS(){
+
+    }
+
+    public void addGroupPermission(String permission){
+        addGroupPermission(this, permission);
+    }
+
+    public static void addGroupPermission(Group group, String permission){
+        permission = permission.toLowerCase();
+        HashSet<String> groupPermissions = group.getGROUP_PERMISSIONS();
+        if (!groupPermissions.contains(permission)){
+            groupPermissions.add(permission);
+        }
+        GroupPermission groupPermission = GroupPermissions.getInstance().getMatchingColumn1FirstSimilarColumn2("GROUP_ID", this, "PERMISSION", permission);
+        if (groupPermission != null){
+            new GroupPermission(group, permission, true);
+        }
+    }
+
+    public void addAllGroupPermissions(String permission, HashSet<String> permissions){
+        addAllGroupPermissions(this, permissions);
+    }
+
+    public static void addAllGroupPermissions(Group group, HashSet<String> permissions){
+        for (String permission : permissions){
+            addGroupPermission(group, permission);
+        }
+    }
+
+    public void removeGroupPermission(Group group, String permission){
+        permission = permission.toLowerCase();
+        if (GROUP_PERMISSIONS.contains(permission)){
+
+        }
+    }
+
+    public void removeAllGroupPermissions(Group group, HashSet<String> permission){
+
+    }
+
     /* DB Methods */
 
     public Group getTagFromDbById(String groupName){
         return GROUPS_DB.getById(groupName);
+    }
+
+    public Group getTagFromDbById(Tag tag){
+        return GROUPS_DB.getFirstExact(TAG_ID_COLUMN, tag);
     }
 
     public List<Group> getMatchingGroupsById(String groupName){
@@ -157,42 +193,15 @@ public class Group {
     public static void deleteFromDatabase(Group group, boolean completePurge){
         if (completePurge){
             group.getTag().deleteFromDatabase();
-            List<GroupPermission> groupPermissions = GroupPermissions.getInstance().getAllExact("GROUP", group);
+            List<GroupPermission> groupPermissions = GroupPermissions.getInstance().getAllExact("GROUP_ID", group);
             for (GroupPermission groupPermission : groupPermissions){
                 groupPermission.deleteFromDatabase();
             }
+            List<GroupInheritance> groupInheritances = GroupInheritances.getInstance().getAllExact("GROUP_ID", group);
+            for (GroupInheritance groupInheritance : groupInheritances){
+                groupInheritance.deleteFromDatabase();
+            }
         }
         GROUPS_DB.delete(group);
-    }
-
-
-    public Group getGroupByName(String groupName) {
-        try {
-            QueryBuilder<Group, String> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<Group, String> where = queryBuilder.where();
-            queryBuilder.where()
-                    .like("GROUP_NAME", groupName);
-            PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
-    }
-
-    public Group getGroupByTag(Tag groupTag) {
-        try {
-            QueryBuilder<Group, String> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<Group, String> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("TAG", groupTag);
-            PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
     }
 }

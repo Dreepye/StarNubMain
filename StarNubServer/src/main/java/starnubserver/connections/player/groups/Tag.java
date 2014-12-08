@@ -65,6 +65,7 @@ public class Tag {
 
     public void refreshTag() {
         TAGS_DB.refresh(this);
+        setTagCache(false);
     }
 
     public Tag(String name, String color, String type, String leftBracket, String rightBracket, String bracketColor) {
@@ -74,7 +75,7 @@ public class Tag {
         this.leftBracket = leftBracket;
         this.rightBracket = rightBracket;
         this.bracketColor = bracketColor;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getName() {
@@ -83,7 +84,7 @@ public class Tag {
 
     public void setName(String name) {
         this.name = name;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getColor() {
@@ -92,7 +93,7 @@ public class Tag {
 
     public void setColor(String color) {
         this.color = color;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getType() {
@@ -101,7 +102,7 @@ public class Tag {
 
     public void setType(String type) {
         this.type = type;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getLeftBracket() {
@@ -110,7 +111,7 @@ public class Tag {
 
     public void setLeftBracket(String leftBracket) {
         this.leftBracket = leftBracket;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getRightBracket() {
@@ -119,7 +120,7 @@ public class Tag {
 
     public void setRightBracket(String rightBracket) {
         this.rightBracket = rightBracket;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getBracketColor() {
@@ -128,7 +129,7 @@ public class Tag {
 
     public void setBracketColor(String bracketColor) {
         this.bracketColor = bracketColor;
-        setTagCache();
+        setTagCache(true);
     }
 
     public String getBuiltGameTag() {
@@ -139,15 +140,19 @@ public class Tag {
         return builtConsoleTag;
     }
 
-    private void setTagCache(){
+    private void setTagCache(boolean createOrUpdate){
         this.builtConsoleTag = rightBracket + name + leftBracket;
         this.builtGameTag =
                 bracketColor + leftBracket +
                 color + name +
                 bracketColor + rightBracket +
                 GameColors.getInstance().getDefaultChatColor();
-        TAGS_DB.createOrUpdate(this);
+        if (createOrUpdate) {
+            TAGS_DB.createOrUpdate(this);
+        }
     }
+
+    /* DB METHODS */
 
     public Tag getTagFromDbById(String tagName){
         return TAGS_DB.getById(tagName);

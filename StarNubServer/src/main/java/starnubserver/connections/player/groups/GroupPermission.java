@@ -20,16 +20,9 @@ package starnubserver.connections.player.groups;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
-import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.database.tables.GroupPermissions;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @DatabaseTable(tableName = "GROUP_PERMISSIONS")
@@ -37,25 +30,18 @@ public class GroupPermission {
 
     private final static GroupPermissions GROUP_PERMISSIONS_DB = GroupPermissions.getInstance();
 
-    /**
-     * Represents a group permissions id
-     */
+    /* COLUMN NAMES */
+    private final String PERMISSION_ID_COLUMN = "PERMISSION_ID";
+    private final String GROUP_ID_COLUMN = "GROUP_ID";
+    private final String PERMISSION_COLUMN = "PERMISSION";
 
-    @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = "GROUP_PERMISSION_ID")
+    @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = PERMISSION_ID_COLUMN)
     private volatile int groupPermissionsId;
 
-    /**
-     * Represents a group that the permission is attached to
-     */
-
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "GROUP")
+    @DatabaseField(foreign = true, columnName = GROUP_ID_COLUMN)
     private volatile Group group;
 
-    /**
-     * Represents a permission which is assigned to the group
-     */
-
-    @DatabaseField(columnName = "PERMISSION")
+    @DatabaseField(columnName = PERMISSION_COLUMN)
     private volatile String permission;
 
     /**
@@ -63,68 +49,69 @@ public class GroupPermission {
      */
     public GroupPermission(){}
 
-    public int getGroupPermissionsId() {
-        return groupPermissionsId;
+    /**
+     * Constructor used in adding, removing or updating a groups permission
+     *
+     * @param group Group representing the group to add a permission to
+     * @param permission String representing the permission to set for the group
+     * @param createEntry boolean representing if a database entry should be made
+     */
+    public GroupPermission(Group group, String permission, boolean createEntry) {
+        this.group = group;
+        this.permission = permission;
+        if(createEntry){
+            GROUP_PERMISSIONS_DB.createOrUpdate(this);
+        }
     }
 
-    public Group getGroup() {
-        return group;
+    public int getGroupPermissionsId() {
+        return groupPermissionsId;
     }
 
     public String getPermission() {
         return permission;
     }
 
-    /**
-     * Constructor used in adding, removing or updating a groups permission
-     * @param group
-     * @param permission
-     */
-    public GroupPermission(Group group, String permission) {
-        this.group = group;
+    public void setPermission(String permission) {
         this.permission = permission;
     }
 
-
-
-
-    public GroupPermission getGroupPermission (Group group, String permission) {
-        GroupPermission groupAssignment = null;
-        try {
-            QueryBuilder<GroupPermission, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<GroupPermission, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("GROUP", group)
-                    .and()
-                    .eq("PERMISSION", permission);
-            PreparedQuery<GroupPermission> preparedQuery = queryBuilder.prepare();
-            groupAssignment = getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return groupAssignment;
+    public Group getGroup() {
+        return group;
     }
 
-    public List<GroupPermission> getGroupPermissions(PlayerCharacter groupId){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .eq("GROUP", groupId)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
-    public List<GroupPermission> getGroupPermissions(Group groupId){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .eq("GROUP", groupId)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    /* DB METHODS */
+
+    public GroupPermission getGroupPermissionByGroupFirstMatch (Group group, String permission) {
+        return GROUP_PERMISSIONS_DB.getMatchingColumn1FirstSimilarColumn2(GROUP_ID_COLUMN, group, PERMISSION_ID_COLUMN, permission);
+    }
+
+    public List<GroupPermission> getGroupPermissionsByGroup(Group group){
+        return GROUP_PERMISSIONS_DB.getAllExact(GROUP_ID_COLUMN, group);
+    }
+
+    public List<GroupPermission> getGroupPermissionsByPermission(String permission){
+        return GROUP_PERMISSIONS_DB.getAllExact(PERMISSION_COLUMN, permission);
+    }
+
+    public void deleteFromDatabase(){
+        deleteFromDatabase(this);
+    }
+
+    public static void deleteFromDatabase(GroupPermission groupPermission){
+        GROUP_PERMISSIONS_DB.delete(groupPermission);
+    }
+
+    @Override
+    public String toString() {
+        return "GroupPermission{" +
+                "groupPermissionsId=" + groupPermissionsId +
+                ", group=" + group +
+                ", permission='" + permission + '\'' +
+                '}';
     }
 }

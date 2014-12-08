@@ -18,22 +18,15 @@
 
 package starnubserver.connections.player.character;
 
-import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
 import starnubserver.database.tables.CharacterIPLog;
 import starnubserver.events.events.StarNubEvent;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class represents a character ip log entry
@@ -46,17 +39,20 @@ import java.util.List;
 @DatabaseTable(tableName = "CHARACTER_IP_LOG")
 public class CharacterIP {
 
-
-
     private final static CharacterIPLog CHARACTER_IP_LOG_DB = CharacterIPLog.getInstance();
 
-    @DatabaseField(generatedId = true, columnName = "IP_LOG_ID")
+    /* COLUMN NAMES */
+    private final String CHARACTER_IP_LOG_ID_COLUMN = "CHARACTER_IP_LOG_ID";
+    private final String CHARACTER_ID_COLUMN = "CHARACTER_ID";
+    private final String IP_COLUMN = "IP";
+
+    @DatabaseField(generatedId = true, columnName = CHARACTER_IP_LOG_ID_COLUMN)
     private int characterIPLogId;
 
-    @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, columnName = "CHARACTER_ID")
+    @DatabaseField(foreign = true, canBeNull = false, uniqueCombo = true, columnName = CHARACTER_ID_COLUMN)
     private PlayerCharacter playerCharacter;
 
-    @DatabaseField(dataType = DataType.STRING, canBeNull = false,  uniqueCombo = true, columnName = "IP")
+    @DatabaseField(dataType = DataType.STRING, canBeNull = false,  uniqueCombo = true, columnName = IP_COLUMN)
     private String sessionIpString;
 
     /**
@@ -92,11 +88,10 @@ public class CharacterIP {
         }
     }
 
-    public static void logCharacterIp(PlayerCharacter playerCharacter, InetAddress playerIP){
-        CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP, false);
-        if (!CHARACTER_IP_LOG_DB.isCharacterIDAndIPComboRecorded(characterIP)) {
-            CharacterIPLog.getInstance().create(characterIP);
-            new StarNubEvent("Player_Character_New_IP", characterIP);
+    public void logCharacterIp(){
+        if (!ipCharacterLogCheck(this)) {
+            CHARACTER_IP_LOG_DB.create(this);
+            new StarNubEvent("Player_Character_New_IP", this);
         }
     }
 
@@ -124,104 +119,57 @@ public class CharacterIP {
         this.sessionIpString = sessionIpString;
     }
 
-    public boolean isCharacterIDAndIPComboRecorded(CharacterIP characterIP){
-        try {
-            List<CharacterIP> characterIpLogs = getTableDao().queryForMatching(characterIP);
-            if(characterIpLogs.size() >= 1){
-                return true;
-            }
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return false;
+    public boolean ipCharacterLogCheck(CharacterIP characterIP){
+        CharacterIP characterIpLogs = CHARACTER_IP_LOG_DB.getMatchingColumn1FirstSimilarColumn2(CHARACTER_ID_COLUMN, characterIP, IP_COLUMN, sessionIpString);
+        return characterIpLogs != null;
     }
 
-    public ArrayList<InetAddress> getCharactersAssociatedIPListFromCharacterId(int characterId) {
-        try {
-            ArrayList<InetAddress> associatedIps = new ArrayList<InetAddress>();
-            /* Get IPs with that match the Starnub ID */
-            GenericRawResults<String[]> rawResults = getTableDao().queryRaw("select IP from CHARACTER_IP_LOG where CHARACTER_ID = "+characterId);
-            /* Get results of the query */
-            List<String[]> results = rawResults.getResults();
-            /* Get results set one */
-            for (String[] result : results) {
-                for (String stringResult : result) {
-                    try {
-                        InetAddress inetAddress = InetAddress.getByName(stringResult);
-                        if (!associatedIps.contains(inetAddress)) {
-                            associatedIps.add(inetAddress);
-                        }
-                    } catch (UnknownHostException e) {
-                            /* Just means invalid ip, add error later TODO */
+    /* DB METHODS*/
+
+    public List<CharacterIP> getCharacterIpLogsByCharacter(){
+        return getCharacterIpLogsByCharacter(CHARACTER_ID_COLUMN, playerCharacter);
+    }
+
+    public List<CharacterIP> getCharacterIpLogsByIP(){
+        return getCharacterIpLogsByIP(IP_COLUMN, sessionIpString);
+    }
+
+    public static List<CharacterIP> getCharacterIpLogsByCharacter(String column, PlayerCharacter playerCharacter){
+        return CHARACTER_IP_LOG_DB.getAllExact(column, playerCharacter);
+    }
+
+    public static List<CharacterIP> getCharacterIpLogsByIP(String column, String ip){
+        return CHARACTER_IP_LOG_DB.getAllExact(column, ip);
+    }
+
+    public HashSet<CharacterIP> getCompleteAssociations(PlayerCharacter playerCharacter){
+        HashSet<CharacterIP> completeSeenList = new HashSet<>();
+        HashMap<Object, Boolean> hasNotBeenChecked = new HashMap<>();
+        hasNotBeenChecked.put(playerCharacter, false);
+        while (hasNotBeenChecked.containsValue(false)){
+            for (Map.Entry<Object, Boolean> entry : hasNotBeenChecked.entrySet()){
+                Object key = entry.getKey();
+                List<CharacterIP> characterIPs;
+                if (key instanceof PlayerCharacter) {
+                    characterIPs = CharacterIP.getCharacterIpLogsByCharacter(CHARACTER_ID_COLUMN, (PlayerCharacter) key);
+                } else {
+                    characterIPs = CharacterIP.getCharacterIpLogsByIP(IP_COLUMN, (String) key);
+                }
+                entry.setValue(true);
+                completeSeenList.addAll(characterIPs);
+                for (CharacterIP characterIP : characterIPs){
+                    PlayerCharacter playerCharacter1 = characterIP.getPlayerCharacter();
+                    String ipString = characterIP.getSessionIpString();
+                    if(hasNotBeenChecked.containsKey(playerCharacter1)){
+                        hasNotBeenChecked.put(playerCharacter1, false);
+                    }
+                    if (hasNotBeenChecked.containsKey(ipString)){
+                        hasNotBeenChecked.put(ipString, false);
                     }
                 }
             }
-            return associatedIps;
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
         }
-        return null;
-    }
-
-    public ArrayList<InetAddress> getCharactersAssociatedIPListFromCharacterIds(ArrayList<Integer> characterIds) {
-        ArrayList<InetAddress> associatedIps = new ArrayList<>();
-        for (Integer characterId : characterIds) {
-            try {
-                /* Get IPs with that match the Starnub ID */
-                GenericRawResults<String[]> rawResults = getTableDao().queryRaw("select IP from CHARACTER_IP_LOG where CHARACTER_ID = "+characterId);
-                /* Get results of the query */
-                List<String[]> results = rawResults.getResults();
-                /* Get results set one */
-                for (String[] result : results) {
-                    for (String stringResult : result) {
-                        try {
-                            InetAddress inetAddress = InetAddress.getByName(stringResult);
-                            if (!associatedIps.contains(inetAddress)) {
-                                associatedIps.add(inetAddress);
-                            }
-                        } catch (UnknownHostException e) {
-                            /* Just means invalid ip, add error later TODO */
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            }
-        }
-        return associatedIps;
-    }
-
-    public List<CharacterIP> getCharacterIpLogs(PlayerCharacter playerCharacter){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .eq("CHARACTER_ID", playerCharacter)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
-    }
-
-    public List<CharacterIP> getCharacterIpLogs(String ip){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .eq("IP", ip)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
-    }
-
-    public HashSet<CharacterIP> getAllCharactersAllIpsList(PlayerCharacter playerCharacter){
-        List<CharacterIP> characterIPs = getCharacterIpLogs(playerCharacter);
-        HashSet<CharacterIP> characterIPHashSet = new HashSet<>();
-        characterIPHashSet.addAll(characterIPs);
-        for (CharacterIP characterIP : characterIPs){
-            List<CharacterIP> characterIPsSub = getCharacterIpLogs(characterIP.getSessionIpString());
-            characterIPHashSet.addAll(characterIPsSub);
-        }
-        return characterIPHashSet;
+        return completeSeenList;
     }
 
     @Override

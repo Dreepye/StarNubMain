@@ -49,7 +49,7 @@ public class GroupsManagement extends YAMLWrapper {
      */
     private static final GroupsManagement instance = new GroupsManagement();
 
-    private final ConcurrentHashMap<String, Group> GROUPS = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Group> groups = new ConcurrentHashMap<>();
 
     /**
      * This constructor is private - Singleton Pattern

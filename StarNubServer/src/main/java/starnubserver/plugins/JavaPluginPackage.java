@@ -51,7 +51,7 @@ public class JavaPluginPackage extends PluginPackage {
      * This is one long constructor, but it is to make plugin information available and
      * simple to grab.
      * <p>
-     *  @param pluginName              String the plugin name
+     * @param pluginName              String the plugin name
      * @param version                 double the plugin version
      * @param pluginLocation          File where on the hard disk is the plugin
      * @param dependencies            String a comma separated list of dependencies

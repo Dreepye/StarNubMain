@@ -41,7 +41,8 @@ public abstract class Plugin {
      * What to do when the plugin is disabled.
      */
     public abstract void onPluginDisable();
-
+//MAKE INTERFACE, then make java plugin
 }
+
 
 
