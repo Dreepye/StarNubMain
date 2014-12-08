@@ -32,12 +32,12 @@ public class Tag {
     private final static Tags TAGS_DB = Tags.getInstance();
 
     /* COLUMN NAMES */
-    private final String TAG_ID_COLUMN = "TAG_ID";
-    private final String COLOR_COLUMN = "COLOR";
-    private final String TYPE_COLUMN = "TYPE";
-    private final String LEFT_BRACKET_COLUMN = "LEFT_BRACKET";
-    private final String RIGHT_BRACKET_COLUMN = "RIGHT_BRACKET";
-    private final String BRACKET_COLOR_COLUMN = "BRACKET_COLOR";
+    private final static String TAG_ID_COLUMN = "TAG_ID";
+    private final static String COLOR_COLUMN = "COLOR";
+    private final static String TYPE_COLUMN = "TYPE";
+    private final static String LEFT_BRACKET_COLUMN = "LEFT_BRACKET";
+    private final static String RIGHT_BRACKET_COLUMN = "RIGHT_BRACKET";
+    private final static String BRACKET_COLOR_COLUMN = "BRACKET_COLOR";
 
     @DatabaseField(id = true, dataType = DataType.STRING, unique = true, columnName = TAG_ID_COLUMN)
     private volatile String name;
@@ -154,24 +154,44 @@ public class Tag {
 
     /* DB METHODS */
 
-    public Tag getTagFromDbById(String tagName){
-        return TAGS_DB.getById(tagName);
+    public Tag getTagFromDbById(){
+        return getTagFromDbById(this.name);
     }
 
-    public List<Tag> getMatchingTagsById(String tagName){
-        return TAGS_DB.getAllSimilar(TAG_ID_COLUMN, tagName);
+    public static Tag getTagFromDbById(String name){
+        return TAGS_DB.getById(name);
     }
 
-    public List<Tag> getMatchingTagsByColor(String color){
+    public List<Tag> getMatchingTagsById(){
+        return getMatchingTagsById(this.name);
+    }
+
+    public static List<Tag> getMatchingTagsById(String name){
+        return TAGS_DB.getAllSimilar(TAG_ID_COLUMN, name);
+    }
+
+    public List<Tag> getMatchingTagsByColor(){
+        return getMatchingTagsByColor(this.color);
+    }
+
+    public static List<Tag> getMatchingTagsByColor(String color){
         return TAGS_DB.getAllSimilar(COLOR_COLUMN, color);
     }
 
-    public List<Tag> getMatchingTagsByType(String type){
+    public List<Tag> getMatchingTagsByType(){
+        return getMatchingTagsByType(this.type);
+    }
+
+    public static List<Tag> getMatchingTagsByType(String type){
         return TAGS_DB.getAllSimilar(TYPE_COLUMN, type);
     }
 
-    public List<Tag> getMatchingTagsByIdSimiliarType(String tagName, String type){
-        return TAGS_DB.getMatchingColumn1AllSimilarColumn2(TAG_ID_COLUMN, tagName, TYPE_COLUMN, type);
+    public List<Tag> getMatchingTagsByIdSimilarType(){
+        return getMatchingTagsByIdSimilarType(this.name, this.type);
+    }
+
+    public static List<Tag> getMatchingTagsByIdSimilarType(String name, String type){
+        return TAGS_DB.getMatchingColumn1AllSimilarColumn2(TAG_ID_COLUMN, name, TYPE_COLUMN, type);
     }
 
     public void deleteFromDatabase(){

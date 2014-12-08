@@ -21,8 +21,13 @@ package starnubserver.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starnubserver.StarNub;
+import starnubserver.connections.player.account.Account;
+import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.GroupPermissions;
+import starnubserver.resources.connections.Players;
 
+import java.util.HashSet;
 import java.util.List;
 
 @DatabaseTable(tableName = "GROUP_PERMISSIONS")
@@ -31,9 +36,9 @@ public class GroupPermission {
     private final static GroupPermissions GROUP_PERMISSIONS_DB = GroupPermissions.getInstance();
 
     /* COLUMN NAMES */
-    private final String PERMISSION_ID_COLUMN = "PERMISSION_ID";
-    private final String GROUP_ID_COLUMN = "GROUP_ID";
-    private final String PERMISSION_COLUMN = "PERMISSION";
+    private final static String PERMISSION_ID_COLUMN = "PERMISSION_ID";
+    private final static String GROUP_ID_COLUMN = "GROUP_ID";
+    private final static String PERMISSION_COLUMN = "PERMISSION";
 
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = PERMISSION_ID_COLUMN)
     private volatile int groupPermissionsId;
@@ -86,15 +91,27 @@ public class GroupPermission {
 
     /* DB METHODS */
 
-    public GroupPermission getGroupPermissionByGroupFirstMatch (Group group, String permission) {
+    public GroupPermission getGroupPermissionByGroupFirstMatch () {
+        return getGroupPermissionByGroupFirstMatch(this.group, this.permission);
+    }
+
+    public static GroupPermission getGroupPermissionByGroupFirstMatch (Group group, String permission) {
         return GROUP_PERMISSIONS_DB.getMatchingColumn1FirstSimilarColumn2(GROUP_ID_COLUMN, group, PERMISSION_ID_COLUMN, permission);
     }
 
-    public List<GroupPermission> getGroupPermissionsByGroup(Group group){
+    public List<GroupPermission> getGroupPermissionsByGroup(){
+        return getGroupPermissionsByGroup(this.group);
+    }
+
+    public static List<GroupPermission> getGroupPermissionsByGroup(Group group){
         return GROUP_PERMISSIONS_DB.getAllExact(GROUP_ID_COLUMN, group);
     }
 
-    public List<GroupPermission> getGroupPermissionsByPermission(String permission){
+    public List<GroupPermission> getGroupPermissionsByPermission(){
+        return getGroupPermissionsByPermission(this.permission);
+    }
+
+    public static List<GroupPermission> getGroupPermissionsByPermission(String permission){
         return GROUP_PERMISSIONS_DB.getAllExact(PERMISSION_COLUMN, permission);
     }
 
@@ -104,6 +121,21 @@ public class GroupPermission {
 
     public static void deleteFromDatabase(GroupPermission groupPermission){
         GROUP_PERMISSIONS_DB.delete(groupPermission);
+    }
+
+    public void refreshAllRelatedPermissions(){
+        Players connectedPlayers = StarNub.getConnections().getCONNECTED_PLAYERS();
+        if (group.getType().equalsIgnoreCase("noaccount")){
+            //noAccount refresh
+        } else {
+            for (PlayerSession playerSession : connectedPlayers.values()) {
+                Account account = playerSession.getPlayerCharacter().getAccount();
+                HashSet<GroupAssignment> groups = account.getGroups();
+
+                if ()
+                .reloadPermissions();
+            }
+        }
     }
 
     @Override

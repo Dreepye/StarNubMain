@@ -31,9 +31,9 @@ public class GroupInheritance {
     private final static GroupInheritances GROUP_INHERITANCES_DB = GroupInheritances.getInstance();
 
     /* COLUMN NAMES */
-    private final String GROUP_INHERITANCE_ID_COLUMN = "GROUP_INHERITANCE_ID";
-    private final String GROUP_ID_COLUMN = "GROUP_ID";
-    private final String INHERITED_GROUP_ID_COLUMN = "INHERITED_GROUP_ID";
+    private final static String GROUP_INHERITANCE_ID_COLUMN = "GROUP_INHERITANCE_ID";
+    private final static String GROUP_ID_COLUMN = "GROUP_ID";
+    private final static String INHERITED_GROUP_ID_COLUMN = "INHERITED_GROUP_ID";
 
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = GROUP_INHERITANCE_ID_COLUMN)
     private volatile int groupInheritanceId;
@@ -87,15 +87,27 @@ public class GroupInheritance {
 
     /* DB METHODS */
 
-    public GroupInheritance getGroupInheritanceByGroupFirstMatch(Group group, Group inheritedGroup) {
+    public GroupInheritance getGroupInheritanceByGroupFirstMatch() {
+        return getGroupInheritanceByGroupFirstMatch(this.group, this.inheritedGroup);
+    }
+
+    public static GroupInheritance getGroupInheritanceByGroupFirstMatch(Group group, Group inheritedGroup) {
         return GROUP_INHERITANCES_DB.getMatchingColumn1FirstSimilarColumn2(GROUP_ID_COLUMN, group, INHERITED_GROUP_ID_COLUMN, inheritedGroup);
     }
 
-    public List<GroupInheritance> getGroupInheritanceByGroup(Group group){
+    public List<GroupInheritance> getGroupInheritanceByGroup(){
+        return getGroupInheritanceByGroup(this.group);
+    }
+
+    public static List<GroupInheritance> getGroupInheritanceByGroup(Group group){
         return GROUP_INHERITANCES_DB.getAllExact(GROUP_ID_COLUMN, group);
     }
 
-    public List<GroupInheritance> getGroupInheritanceByInheritedGroup(Group inheritedGroup){
+    public List<GroupInheritance> getGroupInheritanceByInheritedGroup(){
+        return getGroupInheritanceByInheritedGroup(this.inheritedGroup);
+    }
+
+    public static List<GroupInheritance> getGroupInheritanceByInheritedGroup(Group inheritedGroup){
         return GROUP_INHERITANCES_DB.getAllExact(INHERITED_GROUP_ID_COLUMN, inheritedGroup);
     }
 

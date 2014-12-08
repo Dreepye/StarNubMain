@@ -42,9 +42,9 @@ public class CharacterIP {
     private final static CharacterIPLog CHARACTER_IP_LOG_DB = CharacterIPLog.getInstance();
 
     /* COLUMN NAMES */
-    private final String CHARACTER_IP_LOG_ID_COLUMN = "CHARACTER_IP_LOG_ID";
-    private final String CHARACTER_ID_COLUMN = "CHARACTER_ID";
-    private final String IP_COLUMN = "IP";
+    private final static String CHARACTER_IP_LOG_ID_COLUMN = "CHARACTER_IP_LOG_ID";
+    private final static String CHARACTER_ID_COLUMN = "CHARACTER_ID";
+    private final static String IP_COLUMN = "IP";
 
     @DatabaseField(generatedId = true, columnName = CHARACTER_IP_LOG_ID_COLUMN)
     private int characterIPLogId;
@@ -127,19 +127,19 @@ public class CharacterIP {
     /* DB METHODS*/
 
     public List<CharacterIP> getCharacterIpLogsByCharacter(){
-        return getCharacterIpLogsByCharacter(CHARACTER_ID_COLUMN, playerCharacter);
+        return getCharacterIpLogsByCharacter(playerCharacter);
+    }
+
+    public static List<CharacterIP> getCharacterIpLogsByCharacter(PlayerCharacter playerCharacter){
+        return CHARACTER_IP_LOG_DB.getAllExact(CHARACTER_ID_COLUMN, playerCharacter);
     }
 
     public List<CharacterIP> getCharacterIpLogsByIP(){
-        return getCharacterIpLogsByIP(IP_COLUMN, sessionIpString);
+        return getCharacterIpLogsByIP(sessionIpString);
     }
 
-    public static List<CharacterIP> getCharacterIpLogsByCharacter(String column, PlayerCharacter playerCharacter){
-        return CHARACTER_IP_LOG_DB.getAllExact(column, playerCharacter);
-    }
-
-    public static List<CharacterIP> getCharacterIpLogsByIP(String column, String ip){
-        return CHARACTER_IP_LOG_DB.getAllExact(column, ip);
+    public static List<CharacterIP> getCharacterIpLogsByIP(String ip){
+        return CHARACTER_IP_LOG_DB.getAllExact(IP_COLUMN, ip);
     }
 
     public HashSet<CharacterIP> getCompleteAssociations(PlayerCharacter playerCharacter){
@@ -151,9 +151,9 @@ public class CharacterIP {
                 Object key = entry.getKey();
                 List<CharacterIP> characterIPs;
                 if (key instanceof PlayerCharacter) {
-                    characterIPs = CharacterIP.getCharacterIpLogsByCharacter(CHARACTER_ID_COLUMN, (PlayerCharacter) key);
+                    characterIPs = CharacterIP.getCharacterIpLogsByCharacter((PlayerCharacter) key);
                 } else {
-                    characterIPs = CharacterIP.getCharacterIpLogsByIP(IP_COLUMN, (String) key);
+                    characterIPs = CharacterIP.getCharacterIpLogsByIP((String) key);
                 }
                 entry.setValue(true);
                 completeSeenList.addAll(characterIPs);

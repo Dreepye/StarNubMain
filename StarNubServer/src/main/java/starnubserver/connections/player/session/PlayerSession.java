@@ -31,15 +31,13 @@ import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubserver.StarNub;
 import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.account.Account;
+import starnubserver.connections.player.account.AccountPermission;
 import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.generic.Ban;
 import starnubserver.connections.player.generic.StaffEntry;
-import starnubserver.connections.player.groups.NoAccountGroup;
-import starnubserver.database.tables.Accounts;
-import starnubserver.database.tables.CharacterIPLog;
-import starnubserver.database.tables.Characters;
-import starnubserver.database.tables.PlayerSessionLog;
+import starnubserver.connections.player.groups.*;
+import starnubserver.database.tables.*;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.NameBuilder;
 import utilities.events.types.StringEvent;
@@ -49,8 +47,8 @@ import utilities.strings.StringUtilities;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * StarNub's Player class that represents a sender. This class
@@ -93,6 +91,8 @@ public class PlayerSession extends StarNubProxyConnection {
     private volatile String cleanNickName;
     private volatile boolean isOp;
     private volatile boolean afk;
+
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> PERMISSIONS = new ConcurrentHashMap<>();
 
     public PlayerSession(){
         super(null, null, null, null);
@@ -328,11 +328,11 @@ public class PlayerSession extends StarNubProxyConnection {
     }
 
     public static List<CharacterIP> getCharactersByIP(String sessionIpString) {
-        return CharacterIPLog.getInstance().getCharacterIpLogs(sessionIpString);
+        return CharacterIP.getCharacterIpLogsByIP(sessionIpString);
     }
 
     public static List<CharacterIP> getIpsByCharacters(PlayerCharacter playerCharacter){
-        return CharacterIPLog.getInstance().getCharacterIpLogs(playerCharacter);
+        return CharacterIP.getCharacterIpLogsByCharacter(playerCharacter);
     }
 
     public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message) {
@@ -378,121 +378,208 @@ public class PlayerSession extends StarNubProxyConnection {
 
     }
 
+    /* Permission Methods*/
 
+    public void reloadPermissions() {
+        PERMISSIONS.clear();
+        loadPermissions();
+    }
 
-
-
-
-
-
-    public boolean hasBasePermission(PlayerSession playerSessionSession, String basePermission) {
-        if (playerSessionSession.isOp()) {
-            return true;
-        } else if (playerSessionSession.getPlayerCharacter().getAccount() != null) {
-            return playerSessionSession.getPlayerCharacter().getAccount().hasBasePermission(basePermission);
+    public void loadPermissions(){
+        Account account = playerCharacter.getAccount();
+        LinkedHashSet<String> permissions = new LinkedHashSet<>();
+        if(account == null){
+            permissions.addAll(NO_ACCOUNT_GROUP.getGROUP_PERMISSIONS());
         } else {
-//            if (groupSync.getNoAccountGroup() != null) {
-//                return groupSync.getNoAccountGroup().hasBasePermission(basePermission);
-//            } else {
-            return false;
-//            }
+            LinkedHashSet<Group> allGroups = account.getAllGroups();
+            for (Group group : allGroups){
+                permissions.addAll(group.getGROUP_PERMISSIONS());
+            }
+        }
+        permissions.forEach(this::addPermissionToMap);
+    }
+
+    public String addPermission(String permission){
+        Account account = playerCharacter.getAccount();
+        if (account == null){
+            return "Could not add permission \"" + permission + "\" to \"" + playerCharacter.getName() + "\". No account was found.";
+        }
+        new AccountPermission(account, permission, true);
+        reloadPermissions();
+        if (hasPermission(permission, false)){
+            return "Permission \"" + permission + "\" added to \"" + playerCharacter.getName() + "\"'s account.";
+        }
+        return "Critical Error Adding Permission";
+    }
+
+    private void addPermissionToMap(String permission){
+        String[] permissionBreak = permission.split("\\.", 3);
+        if (permissionBreak.length == 3) {
+            PERMISSIONS.putIfAbsent(permissionBreak[0], new ConcurrentHashMap<>());
+            PERMISSIONS.get(permissionBreak[0]).putIfAbsent(permissionBreak[1], new ArrayList<>());
+            PERMISSIONS.get(permissionBreak[0]).get(permissionBreak[1]).add(permissionBreak[2]);
+        } else if (permissionBreak.length == 2 ) {
+            PERMISSIONS.putIfAbsent(permissionBreak[0], new ConcurrentHashMap<>());
+            PERMISSIONS.get(permissionBreak[0]).putIfAbsent(permissionBreak[1], new ArrayList<>());
+        } else if (permissionBreak.length == 1){
+            PERMISSIONS.putIfAbsent(permissionBreak[0], new ConcurrentHashMap<>());
         }
     }
 
+    public String deletePermission(String permission){
+        Account account = playerCharacter.getAccount();
+        if (account == null){
+            return "Could not delete permission \"" + permission + "\" from \"" + playerCharacter.getName() + "\". No account was found.";
+        }
+        AccountPermission accountPermission = AccountPermission.getAccountPermissionByAccountFirstMatch(account, permission);
+        accountPermission.deleteFromDatabase();
+        deletePermissionFromMap(permission);
+        if (hasPermission(permission, false)){
+            return "Permission \"" + permission + "\" was deleted from \"" + playerCharacter.getName() + "\"'s account.";
+        }
+        return "Critical Error Adding Permission";
+    }
 
+    private void deletePermissionFromMap(String permission){
+        String[] permissionBreak = permission.split("\\.", 3);
+        if (permissionBreak.length == 3) {
+            PERMISSIONS.get(permissionBreak[0]).get(permissionBreak[1]).remove(permissionBreak[2]);
+            if (PERMISSIONS.get(permissionBreak[0]).get(permissionBreak[1]).isEmpty()) {
+                PERMISSIONS.get(permissionBreak[0]).remove(permissionBreak[1]);
+                if (PERMISSIONS.get(permissionBreak[0]).isEmpty()){
+                    PERMISSIONS.remove(permissionBreak[0]);
+                }
+            }
+        } else if (permissionBreak.length == 2 ) {
+            PERMISSIONS.get(permissionBreak[0]).remove(permissionBreak[1]);
+            if (PERMISSIONS.get(permissionBreak[0]).isEmpty()) {
+                PERMISSIONS.remove(permissionBreak[0]);
+            }
+        } else if (permissionBreak.length == 1){
+            PERMISSIONS.remove(permissionBreak[0]);
+        }
+    }
 
+    public boolean hasBasePermission(String basePermission) {
+        return isOp || PERMISSIONS.containsKey("*") || PERMISSIONS.containsKey(basePermission);
+    }
+
+    private boolean hasSubPermission(String basePermission, String subPermission, boolean checkWildCards){
+        ConcurrentHashMap<String, ArrayList<String>> concurrentHashMap = PERMISSIONS.get(basePermission);
+        if (concurrentHashMap == null){
+            return false;
+        }
+        if (checkWildCards){
+            return concurrentHashMap.containsKey("*") || concurrentHashMap.containsKey(subPermission);
+        } else {
+            return concurrentHashMap.containsKey(subPermission);
+        }
+    }
+
+    private boolean hasFullPermission(String basePermission, String subPermission, String fullPermission, boolean checkWildCards){
+        ConcurrentHashMap<String, ArrayList<String>> concurrentHashMap = PERMISSIONS.get(basePermission);
+        if (concurrentHashMap == null) {
+            return false;
+        }
+        ArrayList<String> strings = concurrentHashMap.get(subPermission);
+        if (strings == null){
+            return false;
+        }
+        if (checkWildCards){
+            return strings.contains("*") || strings.contains(fullPermission);
+        } else {
+            return strings.contains(fullPermission);
+        }
+    }
 
     public boolean hasPermission(String permission, boolean checkWildCards) {
-        String[] perms;
-        String perm3 = null;
-        boolean fullPermission = false;
-        try {
-            perms = permission.split("\\.", 3);
-            perm3 = perms[2];
-            fullPermission = true;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            perms = permission.split("\\.", 2);
-        }
-        return hasPermission(perms[0], perms[1], perm3, fullPermission, checkWildCards);
-    }
-
-    @SuppressWarnings("all")
-    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, String mainArgOrVariable, boolean fullPermission, boolean checkWildCards) {
-        if (this.isOp() && checkWildCards) {
+        if (isOp && checkWildCards){
             return true;
-        } else if (this.getPlayerCharacter().getAccount() != null) {
-            return this.getPlayerCharacter().getAccount().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
         } else {
-//            if (groupSync.getNoAccountGroup() != null) {
-//                return groupSync.getNoAccountGroup().hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, fullPermission, checkWildCards);
-//            } else {
-            return false;
-//            }
-        }
-    }
-
-    public boolean hasPermission(String pluginCommandNamePermission, String commandPermission, boolean checkWildCards) {
-        return hasPermission(pluginCommandNamePermission, commandPermission, null, false, checkWildCards);
-    }
-
-    public boolean hasPermission(String pluginCommandNamePermission, String mainArgOrVariable, String commandPermission, boolean checkWildCards) {
-        return hasPermission(pluginCommandNamePermission, commandPermission, mainArgOrVariable, true, checkWildCards);
-    }
-
-    public String getPermissionVariable(String permission) {
-        String[] perms;
-        try {
-            perms = permission.split("\\.", 3);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            perms = permission.split("\\.", 2);
-        }
-        return getPermissionVariable(perms[0], perms[1]);
-    }
-
-
-    @SuppressWarnings("all")
-    public String getPermissionVariable(String pluginCommandNamePermission, String commandPermission) {
-        if (this.isOp()) {
-            return "OP";
-        } else if (this.getPlayerCharacter().getAccount() != null) {
-            return this.getPlayerCharacter().getAccount().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
-        } else {
-//            if (groupSync.getNoAccountGroup() != null) {
-//                return groupSync.getNoAccountGroup().getPermissionSpecific(pluginCommandNamePermission, commandPermission);
-//            } else {
-            return null;
-//            }
-        }
-    }
-
-    public int getPermissionVariableInteger(PlayerSession playerSessionSession, String permission) {
-        String[] perms;
-        try {
-            perms = permission.split("\\.", 3);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            perms = permission.split("\\.", 2);
-        }
-        return getPermissionVariableInteger(playerSessionSession, perms[0], perms[1]);
-    }
-
-    public int getPermissionVariableInteger(PlayerSession playerSessionSession, String pluginCommandNamePermission, String commandPermission) {
-        String permissionVariable = getPermissionVariable(pluginCommandNamePermission, commandPermission);
-        if (permissionVariable == null) {
-            return -100001;
-        } else if (permissionVariable.equals("OP")) {
-            return -100000;
-        } else {
-            try {
-                return Integer.parseInt(permissionVariable);
-            } catch (NumberFormatException e) {
-                return -100002;
+            String[] permissions = permission.split("\\.", 3);
+            boolean fullPermission = permissions.length == 3;
+            if (fullPermission){
+                return hasFullPermission(permissions[0], permissions[1], permissions[3], checkWildCards);
+            } else {
+                return hasSubPermission(permissions[0], permissions[1], checkWildCards);
             }
         }
     }
 
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will return if a player has a permission. It will check OP and Wildcards first then for partial or full permission.
+     * <P>
+     * Example: {plugname}.{subpermission}.{command}
+     *          starnub.server.shutdown
+     *          starnub.server.start
+     *          starnub.server.*
+     *          starnub.*
+     * <br>
+     * The first line would give me shutdown. The second line would be start. The third line give me anything under
+     * starnub.server, The fourth line gives me all PERMISSIONS for the starnub related commands that fall under starnub. .
+     *
+     * <p>
+     * @param basePermission String representing the plugin command name to check
+     * @param subPermission String representing the plugins command specific sub permission
+     * @param fullPermission String representing the plugins sub permission specific Command
+     * @return boolean if the account has the permission
+     */
+    public boolean hasPermission(String basePermission, String subPermission, String fullPermission, boolean checkWildCards) {
+        return isOp && checkWildCards || hasFullPermission(basePermission, subPermission, fullPermission, checkWildCards);
+    }
+
+    public String getSpecificPermission(String basePermission, String subPermission) {
+        ConcurrentHashMap<String, ArrayList<String>> concurrentHashMap = PERMISSIONS.get(basePermission);
+        if (concurrentHashMap == null){
+            return null;
+        }
+        return concurrentHashMap.get(subPermission).get(0);
+    }
+
+    public String getSpecificPermission(String permission){
+        String[] permissions = permission.split("\\.", 3);
+        return getSpecificPermission(permissions[0], permissions[1]);
+    }
+
+    public int getSpecificPermissionInteger(String permission){
+        String[] permissions = permission.split("\\.", 3);
+        return getSpecificPermissionInteger(permissions[0], permissions[1]);
+    }
+
+    public int getSpecificPermissionInteger(String basePermission, String subPermission) {
+        if (isOp){
+            return -10000;
+        }
+        String permissionVariable = getSpecificPermission(basePermission, subPermission);
+        if (permissionVariable == null) {
+            return -100001;
+        }
+        try {
+            return Integer.parseInt(permissionVariable);
+        } catch (NumberFormatException e) {
+            return -100002;
+        }
+    }
+
+    /* DB Methods */
+
     public static void retreiveSession(PlayerCharacter playerCharacter){
 
     }
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public String toString() {

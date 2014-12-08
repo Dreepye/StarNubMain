@@ -13,6 +13,7 @@ import starbounddata.packets.Packets;
  * Packet Direction: Client -> Server
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
+ *         Tim    (r00t-s)
  * @since 1.0 Beta
  */
 public class WarpCommand extends Packet {

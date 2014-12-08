@@ -43,6 +43,7 @@ import utilities.crypto.PasswordHash;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,12 +63,12 @@ public class Account implements Serializable{
     private final static Accounts ACCOUNTS_DB = Accounts.getInstance();
 
     /* COLUMN NAMES */
-    private final String STARNUB_ID_COLUMN = "STARNUB_ID";
-    private final String NAME_COLUMN = "NAME";
-    private final String PASSWORD_COLUMN = "PASSWORD";
-    private final String SALT_COULMN = "SALT";
-    private final String SETTINGS_ID_COLUMN = "SETTINGS_ID";
-    private final String LAST_LOGIN_COLUMN = "LAST_LOGIN";
+    private final static String STARNUB_ID_COLUMN = "STARNUB_ID";
+    private final static String NAME_COLUMN = "NAME";
+    private final static String PASSWORD_COLUMN = "PASSWORD";
+    private final static String SALT_COULMN = "SALT";
+    private final static String SETTINGS_ID_COLUMN = "SETTINGS_ID";
+    private final static String LAST_LOGIN_COLUMN = "LAST_LOGIN";
 
     @DatabaseField(generatedId = true, columnName = STARNUB_ID_COLUMN)
     private volatile int starnubId;
@@ -94,9 +95,7 @@ public class Account implements Serializable{
     private volatile ForeignCollection<PlayerCharacter> characters;
 
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
-    private volatile ForeignCollection<GroupAssignment> groups;
-
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> permissions;
+    private final HashSet<Group> GROUP_ASSIGNMENTS = new HashSet<>();
 
     /**
      * Constructor for database purposes
@@ -170,6 +169,30 @@ public class Account implements Serializable{
         }
     }
 
+    public void setStarnubId(int starnubId) {
+        this.starnubId = starnubId;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public void setAccountSettings(Settings accountSettings) {
+        this.accountSettings = accountSettings;
+    }
+
+    public ForeignCollection<PlayerCharacter> getCharacters() {
+        return characters;
+    }
+
+    public void setCharacters(ForeignCollection<PlayerCharacter> characters) {
+        this.characters = characters;
+    }
+
+    public void setGroups(ForeignCollection<GroupAssignment> groups) {
+        this.groups = groups;
+    }
+
     public int getStarnubId() {
         return starnubId;
     }
@@ -222,197 +245,26 @@ public class Account implements Serializable{
         return ACCOUNTS_DB.update(this);
     }
 
-    public void setPermissions(ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> permissions) {
-        this.permissions = permissions;
-    }
-
-    public void addPermission(String permission) {
-        addPermissionToMap(permission);
-        new AccountPermission(this, permission, true);
-    }
-
-    public void deletePermission(String permission){
-        String[] permissionBreak = permission.split("\\.", 3);
-        if (permissionBreak.length == 3) {
-            permissions.get(permissionBreak[0]).get(permissionBreak[1]).remove(permissionBreak[2]);
-            if (permissions.get(permissionBreak[0]).get(permissionBreak[1]).isEmpty()) {
-                permissions.get(permissionBreak[0]).remove(permissionBreak[1]);
-                if (permissions.get(permissionBreak[0]).isEmpty()){
-                    permissions.remove(permissionBreak[0]);
-                }
-            }
-        } else if (permissionBreak.length == 2 ) {
-            permissions.get(permissionBreak[0]).remove(permissionBreak[1]);
-            if (permissions.get(permissionBreak[0]).isEmpty()) {
-                permissions.remove(permissionBreak[0]);
-            }
-        } else if (permissionBreak.length == 1){
-            permissions.remove(permissionBreak[0]);
-        }
-        AccountPermission accountPermission = AccountPermissions.getInstance().getAccountPermission(this.starnubId, permission);
-        AccountPermissions.getInstance().delete(accountPermission);
-    }
-
-    public void reloadPermissions() {
-        permissions.clear();
-        loadPermissions();
-    }
-
-    public void loadPermissions(){
-        permissions = new ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>>();
-        LinkedHashSet<String> permissionsToLoad = new LinkedHashSet<String>();
-        /* Load account permissions first */
-        List<AccountPermission> accountPermissionList = AccountPermissions.getInstance().getAccountPermissions(this.starnubId);
-        permissionsToLoad.addAll(accountPermissionList.stream().map(AccountPermission::getPermission).collect(Collectors.toList()));
-        /* Group assignment then recursively all inherited groups */
-        LinkedHashSet<String> groupPermissions = new LinkedHashSet<String>();
-        if (groups != null) {
-            LinkedHashSet<Group> groupsToLoad = recursiveGroupInheritanceList(groups);
-            for (Group group : groupsToLoad) {
-                for (GroupPermission groupPermission : group.getPermissions()) {
-                    groupPermissions.add(groupPermission.getPermission());
+    public LinkedHashSet<Group> getAllGroups(){
+        LinkedHashSet<Group> finalGroupList = new LinkedHashSet<>();
+        HashSet<String> groupsComplete = new HashSet<>();
+        finalGroupList.addAll(GROUP_ASSIGNMENTS);
+        groupsComplete.addAll(GROUP_ASSIGNMENTS.stream().map(Group::getName).collect(Collectors.toList()));
+        for(Group groupFromFinal : finalGroupList){
+            HashSet<Group> inheritedGroups = groupFromFinal.getINHERITED_GROUPS();
+            for (Group groupToInherit : inheritedGroups) {
+                String groupName = groupToInherit.getName();
+                if (!groupsComplete.contains(groupName)){
+                    finalGroupList.add(groupToInherit);
+                    groupsComplete.add(groupName);
                 }
             }
         }
-        permissionsToLoad.addAll(groupPermissions);
-        permissionsToLoad.forEach(this::addPermissionToMap);
+        return finalGroupList;
     }
 
-    private LinkedHashSet<Group> recursiveGroupInheritanceList(ForeignCollection<GroupAssignment> groups){
-        LinkedHashSet<Group> uniqueGroups = new LinkedHashSet<Group>();
-        for (GroupAssignment groupAssignment : groups) {
-            Group group = groupAssignment.getGroup();
-            uniqueGroups.add(group);
-            uniqueGroups.addAll(recursiveGroupAdd(group.getInheritedGroups()));
-        }
-        return uniqueGroups;
-    }
 
-    private LinkedHashSet<Group> recursiveGroupAdd(ForeignCollection<GroupInheritance> groupInheritances){
-        LinkedHashSet<Group> uniqueGroups = new LinkedHashSet<Group>();
-        for (GroupInheritance groupInheritance : groupInheritances) {
-            Groups.getInstance().refresh(groupInheritance.getInheritedGroup());
-            Group group = groupInheritance.getInheritedGroup();
-            uniqueGroups.add(group);
-            uniqueGroups.addAll(recursiveGroupAdd(group.getInheritedGroups()));
-        }
-        return uniqueGroups;
-    }
-
-    private void addPermissionToMap(String permissionFinal){
-        String[] permissionBreak = permissionFinal.split("\\.", 3);
-        if (permissionBreak.length == 3) {
-            permissions.putIfAbsent(permissionBreak[0], new ConcurrentHashMap<String, ArrayList<String>>());
-            permissions.get(permissionBreak[0]).putIfAbsent(permissionBreak[1], new ArrayList<String>());
-            permissions.get(permissionBreak[0]).get(permissionBreak[1]).add(permissionBreak[2]);
-        } else if (permissionBreak.length == 2 ) {
-            permissions.putIfAbsent(permissionBreak[0], new ConcurrentHashMap<String, ArrayList<String>>());
-            permissions.get(permissionBreak[0]).putIfAbsent(permissionBreak[1], new ArrayList<String>());
-        } else if (permissionBreak.length == 1){
-            permissions.putIfAbsent(permissionBreak[0], new ConcurrentHashMap<String, ArrayList<String>>());
-        }
-    }
-
-    public boolean hasBasePermission(String basePermission){
-        return permissions.containsKey("*") || permissions.containsKey(basePermission);
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will return if a player has a permission. It first for a wildcard "*" basically OP,
-     * Then this method will see if the person even has the plugin permission. If yes, then we check to see if
-     * they have the wildcard "*" for all of that plugins permissions. If not we check for that plugins sub permission,
-     * If they have the sub permission, we then check the wildcard "*" for all of the commands or permission ends that
-     * fall under that plugins sub permission. If no wild card, we check to see if they have the actual command.
-     * <P>
-     * Example: {plugname}.{subpermission}.{command}
-     *          starnubserver.starbounddata.packets.starbounddata.packets.starnubserver.shutdown
-     *          starnubserver.starbounddata.packets.starbounddata.packets.starnubserver.start
-     *          starnubserver.starbounddata.packets.starbounddata.packets.starnubserver.*
-     *          starnubserver.*
-     * <br>
-     * The first line would give me shutdown. The second line would be start. The third line give me anything under
-     * starnubserver.starbounddata.packets.starbounddata.packets.starnubserver The fourth line gives me all permissions for the starnubserver plugin.
-     *
-     * <p>
-     * @param startPermissionString String representing the plugin command name to check
-     * @param subPermissionString String representing the plugins command specific sub permission
-     * @param endPermissionString String representing the plugins sub permission specific Command
-     * @return boolean if the account has the permission
-     */
-    public boolean hasPermission(String startPermissionString, String subPermissionString, String endPermissionString, boolean fullPermission, boolean checkWildCards) {
-        if (checkWildCards) {
-            try {
-                if (permissions.containsKey("*")) {
-                    return true;
-                }
-                if (!fullPermission) {
-                    if (permissions.get(startPermissionString).containsKey(subPermissionString)
-                            || permissions.get(startPermissionString).containsKey("*")) {
-                        return true;
-                    }
-                }
-                if (permissions.get(startPermissionString).get(subPermissionString).contains("*")
-                    || permissions.get(startPermissionString).get(subPermissionString).contains(endPermissionString))
-                    return true;
-            } catch (NullPointerException e) {
-                return false;
-            }
-        } else {
-            try {
-                if (!fullPermission) {
-                    if (permissions.get(startPermissionString).containsKey(subPermissionString)) {
-                        return true;
-                    }
-                }
-                if (permissions.get(startPermissionString).get(subPermissionString).contains(endPermissionString))
-                    return true;
-            } catch (NullPointerException e) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    public ArrayList<String> getPermission(String startPermissionString, String subPermissionString, String endPermissionString) {
-        try {
-            return permissions.get(startPermissionString).get(subPermissionString);
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
-
-    public ArrayList<String> getPermission(String permission){
-        String perm3 = null;
-        String[] perms;
-        try {
-            perms = permission.split("\\.", 3);
-            perm3 = perms[2];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            perms = permission.split("\\.", 2);
-        }
-        return getPermission(perms[0], perms[1], perm3);
-    }
-
-    //Only needs the command, sub permission
-    public String getPermissionSpecific(String startPermissionString, String subPermissionString) {
-        try {
-            return permissions.get(startPermissionString).get(subPermissionString).get(0);
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
-
-    //only needs the first parts {base}.{sub}
-    public String getPermissionSpecific(String permission){
-        String[] strings = permission.split("\\.", 3);
-        return getPermissionSpecific(strings[0], strings[1]);
-    }
-
-    public ForeignCollection<GroupAssignment> getGroups() {
+    public HashSet<GroupAssignment> getGroups() {
         return groups;
     }
 

@@ -20,16 +20,10 @@ package starnubserver.connections.player.account;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import starnubserver.StarNub;
 import starnubserver.database.tables.AccountPermissions;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -46,15 +40,15 @@ public class AccountPermission implements Serializable {
     private final static AccountPermissions ACCOUNT_PERMISSIONS_DB = AccountPermissions.getInstance();
 
     /* COLUMN NAMES */
-    private final String PERMISSION_ID_COLUMN = "PERMISSION_ID";
-    private final String STARNUB_ID_COLUMN = "STARNUB_ID";
-    private final String PERMISSION_COLUMN = "PERMISSION_COLUMN";
+    private final static String PERMISSION_ID_COLUMN = "PERMISSION_ID";
+    private final static String STARNUB_ID_COLUMN = "STARNUB_ID";
+    private final static String PERMISSION_COLUMN = "PERMISSION_COLUMN";
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = PERMISSION_ID_COLUMN)
     private volatile int permissionId;
 
     @DatabaseField(uniqueCombo = true, columnName = STARNUB_ID_COLUMN)
-    private volatile Account starnubId;
+    private volatile Account account;
 
     @DatabaseField(dataType = DataType.STRING, uniqueCombo = true, columnName = PERMISSION_COLUMN)
     private volatile String permission;
@@ -67,12 +61,12 @@ public class AccountPermission implements Serializable {
     /**
      * This will create a account permission
      *
-     * @param starnubId Account representing the account belong to this permission
+     * @param account Account representing the account belong to this permission
      * @param permission String representing the permission
      * @param createEntry boolean representing if a database entry should be made
      */
-    public AccountPermission(Account starnubId, String permission, boolean createEntry) {
-        this.starnubId = starnubId;
+    public AccountPermission(Account account, String permission, boolean createEntry) {
+        this.account = account;
         this.permission = permission;
         if (createEntry){
             ACCOUNT_PERMISSIONS_DB.createOrUpdate(this);
@@ -83,48 +77,61 @@ public class AccountPermission implements Serializable {
         return permissionId;
     }
 
-    public Account getStarnubId() {
-        return starnubId;
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getPermission() {
         return permission;
     }
 
-    public List<AccountPermission> getAccountPermissions(int starnubId){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .eq("STARNUB_ID", starnubId)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
-    public AccountPermission getAccountPermission(int starnubId, String permissionString) {
-        AccountPermission permission = null;
-        try {
-            QueryBuilder<AccountPermission, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<AccountPermission, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("STARNUB_ID", starnubId)
-                    .and()
-                    .like("PERMISSION_COLUMN", permissionString);
-            PreparedQuery<AccountPermission> preparedQuery = queryBuilder.prepare();
-            permission = getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return permission;
+    /* DB Methods */
+
+    public AccountPermission getAccountPermissionByGroupFirstMatch () {
+        return getAccountPermissionByAccountFirstMatch(this.account, this.permission);
+    }
+
+    public static AccountPermission getAccountPermissionByAccountFirstMatch (Account account, String permission) {
+        return ACCOUNT_PERMISSIONS_DB.getMatchingColumn1FirstSimilarColumn2(STARNUB_ID_COLUMN, account, PERMISSION_ID_COLUMN, permission);
+    }
+
+    public List<AccountPermission> getAccountPermissionsByAccount(){
+        return getAccountPermissionsByAccount(this.account);
+    }
+
+    public static List<AccountPermission> getAccountPermissionsByAccount(Account account){
+        return ACCOUNT_PERMISSIONS_DB.getAllExact(STARNUB_ID_COLUMN, account);
+    }
+
+    public List<AccountPermission> getAccountPermissionsByPermission(){
+        return getAccountPermissionsByPermission(this.permission);
+    }
+
+    public static List<AccountPermission> getAccountPermissionsByPermission(String permission){
+        return ACCOUNT_PERMISSIONS_DB.getAllExact(PERMISSION_COLUMN, permission);
+    }
+
+    public void deleteFromDatabase(){
+        deleteFromDatabase(this);
+    }
+
+    public static void deleteFromDatabase(AccountPermission accountPermission){
+        ACCOUNT_PERMISSIONS_DB.delete(accountPermission);
     }
 
     @Override
     public String toString() {
         return "AccountPermission{" +
                 "permissionId=" + permissionId +
-                ", starnubId=" + starnubId +
+                ", account=" + account +
                 ", permission='" + permission + '\'' +
                 '}';
     }
