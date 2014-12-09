@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnubserver.connections.player.groups;
+package starnubserver.connections.player.generic;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;

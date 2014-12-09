@@ -25,6 +25,7 @@ import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.StaffEntries;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This class represents a staff entry to be used with various classes
@@ -39,14 +40,19 @@ public class StaffEntry implements Serializable{
 
     private final static StaffEntries STAFF_ENTRIES_DB = StaffEntries.getInstance();
 
-    @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "ENTRY_ID")
+    /* COLUMN NAMES */
+    private final static String STAFF_ENTRY_ID_COLUMN = "STAFF_ENTRY_ID";
+    private final static String STARNUB_ID_COLUMN = "STARNUB_ID";
+    private final static String DESCRIPTION_COLUMN = "DESCRIPTION";
+
+    @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = STAFF_ENTRY_ID_COLUMN)
     private volatile int staffEntryId;
 
-    @DatabaseField(foreign = true, columnName = "ACCOUNT")
-    private volatile Account staffAccount;
+    @DatabaseField(foreign = true, columnName = STARNUB_ID_COLUMN)
+    private volatile Account account;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = "DESCRIPTION")
-    private volatile String staffDescription;
+    @DatabaseField(dataType = DataType.STRING, columnName = DESCRIPTION_COLUMN)
+    private volatile String description;
 
     /**
      * Constructor for database purposes
@@ -56,24 +62,50 @@ public class StaffEntry implements Serializable{
     /**
      * This will construct a staff entry which can be used with various classes
      *
-     * @param staffAccount Account representing the staff members account
-     * @param staffDescription String representing the description for this staff entry
+     * @param account Account representing the staff members account
+     * @param description String representing the description for this staff entry
      * @param createEntry boolean representing if a database entry should be made
      */
-    public StaffEntry(Account staffAccount, String staffDescription, boolean createEntry) {
-        this.staffAccount = staffAccount;
-        this.staffDescription = staffDescription;
+    public StaffEntry(Account account, String description, boolean createEntry) {
+        this.account = account;
+        this.description = description;
         if (createEntry){
             STAFF_ENTRIES_DB.createOrUpdate(this);
         }
+    }
+
+    /* DB Methods */
+
+    public List<StaffEntry> getStaffEntryByAccount(){
+        return getStaffEntryByAccount(this.account);
+    }
+
+    public static List<StaffEntry> getStaffEntryByAccount(Account account){
+        return STAFF_ENTRIES_DB.getAllExact(STARNUB_ID_COLUMN, account);
+    }
+
+    public List<StaffEntry> getStaffEntryByStaffEntry(){
+        return getStaffEntryByStaffEntry(this);
+    }
+
+    public static List<StaffEntry> getStaffEntryByStaffEntry(StaffEntry staffEntry){
+        return STAFF_ENTRIES_DB.getAllExact(STAFF_ENTRY_ID_COLUMN, staffEntry);
+    }
+
+    public void deleteFromDatabase(){
+        deleteFromDatabase(this);
+    }
+
+    public static void deleteFromDatabase(StaffEntry accountPermission){
+        STAFF_ENTRIES_DB.delete(accountPermission);
     }
 
     @Override
     public String toString() {
         return "StaffEntry{" +
                 "staffEntryId=" + staffEntryId +
-                ", staffAccount=" + staffAccount +
-                ", staffDescription='" + staffDescription + '\'' +
+                ", account=" + account +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

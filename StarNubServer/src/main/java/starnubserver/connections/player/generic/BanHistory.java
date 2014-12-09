@@ -41,6 +41,8 @@ public class BanHistory implements Serializable {
 
     private final static BansHistory BANS_HISTORY_DB = BansHistory.getInstance();
 
+    //TODO DB COLUMNS - METHODS
+
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "BAN_ID")
     private int banEntryId;
 

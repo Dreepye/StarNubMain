@@ -70,6 +70,8 @@ public class PlayerSession extends StarNubProxyConnection {
     private final static NoAccountGroup NO_ACCOUNT_GROUP = NoAccountGroup.getInstance();
     private final static NameBuilder NAME_BUILDER = NameBuilder.getInstance();
 
+    //TODO DB COLUMNS - METHODS
+
     @DatabaseField(generatedId = true, columnName = "SESSION_ID")
     private volatile int sessionID;
 
@@ -120,6 +122,7 @@ public class PlayerSession extends StarNubProxyConnection {
         } catch (Exception e) {
             this.isOp = false;
         }
+        loadPermissions();
         PlayerSessionLog.getInstance().create(this);
         new StarNubEvent("Player_Character_New_Session", playerCharacter);
     }

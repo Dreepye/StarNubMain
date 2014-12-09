@@ -201,18 +201,18 @@ public class NameBuilder {
             String prefix = "";
             String suffix = "";
             if (playerSession.getPlayerCharacter().getAccount() != null) {
-                Settings sett = playerSession.getPlayerCharacter().getAccount().getAccountSettings();
-                if (sett.getChatPrefix1() != null) {
-                    prefix = sett.getChatPrefix1().getColorTag();
+                Settings settings = playerSession.getPlayerCharacter().getAccount().getAccountSettings();
+                if (settings.getChatPrefix1() != null) {
+                    prefix = settings.getChatPrefix1().getBuiltGameTag();
                 }
-                if (sett.getChatPrefix2() != null) {
-                    prefix = prefix + sett.getChatPrefix2().getColorTag();
+                if (settings.getChatPrefix2() != null) {
+                    prefix = prefix + settings.getChatPrefix2().getBuiltGameTag();
                 }
-                if (sett.getChatSuffix1() != null) {
-                    suffix = sett.getChatSuffix1().getColorTag();
+                if (settings.getChatSuffix1() != null) {
+                    suffix = settings.getChatSuffix1().getBuiltGameTag();
                 }
-                if (sett.getChatSuffix2() != null) {
-                    suffix = suffix + sett.getChatSuffix2().getColorTag();
+                if (settings.getChatSuffix2() != null) {
+                    suffix = suffix + settings.getChatSuffix2().getBuiltGameTag();
                 }
                 if (prefix != null && prefix.length() > 0) {
                     playerName = prefix + " " + playerName;
@@ -250,16 +250,16 @@ public class NameBuilder {
             if (playerSession.getPlayerCharacter().getAccount() != null) {
                 Settings sett = playerSession.getPlayerCharacter().getAccount().getAccountSettings();
                 if (sett.getChatPrefix1() != null) {
-                    prefix = sett.getChatPrefix1().getCleanTag();
+                    prefix = sett.getChatPrefix1().getBuiltConsoleTag();
                 }
                 if (sett.getChatPrefix2() != null) {
-                    prefix = prefix + sett.getChatPrefix2().getCleanTag();
+                    prefix = prefix + sett.getChatPrefix2().getBuiltConsoleTag();
                 }
                 if (sett.getChatSuffix1() != null) {
-                    suffix = sett.getChatSuffix1().getCleanTag();
+                    suffix = sett.getChatSuffix1().getBuiltConsoleTag();
                 }
                 if (sett.getChatSuffix2() != null) {
-                    suffix = suffix + sett.getChatSuffix2().getCleanTag();
+                    suffix = suffix + sett.getChatSuffix2().getBuiltConsoleTag();
                 }
                 if (prefix != null && prefix.length() > 0) {
                     playerName = prefix + " " + playerName;

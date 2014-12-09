@@ -412,8 +412,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
                     tokenShowStarboundId = Long.toString(playerSessionSession.getStarboundClientId());
                 }
                 if (showStarNubId) {
-                    if (playerSessionSession.getAccount() > 0) {
-                        tokenShowStarNubId = Integer.toString(playerSessionSession.getAccount()) + "S";
+                    if (playerSessionSession.getPlayerCharacter().getAccount().getStarnubId() > 0) {
+                        tokenShowStarNubId = Integer.toString(playerSessionSession.getPlayerCharacter().getAccount().getStarnubId()) + "S";
                     } else {
                         tokenShowStarNubId = "NA";
                     }

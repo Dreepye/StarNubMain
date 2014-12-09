@@ -40,6 +40,8 @@ public class Disabled {
 
     private final static Disables DISABLES_DB = Disables.getInstance();
 
+    //TODO DB COLUMNS - METHODS
+
     @DatabaseField(dataType = DataType.STRING, columnName = "ACCOUNT_NAME")
     private String accountNameId;
 

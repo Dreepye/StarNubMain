@@ -18,26 +18,20 @@
 
 package starnubserver.connections.player.character;
 
-import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
-import starnubserver.StarNub;
 import starnubserver.connections.player.account.Account;
 import starnubserver.database.tables.Characters;
 import starnubserver.events.events.StarNubEvent;
 import utilities.strings.StringUtilities;
 
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 /**
@@ -56,25 +50,34 @@ public class PlayerCharacter implements Serializable {
 
     private final static Characters CHARACTERS_DB = Characters.getInstance();
 
-    @DatabaseField(generatedId = true, columnName = "CHARACTER_ID")
+    /* COLUMN NAMES */
+    private final static String CHARACTER_ID_COLUMN = "CHARACTER_ID";
+    private final static String NAME_COLUMN = "NAME";
+    private final static String CLEAN_NAME_COLUMN = "CLEAN_NAME";
+    private final static String UUID_COLUMN = "UUID";
+    private final static String LAST_SEEN_COLUMN = "LAST_SEEN";
+    private final static String PLAYED_TIME_COLUMN = "PLAYED_TIME";
+    private final static String STARNUB_ID_COLUMN = "STARNUB_ID";
+
+    @DatabaseField(generatedId = true, columnName = CHARACTER_ID_COLUMN)
     private volatile int characterId;
 
-    @DatabaseField(dataType = DataType.STRING, uniqueCombo=true, columnName = "NAME")
+    @DatabaseField(dataType = DataType.STRING, uniqueCombo=true, columnName = NAME_COLUMN)
     private volatile String name;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = "CLEAN_NAME")
+    @DatabaseField(dataType = DataType.STRING, columnName = CLEAN_NAME_COLUMN)
     private volatile String cleanName;
 
-    @DatabaseField(dataType = DataType.UUID, uniqueCombo=true, columnName = "UUID")
+    @DatabaseField(dataType = DataType.UUID, uniqueCombo=true, columnName = UUID_COLUMN)
     private volatile UUID uuid;
 
-    @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_SEEN")
+    @DatabaseField(dataType = DataType.DATE_TIME, columnName = LAST_SEEN_COLUMN)
     private volatile DateTime lastSeen;
 
-    @DatabaseField(dataType = DataType.LONG, columnName = "PLAYED_TIME")
+    @DatabaseField(dataType = DataType.LONG, columnName = PLAYED_TIME_COLUMN)
     private volatile long playedTime;
 
-    @DatabaseField(canBeNull = true, foreign = true, columnName = "STARNUB_ID")
+    @DatabaseField(canBeNull = true, foreign = true, columnName = STARNUB_ID_COLUMN)
     private volatile Account account;
 
     /**
@@ -100,7 +103,7 @@ public class PlayerCharacter implements Serializable {
     }
 
     public static PlayerCharacter getPlayerCharacter(String name, UUID uuid){
-        PlayerCharacter playerCharacter = Characters.getInstance().getCharacterFromNameUUIDCombo(name, uuid);
+        PlayerCharacter playerCharacter = getCharacterByNameUUIDCombo(name, uuid);
         if (playerCharacter != null) {
             playerCharacter.getAccount().refreshAccount(true, true);
             return playerCharacter;
@@ -161,99 +164,45 @@ public class PlayerCharacter implements Serializable {
 
     /* DB Methods */
 
-    public PlayerCharacter getCharacterFromNameUUIDCombo(String nameString, UUID uuid) {
-        try {
-            QueryBuilder<PlayerCharacter, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<PlayerCharacter, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .eq("NAME", nameString)
-                    .and()
-                    .eq("uuid", UUID);
-            PreparedQuery<PlayerCharacter> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
+    public PlayerCharacter getCharacterByNameUUIDCombo() {
+        return getCharacterByNameUUIDCombo(this.name, this.uuid);
     }
 
-    public PlayerCharacter getCharacterFromCleanNameCombo(String nameString) {
-        PlayerCharacter playerCharacter = null;
-        try {
-            QueryBuilder<PlayerCharacter, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<PlayerCharacter, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .like("CLEAN_NAME", nameString);
-            PreparedQuery<PlayerCharacter> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
+    public static PlayerCharacter getCharacterByNameUUIDCombo(String name, UUID uuid) {
+        return CHARACTERS_DB.getMatchingColumn1FirstSimilarColumn2(NAME_COLUMN, name, UUID_COLUMN, uuid);
     }
 
-    public List<PlayerCharacter> getCharacterByName(String characterString){
-        try {
-            return getTableDao().queryBuilder().where()
-                    .like("CLEAN_NAME", characterString)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    public List<PlayerCharacter> getCharacterByName(){
+        return getCharacterByName(this.name);
     }
 
-    public List<PlayerCharacter> getCharactersListFromStarnubId(int starnubId) {
-        try {
-            return getTableDao().queryForEq("STARNUB_ID", starnubId);
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    public static List<PlayerCharacter> getCharacterByName(String name){
+        return CHARACTERS_DB.getAllSimilar(NAME_COLUMN, name);
     }
 
-    public ArrayList<Integer> getCharacterIDsListFromStarnubId(int starnubId){
-        try {
-            /* Get UUIDs with that match the Starnub ID */
-            GenericRawResults<Object[]> rawResults = getTableDao().queryRaw("select CHARACTER_ID from CHARACTERS where STARNUB_ID = " + starnubId, new DataType[] { DataType.INTEGER });
-            /* Get results of the query */
-            List<Object[]> results = rawResults.getResults();
-            ArrayList<Integer> characterIdList = new ArrayList<Integer>();
-            for (Object[] result : results) {
-                for (Object objectResult : result) {
-                    if (!characterIdList.contains(objectResult)) {
-                        characterIdList.add((Integer) objectResult);
-                    }
-                }
-            }
-            return characterIdList;
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    public List<PlayerCharacter> getCharacterByCleanName(){
+        return getCharacterByName(this.cleanName);
     }
 
-    public ArrayList<UUID> getCharactersUUIDListFromStarnubId(int starnubId) {
-        try {
-            /* Get UUIDs with that match the Starnub ID */
-            GenericRawResults<Object[]> rawResults = getTableDao().queryRaw("select uuid from CHARACTERS where STARNUB_ID = "+ starnubId, new DataType[] { DataType.UUID });
-            /* Get results of the query */
-            List<Object[]> results = rawResults.getResults();
-            ArrayList<UUID> uuidList = new ArrayList<UUID>();
-            for (Object[] result : results) {
-                for (Object objectResult : result) {
-                    if (!uuidList.contains(objectResult)) {
-                        uuidList.add((UUID) objectResult);
-                    }
-                }
-            }
-            return uuidList;
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        return null;
+    public List<PlayerCharacter> getCharacterByCleanName(String cleanName){
+        return CHARACTERS_DB.getAllSimilar(CLEAN_NAME_COLUMN, cleanName);
+    }
+
+    public List<PlayerCharacter> getCharactersByStarNubId(){
+        return getCharactersByStarNubId(this.getAccount());
+    }
+
+    public static List<PlayerCharacter> getCharactersByStarNubId(Account account){
+        return CHARACTERS_DB.getAllExact(STARNUB_ID_COLUMN, account);
+    }
+
+    public Set<UUID> getCharactersUUIDListFromStarnubId(){
+        return getCharactersUUIDListFromStarnubId(this.account);
+    }
+
+    public static Set<UUID> getCharactersUUIDListFromStarnubId(Account account) {
+        List<PlayerCharacter> playerCharacters = getCharactersByStarNubId(account);
+        return playerCharacters.stream().map(PlayerCharacter::getUuid).collect(Collectors.toSet());
     }
 
     @Override

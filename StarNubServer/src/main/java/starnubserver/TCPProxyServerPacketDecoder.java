@@ -196,7 +196,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             int newTime = cache.getInteger() + randomInt;
             cache.setInteger(newTime);
             boolean isPastTime = cache.isPastDesignatedTimeRefreshTimeNowIfPast(newTime);
-            System.out.println(isPastTime); //REMOVE
+            System.out.println(isPastTime); //REMOVE // DEBUG
             if(!isPastTime){
                 ctx.close();
             } else {

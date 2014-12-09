@@ -24,6 +24,7 @@ import utilities.exceptions.CollectionDoesNotExistException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Represents a YAMLWrapper. The YAML Wrapper is constructed and then contains methods for manipulating
@@ -271,6 +272,15 @@ public class YAMLWrapper extends YAMLFile {
      */
     protected String getYAMLString() {
         return new Yaml(super.getYAML_DUMPER().getDUMPER_OPTIONS()).dump(DATA);
+    }
+
+    /**
+     * This method will return all of the keys at the base layer of the map
+     *
+     * @return Set of Strings containing all the keys
+     */
+    public Set<String> getAllKeys(){
+        return DATA.keySet().stream().collect(Collectors.toSet());
     }
 
     /**

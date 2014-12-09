@@ -39,6 +39,8 @@ public class DisabledHistory {
 
     private final static DisablesHistory DISABLES_HISTORY_DB = DisablesHistory.getInstance();
 
+    //TODO DB COLUMNS - METHODS
+
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "DISABLED_ID")
     private int disabledHistoryId;
 

@@ -19,7 +19,7 @@
 package starnubserver.database.tables;
 
 import com.j256.ormlite.support.ConnectionSource;
-import starnubserver.connections.player.groups.Tag;
+import starnubserver.connections.player.generic.Tag;
 import starnubserver.database.DatabaseConnection;
 import starnubserver.database.TableWrapper;
 

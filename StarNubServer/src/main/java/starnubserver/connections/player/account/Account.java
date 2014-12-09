@@ -18,31 +18,24 @@
 
 package starnubserver.connections.player.account;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
-import starnubserver.connections.player.character.PlayerCharacter;
+import starnubserver.connections.player.generic.Tag;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.connections.player.groups.GroupAssignment;
-import starnubserver.connections.player.groups.GroupInheritance;
-import starnubserver.connections.player.groups.GroupPermission;
-import starnubserver.database.tables.AccountPermissions;
 import starnubserver.database.tables.Accounts;
-import starnubserver.database.tables.GroupAssignments;
-import starnubserver.database.tables.Groups;
+import starnubserver.resources.files.GroupsManagement;
 import utilities.crypto.PasswordHash;
 
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -88,9 +81,6 @@ public class Account implements Serializable{
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_LOGIN")
     private volatile DateTime lastLogin;
 
-    @ForeignCollectionField(eager = true, columnName = "CHARACTERS")
-    private volatile ForeignCollection<PlayerCharacter> characters;
-
     @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
     private final HashSet<Group> GROUP_ASSIGNMENTS = new HashSet<>();
 
@@ -105,58 +95,20 @@ public class Account implements Serializable{
      * @param accountName String representing the account name
      * @param accountPassword String representing the password
      */
-    public Account(PlayerCharacter player, String accountName, String accountPassword) {
+    public Account(String accountName, String accountPassword) throws Exception {
         this.accountName = accountName;
-//        this.accountSettings = new Settings(accountName, StarNub.getStarboundServer().getServerChat().getChatRoomByName("Universe"));
         this.lastLogin = DateTime.now();
-        try {
-            this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
-        } catch (Exception e) {
-//            StarNub.getMessageSender().playerMessage("StarNub", player,"There was a critical error in creating your account. Something " +
-//                    "went wrong with your password, please contact a administrator.");
-        }
-        try {
-            this.groups = ACCOUNTS_DB.getTableDao().getEmptyForeignCollection("GROUP_ASSIGNMENTS");
-        } catch (SQLException e) {
-            StarNub.getLogger().cErrPrint("sn","An issue occurred when StarNub attempted to add permissions to a Group.");
-        }
-        ACCOUNTS_DB.createIfNotExist(this);
-//        for (String groupName : StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().keySet()) {
-//            Map<String, Object> group = (Map) StarNub.getStarboundServer().getConnectionss().getGroupSync().getGroups().get(groupName);
-//            if (((String) group.get("type")).equalsIgnoreCase("default")) {
-//                getAndAddGroup(groupName);
-//            }
-//        }
-        loadPermissions();
-        setUpdateTagsMainGroups();
-    }
+        this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
+        ConcurrentHashMap<String, Group> groups = GroupsManagement.getInstance().getGROUPS();
+        for (Group group : groups.values()){
+            String groupType = group.getType();
+            if (groupType.equalsIgnoreCase("default")){
 
-    public Account getAccount(String accountName, String password){
-        List<Account> accountList = ACCOUNTS_DB.getAllSimilar()
-        try {
-            accountList = getTableDao().queryBuilder().where()
-                    .like("ACCOUNT_NAME", accountName)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        if (accountList.size() == 0) {
-            return null;
-        }
-        PasswordHash passwordHash = new PasswordHash();
-        boolean matchingHashPass = false;
-        for (Account account : accountList) {
-            try {
-                matchingHashPass = passwordHash.check(password, account.getAccountPassword());
-            } catch (Exception e) {
-                StarNub.getLogger().cErrPrint("StarNub", "StarNub had a critical error trying to determine if a password hash from " +
-                        "an account matched the input.");
-            }
-            if (matchingHashPass) {
-                return account;
             }
         }
-        return null;
+
+        ACCOUNTS_DB.createIfNotExist(this);
+        updateTagsMainGroups();
     }
 
     public void refreshAccount(boolean settings, boolean tags) {
@@ -165,6 +117,8 @@ public class Account implements Serializable{
             accountSettings.refreshSettings(tags);
         }
     }
+
+    //GROUP ASSIGNMENT TAG REFRESH
 
     public void setStarnubId(int starnubId) {
         this.starnubId = starnubId;
@@ -176,18 +130,6 @@ public class Account implements Serializable{
 
     public void setAccountSettings(Settings accountSettings) {
         this.accountSettings = accountSettings;
-    }
-
-    public ForeignCollection<PlayerCharacter> getCharacters() {
-        return characters;
-    }
-
-    public void setCharacters(ForeignCollection<PlayerCharacter> characters) {
-        this.characters = characters;
-    }
-
-    public void setGroups(ForeignCollection<GroupAssignment> groups) {
-        this.groups = groups;
     }
 
     public int getStarnubId() {
@@ -214,12 +156,6 @@ public class Account implements Serializable{
         return lastLogin;
     }
 
-
-    public void getAndAddGroup(String groupToGet){
-        Group group = Groups.getInstance().getGroupByName(groupToGet);
-        this.groups.add(new GroupAssignment(this, group));
-    }
-
     public boolean setAccountPassword(String accountPassword) {
         try {
             this.accountPassword = new PasswordHash().getSaltedHash(accountPassword);
@@ -236,6 +172,12 @@ public class Account implements Serializable{
     public boolean setLastLogin(DateTime lastLogin) {
         this.lastLogin = lastLogin;
         return ACCOUNTS_DB.update(this);
+    }
+
+    /* Group Methods */
+
+    public Set<String> getAllGroupNames(){
+        return getAllGroups().stream().map(Group::getName).collect(Collectors.toSet());
     }
 
     public LinkedHashSet<Group> getAllGroups(){
@@ -256,38 +198,38 @@ public class Account implements Serializable{
         return finalGroupList;
     }
 
-    public Set<String> getAllGroupNames(){
-        return getAllGroups().stream().map(Group::getName).collect(Collectors.toSet());
-    }
-
-    public HashSet<GroupAssignment> getGroups() {
-        return groups;
-    }
-
-
-
     @SuppressWarnings("unchecked")
     public void addGroupAssignment(Group group){
-        if (GroupAssignments.getInstance().getGroupAssignments(this, group) == null) {
-            this.groups.add(new GroupAssignment(this, group));
-        }
+
+
+
+        //LADDER CHECK
+        new GroupAssignment(this, group, true);
+//        GROUPS.
     }
 
     @SuppressWarnings("unchecked")
     public void removeGroupAssignment(Group group){
-        this.groups.remove(GroupAssignments.getInstance().getGroupAssignments(this, group));
+        GroupAssignment groupAssignment = GroupAssignment.getGroupAssigmentByGroupFirstMatch(this, group);
+        groupAssignment.deleteFromDatabase();
     }
 
     public void refreshGroupAssignments(){
 
     }
 
+    /* Tag Methods - Account & Settings */
 
-    public void setUpdateTagsMainGroups(){
-        for (GroupAssignment groupAssignment : groups) {
-            boolean groupSet = true;
-            Group group = groupAssignment.getGroup();
-            String groupName = group.getName();
+    public Set<Tag> getAvailableTags(){
+        return getAvailableTags(this);
+    }
+
+    public static Set<Tag> getAvailableTags(Account account){
+        return account.getAllGroups().stream().map(Group::getTag).collect(Collectors.toSet());
+    }
+
+    public void updateTagsMainGroups(){
+        for (Group group : GROUP_ASSIGNMENTS) {
             String groupLadder = group.getLadderName();
             int groupLadderRank = group.getLadderRank();
             boolean px1Null = accountSettings.getChatPrefix1() == null;
@@ -296,28 +238,28 @@ public class Account implements Serializable{
             boolean sx2Null = accountSettings.getChatSuffix2() == null;
             boolean px12Used = !px1Null & !px2Null;
             if (!px1Null && accountSettings.getChatPrefix1().getType().equalsIgnoreCase("group")) {
-                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatPrefix1().getName());
+                Group tagGroup = Group.getTagFromDbById(accountSettings.getChatPrefix1().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatPrefix1(group.getTag());
                     return;
                 }
             }
             if (!px2Null && accountSettings.getChatPrefix2().getType().equalsIgnoreCase("group")) {
-                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatPrefix2().getName());
+                Group tagGroup = Group.getTagFromDbById(accountSettings.getChatPrefix2().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatPrefix2(group.getTag());
                     return;
                 }
             }
             if (!sx1Null && accountSettings.getChatSuffix1().getType().equalsIgnoreCase("group")) {
-                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatSuffix1().getName());
+                Group tagGroup = Group.getTagFromDbById(accountSettings.getChatSuffix1().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatSuffix1(group.getTag());
                     return;
                 }
             }
             if (!sx2Null && accountSettings.getChatSuffix2().getType().equalsIgnoreCase("group")) {
-                Group tagGroup = Groups.getInstance().getGroupByName(accountSettings.getChatSuffix2().getName());
+                Group tagGroup = Group.getTagFromDbById(accountSettings.getChatSuffix2().getName());
                 if (tagGroup.getLadderName().equalsIgnoreCase(groupLadder) && tagGroup.getLadderRank() > groupLadderRank) {
                     accountSettings.setChatSuffix2(group.getTag());
                     return;
@@ -326,54 +268,39 @@ public class Account implements Serializable{
             if (px12Used) {
                 return;
             } else {
-                if (px1Null) {
+                if (px1Null){
                     accountSettings.setChatPrefix1(group.getTag());
-                } else if (px2Null) {
+                } else {
                     accountSettings.setChatPrefix2(group.getTag());
                 }
             }
         }
     }
 
-    //purge account
+    /* DB Methods */
 
-    //purge overage
-
-    //static purge
-
-    public void getTagList(){
-//        LinkedHashSet<Group> groupHashSet = new LinkedHashSet<Group>();
-//        groupAssignmentHashSet.addAll(groups);
-//
-//        groupAssignmentHashSet.addAll(recursiveGroupInheritanceList(groups));
-    }
-    public Account getAccountByName(String accountName) {
-        try {
-            QueryBuilder<Account, Integer> queryBuilder =
-                    getTableDao().queryBuilder();
-            Where<Account, Integer> where = queryBuilder.where();
-            queryBuilder.where()
-                    .like("ACCOUNT_NAME", accountName);
-            PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
-            return getTableDao().queryForFirst(preparedQuery);
-        } catch (Exception e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-            return null;
-        }
+    public Account getAccountByName(){
+        return getAccountByNameFirstSimilar(this.accountName);
     }
 
-    public Account getAccount(String accountName, String password){
-        List<Account> accountList = new ArrayList<>();
-        try {
-            accountList = getTableDao().queryBuilder().where()
-                    .like("ACCOUNT_NAME", accountName)
-                    .query();
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
-        }
-        if (accountList.size() == 0) {
-            return null;
-        }
+    public static Account getAccountByNameFirstSimilar(String accountName) {
+        return ACCOUNTS_DB.getFirstSimilar(NAME_COLUMN, accountName);
+    }
+
+    public List<Account> getAccountByNameAllSimiliar(){
+        return getAccountByNameAllSimiliar(this.accountName);
+    }
+
+    public static List<Account> getAccountByNameAllSimiliar(String accountName) {
+        return ACCOUNTS_DB.getAllSimilar(NAME_COLUMN, accountName);
+    }
+
+    public Account getAccountByNamePassword(String accountPassword){
+        return getAccountByNamePassword(accountName, accountPassword);
+    }
+
+    public static Account getAccountByNamePassword(String accountName, String password){
+        List<Account> accountList = getAccountByNameAllSimiliar(accountName);
         PasswordHash passwordHash = new PasswordHash();
         boolean matchingHashPass = false;
         for (Account account : accountList) {
@@ -390,4 +317,30 @@ public class Account implements Serializable{
         return null;
     }
 
+    public void deleteFromDatabase( boolean completePurge){
+        deleteFromDatabase(this, completePurge);
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will purge a account from the database and if set its group assignments, settings and permissions.
+     *
+     * @param account Account representing the Account to purge
+     * @param completePurge boolean representing if we should purge inheritances, assignments and permissions
+     */
+    public static void deleteFromDatabase(Account account, boolean completePurge){
+        if (completePurge){
+            account.getAccountSettings().deleteFromDatabase();
+            List<AccountPermission> accountPermissions = AccountPermission.getAccountPermissionsByAccount(account);
+            for (AccountPermission accountPermission : accountPermissions){
+                accountPermission.deleteFromDatabase();
+            }
+            List<GroupAssignment> groupAssignments = GroupAssignment.getGroupAssignmentByAccount(account);
+            for (GroupAssignment groupAssignment : groupAssignments){
+                groupAssignment.deleteFromDatabase();
+            }
+        }
+        ACCOUNTS_DB.delete(account);
+    }
 }

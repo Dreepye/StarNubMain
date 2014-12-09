@@ -65,7 +65,7 @@ public class StarNubVersion {
      * This constructor is private - Singleton Pattern
      */
     @SuppressWarnings("unchecked")
-    private static StarNubVersion getInstance() {
+    public static StarNubVersion getInstance() {
         return instance;
     }
 

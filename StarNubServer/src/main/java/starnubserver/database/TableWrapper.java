@@ -177,6 +177,15 @@ public abstract class TableWrapper<T1, T2> {
         }
     }
 
+    public List<T1> getAll(){
+        try {
+            return getTableDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public List<T1> getAllExact(String columnName, Object searchTerm){
         try {
             return getTableDao().queryBuilder().where()

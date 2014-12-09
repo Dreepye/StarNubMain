@@ -1,5 +1,7 @@
 package starnubserver.connections.player.groups;
 
+import starnubserver.connections.player.generic.Tag;
+
 import java.util.HashSet;
 
 public class NoAccountGroup {

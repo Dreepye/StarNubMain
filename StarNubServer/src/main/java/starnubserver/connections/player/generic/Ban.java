@@ -43,6 +43,8 @@ public class Ban implements Serializable {
 
     private final static Bans BANS_DB = Bans.getInstance();
 
+    //TODO DB COLUMNS - METHODS
+
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = "BAN_ID")
     private volatile int banEntryId;
 

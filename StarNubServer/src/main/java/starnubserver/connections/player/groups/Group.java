@@ -21,6 +21,7 @@ package starnubserver.connections.player.groups;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starnubserver.connections.player.generic.Tag;
 import starnubserver.database.tables.Groups;
 import starnubserver.resources.files.GroupsManagement;
 import utilities.exceptions.CollectionDoesNotExistException;
@@ -241,25 +242,6 @@ public class Group {
             removeGroupPermission(group, permission);
         }
     }
-//    "owner": {
-//        "tag": {
-//            "brackets": [ '[', ']' ],
-//            "bracket_color": "#FFFF00",
-//                    "color": "#F58LLB",
-//                    "look": "Owner"
-//        },
-//        "type": "regular",
-//                "inherited_groups": [
-//        "admin"
-//        ],
-//        "group_ranking": {
-//            "NAME": "owner",
-//                    "rank": 999
-//        },
-//        "permissions": [
-//        "None"
-//        ]
-//    },
 
     /* Inherited Group Methods */
 
@@ -356,11 +338,20 @@ public class Group {
         return GROUPS_DB.getMatchingColumn1AllSimilarColumn2(GROUP_NAME_ID_COLUMN, groupName, LADDER_NAME_COLUMN, ladderName);
     }
 
-    public void deleteFromDatabaseAndFile(boolean completePurge){
-        deleteFromDatabaseAndFile(this, completePurge);
+    public void deleteFromDatabaseAndFile(boolean filePurge, boolean completePurge){
+        deleteFromDatabaseAndFile(this, filePurge, completePurge);
     }
 
-    public static void deleteFromDatabaseAndFile(Group group, boolean completePurge){
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will purge a group from the database, file if set and if set its inheritances, assignments, tags and permissions.
+     *
+     * @param group Group representing the group to purge
+     * @param filePurge boolean representing if twe should purge the file
+     * @param completePurge boolean representing if we should purge inheritances, assignments and permissions
+     */
+    public static void deleteFromDatabaseAndFile(Group group, boolean filePurge, boolean completePurge){
         if (completePurge){
             group.getTag().deleteFromDatabase();
             List<GroupPermission> groupPermissions = GroupPermission.getGroupPermissionsByGroup(group);
@@ -371,16 +362,27 @@ public class Group {
             for (GroupInheritance groupInheritance : groupInheritances){
                 groupInheritance.deleteFromDatabase();
             }
+            List<GroupInheritance> groupInheritances2 = GroupInheritance.getGroupInheritanceByInheritedGroup(group);
+            for (GroupInheritance groupInheritance : groupInheritances2){
+                groupInheritance.deleteFromDatabase();
+            }
+            List<GroupAssignment> groupAssignments = GroupAssignment.getGroupAssignmentByGroup(group);
+            for (GroupAssignment groupAssignment : groupAssignments){
+                groupAssignment.deleteFromDatabase();
+            }
         }
         GROUPS_DB.delete(group);
         String groupName = group.getName();
-        GROUP_MANAGEMENT.getGROUPS().remove(groupName);
-        try {
-            GROUP_MANAGEMENT.removeValue(groupName);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (filePurge) {
+            GROUP_MANAGEMENT.getGROUPS().remove(groupName);
+            try {
+                GROUP_MANAGEMENT.removeValue(groupName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 
     @Override
     public String toString() {

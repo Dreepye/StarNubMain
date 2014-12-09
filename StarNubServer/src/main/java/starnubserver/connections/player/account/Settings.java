@@ -21,13 +21,8 @@ package starnubserver.connections.player.account;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starnubserver.StarNub;
-import starnubserver.connections.player.groups.Group;
-import starnubserver.connections.player.groups.GroupAssignment;
-import starnubserver.connections.player.groups.Tag;
-import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.connections.player.generic.Tag;
 import starnubserver.database.tables.AccountSettings;
-import starnubserver.database.tables.Groups;
 
 import java.io.Serializable;
 
@@ -44,6 +39,8 @@ public class Settings implements Serializable {
 
     private final static AccountSettings ACCOUNT_SETTINGS_DB = AccountSettings.getInstance();
 
+    //TODO DB COLUMNS - METHODS
+
     /* COLUMN NAMES */
     private final static String ACCOUNT_SETTINGS_ID_COLUMN = "ACCOUNT_SETTINGS_ID";
     private final static String CHAT_PREFIX_1_COLUMN = "CHAT_PREFIX_1";
@@ -58,27 +55,34 @@ public class Settings implements Serializable {
     @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_PREFIX_1_COLUMN)
     private volatile Tag chatPrefix1;
 
-
     @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_PREFIX_2_COLUMN)
     private volatile Tag chatPrefix2;
-
 
     @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_SUFFIX_1_COLUMN)
     private volatile Tag chatSuffix1;
 
-
     @DatabaseField(canBeNull = true, foreign = true, columnName = CHAT_SUFFIX_2_COLUMN)
     private volatile Tag chatSuffix2;
-
 
     @DatabaseField(dataType = DataType.BOOLEAN, columnName = APPEAR_OFFLINE_COLUMN)
     private volatile boolean appearOffline;
 
+    /**
+     * Constructor for database purposes
+     */
     public Settings(){}
 
-    public Settings(String accountSettings) {
-        this.accountSettings = accountSettings;
-        ACCOUNT_SETTINGS_DB.createIfNotExist(this);
+    /**
+     * This will construct an account setting using the account name as a key
+     *
+     * @param accountName String representing the account name these settings belong to
+     * @param createEntry boolean representing if we should create this entry on construction
+     */
+    public Settings(String accountName, boolean createEntry) {
+        this.accountSettings = accountName;
+        if (createEntry) {
+            ACCOUNT_SETTINGS_DB.createOrUpdate(this);
+        }
     }
 
     public void refreshSettings(boolean tags) {
@@ -145,106 +149,16 @@ public class Settings implements Serializable {
         ACCOUNT_SETTINGS_DB.update(this);
     }
 
-    public void availableTags(Object sender, Object playerIdentifier){
-        PlayerSession playerSessionSession = null;
-//        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        if (playerSessionSession == null) {
-//            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when looking up available Tags.");
-            return;
-        }
-        if (playerSessionSession.getPlayerCharacter().getAccount() == null) {
-//            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
-            return;
-        }
-        String availableTags = "Available Tags: ";
-        for (GroupAssignment groupAssignment : playerSessionSession.getPlayerCharacter().getAccount().getGroups()) {
-            Group group = groupAssignment.getGroup();
-            String groupTag = group.getTag().getName();
-            if (sender instanceof PlayerSession) {
-                groupTag = group.getTag().getColor()+groupTag;
-                availableTags = availableTags + buildTagFinal(groupTag) + ", ";
-            } else {
-                availableTags = availableTags + buildTagNoColor(groupTag) + ", ";
-            }
-        }
-        try {
-            availableTags = availableTags.substring(0, availableTags.lastIndexOf(",")) + ".";
-        } catch (StringIndexOutOfBoundsException e) {
-            /* Do nothing no players are online */
-        }
-        if (sender instanceof PlayerSession) {
-//            StarNub.getMessageSender().playerMessage("StarNub", sender, availableTags);
-        } else {
-            StarNub.getLogger().cInfoPrint("StarNub", availableTags);
-        }
-    }
-
-    public void setPreffixOrSuffix(Object sender, Object playerIdentifier, boolean prefix, int position, String prefixOrSuffix){
-        PlayerSession playerSessionSession =null;
-//        = StarNub.getStarboundServer().getConnectionss().getOnlinePlayerByAnyIdentifier(playerIdentifier);
-        if (playerSessionSession == null) {
-//            StarNub.getMessageSender().playerMessage("StarNub", sender, "We could not find the player or they are not online when trying to set Tags.");
-            return;
-        }
-        if (playerSessionSession.getPlayerCharacter().getAccount() == null) {
-//            StarNub.getMessageSender().playerMessage("StarNub", sender, "You must have an account to see available Tags.");
-            return;
-        }
-        if (prefixOrSuffix.contains("]")) {
-            prefixOrSuffix =  prefixOrSuffix.replace("]", "");
-        }
-        if (prefixOrSuffix.contains("[")) {
-            prefixOrSuffix =  prefixOrSuffix.replace("[", "");
-        }
-        for (GroupAssignment groupAssignment : playerSessionSession.getPlayerCharacter().getAccount().getGroups()) {
-            Group group = groupAssignment.getGroup();
-            String groupTag = group.getTag().getName();
-            if (groupTag.equalsIgnoreCase(prefixOrSuffix)) {
-                Tag tagSelected = group.getTag();
-                if (isUsingTag(groupTag)) {
-//                    StarNub.getMessageSender().playerMessage("StarNub", sender, "You already have this Tag set in one of your Tag slots.");
-                }
-                if (prefix) {
-                    if (position == 1) {
-                        this.chatPrefix1 = tagSelected;
-//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 1st Prefix is now set to \""+buildTagFinal(groupTag)+"\".");
-                        return;
-                    } else if (position == 2 ) {
-                        this.chatPrefix2 = tagSelected;
-//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 2nd Prefix is now set to \""+buildTagFinal(groupTag)+"\".");
-                        return;
-                    }
-                } else {
-                    if (position == 1) {
-                        this.chatSuffix1 = tagSelected;
-//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 1st Suffix is now set to \""+buildTagFinal(groupTag)+"\".");
-                        return;
-                    } else if (position == 2 ) {
-                        this.chatSuffix2 = tagSelected;
-//                        StarNub.getMessageSender().playerMessage("StarNub", sender, "Your 2nd Suffix is now set to \""+buildTagFinal(groupTag)+"\".");
-                        return;
-                    }
-                }
-            }
-        }
-//        StarNub.getMessageSender().playerMessage("StarNub", sender, "It appears we could not find the Tag you were looking for, check your spelling or available Tags.");
-    }
-
     public boolean isUsingTag(String prefixOrSuffix){
         return chatPrefix1.getName().equalsIgnoreCase(prefixOrSuffix) || chatPrefix2.getName().equalsIgnoreCase(prefixOrSuffix)
                 || chatSuffix1.getName().equalsIgnoreCase(prefixOrSuffix) || chatSuffix2.getName().equalsIgnoreCase(prefixOrSuffix);
     }
 
-    public Group getGroupFromTag(Tag tag){
-        return Groups.getInstance().getGroupByTag(tag);
+    public void deleteFromDatabase(){
+        deleteFromDatabase(this);
     }
 
-
-
-    public void setSpecificTagSpecificSlot(){
-
-
+    public static void deleteFromDatabase(Settings settings){
+        ACCOUNT_SETTINGS_DB.delete(settings);
     }
-
-
 }
