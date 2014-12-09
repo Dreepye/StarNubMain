@@ -63,19 +63,25 @@ public class Tag {
 
     public Tag(){}
 
-    public void refreshTag() {
-        TAGS_DB.refresh(this);
-        setTagCache(false);
-    }
-
-    public Tag(String name, String color, String type, String leftBracket, String rightBracket, String bracketColor) {
+    /**
+     * This will create tags.
+     *
+     * @param name String name of the tag
+     * @param color String color of the tag
+     * @param type String type such as group, or award
+     * @param leftBracket Sting left bracket
+     * @param rightBracket String right bracket
+     * @param bracketColor String bracket color
+     * @param createEntry boolean representing if we should create this entry on construction
+     */
+    public Tag(String name, String color, String type, String leftBracket, String rightBracket, String bracketColor, boolean createEntry) {
         this.name = name;
         this.type = type;
         this.color = GameColors.Colors.validate(color, true);
         this.leftBracket = leftBracket;
         this.rightBracket = rightBracket;
         this.bracketColor = bracketColor;
-        setTagCache(true);
+        setTagCache(createEntry);
     }
 
     public String getName() {
@@ -192,6 +198,11 @@ public class Tag {
 
     public static List<Tag> getMatchingTagsByIdSimilarType(String name, String type){
         return TAGS_DB.getMatchingColumn1AllSimilarColumn2(TAG_ID_COLUMN, name, TYPE_COLUMN, type);
+    }
+
+    public void refreshTag() {
+        TAGS_DB.refresh(this);
+        setTagCache(true);
     }
 
     public void deleteFromDatabase(){

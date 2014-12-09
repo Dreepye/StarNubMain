@@ -23,8 +23,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import starnubserver.database.tables.Groups;
 import starnubserver.resources.files.GroupsManagement;
+import utilities.exceptions.CollectionDoesNotExistException;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @DatabaseTable(tableName = "GROUPS")
@@ -56,7 +59,7 @@ public class Group {
     private volatile int ladderRank;
 
     private final HashSet<Group> INHERITED_GROUPS = new HashSet<>();
-
+    private final HashSet<String> INHERITED_GROUPS_STRINGS = new HashSet<>();
     private final HashSet<String> GROUP_PERMISSIONS = new HashSet<>();
 
     /**
@@ -73,55 +76,50 @@ public class Group {
      * @param ladderRank int ladder rank
      * @param createEntry boolean representing if a database entry should be made
      */
-    public Group(String name, String type, Tag tag, String ladderName, int ladderRank, boolean createEntry) {
+    public Group(String name, String type, Tag tag, String ladderName, int ladderRank, List<String> inheritedGroups, List<String> permissions, boolean createEntry) {
         this.name = name;
+        this.type = type;
         this.tag = tag;
         this.ladderName = ladderName;
         this.ladderRank = ladderRank;
+        INHERITED_GROUPS_STRINGS.addAll(inheritedGroups);
+        GROUP_PERMISSIONS.addAll(permissions);
         if (createEntry) {
             GROUPS_DB.createOrUpdate(this);
         }
     }
 
-    public Group(String name, String type, String tagLeftBracket, String tagRightBracket, String bracketsColors, String tagColor, String tagName, String ladderName, int ladderRank, String inheritedGroups, List<String> Permissions, boolean createEntry) {
+    public Group(String name, String type, String tagName, String tagColor, String tagType, String tagLeftBracket, String tagRightBracket, String bracketsColors, String ladderName, int ladderRank, List<String> inheritedGroups, List<String> permissions, boolean createEntry) {
         this.name = name;
+        this.type = type;
+        this.tag = new Tag(tagName, tagColor, tagType, tagLeftBracket, tagRightBracket, bracketsColors, true);
         this.ladderName = ladderName;
         this.ladderRank = ladderRank;
+        INHERITED_GROUPS_STRINGS.addAll(inheritedGroups);
+        GROUP_PERMISSIONS.addAll(permissions);
         if (createEntry) {
             GROUPS_DB.createOrUpdate(this);
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Group(String name, Map<String, Object> group, boolean createEntry) {
         this.name = name;
-        this.tag = tag;
-        this.ladderName = ladderName;
-        this.ladderRank = ladderRank;
+        this.type = (String) group.get("type");
+        Map<String, Object> tagData = (Map<String, Object>) group.get("tag");
+        String tagName = (String) tagData.get("look");
+        String tagColor = (String) tagData.get("color");
+        List<String> brackets = (List<String>) tagData.get("brackets");
+        String bracketColor = (String) tagData.get("bracket_color");
+        this.tag = new Tag(tagName, tagColor, "group",brackets.get(0), brackets.get(1), bracketColor, true);
+        List<String> inheritedGroups = (List<String>) group.get("inherited_groups");
+        List<String> permissions = (List<String>) group.get("permissions");
+        INHERITED_GROUPS_STRINGS.addAll(inheritedGroups);
+        GROUP_PERMISSIONS.addAll(permissions);
         if (createEntry) {
             GROUPS_DB.createOrUpdate(this);
         }
     }
-// Various group Builds
-// Various refresh on changes
-    "owner": {
-        "tag": {
-            "brackets": [ '[', ']' ],
-            "bracket_color": "#FFFF00",
-                    "color": "#F58LLB",
-                    "look": "Owner"
-        },
-        "type": "regular",
-                "inherited_groups": [
-        "admin"
-        ],
-        "group_ranking": {
-            "NAME": "owner",
-                    "rank": 999
-        },
-        "permissions": [
-        "None"
-        ]
-    },
 
     public String getName() {
         return name;
@@ -168,15 +166,19 @@ public class Group {
     }
 
     public void setINHERITED_GROUPS(){
-
+        for(String groupString : INHERITED_GROUPS_STRINGS){
+            ConcurrentHashMap<String, Group> managementGroups = GROUP_MANAGEMENT.getGROUPS();
+            Group group = managementGroups.get(groupString);
+            if (group !=null){
+                INHERITED_GROUPS.add(group);
+            }
+        }
     }
+
+    /* Permission Methods */
 
     public HashSet<String> getGROUP_PERMISSIONS() {
         return GROUP_PERMISSIONS;
-    }
-
-    public void setGROUP_PERMISSIONS(){
-
     }
 
     public void addGroupPermission(String permission){
@@ -190,8 +192,13 @@ public class Group {
             groupPermissions.add(permission);
         }
         GroupPermission groupPermission = GroupPermission.getGroupPermissionByGroupFirstMatch(group, permission);
-        if (groupPermission != null){
-            new GroupPermission(group, permission, true);
+        if (groupPermission == null){
+            try {
+                GROUP_MANAGEMENT.addToCollection(permission, group.getName(), "permissions");
+            } catch (IOException | CollectionDoesNotExistException e) {
+                e.printStackTrace();
+            }
+            new GroupPermission(group, permission, true, true).refreshAllRelatedPermissions();
         }
     }
 
@@ -216,6 +223,12 @@ public class Group {
         GroupPermission groupPermission = GroupPermission.getGroupPermissionByGroupFirstMatch(group, permission);
         if (groupPermission != null){
             groupPermission.deleteFromDatabase();
+            groupPermission.refreshAllRelatedPermissions();
+            try {
+                GROUP_MANAGEMENT.removeFromCollection(permission, group.getName(), "permissions");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -226,6 +239,56 @@ public class Group {
     public static void removeAllGroupPermissions(Group group, HashSet<String> permissions){
         for (String permission : permissions){
             removeGroupPermission(group, permission);
+        }
+    }
+//    "owner": {
+//        "tag": {
+//            "brackets": [ '[', ']' ],
+//            "bracket_color": "#FFFF00",
+//                    "color": "#F58LLB",
+//                    "look": "Owner"
+//        },
+//        "type": "regular",
+//                "inherited_groups": [
+//        "admin"
+//        ],
+//        "group_ranking": {
+//            "NAME": "owner",
+//                    "rank": 999
+//        },
+//        "permissions": [
+//        "None"
+//        ]
+//    },
+
+    /* Inherited Group Methods */
+
+    public void addGroupInheritance(String groupName){
+        Group group = GROUP_MANAGEMENT.getGROUPS().get(groupName);
+        if (group != null){
+            new GroupInheritance(this, group, true);
+            INHERITED_GROUPS_STRINGS.add(groupName);
+            INHERITED_GROUPS.add(group);
+            try {
+                GROUP_MANAGEMENT.addToCollection(groupName, "inherited_groups");
+            } catch (IOException | CollectionDoesNotExistException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void removeGroupInheritance(String groupName){
+        Group group = GROUP_MANAGEMENT.getGROUPS().remove(groupName);
+        if (group != null){
+            GroupInheritance groupInheritance = GroupInheritance.getGroupInheritanceByGroupFirstMatch(this, group);
+            groupInheritance.deleteFromDatabase();
+            INHERITED_GROUPS_STRINGS.remove(groupName);
+            INHERITED_GROUPS.remove(group);
+            try {
+                GROUP_MANAGEMENT.removeFromCollection(groupName, "inherited_groups");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -293,11 +356,11 @@ public class Group {
         return GROUPS_DB.getMatchingColumn1AllSimilarColumn2(GROUP_NAME_ID_COLUMN, groupName, LADDER_NAME_COLUMN, ladderName);
     }
 
-    public void deleteFromDatabase(boolean completePurge){
-        deleteFromDatabase(this, completePurge);
+    public void deleteFromDatabaseAndFile(boolean completePurge){
+        deleteFromDatabaseAndFile(this, completePurge);
     }
 
-    public static void deleteFromDatabase(Group group, boolean completePurge){
+    public static void deleteFromDatabaseAndFile(Group group, boolean completePurge){
         if (completePurge){
             group.getTag().deleteFromDatabase();
             List<GroupPermission> groupPermissions = GroupPermission.getGroupPermissionsByGroup(group);
@@ -310,5 +373,26 @@ public class Group {
             }
         }
         GROUPS_DB.delete(group);
+        String groupName = group.getName();
+        GROUP_MANAGEMENT.getGROUPS().remove(groupName);
+        try {
+            GROUP_MANAGEMENT.removeValue(groupName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", tag=" + tag +
+                ", ladderName='" + ladderName + '\'' +
+                ", ladderRank=" + ladderRank +
+                ", INHERITED_GROUPS=" + INHERITED_GROUPS +
+                ", INHERITED_GROUPS_STRINGS=" + INHERITED_GROUPS_STRINGS +
+                ", GROUP_PERMISSIONS=" + GROUP_PERMISSIONS +
+                '}';
     }
 }

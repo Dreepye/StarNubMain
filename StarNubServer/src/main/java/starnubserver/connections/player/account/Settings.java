@@ -45,12 +45,12 @@ public class Settings implements Serializable {
     private final static AccountSettings ACCOUNT_SETTINGS_DB = AccountSettings.getInstance();
 
     /* COLUMN NAMES */
-    private final String ACCOUNT_SETTINGS_ID_COLUMN = "ACCOUNT_SETTINGS_ID";
-    private final String CHAT_PREFIX_1_COLUMN = "CHAT_PREFIX_1";
-    private final String CHAT_PREFIX_2_COLUMN = "CHAT_PREFIX_2";
-    private final String CHAT_SUFFIX_1_COLUMN = "CHAT_SUFFIX_1";
-    private final String CHAT_SUFFIX_2_COLUMN = "CHAT_SUFFIX_2";
-    private final String APPEAR_OFFLINE_COLUMN = "APPEAR_OFFLINE";
+    private final static String ACCOUNT_SETTINGS_ID_COLUMN = "ACCOUNT_SETTINGS_ID";
+    private final static String CHAT_PREFIX_1_COLUMN = "CHAT_PREFIX_1";
+    private final static String CHAT_PREFIX_2_COLUMN = "CHAT_PREFIX_2";
+    private final static String CHAT_SUFFIX_1_COLUMN = "CHAT_SUFFIX_1";
+    private final static String CHAT_SUFFIX_2_COLUMN = "CHAT_SUFFIX_2";
+    private final static String APPEAR_OFFLINE_COLUMN = "APPEAR_OFFLINE";
 
     @DatabaseField(id = true, dataType = DataType.STRING, columnName = ACCOUNT_SETTINGS_ID_COLUMN)
     private volatile String accountSettings;

@@ -159,7 +159,9 @@ public class PlayerCharacter implements Serializable {
         CHARACTERS_DB.update(this);
     }
 
-    public PlayerCharacter getCharacterFromNameUUIDCombo(String nameString, UUID UUID) {
+    /* DB Methods */
+
+    public PlayerCharacter getCharacterFromNameUUIDCombo(String nameString, UUID uuid) {
         try {
             QueryBuilder<PlayerCharacter, Integer> queryBuilder =
                     getTableDao().queryBuilder();

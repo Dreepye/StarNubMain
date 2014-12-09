@@ -571,16 +571,6 @@ public class PlayerSession extends StarNubProxyConnection {
 
     }
 
-
-
-
-
-
-
-
-
-
-
     @Override
     public String toString() {
         return "Player{" +

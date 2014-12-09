@@ -27,8 +27,8 @@ import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.GroupPermissions;
 import starnubserver.resources.connections.Players;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @DatabaseTable(tableName = "GROUP_PERMISSIONS")
 public class GroupPermission {
@@ -60,12 +60,16 @@ public class GroupPermission {
      * @param group Group representing the group to add a permission to
      * @param permission String representing the permission to set for the group
      * @param createEntry boolean representing if a database entry should be made
+     * @param reloadPermissions boolean this will reload all the permissions for each person that has this group
      */
-    public GroupPermission(Group group, String permission, boolean createEntry) {
+    public GroupPermission(Group group, String permission, boolean createEntry, boolean reloadPermissions) {
         this.group = group;
         this.permission = permission;
         if(createEntry){
             GROUP_PERMISSIONS_DB.createOrUpdate(this);
+        }
+        if(reloadPermissions){
+            refreshAllRelatedPermissions();
         }
     }
 
@@ -124,16 +128,24 @@ public class GroupPermission {
     }
 
     public void refreshAllRelatedPermissions(){
-        Players connectedPlayers = StarNub.getConnections().getCONNECTED_PLAYERS();
-        if (group.getType().equalsIgnoreCase("noaccount")){
-            //noAccount refresh
-        } else {
-            for (PlayerSession playerSession : connectedPlayers.values()) {
-                Account account = playerSession.getPlayerCharacter().getAccount();
-                HashSet<GroupAssignment> groups = account.getGroups();
+        refreshAllRelatedPermissions(this.group);
+    }
 
-                if ()
-                .reloadPermissions();
+    public static void refreshAllRelatedPermissions(Group group){
+        Players connectedPlayers = StarNub.getConnections().getCONNECTED_PLAYERS();
+        for (PlayerSession playerSession : connectedPlayers.values()){
+            Account account = playerSession.getPlayerCharacter().getAccount();
+            if (account == null){
+                String groupType = group.getType();
+                if (groupType.equalsIgnoreCase("noaccount")) {
+                    playerSession.reloadPermissions();
+                }
+            } else {
+                Set<String> groupNames = account.getAllGroupNames();
+                String groupName = group.getName();
+                if (groupNames.contains(groupName)){
+                    playerSession.reloadPermissions();
+                }
             }
         }
     }

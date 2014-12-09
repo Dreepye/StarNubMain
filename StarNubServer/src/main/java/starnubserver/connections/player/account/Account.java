@@ -42,10 +42,7 @@ import utilities.crypto.PasswordHash;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -218,10 +215,6 @@ public class Account implements Serializable{
     }
 
 
-    public ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> getPermissions() {
-        return permissions;
-    }
-
     public void getAndAddGroup(String groupToGet){
         Group group = Groups.getInstance().getGroupByName(groupToGet);
         this.groups.add(new GroupAssignment(this, group));
@@ -263,6 +256,9 @@ public class Account implements Serializable{
         return finalGroupList;
     }
 
+    public Set<String> getAllGroupNames(){
+        return getAllGroups().stream().map(Group::getName).collect(Collectors.toSet());
+    }
 
     public HashSet<GroupAssignment> getGroups() {
         return groups;

@@ -29,7 +29,6 @@ import starnubserver.resources.ResourceManager;
 import utilities.file.yaml.YAMLWrapper;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,7 @@ public class GroupsManagement extends YAMLWrapper {
      */
     private static final GroupsManagement instance = new GroupsManagement();
 
-    private final ConcurrentHashMap<String, Group> groups = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Group> GROUPS = new ConcurrentHashMap<>();
 
     /**
      * This constructor is private - Singleton Pattern
@@ -76,9 +75,13 @@ public class GroupsManagement extends YAMLWrapper {
         return instance;
     }
 
+    public ConcurrentHashMap<String, Group> getGROUPS() {
+        return GROUPS;
+    }
+
     public String groupSynchronizeFileToDB(){
         if (getDATA().isEmpty()){
-            return "The groups from utilities.file could not be synchronized with the Database groups, make sure that the StarNub/groups.yml utilities.file exist and that their is no YAML syntax errors.");
+            return "The GROUPS from utilities.file could not be synchronized with the Database GROUPS, make sure that the StarNub/GROUPS.yml utilities.file exist and that their is no YAML syntax errors.");
         }
         synchronizeGroupsFileToDB();
     }
@@ -91,7 +94,7 @@ public class GroupsManagement extends YAMLWrapper {
     }
 
     private void
-
+//after set groups up then group inheritance set
 
 
     private void deleteDBGroupsTags(){
@@ -117,7 +120,7 @@ public class GroupsManagement extends YAMLWrapper {
         try {
             List<Tag> tagsInDb = Tags.getInstance().getTableDao().queryForAll();
             for (Tag tag : tagsInDb){
-                if (!groups.containsKey(tag.getName())) {
+                if (!GROUPS.containsKey(tag.getName())) {
                     Tags.getInstance().delete(tag);
                 }
             }
@@ -141,21 +144,21 @@ public class GroupsManagement extends YAMLWrapper {
 
     @SuppressWarnings("unchecked")
     private void addDBGroups(){
-        for (String groupName : groups.keySet()) {
+        for (String groupName : GROUPS.keySet()) {
             Group newGroup = new Group(
                     groupName,
-                    createTag((Map) ((Map) groups.get(groupName)).get("tag")),
-                    (String) ((Map) ((Map) groups.get(groupName)).get("group_ranking")).get("name"),
-                    (int) ((Map) ((Map) groups.get(groupName)).get("group_ranking")).get("rank")
+                    createTag((Map) ((Map) GROUPS.get(groupName)).get("tag")),
+                    (String) ((Map) ((Map) GROUPS.get(groupName)).get("group_ranking")).get("name"),
+                    (int) ((Map) ((Map) GROUPS.get(groupName)).get("group_ranking")).get("rank")
             );
             Groups.getInstance().createIfNotExist(newGroup);
-            newGroup.getPermissions().addAll(permissionsUpdate(newGroup, (Object) ((Map) groups.get(groupName)).get("permissions")));
+            newGroup.getPermissions().addAll(permissionsUpdate(newGroup, (Object) ((Map) GROUPS.get(groupName)).get("permissions")));
         }
-        /* We already loaded the groups and the permission's, but now we need to load inheritances last */
-        for (String groupName : groups.keySet()) {
-            /* Part one is the group from the DB, Part two is the groups to inherit */
+        /* We already loaded the GROUPS and the permission's, but now we need to load inheritances last */
+        for (String groupName : GROUPS.keySet()) {
+            /* Part one is the group from the DB, Part two is the GROUPS to inherit */
             Group groupDb = Groups.getInstance().getGroupByName(groupName);
-            groupDb.getInheritedGroups().addAll(groupInheritancesUpdate(groupDb, ((Map) groups.get(groupName)).get("inherited_groups")));
+            groupDb.getInheritedGroups().addAll(groupInheritancesUpdate(groupDb, ((Map) GROUPS.get(groupName)).get("inherited_groups")));
         }
     }
 
@@ -249,7 +252,7 @@ public class GroupsManagement extends YAMLWrapper {
         } else {
             if (!groupInherited.equalsIgnoreCase("none")) {
                 StarNub.getLogger().cErrPrint("StarNub", "Error a group is not in the data base but is set as a inherited group. " +
-                        "Please add this group to your groups.yml or remove the inheritance.");
+                        "Please add this group to your GROUPS.yml or remove the inheritance.");
             }
         }
     }
@@ -258,7 +261,7 @@ public class GroupsManagement extends YAMLWrapper {
      * This method will save the configuration to utilities.file.
      */
     private void saveGroupsFile() {
-//        new YamlDumper().toFileYamlDump(this.groups, "StarNub/groups.yml");
+//        new YamlDumper().toFileYamlDump(this.GROUPS, "StarNub/GROUPS.yml");
     }
 
 //    inherited_groups: ['none'],
@@ -271,7 +274,7 @@ public class GroupsManagement extends YAMLWrapper {
 
     @SuppressWarnings("unchecked")
     public void updateGroupField(String groupName, String field, String value){
-        ((Map) groups.get(groupName)).replace(field, value);
+        ((Map) GROUPS.get(groupName)).replace(field, value);
         saveGroupsFile();
 //        for (Player players : StarNub.getStarboundServer().getConnectionss().getConnectedPlayers().values()) {
 //            Account account = players.getPlayerCharacter().getAccount();
@@ -279,7 +282,7 @@ public class GroupsManagement extends YAMLWrapper {
 //                try {
 //                    account.getGroups().refreshAll();
 //                } catch (SQLException e) {
-//                    StarNub.getLogger().cFatPrint("StarNub", "Unable to refresh player assigned groups for account \""+account.getAccountName()+"\".");
+//                    StarNub.getLogger().cFatPrint("StarNub", "Unable to refresh player assigned GROUPS for account \""+account.getAccountName()+"\".");
 //                }
 //            }
 //        }
