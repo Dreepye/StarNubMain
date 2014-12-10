@@ -7,7 +7,7 @@ Change Log:
 
 //planet who
 //EPOLL
-//Ordered events
+//thread not closinh
 
 ///////// THIS IS FOR ESSENTIALS PLUGIN ////////////////
         jsonObject.put("gamePort", ((Map)StarNub.getConfiguration().getConfiguration().get("starnubserver settings")).get("starbound_port"));

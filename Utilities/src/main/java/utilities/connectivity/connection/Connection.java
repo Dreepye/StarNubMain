@@ -113,8 +113,6 @@ public abstract class Connection {
     @Override
     public String toString() {
         return "Connection{" +
-                "DISCONNECTED=" + DISCONNECTED +
-                ", CONNECTED=" + CONNECTED +
                 ", connectionStatus=" + connectionStatus +
                 ", CLIENT_CTX=" + CLIENT_CTX +
                 ", CONNECTION_START_TIME=" + CONNECTION_START_TIME +

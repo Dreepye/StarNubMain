@@ -24,7 +24,6 @@ import utilities.cache.objects.TimeCache;
 import utilities.concurrency.task.InternalTask;
 import utilities.concurrency.task.ScheduledTask;
 import utilities.concurrency.task.TaskManager;
-import utilities.exceptions.CacheWrapperOperationException;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -148,11 +147,11 @@ public abstract class CacheWrapper<E1> {
      * @param key           E1 representing a contactable key
      * @param timeCache TimeCache representing a utilities.cache object
      */
-    public void addCache(E1 key, TimeCache timeCache) throws CacheWrapperOperationException {
+    public void addCache(E1 key, TimeCache timeCache) {
         try {
             CACHE_MAP.put(key, timeCache);
         } catch (NullPointerException e) {
-            throw new CacheWrapperOperationException(ERROR_MSG);
+            System.out.println(ERROR_MSG + " " +e.getMessage());
         }
     }
 
@@ -162,11 +161,12 @@ public abstract class CacheWrapper<E1> {
      *
      * @param key E1 representing a contactable key
      */
-    public TimeCache removeCache(E1 key) throws CacheWrapperOperationException {
+    public TimeCache removeCache(E1 key) {
         try {
             return CACHE_MAP.remove(key);
         } catch (NullPointerException e) {
-            throw new CacheWrapperOperationException(ERROR_MSG);
+            System.out.println(ERROR_MSG + " " +e.getMessage());
+            return null;
         }
     }
 
@@ -177,11 +177,11 @@ public abstract class CacheWrapper<E1> {
      * @param key           E1 representing a contactable key
      * @param timeCache TimeCache representing a utilities.cache object
      */
-    public void replaceCache(E1 key, TimeCache timeCache) throws CacheWrapperOperationException {
+    public void replaceCache(E1 key, TimeCache timeCache) {
         try {
             CACHE_MAP.put(key, timeCache);
         } catch (NullPointerException e) {
-            throw new CacheWrapperOperationException(ERROR_MSG);
+            System.out.println(ERROR_MSG + " " +e.getMessage());
         }
     }
 
@@ -194,14 +194,14 @@ public abstract class CacheWrapper<E1> {
      * @param key E1 representing a contactable key
      * @return TimeCache representing the utilities.cache object
      */
-    public TimeCache getCache(E1 key) throws CacheWrapperOperationException {
+    public TimeCache getCache(E1 key) {
         try {
             return CACHE_MAP.get(key);
         } catch (NullPointerException e) {
-            throw new CacheWrapperOperationException(ERROR_MSG);
+            System.out.println(ERROR_MSG + " " +e.getMessage());
+            return null;
         }
     }
-
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -232,7 +232,7 @@ public abstract class CacheWrapper<E1> {
      */
     public void cachePruneTask(ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR) {
         if (CACHE_PRUNE_TASK_TIME != 0) {
-            Runnable runnable = this::cachePruner;
+            Runnable runnable = this::cachePrune;
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
                 ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
                 String taskName = String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME);
@@ -249,7 +249,7 @@ public abstract class CacheWrapper<E1> {
     /**
      * This will prune cache
      */
-    private void cachePruner(){
+    public void cachePrune(){
         CACHE_MAP.keySet().stream().filter(key -> CACHE_MAP.get(key).getCacheAge() > TimeUnit.MILLISECONDS.convert(CACHE_PRUNE_TASK_TIME, TIME_UNIT)).forEach(CACHE_MAP::remove);
     }
 
@@ -262,7 +262,7 @@ public abstract class CacheWrapper<E1> {
      */
     public void cachePurgeTask(ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR) {
         if (CACHE_PURGE_TAKE_TIME != 0) {
-            Runnable runnable = this::cachePurger;
+            Runnable runnable = this::cachePurge;
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
                 ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
                 String taskName = String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME);
@@ -279,7 +279,7 @@ public abstract class CacheWrapper<E1> {
     /**
      * This will purge all cache
      */
-    private void cachePurger(){
+    public void cachePurge(){
         CACHE_MAP.clear();
     }
 

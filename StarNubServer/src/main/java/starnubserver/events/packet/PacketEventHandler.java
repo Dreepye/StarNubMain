@@ -23,13 +23,10 @@ public abstract class PacketEventHandler extends EventHandler<Packet> {
      *                  ChatSentPacket chatSentPacket = (ChatSentPacket) eventData;
      *                  //Do Stuff, chatSentPacket.getMessage();
      *                  //Do Stuff, chatSentPacket.setMessage();
-     *                  return chatSentPacket;
      *              }
-     *       - YOU MUST RETURN THE PACKET OR YOU WILL CAUSE THE STREAM TO FAIL.
      *       - YOUR CAN RECYCLE THE PACKET IN ORDER TO STOP ITS ROUTING BY USING packet.recycle();
      *
      * @param eventData Packet representing the packet being routed
-     * @return Packet any class representing packet can be returned
      */
     @Override
     public abstract void onEvent(Packet eventData);

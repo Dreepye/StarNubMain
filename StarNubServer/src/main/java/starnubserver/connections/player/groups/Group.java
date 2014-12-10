@@ -189,7 +189,7 @@ public class Group {
         addGroupPermission(this, permission);
     }
 
-    public static void addGroupPermission(Group group, String permission){
+    public static void addGroupPermission(Group group, String permission){//DEBUG MANAGEMENT
         permission = permission.toLowerCase();
         HashSet<String> groupPermissions = group.getGROUP_PERMISSIONS();
         if (!groupPermissions.contains(permission)){

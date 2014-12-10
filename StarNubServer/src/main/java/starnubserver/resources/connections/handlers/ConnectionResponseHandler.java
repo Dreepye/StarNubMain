@@ -27,7 +27,6 @@ import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.packet.PacketEventHandler;
-import utilities.exceptions.CacheWrapperOperationException;
 
 public class ConnectionResponseHandler extends PacketEventHandler {
 
@@ -48,12 +47,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
     @Override
     public void onEvent(Packet eventData) {
         ConnectResponsePacket connectResponsePacket = (ConnectResponsePacket) eventData;
-        RejectionCache rejectionCache = null;
-        try {
-            rejectionCache = (RejectionCache) CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().removeCache(connectResponsePacket.getDESTINATION_CTX());
-        } catch (CacheWrapperOperationException e) {
-            StarNub.getLogger().cFatPrint("StarNub", "CRITICAL ERROR, SESSION WILL END: " + e.getMessage());
-        }
+        RejectionCache rejectionCache = (RejectionCache) CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().removeCache(connectResponsePacket.getDESTINATION_CTX());
         PlayerSession playerSession;
         if (rejectionCache != null) {
             playerSession = rejectionCache.getPLAYERSession();

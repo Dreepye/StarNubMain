@@ -24,6 +24,9 @@ import com.j256.ormlite.table.DatabaseTable;
 import generic.BanType;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import starbounddata.chat.ChatReceiveChannel;
+import starbounddata.chat.ChatSendChannel;
+import starbounddata.packets.Packet;
 import starbounddata.packets.chat.ChatReceivePacket;
 import starbounddata.packets.chat.ChatSendPacket;
 import starbounddata.packets.connection.ClientDisconnectRequestPacket;
@@ -36,13 +39,13 @@ import starnubserver.connections.player.character.CharacterIP;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.generic.Ban;
 import starnubserver.connections.player.generic.StaffEntry;
-import starnubserver.connections.player.groups.*;
-import starnubserver.database.tables.*;
+import starnubserver.connections.player.groups.Group;
+import starnubserver.database.tables.Characters;
+import starnubserver.database.tables.PlayerSessionLog;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.NameBuilder;
 import starnubserver.resources.files.GroupsManagement;
 import utilities.events.types.StringEvent;
-import utilities.exceptions.CacheWrapperOperationException;
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.strings.StringUtilities;
 
@@ -104,11 +107,7 @@ public class PlayerSession extends StarNubProxyConnection {
     public PlayerSession(StarNubProxyConnection starNubProxyConnection, String playerName, UUID playerUUID) {
         super(StarNub.getStarNubEventRouter(), ConnectionType.PLAYER, starNubProxyConnection.getCLIENT_CTX(), starNubProxyConnection.getSERVER_CTX());
         InetAddress playerIP = starNubProxyConnection.getClientIP();
-        try {
-            StarNub.getConnections().getINTERNAL_IP_WATCHLIST().removeCache(playerIP);
-        } catch (CacheWrapperOperationException e) {
-            e.printStackTrace();
-        }
+        StarNub.getConnections().getINTERNAL_IP_WATCHLIST().removeCache(playerIP);
         this.startTimeUtc = DateTime.now();
         this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
         this.playerCharacter = PlayerCharacter.getPlayerCharacter(playerName, playerUUID);
@@ -341,13 +340,13 @@ public class PlayerSession extends StarNubProxyConnection {
     //Get game tags
     //Get console tags
 
-    public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message) {
+    public void sendChatMessage(Object sender, ChatReceiveChannel channel, String message) {
         String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
-        ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "", 0, nameOfSender, message);
+        ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "Server", 1, nameOfSender, message);
         chatReceivePacket.routeToDestination();
     }
 
-    public void sendServerChatMessage(ChatSendPacket.ChatSendChannel channel, String message) {
+    public void sendServerChatMessage(ChatSendChannel channel, String message) {
         ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, channel, message);
         chatSendPacket.routeToDestination();
     }
@@ -382,6 +381,8 @@ public class PlayerSession extends StarNubProxyConnection {
             new ServerDisconnectPacket(CLIENT_CTX, "");
         }
     }
+
+    //remove from op
 
     /* Permission Methods*/
 
@@ -510,7 +511,7 @@ public class PlayerSession extends StarNubProxyConnection {
             String[] permissions = permission.split("\\.", 3);
             boolean fullPermission = permissions.length == 3;
             if (fullPermission){
-                return hasFullPermission(permissions[0], permissions[1], permissions[3], checkWildCards);
+                return hasFullPermission(permissions[0], permissions[1], permissions[2], checkWildCards);
             } else {
                 return hasSubPermission(permissions[0], permissions[1], checkWildCards);
             }
@@ -576,6 +577,10 @@ public class PlayerSession extends StarNubProxyConnection {
         }
     }
 
+    public static PlayerSession getPlayerSession(Packet packet){
+        return StarNub.getConnections().getCONNECTED_PLAYERS().getPlayer(packet);
+    }
+
     /* DB Methods */
 
     public static void retreiveSession(PlayerCharacter playerCharacter){
@@ -598,7 +603,6 @@ public class PlayerSession extends StarNubProxyConnection {
                 ", afk=" + afk +
                 "} " + super.toString();
     }
-    //remove from op
 }
 
 

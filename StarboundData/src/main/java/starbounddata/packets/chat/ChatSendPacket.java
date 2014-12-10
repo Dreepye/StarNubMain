@@ -21,6 +21,7 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.chat.ChatSendChannel;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -130,10 +131,5 @@ public class ChatSendPacket extends Packet {
                 "channel=" + channel +
                 ", message='" + message + '\'' +
                 "} " + super.toString();
-    }
-
-    public enum ChatSendChannel {
-        UNIVERSE,
-        PLANET
     }
 }

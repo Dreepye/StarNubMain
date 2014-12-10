@@ -22,12 +22,9 @@ public abstract class StarNubEventHandler<T> extends EventHandler<Event<String>>
      *              {
      *                  Player player = (Player) eventData.getEVENT_DATA();
      *                  //Do Stuff, player.disconnect();
-     *                  return player; OR return null;
      *              }
-     *       - YOU DO NOT HAVE TO RETURN THE EVENT.
      *
      * @param eventData Event representing the event being shared
-     * @return Event you are not required to return the event
      */
     @Override
     public abstract void onEvent(Event<String> eventData);

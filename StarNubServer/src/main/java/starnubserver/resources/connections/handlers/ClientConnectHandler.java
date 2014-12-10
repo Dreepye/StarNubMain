@@ -21,8 +21,8 @@ package starnubserver.resources.connections.handlers;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import starbounddata.chat.ChatReceiveChannel;
 import starbounddata.packets.Packet;
-import starbounddata.packets.chat.ChatReceivePacket;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starboundmanager.Starting;
 import starnubserver.Connections;
@@ -39,7 +39,6 @@ import starnubserver.events.starnub.StarNubEventSubscription;
 import utilities.cache.objects.TimeCache;
 import utilities.events.Priority;
 import utilities.events.types.Event;
-import utilities.exceptions.CacheWrapperOperationException;
 import utilities.time.DateAndTimes;
 
 import java.util.UUID;
@@ -68,14 +67,10 @@ public class ClientConnectHandler extends PacketEventHandler {
             public void onEvent(Event<String> eventData) {
                 PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
                 TimeCache timeCache = null;
-                try {
-                    timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
-                } catch (CacheWrapperOperationException e) {
-                    StarNub.getLogger().cFatPrint("StarNub", e.getMessage());
-                }
+                timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
                 if (timeCache != null) {
-                    playerSession.sendChatMessage("StarNub", ChatReceivePacket.ChatReceiveChannel.UNIVERSE, "You were disconnected to make room for a player" +
-                            "who has a Reserved Server Slot.");
+                    playerSession.sendChatMessage("StarNub", ChatReceiveChannel.UNIVERSE, "You were disconnected to make room for a player" +
+                            " who has a Reserved Server Slot.");
                 }
             }
         });
@@ -163,11 +158,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         playerSession.getPlayerCharacter().updateLastSeen(DateTime.now());
         new StarNubEvent("Player_Connection_Attempt", this);
         StarNub.getLogger().cDebPrint("StarNub", "A player named "+ playerSession.getPlayerCharacter().getCleanName() +" is attempting to connect to the server on IP: " + playerSession.getSessionIpString() + ".");
-        try {
-            CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().addCache(clientCTX, rejectionCache);
-        } catch (CacheWrapperOperationException e) {
-            StarNub.getLogger().cFatPrint("StarNub", e.getMessage());
-        }
+        CONNECTIONS.getCONNECTED_PLAYERS().getACCEPT_REJECT().addCache(clientCTX, rejectionCache);
         return clientConnectPacket;
     }
 
@@ -271,18 +262,14 @@ public class ClientConnectHandler extends PacketEventHandler {
         UUID uuid = playerSession.getPlayerCharacter().getUuid();
         boolean isOnline = CONNECTIONS.getCONNECTED_PLAYERS().isOnline("StarNub", uuid);
         if (isOnline) {
-            try {
-                if (ALREADY_LOGGED_ON.getCache(uuid) != null) {
-                    PlayerSession playerSessionDisconnect = CONNECTIONS.getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(uuid);
-                    playerSessionDisconnect.disconnectReason("Same_Character_Login");
-                    ALREADY_LOGGED_ON.removeCache(uuid);
-                } else {
-                    ALREADY_LOGGED_ON.addCache(uuid, new TimeCache());
-                    String reason = "\n^#f5f5f5;You are already logged into this Server with this character. Please try again.";
-                    return new RejectionCache(true, RejectionCache.Reason.ALREADY_LOGGED_IN, header + reason + footer, playerSession);
-                }
-            } catch (CacheWrapperOperationException e) {
-                StarNub.getLogger().cFatPrint("StarNub", e.getMessage());
+            if (ALREADY_LOGGED_ON.getCache(uuid) != null) {
+                PlayerSession playerSessionDisconnect = CONNECTIONS.getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(uuid);
+                playerSessionDisconnect.disconnectReason("Same_Character_Login");
+                ALREADY_LOGGED_ON.removeCache(uuid);
+            } else {
+                ALREADY_LOGGED_ON.addCache(uuid, new TimeCache());
+                String reason = "\n^#f5f5f5;You are already logged into this Server with this character. Please try again.";
+                return new RejectionCache(true, RejectionCache.Reason.ALREADY_LOGGED_IN, header + reason + footer, playerSession);
             }
         }
         return null;
@@ -308,26 +295,18 @@ public class ClientConnectHandler extends PacketEventHandler {
             String previousKick = "";
             boolean spaceMade = false;
             TimeCache timeCache = null;
-            try {
-                timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
-            } catch (CacheWrapperOperationException e) {
-                e.printStackTrace();
-            }
+            timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
             if (timeCache != null) {
                 previousKick = "\n^#f5f5f5;You were previously Kicked to make room for a player with a reserved Slot.";
             }
-            if (playerSession.hasPermission("starnubinternals.reserved.kick", true)) {
+            if (playerSession.hasPermission("starnub.reserved.kick", true)) {
                 for (PlayerSession playerSessionToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
                     if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                         spaceMade = true;
                         break;
-                    } else if (!playerSessionToKick.hasPermission("starnubinternals.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
+                    } else if (!playerSessionToKick.hasPermission("starnub.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
                         playerSession.disconnectReason("Reserved_Kick");
-                        try {
-                            RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
-                        } catch (CacheWrapperOperationException e) {
-                            e.printStackTrace();
-                        }
+                        RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                     }
                 }
                 if (!spaceMade) {
@@ -335,13 +314,9 @@ public class ClientConnectHandler extends PacketEventHandler {
                         if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                             spaceMade = true;
                             break;
-                        } else if (!playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
+                        } else if (!playerSessionToKick.hasPermission("starnub.reserved.kick", true)) {
                             playerSession.disconnectReason("Reserved_Kick");
-                            try {
-                                RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
-                            } catch (CacheWrapperOperationException e) {
-                                e.printStackTrace();
-                            }
+                            RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                         }
                     }
                 }
@@ -349,18 +324,14 @@ public class ClientConnectHandler extends PacketEventHandler {
                     reason = "^#f5f5f5;This network is full and no more VIP slots are available.";
                     return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP_KICK, header + reason + footer, playerSession);
                 }
-            } else if (playerSession.hasPermission("starnubinternals.reserved", true)) {
+            } else if (playerSession.hasPermission("starnub.reserved", true)) {
                 for (PlayerSession playerSessionToKick : CONNECTIONS.getCONNECTED_PLAYERS().values()) {
                     if (CONNECTIONS.getCONNECTED_PLAYERS().size() < combinedCount) {
                         spaceMade = true;
                         break;
-                    } else if (!playerSessionToKick.hasPermission("starnubinternals.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
+                    } else if (!playerSessionToKick.hasPermission("starnub.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
                         playerSession.disconnectReason("Reserved_Kick");
-                        try {
-                            RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
-                        } catch (CacheWrapperOperationException e) {
-                            e.printStackTrace();
-                        }
+                        RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                     }
                 }
                 if (!spaceMade) {

@@ -35,15 +35,14 @@ public abstract class EventRouter<T1, T2, T3> {
     public void registerEventSubscription(T1 eventKey, EventSubscription eventSubscription){
         if (!EVENT_SUBSCRIPTION_MAP.containsKey(eventKey)){
             EVENT_SUBSCRIPTION_MAP.put(eventKey, new HashSet<>());
-        } else {
-            synchronized (HASHSET_LOCK_OBJECT_1) {
-                HashSet<EventSubscription> eventSubscriptionHashSet = EVENT_SUBSCRIPTION_MAP.get(eventKey);
-                eventSubscriptionHashSet.add(eventSubscription);
-                eventSubscriptionHashSet = eventSubscriptionHashSet.stream()
-                                                .sorted((es1, es2) -> es1.getPRIORITY().compareTo(es2.getPRIORITY()))
-                                                .collect(Collectors.toCollection(LinkedHashSet::new));
-                EVENT_SUBSCRIPTION_MAP.put(eventKey, eventSubscriptionHashSet);
-            }
+        }
+        synchronized (HASHSET_LOCK_OBJECT_1) {
+            HashSet<EventSubscription> eventSubscriptionHashSet = EVENT_SUBSCRIPTION_MAP.get(eventKey);
+            eventSubscriptionHashSet.add(eventSubscription);
+            eventSubscriptionHashSet = eventSubscriptionHashSet.stream()
+                                            .sorted((es1, es2) -> es1.getPRIORITY().compareTo(es2.getPRIORITY()))
+                                            .collect(Collectors.toCollection(LinkedHashSet::new));
+            EVENT_SUBSCRIPTION_MAP.put(eventKey, eventSubscriptionHashSet);
         }
     }
 
@@ -58,7 +57,7 @@ public abstract class EventRouter<T1, T2, T3> {
             synchronized (HASHSET_LOCK_OBJECT_1) {
                 EVENT_SUBSCRIPTION_SET.stream().filter(eventSubscription -> eventSubscription.getSUBSCRIBER_NAME().equalsIgnoreCase(subscriberName)).forEach(EVENT_SUBSCRIPTION_SET::remove);
             }
-            if (EVENT_SUBSCRIPTION_MAP.isEmpty()) {
+            if (EVENT_SUBSCRIPTION_SET.isEmpty()) {
                     EVENT_SUBSCRIPTION_MAP.remove(eventKey);
             }
         }
@@ -75,7 +74,7 @@ public abstract class EventRouter<T1, T2, T3> {
             synchronized (HASHSET_LOCK_OBJECT_1) {
                 EVENT_SUBSCRIPTION_SET.stream().filter(eventSubscription::equals).forEach(EVENT_SUBSCRIPTION_SET::remove);
             }
-            if (EVENT_SUBSCRIPTION_MAP.isEmpty()) {
+            if (EVENT_SUBSCRIPTION_SET.isEmpty()) {
                 EVENT_SUBSCRIPTION_MAP.remove(eventKey);
             }
         }
@@ -85,7 +84,6 @@ public abstract class EventRouter<T1, T2, T3> {
      * This method must be extended and enhanced to handle event notification of specific data types which may vary
      *
      * @param event T2 event data of sometime
-     * @return T3 some data back, can be event data or boolean, anything
      */
     public abstract void eventNotify(T2 event);
 
@@ -93,12 +91,10 @@ public abstract class EventRouter<T1, T2, T3> {
      * This method must be extended and enhanced to handle events of specific data types which may vary
      *
      * @param event T2 event data of sometime
-     * @return T2 returns the handled event data back
      */
     public abstract void handleEvent(T2 event);
 
-    @Override
-    public String toString() {
+    public String printString() {
         return "EventRouter{" +
                 "HASHSET_LOCK_OBJECT_1=" + HASHSET_LOCK_OBJECT_1 +
                 ", EVENT_SUBSCRIPTION_MAP=" + EVENT_SUBSCRIPTION_MAP +

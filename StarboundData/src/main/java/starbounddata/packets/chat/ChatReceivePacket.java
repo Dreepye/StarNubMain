@@ -21,6 +21,7 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.chat.ChatReceiveChannel;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -183,12 +184,5 @@ public class ChatReceivePacket extends Packet {
                 ", name='" + name + '\'' +
                 ", message='" + message + '\'' +
                 "} " + super.toString();
-    }
-
-    public enum ChatReceiveChannel {
-        PLANET,
-        UNIVERSE,
-        WHISPER,
-        COMMAND
     }
 }

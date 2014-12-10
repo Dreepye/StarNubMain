@@ -257,13 +257,6 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         }
     }
 
-    /**
-     * This method will send a Player Disconnect Event }
-     *
-     * After channel is inactive we want to remove the channel from
-     * the starbounddata.packets.global list.
-     * @param ctx
-     */
     @Override
     public void channelInactive (ChannelHandlerContext ctx) {
         closeConnection(ctx);
