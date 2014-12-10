@@ -42,7 +42,7 @@ public class GroupPermissions extends TableWrapper<GroupPermission, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private GroupPermissions(){
-        super(DatabaseConnection.getConnection(), 0, GroupPermission.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, GroupPermission.class, Integer.class);
     }
 
     public static GroupPermissions getInstance() {

@@ -193,18 +193,18 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         IntegerCache cache = (IntegerCache) lastActiveCache.getCache(connectingIp);
         int randomInt = RandomNumber.randInt(3000, 6000); //DEBUG CLOSE THREADS CHECK - RESOURCE CLEAN UP
         if (cache != null) {
-            int newTime = cache.getInteger() + randomInt;
-            cache.setInteger(newTime);
-            boolean isPastTime = cache.isPastDesignatedTimeRefreshTimeNowIfPast(newTime);
-            System.out.println(isPastTime); //REMOVE // DEBUG
+            int cachedTimer = cache.getInteger();
+            boolean isPastTime = cache.isPastDesignatedTimeRefreshTimeNowIfPast(cachedTimer);
+            System.out.println(cachedTimer);
             if(!isPastTime){
+                cache.setInteger(cachedTimer + randomInt);
                 ctx.close();
             } else {
-                cache.setInteger(0);
+                cache.setInteger(randomInt);
                 openServerConnection(ctx);
             }
         } else {
-            lastActiveCache.addCache(connectingIp, new IntegerCache(0));
+            lastActiveCache.addCache(connectingIp, new IntegerCache(randomInt));
             openServerConnection(ctx);
         }
     }

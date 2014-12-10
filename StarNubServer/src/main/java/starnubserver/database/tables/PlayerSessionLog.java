@@ -42,7 +42,7 @@ public class PlayerSessionLog extends TableWrapper<PlayerSession, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private PlayerSessionLog(){
-        super(DatabaseConnection.getConnection(), 0, PlayerSession.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, PlayerSession.class, Integer.class);
     }
 
     public static PlayerSessionLog getInstance() {

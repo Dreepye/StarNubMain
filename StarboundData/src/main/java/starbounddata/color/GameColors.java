@@ -18,6 +18,7 @@
 
 package starbounddata.color;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public final class GameColors {
     private volatile String defaultChatColor;
     private volatile String defaultServerNameColor;
     private volatile String defaultServerChatColor;
-    private final String STARBOUND_CHAT_DEFAULT = Colors.validate("#FFFF00", true);
+    private final String STARBOUND_CHAT_DEFAULT = Colors.validate("#FFFF00", true, true);
 
     /**
      * Must be private to ensure integrity of the singleton pattern
@@ -79,10 +80,10 @@ public final class GameColors {
      * <p>
      */
     public void setColors(String defaultNameColor, String defaultChatColor, String defaultServerNameColor, String defaultServerChatColor, String bracketColor) {
-        this.defaultNameColor = Colors.validate(defaultNameColor, true);
-        this.defaultChatColor = Colors.validate(defaultChatColor, true);
-        this.defaultServerNameColor = Colors.validate(defaultServerNameColor, true);
-        this.defaultServerChatColor = Colors.validate(defaultServerChatColor, true);
+        this.defaultNameColor = Colors.validate(defaultNameColor, true, true);
+        this.defaultChatColor = Colors.validate(defaultChatColor, true, true);
+        this.defaultServerNameColor = Colors.validate(defaultServerNameColor, true, true);
+        this.defaultServerChatColor = Colors.validate(defaultServerChatColor, true, true);
     }
 
     @Override
@@ -250,10 +251,51 @@ public final class GameColors {
 
         private final String hexValue;
         private final String shortcut;
+        private final static HashMap<String, String> QUICK_SHORTCUT_HEX = Colors.buildQuickShortcut();
+        private final static HashMap<String, String> QUICK_HEX_COLOR = Colors.buildQuickHex();
+        private final static HashMap<String, String> QUICK_COLOR_HEX = Colors.buildQuickColor();
 
         Colors(String hexValue, String shortcut) {
             this.hexValue = hexValue;
             this.shortcut = shortcut;
+        }
+
+        public String getHexValue() {
+            return hexValue;
+        }
+
+        public String getShortcut() {
+            return shortcut;
+        }
+
+        private static HashMap<String, String> buildQuickShortcut(){
+            HashMap<String, String> quickShortcut = new HashMap<>();
+            for (Colors c : Colors.values()){
+                String cHexValue = c.getHexValue().toLowerCase();
+                String cShortcut = c.getShortcut().toLowerCase();
+                quickShortcut.put(cShortcut, cHexValue);
+            }
+            return quickShortcut;
+        }
+
+        private static HashMap<String, String> buildQuickHex(){
+            HashMap<String, String> quickShortcut = new HashMap<>();
+            for (Colors c : Colors.values()){
+                String cHexValue = c.getHexValue().toLowerCase();
+                String cColor = c.toString().toLowerCase();
+                quickShortcut.put(cHexValue, cColor);
+            }
+            return quickShortcut;
+        }
+
+        private static HashMap<String, String> buildQuickColor(){
+            HashMap<String, String> quickShortcut = new HashMap<>();
+            for (Colors c : Colors.values()){
+                String cColor = c.toString().toLowerCase();
+                String cHexValue = c.getHexValue().toLowerCase();
+                quickShortcut.put(cColor, cHexValue);
+            }
+            return quickShortcut;
         }
 
         /**
@@ -266,14 +308,33 @@ public final class GameColors {
          * @param format boolean do you want to have it formatted for in game color display
          * @return String valid color string, will return null if color does not exist
          */
-        public static String validate(String string, boolean format) {
-            int index = string.contains("#") ? 2 : 1;
-            String substring = string.substring(index, string.lastIndexOf(";"));
+        public static String validate(String string, boolean format, boolean returnHex) {
+            string = string.toLowerCase();
+            int index = 0;
+            if (string.contains("#")){
+                index = string.indexOf("#") + 1;
+            } else if (string.contains("^")){
+                index = string.indexOf("^") + 1;
+            }
+            String substring = "";
+            if (string.contains(";")) {
+                substring = string.substring(index, string.lastIndexOf(";"));
+            } else {
+                substring = string.substring(index);
+            }
             int stringLength = substring.length();
             if ((stringLength == 3 || stringLength == 6) && string.matches(".*\\d.*")) {
-                return fromHex(substring, format);
+                if (QUICK_HEX_COLOR.containsKey(substring)) {
+                    return format(substring, true);
+                } else {
+                    return GameColors.getInstance().getDefaultChatColor();
+                }
             } else {
-                return fromColor(substring, format);
+                if (QUICK_COLOR_HEX.containsKey(substring)){
+                    return format(substring, false);
+                } else {
+                    return GameColors.getInstance().getDefaultChatColor();
+                }
             }
         }
 
@@ -287,14 +348,18 @@ public final class GameColors {
          * @param format boolean do you want to have it formatted for in game color display
          * @return String representing the color value
          */
-        public static String fromHex(String hex, boolean format) {
+        public static String fromHex(String hex, boolean format, boolean returnHex) {
             hex = cleanString(hex);
             for (Colors c : Colors.values()) {
                 if (c.hexValue.equalsIgnoreCase(hex)) {
-                    return format ? format(c.toString(), false) : c.toString();
+                    if (!returnHex) {
+                        return format ? format(c.toString(), false) : c.toString();
+                    } else {
+                        return format ? format(c.getHexValue(), true) : c.getHexValue();
+                    }
                 }
             }
-            return null;
+            return GameColors.getInstance().getDefaultChatColor();
         }
 
         /**
@@ -307,14 +372,18 @@ public final class GameColors {
          * @param format boolean do you want to have it formatted for in game color display
          * @return String representing the hex value of the color
          */
-        public static String fromColor(String color, boolean format) {
+        public static String fromColor(String color, boolean format, boolean returnHex) {
             color = cleanString(color);
             for (Colors c : Colors.values()) {
                 if (c.toString().equalsIgnoreCase(color)) {
-                    return format ? format(c.getHexValue(), true) : c.getHexValue();
+                    if (!returnHex) {
+                        return format ? format(c.toString(), false) : c.toString();
+                    } else {
+                        return format ? format(c.getHexValue(), true) : c.getHexValue();
+                    }
                 }
             }
-            return null;
+            return GameColors.getInstance().getDefaultChatColor();
         }
 
         /**
@@ -342,22 +411,10 @@ public final class GameColors {
          *
          * @param string String repenting the value to be formatted for in game
          * @param hex    boolean representing if the value is a hex value or not
-         * @return String representing the string formmated for in game
+         * @return String representing the string formatted for in game
          */
         public static String format(String string, boolean hex) {
             return hex ? "^#" + string + ";" : "^" + string + ";";
-        }
-
-        @Override
-        public String toString() {
-            return "Colors{" +
-                    "hexValue='" + hexValue + '\'' +
-                    ", shortcut='" + shortcut + '\'' +
-                    "} " + super.toString();
-        }
-
-        public String getHexValue() {
-            return hexValue;
         }
 
         /**
@@ -374,7 +431,7 @@ public final class GameColors {
             Matcher m = p.matcher(string);
             StringBuffer sb = new StringBuffer();
             while (m.find()) {
-                String shortcut = m.group();
+                String shortcut = m.group().toLowerCase();
                 String replacement = Colors.fromShortcut(shortcut, true, true);
                 m.appendReplacement(sb, replacement);
             }
@@ -402,8 +459,50 @@ public final class GameColors {
                     }
                 }
             }
-            return null;
+            return GameColors.getInstance().getDefaultChatColor();
         }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will replace shortcuts with the hex color tag
+         * <p>
+         *
+         * @param string String representing the whole entire message to be scanned for color shortcuts
+         * @return String representing the whole entire message with the shortcut colors replaced with hex colors for game display
+         */
+        public static String speedyShortcutReplacement(String string) {
+            Pattern p = Pattern.compile("\\{.\\}");
+            Matcher m = p.matcher(string);
+            StringBuffer sb = new StringBuffer();
+            while (m.find()) {
+                String shortcut = m.group().toLowerCase();
+                String replacement = QUICK_SHORTCUT_HEX.get(shortcut);
+                m.appendReplacement(sb, replacement);
+            }
+            return m.appendTail(sb).toString();
+        }
+
+        /**
+         * Recommended: For Plugin Developers & Anyone else.
+         * <p>
+         * Uses: This method will return a color or hex based on a shortcut.
+         * <p>
+         *
+         * @param shortcut String shortcut to be looked up
+         * @return String representing the looked up value
+         */
+        public static String speedyFromShortcut(String shortcut) {
+            for (Colors c : Colors.values()) {
+                if (c.shortcut.equalsIgnoreCase(shortcut)) {
+                    return "^#" + c.getHexValue() + ";";
+                }
+            }
+            return GameColors.getInstance().getDefaultChatColor();
+        }
+
+
+
 
         /**
          * Recommended: For Plugin Developers & Anyone else.
@@ -434,10 +533,6 @@ public final class GameColors {
          */
         private static Color buildColor(Colors c) {
             return new Color(c.toString(), c.getHexValue(), c.getShortcut());
-        }
-
-        public String getShortcut() {
-            return shortcut;
         }
 
         /**

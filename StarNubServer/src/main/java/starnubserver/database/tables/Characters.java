@@ -42,7 +42,7 @@ public class Characters extends TableWrapper<PlayerCharacter, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private Characters(){
-        super(DatabaseConnection.getConnection(), 0, PlayerCharacter.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, PlayerCharacter.class, Integer.class);
     }
 
     public static Characters getInstance() {

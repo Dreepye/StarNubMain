@@ -42,7 +42,7 @@ public class GroupAssignments extends TableWrapper<GroupAssignment, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private GroupAssignments(){
-        super(DatabaseConnection.getConnection(), 0, GroupAssignment.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, GroupAssignment.class, Integer.class);
     }
 
     public static GroupAssignments getInstance() {

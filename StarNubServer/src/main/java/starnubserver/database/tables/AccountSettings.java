@@ -42,7 +42,7 @@ public class AccountSettings extends TableWrapper<Settings, String> {
      * This constructor is private - Singleton Pattern
      */
     private AccountSettings(){
-        super(DatabaseConnection.getConnection(), 0, Settings.class, String.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, Settings.class, String.class);
     }
 
     public static AccountSettings getInstance() {

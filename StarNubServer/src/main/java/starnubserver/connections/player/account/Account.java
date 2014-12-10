@@ -20,7 +20,6 @@ package starnubserver.connections.player.account;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
@@ -32,10 +31,7 @@ import starnubserver.resources.files.GroupsManagement;
 import utilities.crypto.PasswordHash;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -75,13 +71,12 @@ public class Account implements Serializable{
     @DatabaseField(dataType = DataType.STRING, columnName = "SALT")
     private volatile String accountSalt;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 9, columnName = "SETTINGS_ID")
+    @DatabaseField(foreign = true, columnName = "SETTINGS_ID")
     private volatile Settings accountSettings;
 
     @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_LOGIN")
     private volatile DateTime lastLogin;
 
-    @ForeignCollectionField(eager = true, columnName = "GROUP_ASSIGNMENTS")
     private final HashSet<Group> GROUP_ASSIGNMENTS = new HashSet<>();
 
     /**
@@ -106,7 +101,6 @@ public class Account implements Serializable{
 
             }
         }
-
         ACCOUNTS_DB.createIfNotExist(this);
         updateTagsMainGroups();
     }
@@ -178,6 +172,26 @@ public class Account implements Serializable{
 
     public Set<String> getAllGroupNames(){
         return getAllGroups().stream().map(Group::getName).collect(Collectors.toSet());
+    }
+
+    public TreeMap<Integer, Group> getAllGroupsOrderedByRank(){
+        TreeMap<Integer, Group> finalGroupList = new TreeMap<>();
+        HashSet<String> groupsComplete = new HashSet<>();
+        for (Group group : GROUP_ASSIGNMENTS){
+            finalGroupList.put(group.getLadderRank(), group);
+        }
+        groupsComplete.addAll(GROUP_ASSIGNMENTS.stream().map(Group::getName).collect(Collectors.toList()));
+        for(Group groupFromFinal : finalGroupList.values()){
+            HashSet<Group> inheritedGroups = groupFromFinal.getINHERITED_GROUPS();
+            for (Group groupToInherit : inheritedGroups) {
+                String groupName = groupToInherit.getName();
+                if (!groupsComplete.contains(groupName)){
+                    finalGroupList.put(groupToInherit.getLadderRank(), groupToInherit);
+                    groupsComplete.add(groupName);
+                }
+            }
+        }
+        return finalGroupList;
     }
 
     public LinkedHashSet<Group> getAllGroups(){

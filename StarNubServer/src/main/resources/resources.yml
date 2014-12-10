@@ -108,7 +108,7 @@ default_groups_configuration: {
         "tag": {
           "brackets": [ '[', ']' ],
           "bracket_color": "#FFFF00",
-          "color": "#F58LLB",
+          "color": "#f5811b",
           "look": "Owner"
         },
         "type": "regular",
@@ -163,8 +163,8 @@ default_groups_configuration: {
           "starnubserver.admin.kick",
           "starnubserver.admin.ban",
           "starnubserver.appear.*",
-          "starnubinternals.starbounddata.packets.chat.*",
-          "starnubinternals.NAME.*",
+          "starnubinternals.chat.*",
+          "starnubinternals.name.*",
           "starnubserver.admin.restart",
           "starnubserver.admin.broadcast"
         ]
@@ -271,12 +271,12 @@ default_groups_configuration: {
         },
         "permissions": [
           "starnubserver.commands.*",
-          "starnubinternals.NAME.color",
-          "starnubinternals.NAME.singlespaces",
+          "starnubinternals.name.color",
+          "starnubinternals.name.singlespaces",
           "starnubinternals.chatrate.5000",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.starnubserver.starbounddata.packets.chat",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.starnubserver.whisper",
-          "starnubinternals.starbounddata.packets.starbounddata.packets.starnubserver.commands",
+          "starnubinternals.chat",
+          "starnubinternals.whisper",
+          "starnubinternals.commands",
           "starboundmanager.w",
           "starboundmanager.r",
           "starboundmanager.nick",

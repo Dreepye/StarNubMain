@@ -8,6 +8,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
+import starnubserver.logger.MultiOutputLogger;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -51,7 +52,12 @@ public abstract class TableWrapper<T1, T2> {
             try {
                 tableDao = DaoManager.createDao(connection, typeParameterDBClass);
             } catch (SQLException e) {
-                StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+                MultiOutputLogger logger = StarNub.getLogger();
+                if (logger != null) {
+                    logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+                } else {
+                    e.printStackTrace();
+                }
             }
         }
         try {
@@ -61,7 +67,12 @@ public abstract class TableWrapper<T1, T2> {
                 tableUpdater(connection, oldVersion);
             }
         } catch (SQLException e){
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -75,7 +86,12 @@ public abstract class TableWrapper<T1, T2> {
                 /*  We don't care if it was a duplicate column so we will ignore this StackTrace */
                 return;
             } else {
-                StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+                MultiOutputLogger logger = StarNub.getLogger();
+                if (logger != null) {
+                    logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+                } else {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -85,7 +101,12 @@ public abstract class TableWrapper<T1, T2> {
             tableDao.createIfNotExists(persistedClass);
             return true;
         } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -95,7 +116,12 @@ public abstract class TableWrapper<T1, T2> {
             tableDao.create(persistedClass);
             return true;
         } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -105,7 +131,12 @@ public abstract class TableWrapper<T1, T2> {
             tableDao.createOrUpdate(persistedClass);
             return true;
         } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -115,7 +146,12 @@ public abstract class TableWrapper<T1, T2> {
             tableDao.update(persistedClass);
             return true;
         } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -125,7 +161,12 @@ public abstract class TableWrapper<T1, T2> {
             tableDao.refresh(persistedClass);
             return true;
         } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -135,7 +176,12 @@ public abstract class TableWrapper<T1, T2> {
             tableDao.delete(persistedClass);
             return true;
         } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            MultiOutputLogger logger = StarNub.getLogger();
+            if (logger != null) {
+                logger.cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+            } else {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -181,7 +227,7 @@ public abstract class TableWrapper<T1, T2> {
         try {
             return getTableDao().queryForAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
             return null;
         }
     }
@@ -192,7 +238,7 @@ public abstract class TableWrapper<T1, T2> {
                     .eq(columnName, searchTerm)
                     .query();
         } catch (SQLException e) {
-            e.printStackTrace();
+            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
             return null;
         }
     }

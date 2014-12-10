@@ -50,7 +50,7 @@ public class Group {
     @DatabaseField(dataType = DataType.STRING, columnName = TYPE_COLUMN)
     private volatile String type;
 
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true, columnName = TAG_ID_COLUMN)
+    @DatabaseField(canBeNull = true, foreign = true, columnName = TAG_ID_COLUMN)
     private volatile Tag tag;
 
     @DatabaseField(dataType = DataType.STRING, columnName = LADDER_NAME_COLUMN)
@@ -107,12 +107,15 @@ public class Group {
     public Group(String name, Map<String, Object> group, boolean createEntry) {
         this.name = name;
         this.type = (String) group.get("type");
+        Map<String, Object> groupLadderData = (Map<String, Object>) group.get("group_ranking");
+        this.ladderName = (String) groupLadderData.get("name");
+        this.ladderRank = (int) groupLadderData.get("rank");
         Map<String, Object> tagData = (Map<String, Object>) group.get("tag");
         String tagName = (String) tagData.get("look");
         String tagColor = (String) tagData.get("color");
         List<String> brackets = (List<String>) tagData.get("brackets");
         String bracketColor = (String) tagData.get("bracket_color");
-        this.tag = new Tag(tagName, tagColor, "group",brackets.get(0), brackets.get(1), bracketColor, true);
+        this.tag = new Tag(tagName, tagColor, "group", brackets.get(0), brackets.get(1), bracketColor, true);
         List<String> inheritedGroups = (List<String>) group.get("inherited_groups");
         List<String> permissions = (List<String>) group.get("permissions");
         INHERITED_GROUPS_STRINGS.addAll(inheritedGroups);
@@ -382,7 +385,6 @@ public class Group {
             }
         }
     }
-
 
     @Override
     public String toString() {

@@ -42,7 +42,7 @@ public class AccountPermissions extends TableWrapper<AccountPermission, Integer>
      * This constructor is private - Singleton Pattern
      */
     private AccountPermissions(){
-        super(DatabaseConnection.getConnection(), 0, AccountPermission.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, AccountPermission.class, Integer.class);
     }
 
     public static AccountPermissions getInstance() {

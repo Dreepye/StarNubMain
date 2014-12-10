@@ -23,7 +23,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import starnubserver.connections.player.account.Account;
+import starnubserver.connections.player.account.Settings;
+import starnubserver.connections.player.generic.Tag;
+import starnubserver.database.tables.AccountSettings;
+import starnubserver.database.tables.Accounts;
 import starnubserver.database.tables.Characters;
+import starnubserver.database.tables.Tags;
 import starnubserver.events.events.StarNubEvent;
 import utilities.strings.StringUtilities;
 
@@ -105,7 +110,22 @@ public class PlayerCharacter implements Serializable {
     public static PlayerCharacter getPlayerCharacter(String name, UUID uuid){
         PlayerCharacter playerCharacter = getCharacterByNameUUIDCombo(name, uuid);
         if (playerCharacter != null) {
-            playerCharacter.getAccount().refreshAccount(true, true);
+            Account account = playerCharacter.getAccount();
+            Accounts.getInstance().refresh(account);
+            if (account != null){
+                Settings settings = account.getAccountSettings();
+                AccountSettings.getInstance().refresh(settings);
+                if(settings != null){
+                    Tag prefix1 = settings.getChatPrefix1();
+                    Tag prefix2 = settings.getChatPrefix2();
+                    Tag suffix1 = settings.getChatSuffix1();
+                    Tag suffix2 = settings.getChatSuffix2();
+                    Tags.getInstance().refresh(prefix1);
+                    Tags.getInstance().refresh(prefix2);
+                    Tags.getInstance().refresh(suffix1);
+                    Tags.getInstance().refresh(suffix2);
+                }
+            }
             return playerCharacter;
         } else {
             playerCharacter = new PlayerCharacter(name, uuid, true);
@@ -148,8 +168,8 @@ public class PlayerCharacter implements Serializable {
     }
 
     public void updatePlayedTimeLastSeen() {
+        this.playedTime = this.playedTime + (DateTime.now().getMillis()-lastSeen.getMillis());
         this.lastSeen = DateTime.now();
-        this.playedTime = this.getPlayedTime()+(DateTime.now().getMillis()-lastSeen.getMillis());
         CHARACTERS_DB.update(this);
     }
 

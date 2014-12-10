@@ -42,7 +42,7 @@ public class GroupInheritances extends TableWrapper<GroupInheritance, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private GroupInheritances(){
-        super(DatabaseConnection.getConnection(), 0, GroupInheritance.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, GroupInheritance.class, Integer.class);
     }
 
     public static GroupInheritances getInstance() {

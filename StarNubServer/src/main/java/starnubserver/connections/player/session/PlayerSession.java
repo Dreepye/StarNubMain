@@ -40,6 +40,7 @@ import starnubserver.connections.player.groups.*;
 import starnubserver.database.tables.*;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.NameBuilder;
+import starnubserver.resources.files.GroupsManagement;
 import utilities.events.types.StringEvent;
 import utilities.exceptions.CacheWrapperOperationException;
 import utilities.exceptions.CollectionDoesNotExistException;
@@ -49,6 +50,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * StarNub's Player class that represents a sender. This class
@@ -67,7 +69,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerSession extends StarNubProxyConnection {
 
     private final static PlayerSessionLog PLAYER_SESSION_LOG_DB = PlayerSessionLog.getInstance();
-    private final static NoAccountGroup NO_ACCOUNT_GROUP = NoAccountGroup.getInstance();
     private final static NameBuilder NAME_BUILDER = NameBuilder.getInstance();
 
     //TODO DB COLUMNS - METHODS
@@ -111,7 +112,6 @@ public class PlayerSession extends StarNubProxyConnection {
         this.startTimeUtc = DateTime.now();
         this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
         this.playerCharacter = PlayerCharacter.getPlayerCharacter(playerName, playerUUID);
-        Accounts.getInstance().refresh(this.playerCharacter.getAccount());
         this.gameName = playerCharacter.getName();
         this.nickName = playerCharacter.getName();
         this.cleanNickName = playerCharacter.getCleanName();
@@ -338,6 +338,9 @@ public class PlayerSession extends StarNubProxyConnection {
         return CharacterIP.getCharacterIpLogsByCharacter(playerCharacter);
     }
 
+    //Get game tags
+    //Get console tags
+
     public void sendChatMessage(Object sender, ChatReceivePacket.ChatReceiveChannel channel, String message) {
         String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
         ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "", 0, nameOfSender, message);
@@ -378,7 +381,6 @@ public class PlayerSession extends StarNubProxyConnection {
             new ClientDisconnectRequestPacket(SERVER_CTX);
             new ServerDisconnectPacket(CLIENT_CTX, "");
         }
-
     }
 
     /* Permission Methods*/
@@ -392,14 +394,20 @@ public class PlayerSession extends StarNubProxyConnection {
         Account account = playerCharacter.getAccount();
         LinkedHashSet<String> permissions = new LinkedHashSet<>();
         if(account == null){
-            permissions.addAll(NO_ACCOUNT_GROUP.getGROUP_PERMISSIONS());
+            GroupsManagement.getInstance().getGROUPS().values().stream().filter(group -> group.getType().equalsIgnoreCase("noaccount")).forEach(group -> {
+                permissions.addAll(group.getGROUP_PERMISSIONS());
+            });
         } else {
-            LinkedHashSet<Group> allGroups = account.getAllGroups();
-            for (Group group : allGroups){
+            List<AccountPermission> accountPermissions = AccountPermission.getAccountPermissionsByAccount(account);
+            permissions.addAll(accountPermissions.stream().map(AccountPermission::getPermission).collect(Collectors.toList()));
+            TreeMap<Integer, Group> allGroups = account.getAllGroupsOrderedByRank();
+            NavigableMap<Integer, Group> navigableMap = allGroups.descendingMap();
+            for (Group group : navigableMap.values()){
                 permissions.addAll(group.getGROUP_PERMISSIONS());
             }
         }
         permissions.forEach(this::addPermissionToMap);
+        System.out.println(PERMISSIONS);
     }
 
     public String addPermission(String permission){

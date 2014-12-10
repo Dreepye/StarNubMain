@@ -77,10 +77,10 @@ public class Tag {
     public Tag(String name, String color, String type, String leftBracket, String rightBracket, String bracketColor, boolean createEntry) {
         this.name = name;
         this.type = type;
-        this.color = GameColors.Colors.validate(color, true);
+        this.color = GameColors.Colors.validate(color, true, true);
         this.leftBracket = leftBracket;
         this.rightBracket = rightBracket;
-        this.bracketColor = bracketColor;
+        this.bracketColor = GameColors.Colors.validate(bracketColor, true, true);
         setTagCache(createEntry);
     }
 
@@ -147,7 +147,7 @@ public class Tag {
     }
 
     private void setTagCache(boolean createOrUpdate){
-        this.builtConsoleTag = rightBracket + name + leftBracket;
+        this.builtConsoleTag = leftBracket + name + rightBracket;
         this.builtGameTag =
                 bracketColor + leftBracket +
                 color + name +

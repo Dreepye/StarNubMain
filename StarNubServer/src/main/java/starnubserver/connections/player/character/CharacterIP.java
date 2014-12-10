@@ -89,8 +89,8 @@ public class CharacterIP {
     }
 
     public void logCharacterIp(){
-        if (!ipCharacterLogCheck(this)) {
-            CHARACTER_IP_LOG_DB.create(this);
+        if (!ipCharacterLogCheck(this.playerCharacter)) {
+            CHARACTER_IP_LOG_DB.createOrUpdate(this);
             new StarNubEvent("Player_Character_New_IP", this);
         }
     }
@@ -119,8 +119,8 @@ public class CharacterIP {
         this.sessionIpString = sessionIpString;
     }
 
-    public boolean ipCharacterLogCheck(CharacterIP characterIP){
-        CharacterIP characterIpLogs = CHARACTER_IP_LOG_DB.getMatchingColumn1FirstSimilarColumn2(CHARACTER_ID_COLUMN, characterIP, IP_COLUMN, sessionIpString);
+    public boolean ipCharacterLogCheck(PlayerCharacter playerCharacter){
+        CharacterIP characterIpLogs = CHARACTER_IP_LOG_DB.getMatchingColumn1FirstSimilarColumn2(CHARACTER_ID_COLUMN, playerCharacter, IP_COLUMN, sessionIpString);
         return characterIpLogs != null;
     }
 

@@ -43,7 +43,7 @@ public class CharacterIPLog extends TableWrapper<CharacterIP, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private CharacterIPLog(){
-        super(DatabaseConnection.getConnection(), 0, CharacterIP.class, Integer.class);
+        super(DatabaseConnection.getInstance().getConnection(), 0, CharacterIP.class, Integer.class);
     }
 
     public static CharacterIPLog getInstance() {

@@ -34,7 +34,7 @@ public class DatabaseConnection {
      * Represents the only instance of this class - Singleton Pattern
      */
     private static final DatabaseConnection instance = new DatabaseConnection();
-    private static ConnectionSource connection;
+    private ConnectionSource connection;
 
     /**
      * This constructor is private - Singleton Pattern
@@ -70,7 +70,7 @@ public class DatabaseConnection {
         return instance;
     }
 
-    public static ConnectionSource getConnection() {
+    public ConnectionSource getConnection() {
         return connection;
     }
 

@@ -40,7 +40,7 @@ public class GroupsManagement extends YAMLWrapper {
     /**
      * Represents the only instance of this class - Singleton Pattern
      */
-    private static final GroupsManagement instance = new GroupsManagement();
+    private static final GroupsManagement instance = new GroupsManagement(); //DEBUG
 
     private final ConcurrentHashMap<String, Group> GROUPS = new ConcurrentHashMap<>();
 
@@ -59,7 +59,7 @@ public class GroupsManagement extends YAMLWrapper {
                 true,
                 true
         );
-        StarNub.getLogger().cErrPrint("StarNub", groupSynchronizeFileToDB());
+        StarNub.getLogger().cInfoPrint("StarNub", groupSynchronizeFileToDB());
     }
 
     /**
@@ -83,13 +83,12 @@ public class GroupsManagement extends YAMLWrapper {
             return "The GROUPS from file could not be synchronized with the Database GROUPS, make sure that the StarNub/GROUPS.yml file exist and that their is no YAML syntax errors.";
         }
         synchronizeGroupsFileToDB();
-        return null;
+        return "Synchronized Temp Message";
     }
 
     private void synchronizeGroupsFileToDB(){
         databasePurge();
         constructGroups();
-        setGroupInheritances();
     }
 
     public void databasePurge(){

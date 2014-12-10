@@ -18,7 +18,6 @@
 
 package starnubserver.resources;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
 import starnubserver.connections.player.generic.Ban;
@@ -26,7 +25,6 @@ import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.database.tables.Bans;
 import starnubserver.events.events.StarNubEvent;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,16 +50,12 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
      */
     private void banLoad() {
         new StarNubEvent("StarNub_Bans_Loading", this);
-        try {
-            List<Ban> bans = Bans.getInstance().getTableDao().queryForAll();
-            for (Ban ban : bans) {
-                ban = banPurgeCheck(ban);
-                if (ban != null){
-                    this.put(ban.getBanIdentifier(), ban);
-                }
+        List<Ban> bans = Bans.getInstance().getAll();
+        for (Ban ban : bans) {
+            ban = banPurgeCheck(ban);
+            if (ban != null){
+                this.put(ban.getBanIdentifier(), ban);
             }
-        } catch (SQLException e) {
-            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
         }
         new StarNubEvent("StarNub_Bans_Loaded", this);
     }
