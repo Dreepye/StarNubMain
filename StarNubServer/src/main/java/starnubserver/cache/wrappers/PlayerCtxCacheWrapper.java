@@ -23,6 +23,7 @@ package starnubserver.cache.wrappers;
         import starnubserver.events.starnub.StarNubEventHandler;
         import starnubserver.events.starnub.StarNubEventSubscription;
         import utilities.cache.wrappers.CacheWrapper;
+        import utilities.events.Priority;
         import utilities.events.types.Event;
 
         import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -75,7 +76,7 @@ public class PlayerCtxCacheWrapper extends CacheWrapper<ChannelHandlerContext> {
      */
     @Override
     public void registerEvents() {
-        new StarNubEventSubscription("StarNub", "Player_Disconnected", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Disconnected", new StarNubEventHandler<Event<String>>() {
             @Override
             @SuppressWarnings("unchecked")
             public void onEvent(Event eventData) {

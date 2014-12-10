@@ -35,6 +35,7 @@ import starnubserver.resources.files.Operators;
 import starnubserver.resources.connections.handlers.ClientConnectHandler;
 import starnubserver.resources.connections.handlers.ConnectionResponseHandler;
 import starnubserver.resources.connections.handlers.ServerDisconnectHandler;
+import utilities.events.Priority;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -77,9 +78,9 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
         this.ACCEPT_REJECT  = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, StarNub.getTaskManager(), 20, concurrencyLevel, TimeUnit.MINUTES, 1, 60);
-        new PacketEventSubscription("StarNub", ClientConnectPacket.class, true, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
-        new PacketEventSubscription("StarNub", ConnectResponsePacket.class, true, new ConnectionResponseHandler(CONNECTIONS));
-        new PacketEventSubscription("StarNub", ServerDisconnectPacket.class, true, new ServerDisconnectHandler(CONNECTIONS));
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new ConnectionResponseHandler(CONNECTIONS));
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
         new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
         new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
         new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);

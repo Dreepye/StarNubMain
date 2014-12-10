@@ -143,6 +143,7 @@ public final class StarNub {
         STARBOUND_SERVER.getUdpProxyServer().start();
         new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
 
+
 //        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", StarNub::tempTime));
     }
 }

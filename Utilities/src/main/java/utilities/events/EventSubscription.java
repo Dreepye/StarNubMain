@@ -10,17 +10,23 @@ package utilities.events;
 public abstract class EventSubscription<T>{
 
     private final String SUBSCRIBER_NAME;
+    private final Priority PRIORITY;
     private final EventHandler<T> EVENT_HANDLER;
 
     public String getSUBSCRIBER_NAME() {
         return SUBSCRIBER_NAME;
     }
 
+    public Priority getPRIORITY() {
+        return PRIORITY;
+    }
+
     public EventHandler<T> getEVENT_HANDLER() {
         return EVENT_HANDLER;
     }
 
-    public EventSubscription(String SUBSCRIBER_NAME, EventHandler<T> EVENT_HANDLER) {
+    public EventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, EventHandler<T> EVENT_HANDLER) {
+        this.PRIORITY = PRIORITY;
         this.SUBSCRIBER_NAME = SUBSCRIBER_NAME;
         this.EVENT_HANDLER = EVENT_HANDLER;
     }
@@ -35,5 +41,13 @@ public abstract class EventSubscription<T>{
      */
     public abstract void removeRegistration();
 
+    @Override
+    public String toString() {
+        return "EventSubscription{" +
+                "SUBSCRIBER_NAME='" + SUBSCRIBER_NAME + '\'' +
+                ", PRIORITY=" + PRIORITY +
+                ", EVENT_HANDLER=" + EVENT_HANDLER +
+                '}';
+    }
 }
 

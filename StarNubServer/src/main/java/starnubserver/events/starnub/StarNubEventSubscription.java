@@ -20,6 +20,7 @@ package starnubserver.events.starnub;
 
 import starnubserver.StarNub;
 import utilities.events.EventSubscription;
+import utilities.events.Priority;
 import utilities.events.types.Event;
 
 /**
@@ -37,15 +38,18 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription but it will not be registered, you must invoke submitRegistration
+     * Uses: This will set up an event subscription but it will be automatically registered
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
      * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
      */
-    public StarNubEventSubscription(String SUBSCRIBER_NAME, String EVENT_KEY, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
-        super(SUBSCRIBER_NAME, EVENT_HANDLER);
+    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
+        super(SUBSCRIBER_NAME,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
+        submitRegistration();
     }
 
     /**
@@ -58,8 +62,10 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      * @param register boolean do you want to auto register this event
      * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
      */
-    public StarNubEventSubscription(String SUBSCRIBER_NAME, String EVENT_KEY, boolean register, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
-        super(SUBSCRIBER_NAME, EVENT_HANDLER);
+    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
+        super(SUBSCRIBER_NAME,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         if (register) {
             submitRegistration();

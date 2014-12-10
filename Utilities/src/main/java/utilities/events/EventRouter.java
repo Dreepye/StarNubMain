@@ -1,7 +1,9 @@
 package utilities.events;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Represents an EventRouter to be used with {@link utilities.events.EventSubscription} and {@link utilities.events.EventHandler}
@@ -31,11 +33,17 @@ public abstract class EventRouter<T1, T2, T3> {
      */
     @SuppressWarnings("unchecked")
     public void registerEventSubscription(T1 eventKey, EventSubscription eventSubscription){
-            if (!EVENT_SUBSCRIPTION_MAP.containsKey(eventKey)){
-                EVENT_SUBSCRIPTION_MAP.put(eventKey, new HashSet<>());
-            }
+        if (!EVENT_SUBSCRIPTION_MAP.containsKey(eventKey)){
+            EVENT_SUBSCRIPTION_MAP.put(eventKey, new HashSet<>());
+        } else {
             synchronized (HASHSET_LOCK_OBJECT_1) {
-                EVENT_SUBSCRIPTION_MAP.get(eventKey).add(eventSubscription);
+                HashSet<EventSubscription> eventSubscriptionHashSet = EVENT_SUBSCRIPTION_MAP.get(eventKey);
+                eventSubscriptionHashSet.add(eventSubscription);
+                eventSubscriptionHashSet = eventSubscriptionHashSet.stream()
+                                                .sorted((es1, es2) -> es1.getPRIORITY().compareTo(es2.getPRIORITY()))
+                                                .collect(Collectors.toCollection(LinkedHashSet::new));
+                EVENT_SUBSCRIPTION_MAP.put(eventKey, eventSubscriptionHashSet);
+            }
         }
     }
 
@@ -88,4 +96,12 @@ public abstract class EventRouter<T1, T2, T3> {
      * @return T2 returns the handled event data back
      */
     public abstract void handleEvent(T2 event);
+
+    @Override
+    public String toString() {
+        return "EventRouter{" +
+                "HASHSET_LOCK_OBJECT_1=" + HASHSET_LOCK_OBJECT_1 +
+                ", EVENT_SUBSCRIPTION_MAP=" + EVENT_SUBSCRIPTION_MAP +
+                '}';
+    }
 }

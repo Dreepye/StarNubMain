@@ -21,6 +21,7 @@ package starnubserver.events.packet;
 import starbounddata.packets.Packet;
 import starnubserver.StarNub;
 import utilities.events.EventSubscription;
+import utilities.events.Priority;
 
 /**
  * Represents StarNubs PacketEventSubscription that can self register or be manually registered with the
@@ -36,29 +37,34 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription but it will not be registered, you must invoke submitRegistration
+     * Uses: This will set up an event subscription ane it will be automatically be registered.
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
      * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
      */
-    public PacketEventSubscription(String SUBSCRIBER_NAME, Class<? extends Packet> EVENT_KEY, PacketEventHandler EVENT_HANDLER) {
-        super(SUBSCRIBER_NAME, EVENT_HANDLER);
+    public PacketEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, Class<? extends Packet> EVENT_KEY, PacketEventHandler EVENT_HANDLER) {
+        super(SUBSCRIBER_NAME,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
+        submitRegistration();
     }
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register
+     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register else you must invoke .submitRegistration();
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
      * @param register boolean do you want to auto register this event
      * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
      */
-    public PacketEventSubscription(String SUBSCRIBER_NAME, Class<? extends Packet> EVENT_KEY, boolean register, PacketEventHandler EVENT_HANDLER) {
-        super(SUBSCRIBER_NAME, EVENT_HANDLER);
+    public PacketEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, Class<? extends Packet> EVENT_KEY, boolean register, PacketEventHandler EVENT_HANDLER) {
+        super(SUBSCRIBER_NAME,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         if (register) {
             submitRegistration();

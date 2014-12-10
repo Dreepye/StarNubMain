@@ -37,6 +37,7 @@ import starnubserver.events.packet.PacketEventHandler;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import utilities.cache.objects.TimeCache;
+import utilities.events.Priority;
 import utilities.events.types.Event;
 import utilities.exceptions.CacheWrapperOperationException;
 import utilities.time.DateAndTimes;
@@ -62,7 +63,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         this.ALREADY_LOGGED_ON = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Character Already Online", true, StarNub.getTaskManager(), 20, expectedThreads, TimeUnit.MINUTES, 10, 60);
         this.RESERVED_KICKED = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Reserved Kick", true, StarNub.getTaskManager(), 20, expectedThreads, TimeUnit.MINUTES, 10, 60);
         /* Register and event handler to notify player if they were kicked for a reserved player */
-        new StarNubEventSubscription("StarNub", "Player_Connected", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL ,"Player_Connected", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();

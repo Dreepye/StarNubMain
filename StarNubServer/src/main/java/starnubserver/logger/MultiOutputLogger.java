@@ -7,6 +7,7 @@ import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import starnubserver.resources.NameBuilder;
+import utilities.events.Priority;
 import utilities.events.types.Event;
 import utilities.strings.StringUtilities;
 import utilities.time.DateAndTimes;
@@ -164,7 +165,7 @@ public class MultiOutputLogger {
     }
 
     public void eventListenerRegistration() {
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Event", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Event", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -189,7 +190,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Debug", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Debug", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -214,7 +215,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Chat", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Chat", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -239,7 +240,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Command", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Command", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -264,7 +265,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Information", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Information", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -289,7 +290,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Warning", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Warning", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -314,7 +315,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Error", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Error", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
@@ -340,7 +341,7 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", "StarNub_Log_Fatal", true, new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Fatal", new StarNubEventHandler<Event<String>>() {
             @Override
             public void onEvent(Event<String> eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
