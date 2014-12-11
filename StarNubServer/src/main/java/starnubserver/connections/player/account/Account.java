@@ -98,7 +98,7 @@ public class Account implements Serializable{
         for (Group group : groups.values()){
             String groupType = group.getType();
             if (groupType.equalsIgnoreCase("default")){
-
+                GROUP_ASSIGNMENTS.add(group);
             }
         }
         ACCOUNTS_DB.createIfNotExist(this);

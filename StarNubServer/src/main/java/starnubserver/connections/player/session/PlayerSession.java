@@ -22,6 +22,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import generic.BanType;
+import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import starbounddata.chat.ChatReceiveChannel;
@@ -32,6 +33,7 @@ import starbounddata.packets.chat.ChatSendPacket;
 import starbounddata.packets.connection.ClientDisconnectRequestPacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubserver.StarNub;
+import starnubserver.connections.player.StarNubConnection;
 import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.account.Account;
 import starnubserver.connections.player.account.AccountPermission;
@@ -45,6 +47,8 @@ import starnubserver.database.tables.PlayerSessionLog;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.NameBuilder;
 import starnubserver.resources.files.GroupsManagement;
+import utilities.connectivity.ConnectionType;
+import utilities.connectivity.connection.Connection;
 import utilities.events.types.StringEvent;
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.strings.StringUtilities;
@@ -69,26 +73,33 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 @DatabaseTable(tableName = "PLAYER_SESSION_LOG")
-public class PlayerSession extends StarNubProxyConnection {
+public class PlayerSession {
 
     private final static PlayerSessionLog PLAYER_SESSION_LOG_DB = PlayerSessionLog.getInstance();
     private final static NameBuilder NAME_BUILDER = NameBuilder.getInstance();
 
-    //TODO DB COLUMNS - METHODS
+    //TODO DB METHODS
 
-    @DatabaseField(generatedId = true, columnName = "SESSION_ID")
+    /* COLUMN NAMES */
+    private final static String SESSION_ID_COLUMN = "SESSION_ID";
+    private final static String IP_COLUMN = "IP";
+    private final static String START_TIME_COLUMN = "START_TIME";
+    private final static String END_TIME_COLUMN = "END_TIME";
+    private final static String CHARACTER_ID_COLUMN = "CHARACTER_ID";
+
+    @DatabaseField(generatedId = true, columnName = SESSION_ID_COLUMN)
     private volatile int sessionID;
 
-    @DatabaseField(dataType = DataType.STRING, columnName = "IP")
+    @DatabaseField(dataType = DataType.STRING, columnName = IP_COLUMN)
     private volatile String sessionIpString;
 
-    @DatabaseField(dataType = DataType.DATE_TIME, columnName = "START_TIME")
+    @DatabaseField(dataType = DataType.DATE_TIME, columnName = START_TIME_COLUMN)
     private volatile DateTime startTimeUtc;
 
-    @DatabaseField(dataType = DataType.DATE_TIME, columnName = "END_TIME")
+    @DatabaseField(dataType = DataType.DATE_TIME, columnName = END_TIME_COLUMN)
     private volatile DateTime endTimeUtc;
 
-    @DatabaseField(foreign = true, canBeNull = false, columnName = "CHARACTER_ID")
+    @DatabaseField(foreign = true, canBeNull = false, columnName = CHARACTER_ID_COLUMN)
     private volatile PlayerCharacter playerCharacter;
 
     private volatile long starboundClientId;
@@ -98,15 +109,29 @@ public class PlayerSession extends StarNubProxyConnection {
     private volatile boolean isOp;
     private volatile boolean afk;
 
+    private final ConnectionType CONNECTION_TYPE;
+    private final Connection CONNECTION;
+
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> PERMISSIONS = new ConcurrentHashMap<>();
 
+    /**
+     * Constructor for database purposes
+     */
     public PlayerSession(){
-        super(null, null, null, null);
+        CONNECTION_TYPE = null;
+        CONNECTION = null;
     }
 
-    public PlayerSession(StarNubProxyConnection starNubProxyConnection, String playerName, UUID playerUUID) {
-        super(StarNub.getStarNubEventRouter(), ConnectionType.PLAYER, starNubProxyConnection.getCLIENT_CTX(), starNubProxyConnection.getSERVER_CTX());
-        InetAddress playerIP = starNubProxyConnection.getClientIP();
+    public PlayerSession(Connection connection, String playerName, UUID playerUUID) {
+        if (connection instanceof StarNubProxyConnection){
+            CONNECTION_TYPE = ConnectionType.PROXY_IN_GAME;
+        } else if (connection instanceof StarNubConnection) {
+            CONNECTION_TYPE = ConnectionType.REMOTE;
+        } else {
+            CONNECTION_TYPE = null;
+        }
+        CONNECTION = connection;
+        InetAddress playerIP = connection.getClientIP();
         StarNub.getConnections().getINTERNAL_IP_WATCHLIST().removeCache(playerIP);
         this.startTimeUtc = DateTime.now();
         this.sessionIpString = StringUtils.remove(playerIP.toString(), "/");
@@ -337,34 +362,47 @@ public class PlayerSession extends StarNubProxyConnection {
         return CharacterIP.getCharacterIpLogsByCharacter(playerCharacter);
     }
 
-    //Get game tags
-    //Get console tags
+    //TODO Get game tags
+    //TODO Get console tags
 
     public void sendChatMessage(Object sender, ChatReceiveChannel channel, String message) {
-        String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
-        ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "Server", 1, nameOfSender, message);
-        chatReceivePacket.routeToDestination();
+        ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
+        if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
+            String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
+            ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "Server", 1, nameOfSender, message);
+            chatReceivePacket.routeToDestination();
+            StarNub.getLogger().cChatPrint("StarNub", message, chatReceivePacket);
+        } else if (CONNECTION_TYPE == ConnectionType.REMOTE) {
+            //TODO - REMOTE
+        }
     }
 
     public void sendServerChatMessage(ChatSendChannel channel, String message) {
-        ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, channel, message);
-        chatSendPacket.routeToDestination();
+        ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
+        if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
+            ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, channel, message);
+            chatSendPacket.routeToDestination();
+        }  else if (CONNECTION_TYPE == ConnectionType.REMOTE) {
+            //TODO - REMOTE
+        }
     }
 
-    @Override
     public void removeConnection() {
-        StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
+        ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
+        if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
+            StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
+        }
     }
 
-    @Override
     public boolean disconnect() {
-        boolean disconnect = super.disconnect();
+        boolean disconnect = CONNECTION.disconnect();
         disconnectCleanUp("");
         return disconnect;
     }
 
     public boolean disconnectReason(String reason) {
-        boolean isConnectedCheck = super.disconnect();
+        ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
+        boolean isConnectedCheck = CONNECTION.disconnect();
         if (!isConnectedCheck) {
             PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
             new StringEvent("Player_Disconnect_" + reason, playerSession);
@@ -374,15 +412,22 @@ public class PlayerSession extends StarNubProxyConnection {
     }
 
     private void disconnectCleanUp(String reason) {
+        /* Each type of connection*/
         setEndTimeUtc();
         playerCharacter.updatePlayedTimeLastSeen();
-        if (!reason.equalsIgnoreCase("quit")) {
-            new ClientDisconnectRequestPacket(SERVER_CTX);
-            new ServerDisconnectPacket(CLIENT_CTX, "");
+
+        /* In-game connections only */
+        if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
+            ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
+            ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
+            if (!reason.equalsIgnoreCase("quit")) {
+                new ClientDisconnectRequestPacket(SERVER_CTX);
+                new ServerDisconnectPacket(CLIENT_CTX, "");
+            }
         }
     }
 
-    //remove from op
+    //TODO remove from op
 
     /* Permission Methods*/
 
@@ -578,7 +623,7 @@ public class PlayerSession extends StarNubProxyConnection {
     }
 
     public static PlayerSession getPlayerSession(Packet packet){
-        return StarNub.getConnections().getCONNECTED_PLAYERS().getPlayer(packet);
+        return StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(packet);
     }
 
     /* DB Methods */

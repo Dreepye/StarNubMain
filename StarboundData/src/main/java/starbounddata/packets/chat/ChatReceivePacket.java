@@ -153,7 +153,7 @@ public class ChatReceivePacket extends Packet {
     public void read(ByteBuf in) {
         this.channel = ChatReceiveChannel.values()[in.readUnsignedByte()];
         this.world = readStringVLQ(in);
-        this.clientId = in.readUnsignedByte();
+        this.clientId = in.readInt();
         this.name = readStringVLQ(in);
         this.message = readStringVLQ(in);
     }
@@ -170,7 +170,7 @@ public class ChatReceivePacket extends Packet {
     public void write(ByteBuf out) {
         out.writeByte(this.channel.ordinal());
         writeStringVLQ(out, this.world);
-        out.writeByte(this.clientId);
+        out.writeInt(this.clientId);
         writeStringVLQ(out, this.name);
         writeStringVLQ(out, this.message);
     }

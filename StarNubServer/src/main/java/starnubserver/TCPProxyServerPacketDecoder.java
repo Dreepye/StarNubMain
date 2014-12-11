@@ -224,7 +224,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port")));
         destinationCTX = f.channel().pipeline().firstContext();
         new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
-        starNubProxyConnection = new StarNubProxyConnection(StarNub.getStarNubEventRouter(), StarNubProxyConnection.ConnectionType.PLAYER_NO_DECODING, ctx, destinationCTX);
+        starNubProxyConnection = new StarNubProxyConnection(StarNub.getStarNubEventRouter(), StarNubProxyConnection.ConnectionProcessingType.PLAYER_NO_DECODING, ctx, destinationCTX);
     }
 
     /**

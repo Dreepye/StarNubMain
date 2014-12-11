@@ -21,13 +21,13 @@ package starnubserver.connections.player;
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.StarNub;
 import starnubserver.events.events.StarNubEvent;
-import utilities.connectivity.connection.ProxyConnection;
+import utilities.connectivity.connection.Connection;
 import utilities.events.EventRouter;
 import utilities.events.types.StringEvent;
 
 import java.io.IOException;
 
-public class StarNubProxyConnection extends ProxyConnection {
+public class StarNubConnection extends Connection {
 
     public enum ConnectionProcessingType {
         PLAYER,
@@ -36,8 +36,9 @@ public class StarNubProxyConnection extends ProxyConnection {
 
     private final ConnectionProcessingType CONNECTION_TYPE;
 
-    public StarNubProxyConnection(EventRouter EVENT_ROUTER, ConnectionProcessingType CONNECTION_TYPE, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
-        super(EVENT_ROUTER, CLIENT_CTX, SERVER_CTX);
+    //TODO CLEAN UP
+    public StarNubConnection(EventRouter EVENT_ROUTER, ConnectionProcessingType CONNECTION_TYPE, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
+        super(EVENT_ROUTER, CLIENT_CTX);
         this.CONNECTION_TYPE = CONNECTION_TYPE;
         StarNub.getConnections().getOPEN_SOCKETS().remove(SERVER_CTX);
         StarNub.getConnections().getOPEN_SOCKETS().remove(CLIENT_CTX);
@@ -50,7 +51,7 @@ public class StarNubProxyConnection extends ProxyConnection {
                         (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "whitelisted") &&
                         StarNub.getConnections().getWHITELIST().collectionContains(getClientIP(), "uuid_ip");
                 if (!uuidIp) {
-                    StarNub.getConnections().getPROXY_CONNECTION().put(CLIENT_CTX, this);
+
                     new StarNubEvent("Player_Connection_Success_No_Decoding", this);
                 } else {
                     new StarNubEvent("Player_Connection_Failure_Whitelist_No_Decoding", this);

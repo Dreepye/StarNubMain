@@ -43,6 +43,7 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Represents StarNubTask instance
@@ -148,7 +149,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method is used to pull a player record using any type of
-     * parameter. (uuid, IP, NAME, clientCTX, Starbound ID, StarNub ID)
+     * parameter. (Packet, Uuid, IP, NAME, clientCTX, Starbound ID, StarNub ID)
      * <p>
      * @param playerIdentifier Object that represent a player and it can take many forms
      * @return Player which represents the player that was retrieved by the provided playerIdentifier
@@ -156,6 +157,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     public PlayerSession getOnlinePlayerByAnyIdentifier(Object playerIdentifier) {
         if (playerIdentifier instanceof PlayerSession) {
             return (PlayerSession) playerIdentifier;
+        } else if (playerIdentifier instanceof Packet){
+            return playerByPacket((Packet) playerIdentifier);
         } else if (playerIdentifier instanceof String) {
             String identifierString = (String) playerIdentifier;
             if (isStarNubId(identifierString)) {
@@ -188,7 +191,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         }
     }
 
-    public PlayerSession getPlayer(Packet packet){
+    private PlayerSession playerByPacket(Packet packet){
         return this.values().stream()
                    .filter(p -> p.getCLIENT_CTX() == packet.getSENDER_CTX() || p.getCLIENT_CTX() == packet.getDESTINATION_CTX())
                    .findAny().orElse(null);
@@ -346,7 +349,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     public boolean canSeePlayer(Object sender, PlayerSession playerSessionSession){
         if (sender instanceof PlayerSession) {
             PlayerSession senderSession = getOnlinePlayerByAnyIdentifier(sender);
-            if (senderSession.hasPermission("starnubserver.bypass.appearoffline", true)) {
+            if (senderSession.hasPermission("starnub.bypass.appear_offline", true)) {
                 return true;
             } else if (playerSessionSession.getPlayerCharacter().getAccount() != null) {
                 return !playerSessionSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
@@ -383,6 +386,11 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         return canSeePlayer;
     }
 
+    public String nameBuild(PlayerSession playerSession){
+
+        return null;
+    }
+
     /**
      * This represents a higher level method for StarNubs API.
      * <p>
@@ -396,64 +404,96 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      * @return String with all of the online players
      */
     public String getOnlinePlayersNameList(Object sender, boolean showStarboundId, boolean showStarNubId) {
-        List<String> sortedPlayers = new ArrayList<String>();
-        String tokenBaseShowStarboundId = "";
-        String tokenBaseShowStarNubId = "";
-        if (showStarboundId) {
-            tokenBaseShowStarboundId = "StarboundID";
+        boolean canSee = false;
+        if (sender instanceof PlayerSession){
+            canSee = ((PlayerSession) sender).hasPermission("starnub.bypass.appear_offline", true);
         }
-        if (showStarNubId) {
-            tokenBaseShowStarNubId = "StarNubID";
-        }
-        String combinedToken;
-        if (!tokenBaseShowStarboundId.isEmpty() && !tokenBaseShowStarNubId.isEmpty()) {
-            combinedToken = tokenBaseShowStarboundId+"/"+tokenBaseShowStarNubId;
-        } else {
-            combinedToken = tokenBaseShowStarboundId+tokenBaseShowStarNubId;
-        }
-        combinedToken = "("+combinedToken+")";
-        String playersOnline = "Players Online: "+ this.size() +". NickName "+combinedToken+": ";
-        String token;
-        String tokenShowStarboundId = "";
-        String tokenShowStarNubId = "";
-        for (PlayerSession playerSessionSession : this.values()) {
-            ArrayList<Boolean> appearance = canSeePlayerIsHiddenCanSee(sender, playerSessionSession);
-            String hiddenToken = "";
-            if (appearance.get(0)) {
-                hiddenToken = " (H)";
-            }
 
-            if (appearance.get(1)) {
-                if (showStarboundId) {
-                    tokenShowStarboundId = Long.toString(playerSessionSession.getStarboundClientId());
-                }
-                if (showStarNubId) {
-                    if (playerSessionSession.getPlayerCharacter().getAccount().getStarnubId() > 0) {
-                        tokenShowStarNubId = Integer.toString(playerSessionSession.getPlayerCharacter().getAccount().getStarnubId()) + "S";
-                    } else {
-                        tokenShowStarNubId = "NA";
-                    }
-                }
 
-                if (!tokenShowStarboundId.isEmpty() && !tokenShowStarNubId.isEmpty()) {
-                    token = tokenShowStarboundId + "/" + tokenShowStarNubId;
-                } else {
-                    token = tokenShowStarboundId + tokenShowStarNubId;
-                }
-                token = "(" + token + ")";
-                sortedPlayers.add(playerSessionSession.getCleanNickName() + hiddenToken + " " + token);
-            }
-        }
-        Collections.sort(sortedPlayers);
-        for (String player : sortedPlayers) {
-            playersOnline = playersOnline + player+", ";
-        }
-        try {
-            playersOnline = playersOnline.substring(0, playersOnline.lastIndexOf(",")) + ".";
-        } catch (StringIndexOutOfBoundsException e) {
-            /* Do nothing no players are online */
-        }
-        return playersOnline;
+        String built = "";
+        HashSet<String> playersOnline;
+
+        final boolean finalCanSee = canSee;
+        playersOnline = this.values().stream()
+                .sorted((p1, p2) -> p1.getCleanNickName().compareTo(p2.getCleanNickName()))
+                .map(
+                        p1 -> p1.getNickName() + "( "
+                                +
+                                (showStarboundId
+                                        && showStarNubId
+                                        && (p1.getPlayerCharacter().getAccount() != null) ? p1.getStarboundClientId() + "/" + p1.getPlayerCharacter().getAccount().getStarnubId()
+                                        : showStarboundId ? p1.getStarboundClientId()
+                                        : showStarNubId
+                                        && (p1.getPlayerCharacter().getAccount() != null) ? p1.getPlayerCharacter().getAccount().getStarnubId() : "")
+                                +
+                                ((p1.getPlayerCharacter().getAccount() != null && p1.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline()) ? " )(H)" : ")")
+                )
+
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+//        .filter(p -> !finalCanSee ? (p.getPlayerCharacter().getAccount() != null && !p.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline()) : null)
+
+
+
+//        //
+//        List<String> sortedPlayers = new ArrayList<String>();
+//        String tokenBaseShowStarboundId = "";
+//        String tokenBaseShowStarNubId = "";
+//        if (showStarboundId) {
+//            tokenBaseShowStarboundId = "StarboundID";
+//        }
+//        if (showStarNubId) {
+//            tokenBaseShowStarNubId = "StarNubID";
+//        }
+//        String combinedToken;
+//        if (!tokenBaseShowStarboundId.isEmpty() && !tokenBaseShowStarNubId.isEmpty()) {
+//            combinedToken = tokenBaseShowStarboundId+"/"+tokenBaseShowStarNubId;
+//        } else {
+//            combinedToken = tokenBaseShowStarboundId+tokenBaseShowStarNubId;
+//        }
+//        combinedToken = "("+combinedToken+")";
+//        String playersOnline = "Players Online: "+ this.size() +". NickName "+combinedToken+": ";
+//        String token;
+//        String tokenShowStarboundId = "";
+//        String tokenShowStarNubId = "";
+//        for (PlayerSession playerSessionSession : this.values()) {
+//            ArrayList<Boolean> appearance = canSeePlayerIsHiddenCanSee(sender, playerSessionSession);
+//            String hiddenToken = "";
+//            if (appearance.get(0)) {
+//                hiddenToken = " (H)";
+//            }
+//
+//            if (appearance.get(1)) {
+//                if (showStarboundId) {
+//                    tokenShowStarboundId = Long.toString(playerSessionSession.getStarboundClientId());
+//                }
+//                if (showStarNubId) {
+//                    if (playerSessionSession.getPlayerCharacter().getAccount().getStarnubId() > 0) {
+//                        tokenShowStarNubId = Integer.toString(playerSessionSession.getPlayerCharacter().getAccount().getStarnubId()) + "S";
+//                    } else {
+//                        tokenShowStarNubId = "NA";
+//                    }
+//                }
+//
+//                if (!tokenShowStarboundId.isEmpty() && !tokenShowStarNubId.isEmpty()) {
+//                    token = tokenShowStarboundId + "/" + tokenShowStarNubId;
+//                } else {
+//                    token = tokenShowStarboundId + tokenShowStarNubId;
+//                }
+//                token = "(" + token + ")";
+//                sortedPlayers.add(playerSessionSession.getCleanNickName() + hiddenToken + " " + token);
+//            }
+//        }
+//        Collections.sort(sortedPlayers);
+//        for (String player : sortedPlayers) {
+//            playersOnline = playersOnline + player+", ";
+//        }
+//        try {
+//            playersOnline = playersOnline.substring(0, playersOnline.lastIndexOf(",")) + ".";
+//        } catch (StringIndexOutOfBoundsException e) {
+//            /* Do nothing no players are online */
+//        }
+        return String.valueOf(playersOnline);
     }
 
 }
