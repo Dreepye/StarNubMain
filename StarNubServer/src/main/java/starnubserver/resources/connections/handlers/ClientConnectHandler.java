@@ -154,7 +154,7 @@ public class ClientConnectHandler extends PacketEventHandler {
      */
     private ClientConnectPacket addToRejections(RejectionCache rejectionCache, ClientConnectPacket clientConnectPacket) {
         PlayerSession playerSession = rejectionCache.getPLAYERSession();
-        ChannelHandlerContext clientCTX = playerSession.getCLIENT_CTX();
+        ChannelHandlerContext clientCTX = playerSession.getCONNECTION().getCLIENT_CTX();
         playerSession.getPlayerCharacter().updateLastSeen(DateTime.now());
         new StarNubEvent("Player_Connection_Attempt", this);
         StarNub.getLogger().cDebPrint("StarNub", "A player named "+ playerSession.getPlayerCharacter().getCleanName() +" is attempting to connect to the server on IP: " + playerSession.getSessionIpString() + ".");

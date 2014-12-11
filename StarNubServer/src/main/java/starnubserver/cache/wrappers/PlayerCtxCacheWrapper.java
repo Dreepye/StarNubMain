@@ -81,7 +81,7 @@ public class PlayerCtxCacheWrapper extends CacheWrapper<ChannelHandlerContext> {
             @SuppressWarnings("unchecked")
             public void onEvent(Event eventData) {
                 PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
-                getCACHE_MAP().remove(playerSession.getCLIENT_CTX());
+                getCACHE_MAP().remove(playerSession.getCONNECTION().getCLIENT_CTX());
             }
         });
     }

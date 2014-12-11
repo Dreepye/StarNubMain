@@ -69,7 +69,10 @@ public class AccountPermission implements Serializable {
         this.account = account;
         this.permission = permission;
         if (createEntry){
-            ACCOUNT_PERMISSIONS_DB.createOrUpdate(this);
+            AccountPermission accountPermission = AccountPermission.getAccountPermissionByAccountFirstMatch(account, permission);
+            if (accountPermission == null) {
+                ACCOUNT_PERMISSIONS_DB.create(this);
+            }
         }
     }
 

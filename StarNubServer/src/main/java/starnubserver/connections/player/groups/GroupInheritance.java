@@ -38,10 +38,10 @@ public class GroupInheritance {
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = GROUP_INHERITANCE_ID_COLUMN)
     private volatile int groupInheritanceId;
 
-    @DatabaseField(foreign = true, columnName = GROUP_ID_COLUMN)
+    @DatabaseField(foreign = true, uniqueCombo = true, columnName = GROUP_ID_COLUMN)
     private volatile Group group;
 
-    @DatabaseField(foreign = true, columnName = INHERITED_GROUP_ID_COLUMN)
+    @DatabaseField(foreign = true, uniqueCombo = true, columnName = INHERITED_GROUP_ID_COLUMN)
     private volatile Group inheritedGroup;
 
     /**
@@ -59,7 +59,10 @@ public class GroupInheritance {
         this.group = group;
         this.inheritedGroup = inheritedGroup;
         if(createEntry){
-            GROUP_INHERITANCES_DB.createOrUpdate(this);
+            GroupInheritance groupInheritance = GroupInheritance.getGroupInheritanceByGroupFirstMatch(group, inheritedGroup);
+            if (groupInheritance == null) {
+                GROUP_INHERITANCES_DB.create(this);
+            }
         }
     }
 

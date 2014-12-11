@@ -16,15 +16,13 @@ package starnubserver;/*
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.netty.channel.ChannelHandlerContext;
 import starnubserver.cache.wrappers.IPCacheWrapper;
-import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.resources.BansList;
-import starnubserver.resources.files.Whitelist;
 import starnubserver.resources.connections.OpenConnections;
 import starnubserver.resources.connections.OpenSockets;
 import starnubserver.resources.connections.Players;
 import starnubserver.resources.connections.ProxyConnections;
+import starnubserver.resources.files.Whitelist;
 
 import java.util.concurrent.TimeUnit;
 
@@ -106,14 +104,6 @@ public class Connections {
         return ((Double) (getExpectedPlayers() * 0.10)).intValue();
     }
 
-    public StarNubProxyConnection getStarNubProxyConnection(ChannelHandlerContext ctx){
-        StarNubProxyConnection connnection = (StarNubProxyConnection) PROXY_CONNECTION.get(ctx);
-        if (connnection != null){
-            return connnection;
-        } else {
-            return CONNECTED_PLAYERS.get(ctx);
-        }
-    }
 }
 
 

@@ -55,7 +55,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
                 connectResponsePacket.setSuccess(false);
                 connectResponsePacket.setRejectionReason(rejectionCache.getPACKET_MESSAGE());
             } else {
-                CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCLIENT_CTX(), playerSession);
+                CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCONNECTION().getCLIENT_CTX(), playerSession);
                 final RejectionCache finalRejectionCache = rejectionCache;
                 new Thread(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
             }

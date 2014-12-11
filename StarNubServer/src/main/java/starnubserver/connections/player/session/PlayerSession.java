@@ -82,6 +82,7 @@ public class PlayerSession {
 
     /* COLUMN NAMES */
     private final static String SESSION_ID_COLUMN = "SESSION_ID";
+    private final static String TYPE_COLUMN = "TYPE";
     private final static String IP_COLUMN = "IP";
     private final static String START_TIME_COLUMN = "START_TIME";
     private final static String END_TIME_COLUMN = "END_TIME";
@@ -89,6 +90,9 @@ public class PlayerSession {
 
     @DatabaseField(generatedId = true, columnName = SESSION_ID_COLUMN)
     private volatile int sessionID;
+
+    @DatabaseField(dataType = DataType.ENUM_STRING, columnName = TYPE_COLUMN)
+    private final ConnectionType CONNECTION_TYPE;
 
     @DatabaseField(dataType = DataType.STRING, columnName = IP_COLUMN)
     private volatile String sessionIpString;
@@ -109,7 +113,6 @@ public class PlayerSession {
     private volatile boolean isOp;
     private volatile boolean afk;
 
-    private final ConnectionType CONNECTION_TYPE;
     private final Connection CONNECTION;
 
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, ArrayList<String>>> PERMISSIONS = new ConcurrentHashMap<>();
@@ -234,6 +237,14 @@ public class PlayerSession {
 
     public void removeAfk(){
         this.afk = false;
+    }
+
+    public ConnectionType getCONNECTION_TYPE() {
+        return CONNECTION_TYPE;
+    }
+
+    public Connection getCONNECTION() {
+        return CONNECTION;
     }
 
     public void addBan(Account staffAccount, String staffDescription, BanType banType, DateTime dateExpires){
@@ -382,8 +393,6 @@ public class PlayerSession {
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
             ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, channel, message);
             chatSendPacket.routeToDestination();
-        }  else if (CONNECTION_TYPE == ConnectionType.REMOTE) {
-            //TODO - REMOTE
         }
     }
 
@@ -426,8 +435,6 @@ public class PlayerSession {
             }
         }
     }
-
-    //TODO remove from op
 
     /* Permission Methods*/
 
@@ -634,7 +641,7 @@ public class PlayerSession {
 
     @Override
     public String toString() {
-        return "Player{" +
+        return "PlayerSession{" +
                 "sessionID=" + sessionID +
                 ", sessionIpString='" + sessionIpString + '\'' +
                 ", startTimeUtc=" + startTimeUtc +
@@ -646,7 +653,9 @@ public class PlayerSession {
                 ", cleanNickName='" + cleanNickName + '\'' +
                 ", isOp=" + isOp +
                 ", afk=" + afk +
-                "} " + super.toString();
+                ", CONNECTION_TYPE=" + CONNECTION_TYPE +
+                ", CONNECTION=" + CONNECTION +
+                '}';
     }
 }
 

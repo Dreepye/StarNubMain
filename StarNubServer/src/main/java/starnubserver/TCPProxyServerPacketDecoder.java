@@ -281,14 +281,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     }
 
     private void closeConnection(ChannelHandlerContext ctx){
-        StarNubProxyConnection starNubProxyConnection = StarNub.getConnections().getStarNubProxyConnection(ctx);
-        if (starNubProxyConnection == null){
-            ctx.close();
-        } else if (starNubProxyConnection instanceof PlayerSession){
-            PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(ctx);
-            playerSession.disconnectReason("Closed_By_Handler");
-        } else {
-            starNubProxyConnection.disconnectReason("Closed_By_Handler_No_Decoding");
-        }
+        PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(ctx);
+        playerSession.disconnectReason("Closed_By_Handler");
     }
 }

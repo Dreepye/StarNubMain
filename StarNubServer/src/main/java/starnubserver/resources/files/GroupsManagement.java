@@ -56,7 +56,7 @@ public class GroupsManagement extends YAMLWrapper {
                 false,
                 true,
                 true,
-                true,
+                false,
                 true
         );
         StarNub.getLogger().cInfoPrint("StarNub", groupSynchronizeFileToDB());
@@ -112,9 +112,16 @@ public class GroupsManagement extends YAMLWrapper {
         }
     }
 
+    public void groupSetup(){
+        setGroupInheritances();
+        setGroupPermissions();
+    }
+
     public void setGroupInheritances(){
-        for (Group group : GROUPS.values()){
-            group.setINHERITED_GROUPS();
-        }
+        GROUPS.values().forEach(starnubserver.connections.player.groups.Group::setINHERITED_GROUPS);
+    }
+
+    public void setGroupPermissions(){
+        GROUPS.values().forEach(starnubserver.connections.player.groups.Group::setGROUP_PERMISSIONS);
     }
 }

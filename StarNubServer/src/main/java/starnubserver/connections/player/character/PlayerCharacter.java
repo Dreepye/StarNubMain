@@ -103,7 +103,7 @@ public class PlayerCharacter implements Serializable {
         this.uuid = uuid;
         this.lastSeen = DateTime.now();
         if (createEntry){
-            CHARACTERS_DB.createOrUpdate(this);
+            CHARACTERS_DB.create(this);
         }
     }
 

@@ -39,10 +39,10 @@ public class GroupAssignment {
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = GROUP_ASSIGNMENT_ID_COLUMN)
     private volatile int groupAssignmentId;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = STARNUB_ID_COLUMN)
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true, columnName = STARNUB_ID_COLUMN)
     private volatile Account account;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = GROUP_ID_COLUMN)
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true, columnName = GROUP_ID_COLUMN)
     private volatile Group group;
 
     /**
@@ -60,7 +60,10 @@ public class GroupAssignment {
         this.account = account;
         this.group = group;
         if(createEntry){
-            GROUP_ASSIGNMENTS_DB.createOrUpdate(this);
+            GroupAssignment groupAssignment = GroupAssignment.getGroupAssigmentByGroupFirstMatch(account, group);
+            if (groupAssignment == null) {
+                GROUP_ASSIGNMENTS_DB.create(this);
+            }
         }
     }
 

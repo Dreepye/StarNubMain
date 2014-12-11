@@ -30,12 +30,14 @@ import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
 import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
+import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventSubscription;
 import starnubserver.resources.connections.handlers.*;
 import starnubserver.resources.files.GroupsManagement;
 import starnubserver.resources.files.Operators;
+import utilities.connectivity.ConnectionType;
 import utilities.events.Priority;
 
 import java.net.InetAddress;
@@ -129,7 +131,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     public void connectedPlayerLostConnectionCheck() {
         for (Map.Entry<ChannelHandlerContext, PlayerSession> playerEntry : this.entrySet()){
             PlayerSession playerSession = playerEntry.getValue();
-            if (!playerSession.isConnected()){
+            if (!playerSession.getCONNECTION().isConnected()){
                 playerSession.disconnectReason("Connection_Lost");
             }
         }
@@ -193,7 +195,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 
     private PlayerSession playerByPacket(Packet packet){
         return this.values().stream()
-                   .filter(p -> p.getCLIENT_CTX() == packet.getSENDER_CTX() || p.getCLIENT_CTX() == packet.getDESTINATION_CTX())
+                   .filter(p -> p.getCONNECTION().getCLIENT_CTX() == packet.getSENDER_CTX() || p.getCONNECTION().getCLIENT_CTX() == packet.getDESTINATION_CTX())
                    .findAny().orElse(null);
     }
 
@@ -245,7 +247,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      */
     private PlayerSession playerByIP(InetAddress ip) {
         for (PlayerSession playerSessionSession : this.values()){
-            if (playerSessionSession.getClientIP().equals(ip)) {
+            if (playerSessionSession.getCONNECTION().getClientIP().equals(ip)) {
                 return playerSessionSession;
             }
         }
@@ -321,7 +323,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      */
     private PlayerSession playerByCTX(ChannelHandlerContext ctx) {
         for (PlayerSession playerSessionSession : this.values()){
-            if (playerSessionSession.getCLIENT_CTX() == ctx || playerSessionSession.getSERVER_CTX() == ctx) {
+            if (playerSessionSession.getCONNECTION().getCLIENT_CTX() == ctx
+                    || (playerSessionSession.getCONNECTION_TYPE() == ConnectionType.PROXY_IN_GAME && ((StarNubProxyConnection) playerSessionSession.getCONNECTION()).getSERVER_CTX() == ctx)) {
                 return playerSessionSession;
             }
         }

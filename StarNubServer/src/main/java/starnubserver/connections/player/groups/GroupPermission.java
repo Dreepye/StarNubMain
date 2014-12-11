@@ -43,10 +43,10 @@ public class GroupPermission {
     @DatabaseField(generatedId =true, dataType = DataType.INTEGER, columnName = PERMISSION_ID_COLUMN)
     private volatile int groupPermissionsId;
 
-    @DatabaseField(foreign = true, columnName = GROUP_ID_COLUMN)
+    @DatabaseField(foreign = true, uniqueCombo = true, columnName = GROUP_ID_COLUMN)
     private volatile Group group;
 
-    @DatabaseField(columnName = PERMISSION_COLUMN)
+    @DatabaseField(uniqueCombo = true, columnName = PERMISSION_COLUMN)
     private volatile String permission;
 
     /**
@@ -66,7 +66,10 @@ public class GroupPermission {
         this.group = group;
         this.permission = permission;
         if(createEntry){
-            GROUP_PERMISSIONS_DB.createOrUpdate(this);
+            GroupPermission groupPermission = getGroupPermissionByGroupFirstMatch(group, permission);
+            if (groupPermission == null) {
+                GROUP_PERMISSIONS_DB.create(this);
+            }
         }
         if(reloadPermissions){
             refreshAllRelatedPermissions();
@@ -100,7 +103,7 @@ public class GroupPermission {
     }
 
     public static GroupPermission getGroupPermissionByGroupFirstMatch (Group group, String permission) {
-        return GROUP_PERMISSIONS_DB.getMatchingColumn1FirstSimilarColumn2(GROUP_ID_COLUMN, group, PERMISSION_ID_COLUMN, permission);
+        return GROUP_PERMISSIONS_DB.getMatchingColumn1FirstSimilarColumn2(GROUP_ID_COLUMN, group, PERMISSION_COLUMN, permission);
     }
 
     public List<GroupPermission> getGroupPermissionsByGroup(){

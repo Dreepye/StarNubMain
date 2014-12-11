@@ -666,11 +666,15 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
-    public boolean addToCollection(Object value, boolean hashSet, String key) throws IOException, CollectionDoesNotExistException {
+    public boolean addToCollection(Object value, boolean hashSet, boolean allowDuplicates, String key) throws IOException, CollectionDoesNotExistException {
         Collection collection = (Collection) DATA.get(key);
         if (collection != null) {
             synchronized (LOCK_OBJECT) {
-                collection.add(value);
+                if (allowDuplicates) {
+                    collection.add(value);
+                } else if (!collection.contains(value)){
+                    collection.add(value);
+                }
             }
         }  else {
             if (hashSet){
@@ -686,7 +690,6 @@ public class YAMLWrapper extends YAMLFile {
             } else {
                 throw new CollectionDoesNotExistException();
             }
-
             dumpOnModification(DATA);
         }
         return collection.contains(value);
@@ -702,11 +705,15 @@ public class YAMLWrapper extends YAMLFile {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
-    public boolean addToCollection(Object value, boolean hashSet, String... keys) throws IOException, CollectionDoesNotExistException {
+    public boolean addToCollection(Object value, boolean hashSet, boolean allowDuplicates, String... keys) throws IOException, CollectionDoesNotExistException {
         Collection collection = (Collection) mapUnwrapper(keys);
         if (collection != null) {
             synchronized (LOCK_OBJECT) {
-                collection.add(value);
+                if (allowDuplicates) {
+                    collection.add(value);
+                } else if (!collection.contains(value)){
+                    collection.add(value);
+                }
             }
         }  else {
             if (hashSet){

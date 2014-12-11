@@ -28,14 +28,12 @@ import utilities.exceptions.CollectionDoesNotExistException;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @DatabaseTable(tableName = "GROUPS")
 public class Group {
 
     private final static Groups GROUPS_DB = Groups.getInstance();
-    private final static GroupsManagement GROUP_MANAGEMENT = GroupsManagement.getInstance();
 
     /* COLUMN NAMES */
     private final static String GROUP_NAME_ID_COLUMN = "GROUP_NAME_ID";
@@ -86,7 +84,7 @@ public class Group {
         INHERITED_GROUPS_STRINGS.addAll(inheritedGroups);
         GROUP_PERMISSIONS.addAll(permissions);
         if (createEntry) {
-            GROUPS_DB.createOrUpdate(this);
+            GROUPS_DB.create(this);
         }
     }
 
@@ -99,7 +97,7 @@ public class Group {
         INHERITED_GROUPS_STRINGS.addAll(inheritedGroups);
         GROUP_PERMISSIONS.addAll(permissions);
         if (createEntry) {
-            GROUPS_DB.createOrUpdate(this);
+            GROUPS_DB.create(this);
         }
     }
 
@@ -165,21 +163,18 @@ public class Group {
         this.ladderRank = ladderRank;
     }
 
-    public HashSet<Group> getINHERITED_GROUPS() {
-        return INHERITED_GROUPS;
-    }
+    /* Permission Methods */
 
-    public void setINHERITED_GROUPS(){
-        for(String groupString : INHERITED_GROUPS_STRINGS){
-            ConcurrentHashMap<String, Group> managementGroups = GROUP_MANAGEMENT.getGROUPS();
-            Group group = managementGroups.get(groupString);
-            if (group !=null){
-                INHERITED_GROUPS.add(group);
+    public void setGROUP_PERMISSIONS(){
+        List<GroupPermission> groupPermissionsDb = GroupPermission.getGroupPermissionsByGroup(this);
+        for (GroupPermission groupPermission : groupPermissionsDb){
+            String permission = groupPermission.getPermission();
+            if(!GROUP_PERMISSIONS.contains(permission)){
+                groupPermission.deleteFromDatabase();
             }
         }
+        GROUP_PERMISSIONS.forEach(this::addGroupPermission);
     }
-
-    /* Permission Methods */
 
     public HashSet<String> getGROUP_PERMISSIONS() {
         return GROUP_PERMISSIONS;
@@ -189,7 +184,7 @@ public class Group {
         addGroupPermission(this, permission);
     }
 
-    public static void addGroupPermission(Group group, String permission){//DEBUG MANAGEMENT
+    public static void addGroupPermission(Group group, String permission){
         permission = permission.toLowerCase();
         HashSet<String> groupPermissions = group.getGROUP_PERMISSIONS();
         if (!groupPermissions.contains(permission)){
@@ -198,11 +193,11 @@ public class Group {
         GroupPermission groupPermission = GroupPermission.getGroupPermissionByGroupFirstMatch(group, permission);
         if (groupPermission == null){
             try {
-                GROUP_MANAGEMENT.addToCollection(permission, group.getName(), "permissions");
+                GroupsManagement.getInstance().addToCollection(permission,  false, false,  group.getName(), "permissions");
             } catch (IOException | CollectionDoesNotExistException e) {
                 e.printStackTrace();
             }
-            new GroupPermission(group, permission, true, true).refreshAllRelatedPermissions();
+            new GroupPermission(group, permission, true, true);
         }
     }
 
@@ -229,7 +224,7 @@ public class Group {
             groupPermission.deleteFromDatabase();
             groupPermission.refreshAllRelatedPermissions();
             try {
-                GROUP_MANAGEMENT.removeFromCollection(permission, group.getName(), "permissions");
+                GroupsManagement.getInstance().removeFromCollection(permission, group.getName(), "permissions");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -248,14 +243,30 @@ public class Group {
 
     /* Inherited Group Methods */
 
+    public HashSet<Group> getINHERITED_GROUPS() {
+        return INHERITED_GROUPS;
+    }
+
+    public void setINHERITED_GROUPS(){
+        List<GroupInheritance> groupInheritancesDb = GroupInheritance.getGroupInheritanceByGroup(this);
+        for (GroupInheritance groupInheritance : groupInheritancesDb){
+            String groupName = groupInheritance.getInheritedGroup().getName();
+            if(!INHERITED_GROUPS_STRINGS.contains(groupName)){
+                groupInheritance.deleteFromDatabase();
+            }
+        }
+        INHERITED_GROUPS_STRINGS.forEach(this::addGroupInheritance);
+    }
+
+
     public void addGroupInheritance(String groupName){
-        Group group = GROUP_MANAGEMENT.getGROUPS().get(groupName);
+        Group group = GroupsManagement.getInstance().getGROUPS().get(groupName);
         if (group != null){
             new GroupInheritance(this, group, true);
             INHERITED_GROUPS_STRINGS.add(groupName);
             INHERITED_GROUPS.add(group);
             try {
-                GROUP_MANAGEMENT.addToCollection(groupName, "inherited_groups");
+                GroupsManagement.getInstance().addToCollection(groupName, false, false, this.getName(), "inherited_groups");
             } catch (IOException | CollectionDoesNotExistException e) {
                 e.printStackTrace();
             }
@@ -263,14 +274,14 @@ public class Group {
     }
 
     public void removeGroupInheritance(String groupName){
-        Group group = GROUP_MANAGEMENT.getGROUPS().remove(groupName);
+        Group group = GroupsManagement.getInstance().getGROUPS().remove(groupName);
         if (group != null){
             GroupInheritance groupInheritance = GroupInheritance.getGroupInheritanceByGroupFirstMatch(this, group);
             groupInheritance.deleteFromDatabase();
             INHERITED_GROUPS_STRINGS.remove(groupName);
             INHERITED_GROUPS.remove(group);
             try {
-                GROUP_MANAGEMENT.removeFromCollection(groupName, "inherited_groups");
+                GroupsManagement.getInstance().removeFromCollection(groupName, this.getName(), "inherited_groups");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -377,9 +388,9 @@ public class Group {
         GROUPS_DB.delete(group);
         String groupName = group.getName();
         if (filePurge) {
-            GROUP_MANAGEMENT.getGROUPS().remove(groupName);
+            GroupsManagement.getInstance().getGROUPS().remove(groupName);
             try {
-                GROUP_MANAGEMENT.removeValue(groupName);
+                GroupsManagement.getInstance().removeValue(groupName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
