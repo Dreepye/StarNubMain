@@ -32,14 +32,21 @@ import java.util.concurrent.TimeUnit;
 
 public class BansList extends ConcurrentHashMap<String, Ban> {
 
-
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final BansList instance = new BansList();
 
     /**
      * Creates a new, empty map with the default initial table size (16).
      */
-    public BansList() {
+    private BansList() {
         banLoad();
         new StarNubTask("StarNub", "StarNub - Bans - Auto Purge", true , 1, 1, TimeUnit.MINUTES, this::banPurge);
+    }
+
+    public static BansList getInstance() {
+        return instance;
     }
 
     /**

@@ -18,13 +18,12 @@
 
 package starnubserver.events.events;
 
-import starnubserver.events.starnub.StarNubEventRouter;
-import utilities.events.types.Event;
+import starnubserver.connections.player.session.PlayerSession;
+import utilities.events.Modification;
 
-public class StarNubEvent extends Event<Object>{
+public class PermissionEvent extends StarNubEvent {
 
-    public StarNubEvent(Object EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
-        StarNubEventRouter.getInstance().eventNotify(this);
+    public PermissionEvent(String EVENT_KEY, PlayerSession PLAYER_SESSION, Modification MODIFICATION) {
+        super("Permission_Modification_" + EVENT_KEY, new PermissionChange(PLAYER_SESSION, MODIFICATION, EVENT_KEY));
     }
 }

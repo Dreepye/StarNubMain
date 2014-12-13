@@ -42,7 +42,6 @@ public class ConnectionResponseHandler extends PacketEventHandler {
      * Uses: Handles Server Connection Response Packets which are replies to the Connection Attempts. Step 2 of 2 (ClientConnectPacket is Part 1).
      *
      * @param eventData Packet representing the packet being routed
-     * @return Packet any class representing packet can be returned
      */
     @Override
     public void onEvent(Packet eventData) {
@@ -57,7 +56,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCONNECTION().getCLIENT_CTX(), playerSession);
                 final RejectionCache finalRejectionCache = rejectionCache;
-                new Thread(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache), "StarNub - Connections - Player Connection Wrap-Up").start();
+                StarNub.getThreadPool().execute(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache));
             }
         }
     }

@@ -18,7 +18,7 @@
 
 package starboundmanager;
 
-import utilities.concurrency.thread.ThreadSleep;
+import utilities.concurrent.thread.ThreadSleep;
 
 import java.io.IOException;
 import java.net.ConnectException;

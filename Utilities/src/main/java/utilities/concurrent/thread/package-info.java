@@ -17,6 +17,6 @@
  */
 
 /**
- * utilities.concurrency.thread is the package containing Thread Classes
+ * utilities.concurrent.thread is the package containing Thread Classes
  */
-package utilities.concurrency.thread;
+package utilities.concurrent.thread;

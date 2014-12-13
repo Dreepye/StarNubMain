@@ -1,6 +1,6 @@
 package starnubserver.events.starnub;
 
-import utilities.events.types.Event;
+import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventHandler;
 
 /**
@@ -10,7 +10,7 @@ import utilities.events.EventHandler;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public abstract class StarNubEventHandler<T> extends EventHandler<Event<String>> {
+public abstract class StarNubEventHandler extends EventHandler<StarNubEvent> {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -27,6 +27,6 @@ public abstract class StarNubEventHandler<T> extends EventHandler<Event<String>>
      * @param eventData Event representing the event being shared
      */
     @Override
-    public abstract void onEvent(Event<String> eventData);
+    public abstract void onEvent(StarNubEvent eventData);
 
 }

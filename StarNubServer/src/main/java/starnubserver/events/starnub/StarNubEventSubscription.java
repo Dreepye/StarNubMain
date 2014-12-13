@@ -18,7 +18,7 @@
 
 package starnubserver.events.starnub;
 
-import starnubserver.StarNub;
+import utilities.events.EventHandler;
 import utilities.events.EventSubscription;
 import utilities.events.Priority;
 import utilities.events.types.Event;
@@ -44,7 +44,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
      * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
      */
-    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
+    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, EventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
                 ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
@@ -62,7 +62,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      * @param register boolean do you want to auto register this event
      * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
      */
-    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
+    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, EventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
                 ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
@@ -79,7 +79,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      */
     @Override
     public void submitRegistration() {
-        StarNub.getStarNubEventRouter().registerEventSubscription(EVENT_KEY, this);
+        StarNubEventRouter.getInstance().registerEventSubscription(EVENT_KEY, this);
     }
 
     /**
@@ -89,6 +89,6 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      */
     @Override
     public void removeRegistration() {
-        StarNub.getStarNubEventRouter().removeEventSubscription(this);
+        StarNubEventRouter.getInstance().removeEventSubscription(this);
     }
 }

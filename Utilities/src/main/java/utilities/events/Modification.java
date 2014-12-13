@@ -16,15 +16,10 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.events.events;
+package utilities.events;
 
-import starnubserver.events.starnub.StarNubEventRouter;
-import utilities.events.types.Event;
-
-public class StarNubEvent extends Event<Object>{
-
-    public StarNubEvent(Object EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
-        StarNubEventRouter.getInstance().eventNotify(this);
-    }
+public enum Modification {
+    ADD,
+    REMOVE,
+    UPDATE
 }

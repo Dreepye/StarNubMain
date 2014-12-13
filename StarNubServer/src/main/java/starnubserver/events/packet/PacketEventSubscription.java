@@ -79,7 +79,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     @Override
     public void submitRegistration() {
         if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")) {
-            StarNub.getStarboundServer().getPacketEventRouter().registerEventSubscription(EVENT_KEY, this);
+            PacketEventRouter.getInstance().registerEventSubscription(EVENT_KEY, this);
         }
     }
 
@@ -90,6 +90,6 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      */
     @Override
     public void removeRegistration() {
-        StarNub.getStarboundServer().getPacketEventRouter().removeEventSubscription(this);
+        PacketEventRouter.getInstance().removeEventSubscription(this);
     }
 }

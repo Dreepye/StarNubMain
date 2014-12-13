@@ -18,6 +18,7 @@
 
 package starnubserver.resources.connections;
 
+import generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
@@ -35,7 +36,6 @@ import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventSubscription;
 import starnubserver.resources.connections.handlers.*;
-import starnubserver.resources.files.GroupsManagement;
 import starnubserver.resources.files.Operators;
 import utilities.connectivity.ConnectionType;
 import utilities.events.Priority;
@@ -58,7 +58,6 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     private final Connections CONNECTIONS;
     private final PlayerCtxCacheWrapper ACCEPT_REJECT;
     private final Operators OPERATORS = Operators.getInstance();
-    private final GroupsManagement GROUP_MANAGEMENT = GroupsManagement.getInstance();
 
     /**
      * Creates a new, empty map with an initial table size based on
@@ -81,7 +80,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     public Players(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
-        this.ACCEPT_REJECT  = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, StarNub.getTaskManager(), 20, concurrencyLevel, TimeUnit.MINUTES, 1, 60);
+        this.ACCEPT_REJECT  = new PlayerCtxCacheWrapper("StarNub", "StarNub - Player Connection - Accept or Reject", true, 20, TimeUnit.MINUTES, 1, 60);
         registerPacketHandlers(concurrencyLevel);
         new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
         new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
@@ -95,7 +94,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
         /* Permission Related */
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ChatSendPacket.class, new ChatSendHandler());
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler(CONNECTIONS.getExpectedPlayers()));
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler());
     }
 
     public PlayerCtxCacheWrapper getACCEPT_REJECT() {
@@ -132,7 +131,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         for (Map.Entry<ChannelHandlerContext, PlayerSession> playerEntry : this.entrySet()){
             PlayerSession playerSession = playerEntry.getValue();
             if (!playerSession.getCONNECTION().isConnected()){
-                playerSession.disconnectReason("Connection_Lost");
+                playerSession.disconnectReason(DisconnectReason.CONNECTION_LOST);
             }
         }
     }

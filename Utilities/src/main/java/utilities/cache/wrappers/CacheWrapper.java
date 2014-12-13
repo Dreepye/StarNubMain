@@ -21,15 +21,16 @@ package utilities.cache.wrappers;
 
 
 import utilities.cache.objects.TimeCache;
-import utilities.concurrency.task.InternalTask;
-import utilities.concurrency.task.ScheduledTask;
-import utilities.concurrency.task.TaskManager;
+import utilities.concurrent.task.InternalTask;
+import utilities.concurrent.task.ScheduledTask;
+import utilities.concurrent.task.TaskManager;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Represents Abstract CacheWrapper that can be transformed to accept any type of key and be used with any
@@ -43,7 +44,7 @@ public abstract class CacheWrapper<E1> {
     private final TimeUnit TIME_UNIT;
     private final int CACHE_PRUNE_TASK_TIME;
     private final int CACHE_PURGE_TAKE_TIME;
-    private final boolean AUTO_CACHE_PURGER;
+    private final boolean REGISTER_EVENTS;
     private final ConcurrentHashMap<E1, TimeCache> CACHE_MAP;
     private final String CACHE_OWNER;
     private final String CACHE_NAME;
@@ -54,19 +55,19 @@ public abstract class CacheWrapper<E1> {
      *
      * @param CACHE_OWNER       String representing the owner of this utilities.cache, should be set to the plugins exact name
      * @param CACHE_NAME        String representing the name for this specific utilities.cache implementation, to be used to task thread purging
-     * @param AUTO_CACHE_PURGER boolean you must create a auto utilities.cache purger implementation if once that you need does
+     * @param REGISTER_EVENTS boolean you must create a auto utilities.cache purger implementation if once that you need does
      *                          not exist already, if you will not be using this which is not recommended, use null in its place.
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      * @param expectedElements  int representing the max number of elements that will be in the utilities.cache at one time
      * @param expectedThreads   int representing the max number of threads you expect to be accessing the elements at one time
      */
-    public CacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean AUTO_CACHE_PURGER, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads) {
+    public CacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean REGISTER_EVENTS, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads) {
         this.CACHE_OWNER = CACHE_OWNER;
         this.CACHE_NAME = CACHE_NAME;
         this.TIME_UNIT = TimeUnit.MINUTES;
         this.CACHE_PRUNE_TASK_TIME = 15;
         this.CACHE_PURGE_TAKE_TIME = 60;
-        this.AUTO_CACHE_PURGER = AUTO_CACHE_PURGER;
+        this.REGISTER_EVENTS = REGISTER_EVENTS;
         this.CACHE_MAP = new ConcurrentHashMap<E1, TimeCache>(expectedElements, 1.0f, expectedThreads);
         startEventListener();
         cachePruneTask(SCHEDULED_THREAD_POOL_EXECUTOR);
@@ -80,7 +81,7 @@ public abstract class CacheWrapper<E1> {
      *
      * @param CACHE_OWNER           String representing the owner of this utilities.cache, should be set to the plugins exact name
      * @param CACHE_NAME            String representing the name for this specific utilities.cache implementation, to be used to task thread purging
-     * @param AUTO_CACHE_PURGER     boolean you must create a auto utilities.cache purger implementation if once that you need does
+     * @param REGISTER_EVENTS     boolean you must create a auto utilities.cache purger implementation if once that you need does
      *                              not exist already, if you will not be using this which is not recommended, use null in its place.
      * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
      * @param TIME_UNIT             TimeUnit representing the time units to set the auto prune and purge to set 0 for off (Not recommended)
@@ -89,13 +90,13 @@ public abstract class CacheWrapper<E1> {
      * @param expectedElements  int representing the max number of elements that will be in the utilities.cache at one time
      * @param expectedThreads   int representing the max number of threads you expect to be accessing the elements at one time
      */
-    public CacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean AUTO_CACHE_PURGER, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads, TimeUnit TIME_UNIT, int CACHE_PRUNE_TASK_TIME, int CACHE_PURGE_TAKE_TIME) {
+    public CacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean REGISTER_EVENTS, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads, TimeUnit TIME_UNIT, int CACHE_PRUNE_TASK_TIME, int CACHE_PURGE_TAKE_TIME) {
         this.CACHE_OWNER = CACHE_OWNER;
         this.CACHE_NAME = CACHE_NAME;
         this.TIME_UNIT = TIME_UNIT;
         this.CACHE_PRUNE_TASK_TIME = CACHE_PRUNE_TASK_TIME;
         this.CACHE_PURGE_TAKE_TIME = CACHE_PURGE_TAKE_TIME;
-        this.AUTO_CACHE_PURGER = AUTO_CACHE_PURGER;
+        this.REGISTER_EVENTS = REGISTER_EVENTS;
         this.CACHE_MAP = new ConcurrentHashMap<E1, TimeCache>(expectedElements, 1.0f, expectedThreads);
         startEventListener();
         cachePruneTask(SCHEDULED_THREAD_POOL_EXECUTOR);
@@ -117,8 +118,8 @@ public abstract class CacheWrapper<E1> {
         return CACHE_PURGE_TAKE_TIME;
     }
 
-    public boolean isAUTO_CACHE_PURGER() {
-        return AUTO_CACHE_PURGER;
+    public boolean isREGISTER_EVENTS() {
+        return REGISTER_EVENTS;
     }
 
     public ConcurrentHashMap<E1, TimeCache> getCACHE_MAP() {
@@ -135,6 +136,18 @@ public abstract class CacheWrapper<E1> {
 
     public String getERROR_MSG() {
         return ERROR_MSG;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will check to see if a cache key is present
+     * <p/>
+     *
+     * @param key           E1 representing a contactable key
+     */
+    public boolean containsCache(E1 key){
+        return CACHE_MAP.containsKey(key);
     }
 
     /**
@@ -213,13 +226,37 @@ public abstract class CacheWrapper<E1> {
      * @param pastTime long time that is to be checked in the utilities.cache for it being past the time
      * @return HashSet containing all of the removed keys
      */
-    public HashSet<E1> bulkCacheRemove(long pastTime) {
+    public HashSet<E1> bulkCacheRemoveTime(long pastTime) {
         HashSet<E1> toRemove = new HashSet<>();
         CACHE_MAP.keySet().stream().filter(element -> CACHE_MAP.get(element).isPastDesignatedTime(pastTime)).forEach(element -> {
             toRemove.add(element);
             CACHE_MAP.remove(element);
         });
         return toRemove;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will bulk remove all of the provided keys
+     * <p/>
+     *
+     * @param keysToRemove HashSet containing all of the keys to remove
+     */
+    public void bulkCacheRemoveSet(HashSet<E1> keysToRemove){
+        keysToRemove.forEach(CACHE_MAP::remove);
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
+     * Uses: This will return all of the keys present in this cache wrapper
+     * <p/>
+     *
+     * @return HashSet containing all of the keys
+     */
+    public HashSet<E1> getCacheKeyList(){
+        return CACHE_MAP.keySet().stream().collect(Collectors.toCollection(HashSet::new));
     }
 
     /**
@@ -291,7 +328,7 @@ public abstract class CacheWrapper<E1> {
      * <p/>
      */
     public void startEventListener() {
-        if (AUTO_CACHE_PURGER) {
+        if (REGISTER_EVENTS) {
             /* Subscribe any events router in this method to the event listeners contained within */
             registerEvents();
         }

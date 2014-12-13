@@ -38,7 +38,7 @@ public class Connections {
      */
     private Connections(){
         if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")) {
-            CONNECTED_PLAYERS = new Players(this, getExpectedPlayers(), 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
+            CONNECTED_PLAYERS = new Players(this, getExpectedPlayers(), 1.0f, getExpectedConnectsPercentage());
         } else {
             CONNECTED_PLAYERS = null;
         }
@@ -55,9 +55,9 @@ public class Connections {
         return instance;
     }
 
-    private final IPCacheWrapper INTERNAL_IP_WATCHLIST = new IPCacheWrapper("StarNub", "StarNub - Internal IP Watch List", true, StarNub.getTaskManager(), 5000, 500, TimeUnit.MINUTES, 60, 120);
+    private final IPCacheWrapper INTERNAL_IP_WATCHLIST = new IPCacheWrapper("StarNub", "StarNub - Internal IP Watch List", true, TimeUnit.MINUTES, 60, 120);
     private final Whitelist WHITELIST = Whitelist.getInstance();
-    private final BansList BANSList = new BansList();
+    private final BansList BANSList = BansList.getInstance();
     private final OpenSockets OPEN_SOCKETS = new OpenSockets(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
     private final OpenConnections OPEN_CONNECTIONS = new OpenConnections(this, 20, 1.0f, getExpectedConnectsPercentage());//Elements, expected Threads
     private final ProxyConnections PROXY_CONNECTION = new ProxyConnections(this, getExpectedPlayers(), 1.0f, getExpectedConnectsPercentage() );//Elements, expected Threads
@@ -91,18 +91,31 @@ public class Connections {
         return INTERNAL_IP_WATCHLIST;
     }
 
-    public int getExpectedPlayers(){
+    public static int getExpectedPlayers(){
         return (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit")
-                + (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit_reserved") + 2;
+                + (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit_reserved") + 5;
     }
 
-    public int getExpectedThreadsGeneric(){
-        return 5;
+    public static int getExpectedPlayers(int multiplier) {
+        if (multiplier == 0){
+            multiplier = 1;
+        }
+        return getExpectedPlayers() * multiplier;
     }
 
-    public int getExpectedConnectsPercentage(){
+    public static int getExpectedConnectsPercentage(){
         return ((Double) (getExpectedPlayers() * 0.10)).intValue();
     }
+
+    public static int getExpectedThreads(){
+        return getExpectedThreadsGeneric();
+    }
+
+    public static int getExpectedThreadsGeneric(){
+        return 20;
+    }
+
+
 
 }
 

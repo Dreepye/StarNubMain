@@ -18,9 +18,9 @@
 
 package utilities.file.yaml;
 
-import utilities.concurrency.task.InternalTask;
-import utilities.concurrency.task.ScheduledTask;
-import utilities.concurrency.task.TaskManager;
+import utilities.concurrent.task.InternalTask;
+import utilities.concurrent.task.ScheduledTask;
+import utilities.concurrent.task.TaskManager;
 
 import java.io.IOException;
 import java.util.Map;

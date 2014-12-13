@@ -57,7 +57,7 @@ public class OpenSockets extends ConcurrentHashMap<ChannelHandlerContext, Long> 
     public OpenSockets(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
         this.CONNECTIONS = CONNECTIONS;
-        new StarNubTask("StarNub", "StarNub - OpenSockets - Socket Purge", true , 15, 15, TimeUnit.SECONDS, this::purgeSockets);
+        new StarNubTask("StarNub", "StarNub - OpenSockets - Socket Purge", true , 5, 5, TimeUnit.SECONDS, this::purgeSockets);
     }
 
     /**

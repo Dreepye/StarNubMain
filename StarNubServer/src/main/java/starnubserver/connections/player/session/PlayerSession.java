@@ -22,6 +22,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import generic.BanType;
+import generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -44,12 +45,12 @@ import starnubserver.connections.player.generic.StaffEntry;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.database.tables.Characters;
 import starnubserver.database.tables.PlayerSessionLog;
+import starnubserver.events.events.DisconnectEvent;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.NameBuilder;
 import starnubserver.resources.files.GroupsManagement;
 import utilities.connectivity.ConnectionType;
 import utilities.connectivity.connection.Connection;
-import utilities.events.types.StringEvent;
 import utilities.exceptions.CollectionDoesNotExistException;
 import utilities.strings.StringUtilities;
 
@@ -381,7 +382,7 @@ public class PlayerSession {
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
             String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
             ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "Server", 1, nameOfSender, message);
-            chatReceivePacket.routeToDestination();
+            chatReceivePacket.routeToDestinationNoFlush();
             StarNub.getLogger().cChatPrint("StarNub", message, chatReceivePacket);
         } else if (CONNECTION_TYPE == ConnectionType.REMOTE) {
             //TODO - REMOTE
@@ -392,7 +393,7 @@ public class PlayerSession {
         ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
             ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, channel, message);
-            chatSendPacket.routeToDestination();
+            chatSendPacket.routeToDestinationNoFlush();
         }
     }
 
@@ -405,22 +406,22 @@ public class PlayerSession {
 
     public boolean disconnect() {
         boolean disconnect = CONNECTION.disconnect();
-        disconnectCleanUp("");
+        disconnectCleanUp(DisconnectReason.OTHER);
         return disconnect;
     }
 
-    public boolean disconnectReason(String reason) {
+    public boolean disconnectReason(DisconnectReason reason) {
         ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
         boolean isConnectedCheck = CONNECTION.disconnect();
         if (!isConnectedCheck) {
             PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().remove(CLIENT_CTX);
-            new StringEvent("Player_Disconnect_" + reason, playerSession);
+            new DisconnectEvent(playerSession, reason);
             disconnectCleanUp(reason);
         }
         return isConnectedCheck;
     }
 
-    private void disconnectCleanUp(String reason) {
+    private void disconnectCleanUp(DisconnectReason reason) {
         /* Each type of connection*/
         setEndTimeUtc();
         playerCharacter.updatePlayedTimeLastSeen();
@@ -429,7 +430,7 @@ public class PlayerSession {
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
             ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
             ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
-            if (!reason.equalsIgnoreCase("quit")) {
+            if (reason != DisconnectReason.QUIT) {
                 new ClientDisconnectRequestPacket(SERVER_CTX);
                 new ServerDisconnectPacket(CLIENT_CTX, "");
             }

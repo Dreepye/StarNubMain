@@ -19,22 +19,16 @@
 package starnubserver;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import network.StarNubMessageClientInitializer;
 import org.joda.time.DateTime;
 import starnubserver.events.events.StarNubEvent;
-import starnubserver.events.starnub.StarNubEventRouter;
 import starnubserver.logger.MultiOutputLogger;
 import starnubserver.plugins.PluginManager;
 import starnubserver.resources.ResourceManager;
 import starnubserver.resources.files.Configuration;
 import starnubserver.resources.files.GroupsManagement;
-import utilities.concurrency.task.TaskManager;
-import utilities.connectivity.client.TCPClient;
 
-import javax.net.ssl.SSLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Represents the StarNubs core.
@@ -53,14 +47,15 @@ public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = Configuration.getInstance();
-    private static final TCPClient tcpClient = new TCPClient("StarNub - Central Client - Worker Thread");
-    private static final TaskManager taskManager = new TaskManager((int) configuration.getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
-    private static final StarNubEventRouter starNubEventRouter = new StarNubEventRouter();
+    private static final ExecutorService threadPool = ForkJoinPool.commonPool();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
+    private static final Connections connections = Connections.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance();
     private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
-    private static final Connections connections = Connections.getInstance();
+
+    private StarNub() {
+    }
 
     private static Channel tcpClientChannel;
 
@@ -76,16 +71,16 @@ public final class StarNub {
         return configuration;
     }
 
+    public static ExecutorService getThreadPool() {
+        return threadPool;
+    }
+
     public static MultiOutputLogger getLogger() {
         return logger;
     }
 
     public static StarNubVersion getVersionInstance() {
         return versionInstance;
-    }
-
-    public static StarNubEventRouter getStarNubEventRouter() {
-        return starNubEventRouter;
     }
 
     public static PluginManager getPluginManager() {
@@ -96,54 +91,23 @@ public final class StarNub {
         return STARBOUND_SERVER;
     }
 
-    public static TaskManager getTaskManager() {
-        return taskManager;
-    }
-
-    public static void connectToCentralServer(String host, int port) throws SSLException {
-        final SslContext SSL_CTX = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
-        ChannelFuture channelFuture = tcpClient.connect(host, port, new StarNubMessageClientInitializer(SSL_CTX, host, port));
-        tcpClientChannel = channelFuture.channel();
-    }
-
-    public static void disconnectFromCentralServer(){
-        tcpClient.shutdown();
-    }
-
     public static void main(String[] args) {
         start();
     }
 
     private static void start () {
-        /* This Resource detector is for debugging only */
+                /* This Resource detector is for debugging only */
 //        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
-//        try {
-//            connectToCentralServer("127.0.0.1", 666);
-//        } catch (SSLException e) {
-//            e.printStackTrace();
-//        }
-//        ThreadSleep.timerSeconds(10);
-//        Ban ban = new Ban();
-//        ban.setBan("127.0.0.1", "Poop", "Test", new DateTime());
-//        for (int i = 0; i < 10; i++) {
-//            StarNubMessage starNubMessage = new StarNubMessageBan(
-//                    StarNubMessage.Type.BAN_ADD,
-//                    ban
-//            );
-//            System.out.println(starNubMessage);
-//            tcpClientChannel.writeAndFlush(starNubMessage);
-//        }
 
-        /* Setting Temporary Time - Measuring StarNub Start Up Time */
         DateTime starnubStarTime = DateTime.now();
-        /* Identify the main thread as StarNub - Main for debugging and OS Task List Identification */
         Thread.currentThread().setName("StarNub - Main");
 
-//        logger.eventListenerRegistration(); /*  */
-        starNubEventRouter.startEventRouter();
-        STARBOUND_SERVER.getUdpProxyServer().start();
+
+
+        StarboundServer.getInstance().start();
         new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
         GroupsManagement.getInstance().groupSetup();
+
 //        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", StarNub::tempTime));
     }
 }

@@ -16,42 +16,40 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.concurrency.thread;
+package utilities.concurrent.task;
+
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Represents a ThreadSleep, this class provides static methods for sleeping a thread
+ * Represents a InternalScheduledTask which is to be used with the {@link TaskManager}
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public class ThreadSleep {
+public class InternalTask extends ScheduledTask {
 
-    public ThreadSleep() {}
-
-    /**
-     * This will sleep a thread for seconds
-     *
-     * @param timer int the number of seconds to sleep this thread
-     */
-    public static void timerSeconds(int timer) {
-        try {
-            Thread.sleep(timer * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public InternalTask(String OWNER, String NAME, Runnable RUNNABLE, ScheduledFuture<?> scheduledFuture) {
+        super(OWNER, NAME, RUNNABLE, scheduledFuture);
     }
 
-    /**
-     * This will sleep a thread for milliseconds
-     *
-     * @param timer int the number of milliseconds to sleep this thread
-     */
-    public static void timerMiliseconds(int timer) {
-        try {
-            Thread.sleep(timer);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void scheduleTask(long timeDelay, TimeUnit timeUnit) {
+
     }
 
+    @Override
+    public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
+
+    }
+
+    @Override
+    public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
+
+    }
+
+    @Override
+    public void removeTask() {
+
+    }
 }

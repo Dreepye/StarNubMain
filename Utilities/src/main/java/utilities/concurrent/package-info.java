@@ -17,6 +17,6 @@
  */
 
 /**
- * utilities.concurrency is the package contains a Concurrency Related classes such as Threads, Task
+ * utilities.concurrent is the package contains a Concurrency Related classes such as Threads, Task
  */
-package utilities.concurrency;
+package utilities.concurrent;

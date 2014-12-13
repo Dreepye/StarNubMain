@@ -21,8 +21,8 @@ package starnubserver.connections.player;
 import io.netty.channel.ChannelHandlerContext;
 import starnubserver.StarNub;
 import starnubserver.events.events.StarNubEvent;
+import starnubserver.events.starnub.StarNubEventRouter;
 import utilities.connectivity.connection.ProxyConnection;
-import utilities.events.EventRouter;
 import utilities.events.types.StringEvent;
 
 import java.io.IOException;
@@ -36,15 +36,12 @@ public class StarNubProxyConnection extends ProxyConnection {
 
     private final ConnectionProcessingType CONNECTION_TYPE;
 
-    public StarNubProxyConnection(EventRouter EVENT_ROUTER, ConnectionProcessingType CONNECTION_TYPE, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
-        super(EVENT_ROUTER, CLIENT_CTX, SERVER_CTX);
+    public StarNubProxyConnection(ConnectionProcessingType CONNECTION_TYPE, ChannelHandlerContext CLIENT_CTX, ChannelHandlerContext SERVER_CTX) {
+        super(StarNubEventRouter.getInstance(), CLIENT_CTX, SERVER_CTX);
         this.CONNECTION_TYPE = CONNECTION_TYPE;
         StarNub.getConnections().getOPEN_SOCKETS().remove(SERVER_CTX);
         StarNub.getConnections().getOPEN_SOCKETS().remove(CLIENT_CTX);
-        boolean limitedWrapper =
-                !(boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding") &&
-                CONNECTION_TYPE == ConnectionProcessingType.PLAYER_NO_DECODING;
-        if (limitedWrapper) {
+        if (CONNECTION_TYPE == ConnectionProcessingType.PLAYER_NO_DECODING) {
             try {
                 boolean uuidIp =
                         (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "whitelisted") &&
@@ -59,8 +56,6 @@ public class StarNubProxyConnection extends ProxyConnection {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (CONNECTION_TYPE == ConnectionProcessingType.PLAYER) {
-            StarNub.getConnections().getOPEN_CONNECTIONS().remove(CLIENT_CTX);
         } else {
             StarNub.getConnections().getOPEN_CONNECTIONS().put(CLIENT_CTX, this);
         }

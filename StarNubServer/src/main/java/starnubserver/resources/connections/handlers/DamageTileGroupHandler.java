@@ -22,20 +22,17 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.chat.ChatReceiveChannel;
 import starbounddata.packets.Packet;
 import starbounddata.packets.tile.DamageTileGroupPacket;
-import starnubserver.StarNub;
-import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
+import starnubserver.cache.wrappers.PermissionCacheWrapper;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventHandler;
 import utilities.cache.objects.BooleanCache;
 
 public class DamageTileGroupHandler extends PacketEventHandler {
 
-    private final PlayerCtxCacheWrapper CTX_CACHE;//TODO Permission reload clear casch
+    private final PermissionCacheWrapper CTX_CACHE = new PermissionCacheWrapper("StarNub", "starnub.tile.break");
 
-    public DamageTileGroupHandler(int expectedPlayers) {
-        CTX_CACHE = new PlayerCtxCacheWrapper("StarNub","StarNub - Tile Break Permission Check", true, StarNub.getTaskManager(), expectedPlayers, expectedPlayers);
+    public DamageTileGroupHandler() {
     }
-
 
     /**
      * This is for internal use - permission checks.
@@ -46,30 +43,16 @@ public class DamageTileGroupHandler extends PacketEventHandler {
     public void onEvent(Packet eventData) {
         DamageTileGroupPacket damageTileGroupPacket = (DamageTileGroupPacket) eventData;
         long time = System.nanoTime();
-
-        ChannelHandlerContext ctx = damageTileGroupPacket.getDESTINATION_CTX();
-//MOVE CACHE WIRING ELSE WHERE INERNAL
+        ChannelHandlerContext ctx = damageTileGroupPacket.getSENDER_CTX();
         BooleanCache cache = (BooleanCache) CTX_CACHE.getCache(ctx);
-        if (cache != null){
-            if (!cache.isBool()){
-                PlayerSession playerSession = PlayerSession.getPlayerSession(damageTileGroupPacket);
-                damageTileGroupPacket.recycle();
-                playerSession.sendChatMessage("StarNub", ChatReceiveChannel.UNIVERSE, "You do not have permission to break tiles. Permission required: \"starnub.tile.break\".");
-                return;
-            }
-        } else {
+        if (!cache.isBool()){
             PlayerSession playerSession = PlayerSession.getPlayerSession(damageTileGroupPacket);
-            /* Check for Tile Break Permission */
-            boolean hasPermission = playerSession.hasPermission("starnub.tile.break", true);
-            CTX_CACHE.addCache(ctx, new BooleanCache(hasPermission));
-            if (!hasPermission) {
-                damageTileGroupPacket.recycle();
+            damageTileGroupPacket.recycle();
+            if (cache.isPastDesignatedTimeRefreshTimeNowIfPast(5000)) {
                 playerSession.sendChatMessage("StarNub", ChatReceiveChannel.UNIVERSE, "You do not have permission to break tiles. Permission required: \"starnub.tile.break\".");
-                return;
             }
+            return;
         }
-
-
         System.out.println(System.nanoTime() - time);
     }
 }

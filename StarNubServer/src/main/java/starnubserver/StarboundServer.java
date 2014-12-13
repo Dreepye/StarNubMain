@@ -18,9 +18,8 @@
 
 package starnubserver;
 
-import starbounddata.color.GameColors;
 import starboundmanager.StarboundManager;
-import starnubserver.events.packet.PacketEventRouter;
+import starnubserver.events.starnub.StarNubEventRouter;
 
 /**
  * Represents the Starbound Server core.
@@ -37,18 +36,16 @@ public class StarboundServer {
      * Represents the only instance of this class - Singleton Pattern
      */
     private static final StarboundServer instance = new StarboundServer();
+    private static final StarboundManager starboundManager = new StarboundManager(StarNubEventRouter.getInstance());
+    private static final TCPProxyServer tcpProxyServer = new TCPProxyServer();
+    private static final Thread udpProxyServer = new Thread(new UDPProxyServer(),"StarNub - UDP Proxy : Connection_Worker Thread");
 
     /**
      * This constructor is private - Singleton Pattern
      */
     private StarboundServer() {
-    }
 
-    private static final GameColors gameColors = GameColors.getInstance();
-    private static final PacketEventRouter packetEventRouter = new PacketEventRouter();
-    private static final StarboundManager starboundManager = new StarboundManager(StarNub.getStarNubEventRouter());
-    private static final TCPProxyServer tcpProxyServer = new TCPProxyServer();
-    private static final Thread udpProxyServer = new Thread(new UDPProxyServer(),"StarNub - UDP Proxy : Connection_Worker Thread");
+    }
 
     public static StarboundServer getInstance() {
         return instance;
@@ -56,12 +53,6 @@ public class StarboundServer {
 
     public StarboundManager getStarboundManager() {
         return starboundManager;
-    }
-    public GameColors getGameColors() {
-        return gameColors;
-    }
-    public PacketEventRouter getPacketEventRouter() {
-        return packetEventRouter;
     }
     public TCPProxyServer getTcpProxyServer() {
         return tcpProxyServer;
@@ -71,6 +62,7 @@ public class StarboundServer {
     }
 
     public void start() {
+        udpProxyServer.start();
 
     }
 

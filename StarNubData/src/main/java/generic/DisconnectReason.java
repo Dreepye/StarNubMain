@@ -16,15 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.events.events;
+package generic;
 
-import starnubserver.events.starnub.StarNubEventRouter;
-import utilities.events.types.Event;
-
-public class StarNubEvent extends Event<Object>{
-
-    public StarNubEvent(Object EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
-        StarNubEventRouter.getInstance().eventNotify(this);
-    }
+public enum DisconnectReason {
+    QUIT,
+    KICKED,
+    BANNED,
+    RESERVED_KICK,
+    CONNECTION_LOST,
+    CONNECTION_FAILURE,
+    CHARACTER_LOG_IN,
+    DECODER_CLOSED,
+    DECODER_CLOSED_NO_DECODING,
+    OTHER
 }

@@ -18,6 +18,7 @@
 
 package starnubserver;
 
+import generic.DisconnectReason;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -31,7 +32,9 @@ import starnubserver.cache.wrappers.IPCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.StarNubEvent;
+import starnubserver.events.packet.PacketEventRouter;
 import utilities.cache.objects.IntegerCache;
+import utilities.connectivity.connection.ProxyConnection;
 import utilities.events.EventSubscription;
 import utilities.exceptions.CacheWrapperOperationException;
 import utilities.numbers.RandomNumber;
@@ -67,6 +70,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
     private ChannelHandlerContext destinationCTX;
     private final Packet.Direction CONNECTION_SIDE;
     private final HashMap<Byte, Packet> PACKET_POOL = new HashMap<>();
+    private final PacketEventRouter PACKET_EVENT_ROUTER = PacketEventRouter.getInstance();
     private int vlqLength;
     private int payloadLength;
     private boolean compressed;
@@ -133,7 +137,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             }
             case READ_PAYLOAD: {
                 if (packet != null) {
-                    HashSet<EventSubscription> hashSet = StarNub.getStarboundServer().getPacketEventRouter().getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
+                    HashSet<EventSubscription> hashSet = PACKET_EVENT_ROUTER.getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
                     /* Handle Packet if there is an event handler for it, else do not create objects */
                     if (hashSet != null) {
                         in.skipBytes(1 + vlqLength);
@@ -182,7 +186,6 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
          if (CONNECTION_SIDE == Packet.Direction.TO_STARBOUND_CLIENT) {
             new StarNubEvent("StarNub_Socket_Connection_Attempt_Client", ctx);
             setClientConnection(ctx);
-            new StarNubEvent("StarNub_Socket_Connection_Success_Client", ctx);
         }
         setPACKET_POOL(ctx);
     }
@@ -191,7 +194,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         InetAddress connectingIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress();
         IPCacheWrapper lastActiveCache = StarNub.getConnections().getINTERNAL_IP_WATCHLIST();
         IntegerCache cache = (IntegerCache) lastActiveCache.getCache(connectingIp);
-        int randomInt = RandomNumber.randInt(3000, 6000); //DEBUG CLOSE THREADS CHECK - RESOURCE CLEAN UP
+        int randomInt = RandomNumber.randInt(3000, 6000); //DEBUG - AFTER X ATTACKS CONNECTIONS ARE NOT BEING EXCEPTED
         if (cache != null) {
             int cachedTimer = cache.getInteger();
             boolean isPastTime = cache.isPastDesignatedTimeRefreshTimeNowIfPast(cachedTimer);
@@ -199,6 +202,11 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             if(!isPastTime){
                 cache.setInteger(cachedTimer + randomInt);
                 ctx.close();
+//                ctx.channel().unsafe().closeForcibly();
+//                ctx.executor().shutdownGracefully();
+//                ctx.channel().eventLoop().shutdownGracefully();
+                new StarNubEvent("StarNub_Socket_Connection_Failed_DOS_Detected", ctx);
+                return;
             } else {
                 cache.setInteger(randomInt);
                 openServerConnection(ctx);
@@ -207,6 +215,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             lastActiveCache.addCache(connectingIp, new IntegerCache(randomInt));
             openServerConnection(ctx);
         }
+        new StarNubEvent("StarNub_Socket_Connection_Success_Client", ctx);
     }
 
     private void openServerConnection(ChannelHandlerContext ctx){
@@ -215,16 +224,24 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         starNubMainOutboundSocket
                 .group(ctx.channel().eventLoop())
                 .channel(ctx.channel().getClass())
-                .option(ChannelOption.TCP_NODELAY, TCPProxyServer.isTcpNoDelay())
+//                .option(ChannelOption.TCP_NODELAY, TCPProxyServer.isTcpNoDelay())
                 .option(ChannelOption.ALLOCATOR, TCPProxyServer.getSocketBuffer())
-                .option(ChannelOption.SO_RCVBUF, TCPProxyServer.getRecvBuffer())
-                .option(ChannelOption.SO_SNDBUF, TCPProxyServer.getSendBuffer())
-                .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, TCPProxyServer.getWriteHighWaterMark())
+//                .option(ChannelOption.SO_RCVBUF, TCPProxyServer.getRecvBuffer())
+//                .option(ChannelOption.SO_SNDBUF, TCPProxyServer.getSendBuffer())
+//                .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, TCPProxyServer.getWriteHighWaterMark())
+//                .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, TCPProxyServer.getWriteLowWaterMark())
+//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                 .handler(new TCPProxyServerPacketDecoder(Packet.Direction.TO_STARBOUND_SERVER, ctx));
         ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port")));
         destinationCTX = f.channel().pipeline().firstContext();
         new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
-        starNubProxyConnection = new StarNubProxyConnection(StarNub.getStarNubEventRouter(), StarNubProxyConnection.ConnectionProcessingType.PLAYER_NO_DECODING, ctx, destinationCTX);
+        StarNubProxyConnection.ConnectionProcessingType connectionProcessingType = null;
+        if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")){
+            connectionProcessingType = StarNubProxyConnection.ConnectionProcessingType.PLAYER;
+        } else {
+            connectionProcessingType = StarNubProxyConnection.ConnectionProcessingType.PLAYER_NO_DECODING;
+        }
+        starNubProxyConnection = new StarNubProxyConnection(connectionProcessingType, ctx, destinationCTX);
     }
 
     /**
@@ -271,8 +288,10 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace(); /* Debug Print */
-        closeConnection(ctx);
+        if (!cause.getMessage().contains("forcibly closed by the remote")){
+            cause.printStackTrace(); /* Debug Print */
+            closeConnection(ctx);
+        }
     }
 
     @Override
@@ -282,6 +301,18 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private void closeConnection(ChannelHandlerContext ctx){
         PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(ctx);
-        playerSession.disconnectReason("Closed_By_Handler");
+        if (playerSession != null) {
+            playerSession.disconnectReason(DisconnectReason.DECODER_CLOSED);
+            return;
+        }
+
+        ProxyConnection proxyConnection = StarNub.getConnections().getPROXY_CONNECTION().get(ctx);
+        if (proxyConnection != null) {
+            proxyConnection.disconnect();
+        } else {
+            if (destinationCTX != null) {
+                destinationCTX.close();
+            }
+        }
     }
 }

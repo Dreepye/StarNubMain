@@ -5,9 +5,11 @@ Change Log:
         - Modified the decoder by adding the Variant Length Quantity equation in the method, vice making it a object (Means its not stored in the memory heap)
         - Changed all socket settings, increasing the buffer allocation and write amount, per right
 
+
+
 //planet who
 //EPOLL
-//thread not closinh
+//Payer session permination time update
 
 ///////// THIS IS FOR ESSENTIALS PLUGIN ////////////////
         jsonObject.put("gamePort", ((Map)StarNub.getConfiguration().getConfiguration().get("starnubserver settings")).get("starbound_port"));
@@ -16,7 +18,7 @@ Change Log:
                 (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit_reserved") +
                 2);
 
-///DDOS DOS - Thread shutdown ???
+///DDOS DOS - Thread crash fix
 //Warp packets delay to starbound
 // Remove exception throws as much as possble bad! - Resource usage
 

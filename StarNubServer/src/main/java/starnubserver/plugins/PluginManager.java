@@ -22,7 +22,6 @@ import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import starnubserver.StarNub;
-import starnubserver.events.events.ThreadEvent;
 import starnubserver.plugins.runnable.StarNubRunnable;
 import utilities.file.yaml.YAMLWrapper;
 
@@ -722,7 +721,7 @@ public class PluginManager {
         Thread threadToStart = new Thread(runnable, name);
         pluginPackage.getThreads().putIfAbsent(threadToStart, runnable);
         threadToStart.start();
-        ThreadEvent.eventSend_Permanent_Thread_Started(pluginPackage.getPLUGIN_NAME(), threadToStart);
+//        ThreadEvent.eventSend_Permanent_Thread_Started(pluginPackage.getPLUGIN_NAME(), threadToStart);
     }
 }
 

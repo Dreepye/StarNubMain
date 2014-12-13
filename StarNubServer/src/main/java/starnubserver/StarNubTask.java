@@ -18,8 +18,8 @@
 
 package starnubserver;
 
-import utilities.concurrency.task.ScheduledTask;
-import utilities.concurrency.task.TaskManager;
+import utilities.concurrent.task.ScheduledTask;
+import utilities.concurrent.task.TaskManager;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class StarNubTask extends ScheduledTask {
 
-    private static TaskManager taskManager = StarNub.getTaskManager();
+    private final static TaskManager TASK_MANAGER = StarNubTaskManager.getInstance();
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -76,7 +76,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void scheduleTask(long timeDelay, TimeUnit timeUnit) {
-        super.scheduledFuture = taskManager.schedule(super.RUNNABLE, timeDelay, timeUnit);
+        super.scheduledFuture = TASK_MANAGER.schedule(super.RUNNABLE, timeDelay, timeUnit);
         insertTaskList();
     }
 
@@ -91,7 +91,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
-        super.scheduledFuture = taskManager.scheduleAtFixedRate(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
+        super.scheduledFuture = TASK_MANAGER.scheduleAtFixedRate(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
         insertTaskList();
     }
 
@@ -106,7 +106,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
-        super.scheduledFuture = taskManager.scheduleWithFixedDelay(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
+        super.scheduledFuture = TASK_MANAGER.scheduleWithFixedDelay(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
         insertTaskList();
     }
 
@@ -118,7 +118,7 @@ public class StarNubTask extends ScheduledTask {
     @Override
     public void removeTask() {
         try {
-            taskManager.getTASK_LIST().get(super.OWNER).remove(super.NAME).getScheduledFuture().cancel(true);
+            TASK_MANAGER.getTASK_LIST().get(super.OWNER).remove(super.NAME).getScheduledFuture().cancel(true);
         }catch (NullPointerException e){
             /* Silent Catch */
         }
@@ -130,7 +130,7 @@ public class StarNubTask extends ScheduledTask {
      * Uses: This will insert this task into the task list
      */
     private void insertTaskList() {
-        ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = taskManager.getTASK_LIST();
+        ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
         if (!taskList.containsKey(super.OWNER)){
             taskList.put(super.OWNER, new ConcurrentHashMap<>());
         }

@@ -1,6 +1,6 @@
-package utilities.concurrency.task;
+package utilities.concurrent.task;
 
-import utilities.concurrency.thread.NamedThreadFactory;
+import utilities.concurrent.thread.NamedThreadFactory;
 
 import java.util.HashSet;
 import java.util.Map;

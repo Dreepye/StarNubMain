@@ -8,7 +8,6 @@ import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import starnubserver.resources.NameBuilder;
 import utilities.events.Priority;
-import utilities.events.types.Event;
 import utilities.strings.StringUtilities;
 import utilities.time.DateAndTimes;
 
@@ -165,9 +164,9 @@ public class MultiOutputLogger {
     }
 
     public void eventListenerRegistration() {
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Event", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Event", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logEvent) {
                     case 0: { /* Not Logging */
@@ -190,9 +189,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Debug", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Debug", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logDebug) {
                     case 0: { /* Not Logging */
@@ -215,9 +214,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Chat", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Chat", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logChat) {
                     case 0: { /* Not Logging */
@@ -240,9 +239,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Command", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Command", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logCommand) {
                     case 0: { /* Not Logging */
@@ -265,9 +264,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Information", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Information", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logInformation) {
                     case 0: { /* Not Logging */
@@ -290,9 +289,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Warning", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Warning", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logWarning) {
                     case 0: { /* Not Logging */
@@ -315,9 +314,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Error", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Error", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logError) {
                     case 0: { /* Not Logging */
@@ -341,9 +340,9 @@ public class MultiOutputLogger {
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Fatal", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Fatal", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logFatal) {
                     case 0: { /* Not Logging */
@@ -787,7 +786,7 @@ public class MultiOutputLogger {
      * @param destination String where the message is going
      */
     public void cChatPrint(Object sender, String message, Object destination) {
-        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "log_original_character_name_with_nick_name");
+        boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "log_original_character_name_with_nick_name");
         new StarNubEvent("StarNub_Log_Chat",
                 stringBuilder(
                         "StarNub",

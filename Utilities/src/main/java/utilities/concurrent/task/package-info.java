@@ -17,6 +17,6 @@
  */
 
 /**
- * utilities.concurrency.task is the package contains a Task Manager and Scheduled Task Class
+ * utilities.concurrent.task is the package contains a Task Manager and Scheduled Task Class
  */
-package utilities.concurrency.task;
+package utilities.concurrent.task;

@@ -14,16 +14,25 @@ import utilities.events.EventRouter;
 public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Packet, Packet> {
 
     /**
+     * This is instantiated to build out the Packet Event Router
+     */
+    private static final PacketEventRouter INSTANCE = new PacketEventRouter();
+
+    /**
      * This is instantiated to build out the Packets enum at start up
      */
-    private static final Packets INSTANCE = Packets.PROTOCOLVERSION;
+    private static final Packets PACKETS_INSTANCE = Packets.PROTOCOLVERSION;
 
-    public PacketEventRouter(){
+    private PacketEventRouter() {
         super();
     }
 
+    public static PacketEventRouter getInstance() {
+        return INSTANCE;
+    }
+
     /**
-     * This was implemented inline with the PacketDecoder.
+     * This was implemented inline with the Packet Decoder.
      *
      * @param packet Packet representing a packet
      */
@@ -32,7 +41,7 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
     }
 
     /**
-     * This was implemented inline with the PacketDecoder.
+     * This was implemented inline with the Packet Decoder.
      *
      * @param packet Packet representing a packet
      */

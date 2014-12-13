@@ -34,6 +34,9 @@ import java.util.HashSet;
  */
 public class Vec2IArray extends ArrayList<Vec2I> {
 
+    private final static int ARRAY_INCOMING_CAP = 100;
+    private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_INCOMING_CAP);
+
     public Vec2IArray() {
         super();
     }
@@ -53,6 +56,12 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         int highX = vector1.getX() > vector2.getX() ? vector1.getX() : vector2.getX();
         int lowY = vector1.getY() > vector2.getY() ? vector2.getY() : vector1.getY();
         int highY = vector1.getY() > vector2.getY() ? vector1.getY() : vector2.getY();
+        int xLen = highX - lowX;
+        int yLen = highY - lowY;
+        int size = xLen * yLen;
+//        if (VEC2I_POOL.size() < size){
+//
+//        }
         while (lowX <= highX) {
             int tempY = lowY;
             while (tempY <= highY) {
@@ -69,11 +78,12 @@ public class Vec2IArray extends ArrayList<Vec2I> {
      */
     public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException {
         int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (arrayLength > 100) {
+        if (arrayLength > ARRAY_INCOMING_CAP) {
             throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {
-            Vec2I vec2I = new Vec2I(in);
+            Vec2I vec2I = VEC2I_POOL.get(1);
+            vec2I.setVec2I(in);
             this.add(vec2I);
         }
     }
@@ -107,6 +117,15 @@ public class Vec2IArray extends ArrayList<Vec2I> {
             groups.add(group);
         }
         return groups;
+    }
+
+    private ArrayList<Vec2I> buildVec2ICache(int cacheSize){
+        ArrayList<Vec2I> vec2IHashSet = new ArrayList<>();
+        for (int i = 0; i < cacheSize; i++) {
+            Vec2I vec2I = new Vec2I(0,0);
+            vec2IHashSet.add(vec2I);
+        }
+        return vec2IHashSet;
     }
 
     @Override

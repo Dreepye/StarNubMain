@@ -1,119 +1,42 @@
 package starnubserver.events.starnub;
 
 import starnubserver.StarNub;
-import starnubserver.StarNubTask;
-import starnubserver.plugins.runnable.StarNubRunnable;
+import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventRouter;
 import utilities.events.EventSubscription;
-import utilities.events.types.Event;
 
 import java.util.HashSet;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Represents StarNubs StarNubEventRouter to be used with {@link starnubserver.events.starnub.StarNubEventSubscription} and
  * {@link starnubserver.events.starnub.StarNubEventHandler}
  *
- * NOTE: TODO THIS CLASS WILL BE PENDING REFACTORING ONCE MORE TO FINISH THE WORKER ALGORITHM BUT IS SUFFICIENT ENOUGH TO RUN PRODUCTION
- *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class StarNubEventRouter extends EventRouter<String, Event<String>, Boolean> {
+public class StarNubEventRouter extends EventRouter<String, StarNubEvent, Boolean> {
 
-    private final Object HASHSET_LOCK_OBJECT_2 = new Object();
-    private volatile int maxThreadCount;
-    private volatile HashSet<StarNubRunnable> currentThreads;
-    private ArrayBlockingQueue<Event<String>> eventsQue;
+    /**
+     * This is instantiated to build out the Packet Event Router
+     */
+    private static final StarNubEventRouter INSTANCE = new StarNubEventRouter();
 
-    private boolean shuttingDown;
-
-    public StarNubEventRouter(){
+    private StarNubEventRouter(){
         super();
-        setResources();
     }
 
-    public void setResources(){
-        eventsQue = new ArrayBlockingQueue<>((int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "event_que_size"));
-        maxThreadCount = (int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "event_thread_count");
-        currentThreads = new HashSet<>(maxThreadCount);
-        shuttingDown = false;
+    public static StarNubEventRouter getInstance() {
+        return INSTANCE;
     }
 
-    public void startEventRouter(){
-        new StarNubTask("StarNub", "StarNub - Event Router - Internal Event Handler Processor", true , 10, 10, TimeUnit.SECONDS, this::checkQue);
-        if (currentThreads.isEmpty()){
-            startNewRunnable();
-        }
-    }
-
-    public void checkQue(){
-        int quePercentage = (int) (((double) eventsQue.remainingCapacity() / eventsQue.size()) * 100);
-        while (quePercentage <= 10) {
-            if (startNewRunnable()) {
-                System.out.println("Starting new runnable to handle overloaded event que.");
-            }
-        }
-        if (quePercentage <= 25) {
-            startNewRunnable();
-        }
-        if (quePercentage > 90) {
-            synchronized (HASHSET_LOCK_OBJECT_2) {
-                if (currentThreads.size() > 1) {
-                    for (StarNubRunnable starNubRunnable : currentThreads) {
-                        starNubRunnable.setShuttingDown(true);
-                        currentThreads.remove(starNubRunnable);
-                        System.out.println("Shutting down idle event thread.");
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean startNewRunnable(){
-        if (currentThreads.size() == maxThreadCount){
-            System.err.println("STARNUB - CRITICAL EVENT HANDLING ERROR - QUE FULL - MAX THREADS REACHED.");
-            return false;
-        }
-        StarNubRunnable starNubRunnable = (new StarNubRunnable(){
-            /**
-             * When an object implementing interface <code>Runnable</code> is used
-             * to create a thread, starting the thread causes the object's
-             * <code>run</code> method to be called in that separately executing
-             * thread.
-             * <p>
-             * The general contract of the method <code>run</code> is that it may
-             * take any action whatsoever.
-             *
-             * @see Thread#run()
-             */
-            @Override
-            public void run() {
-                while (!shuttingDown){
-                    try {
-                        handleEvent(eventsQue.take());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        synchronized (HASHSET_LOCK_OBJECT_2){
-            currentThreads.add(starNubRunnable);
-        }
-        new Thread(starNubRunnable, "StarNub - Event Handler : Thread - " + currentThreads.size()).start();
-        return true;
-    }
-
-    public void eventNotify(Event<String> event){
-        eventsQue.add(event);
+    public void eventNotify(StarNubEvent event){
+       StarNub.getThreadPool().submit(() -> handleEvent(event));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void handleEvent(Event<String> event) {
-            String eventKey = event.getEVENT_KEY();
+    public void handleEvent(StarNubEvent event) {
+            Object eventKey = event.getEVENT_KEY();
             HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
             if (eventSubscriptions != null){
                 for (EventSubscription eventSubscription : eventSubscriptions){

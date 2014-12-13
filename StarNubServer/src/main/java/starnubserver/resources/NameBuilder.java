@@ -18,7 +18,8 @@
 
 package starnubserver.resources;
 
-import starnubserver.StarNub;
+import starbounddata.color.GameColors;
+import starbounddata.packets.Packet;
 import starnubserver.connections.player.account.Settings;
 import starnubserver.connections.player.session.PlayerSession;
 
@@ -158,6 +159,10 @@ public class NameBuilder {
      */
     private String nameBuilder (Object nameToBuild, boolean console, boolean color, boolean playerTags, boolean originalName){
         String nameString = "";
+        if (nameToBuild instanceof Packet){
+            nameToBuild = PlayerSession.getPlayerSession((Packet) nameToBuild);
+        }
+
         if (nameToBuild instanceof PlayerSession) {
             PlayerSession playerSession = (PlayerSession) nameToBuild;
             if (console) {
@@ -177,7 +182,7 @@ public class NameBuilder {
                 nameString = string;
             }
             if (color){
-                nameString = StarNub.getStarboundServer().getGameColors().getDefaultServerNameColor() + nameString;
+                nameString = GameColors.getInstance().getDefaultServerNameColor() + nameString;
             }
         }
         return nameString;
@@ -196,7 +201,7 @@ public class NameBuilder {
      * @return String built player name
      */
     public String msgPlayerNameBuilderFinal(PlayerSession playerSession, boolean playerTags, boolean originalName){
-        String playerName = StarNub.getStarboundServer().getGameColors().getDefaultNameColor() +  playerSession.getNickName();
+        String playerName = GameColors.getInstance().getDefaultNameColor() +  playerSession.getNickName();
         if (playerTags) {
             String prefix = "";
             String suffix = "";

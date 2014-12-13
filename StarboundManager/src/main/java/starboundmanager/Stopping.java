@@ -19,7 +19,7 @@
 package starboundmanager;
 
 
-import utilities.concurrency.thread.ThreadSleep;
+import utilities.concurrent.thread.ThreadSleep;
 
 /**
  * Represents StarNubs Disconnected Status

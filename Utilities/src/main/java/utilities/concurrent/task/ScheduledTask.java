@@ -1,4 +1,4 @@
-package utilities.concurrency.task;
+package utilities.concurrent.task;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;

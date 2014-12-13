@@ -18,6 +18,7 @@
 
 package starnubserver.resources.connections.handlers;
 
+import generic.DisconnectReason;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubserver.Connections;
@@ -38,14 +39,13 @@ public class ServerDisconnectHandler extends PacketEventHandler {
      * Uses: This is used to clean up player connections
      *
      * @param eventData Packet representing the packet being routed
-     * @return Packet any class representing packet can be returned
      */
     @Override
     public void onEvent(Packet eventData) {
         ServerDisconnectPacket serverDisconnectPacket = (ServerDisconnectPacket) eventData;
         PlayerSession playerSession = CONNECTIONS.getCONNECTED_PLAYERS().get(serverDisconnectPacket.getDESTINATION_CTX());
         if (playerSession != null){
-            playerSession.disconnectReason("Quit");
+            playerSession.disconnectReason(DisconnectReason.QUIT);
         }
     }
 }

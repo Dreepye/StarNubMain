@@ -139,6 +139,15 @@ public abstract class Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     */
+    public void routeToDestinationNoFlush() {
+        DESTINATION_CTX.write(packetToMessageEncoder(), DESTINATION_CTX.voidPromise());
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
      * Uses: This will send this packet to multiple people
      *
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
@@ -150,6 +159,24 @@ public abstract class Packet {
         } else {
             for (ChannelHandlerContext ctx : sendList) {
                 ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise());
+            }
+        }
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
+     */
+    public void routeToGroupNoFlush(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
+        if (ignoredList != null) {
+            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise()));
+        } else {
+            for (ChannelHandlerContext ctx : sendList) {
+                ctx.write(packetToMessageEncoder(), ctx.voidPromise());
             }
         }
     }

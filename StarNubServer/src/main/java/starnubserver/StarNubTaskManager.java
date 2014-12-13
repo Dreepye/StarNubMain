@@ -16,15 +16,32 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.events.events;
+package starnubserver;
 
-import starnubserver.events.starnub.StarNubEventRouter;
-import utilities.events.types.Event;
+import utilities.concurrent.task.TaskManager;
 
-public class StarNubEvent extends Event<Object>{
+/**
+ * Represents StarNubTask instance
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0 Beta
+ */
+public class StarNubTaskManager extends TaskManager {
 
-    public StarNubEvent(Object EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
-        StarNubEventRouter.getInstance().eventNotify(this);
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final StarNubTaskManager instance = new StarNubTaskManager();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private StarNubTaskManager() {
+        super((int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
     }
+
+    public static StarNubTaskManager getInstance() {
+        return instance;
+    }
+
 }

@@ -24,7 +24,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import utilities.concurrency.thread.NamedThreadFactory;
+import utilities.concurrent.thread.NamedThreadFactory;
 
 import java.util.concurrent.Executors;
 

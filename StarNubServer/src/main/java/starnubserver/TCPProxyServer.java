@@ -20,12 +20,14 @@ package starnubserver;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import utilities.concurrency.thread.NamedThreadFactory;
+import utilities.concurrent.thread.NamedThreadFactory;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -51,6 +53,10 @@ class TCPProxyServer {
     private static int recvBuffer;
     private static int sendBuffer;
     private static int writeHighWaterMark;
+    private static int writeLowWaterMark;
+    private static Channel BIND;
+//    new EpollEventLoopGroup()
+//    EpollSocketChannel.class
 
     public TCPProxyServer() {
         setNetworkThreading();
@@ -78,6 +84,14 @@ class TCPProxyServer {
         return writeHighWaterMark;
     }
 
+    public static int getWriteLowWaterMark() {
+        return writeLowWaterMark;
+    }
+
+    public static void setWriteLowWaterMark(int writeLowWaterMark) {
+        TCPProxyServer.writeLowWaterMark = writeLowWaterMark;
+    }
+
     public static void setNetworkThreading() {
         if (connectionBossGroup == null) {
             connectionBossGroup =
@@ -85,40 +99,47 @@ class TCPProxyServer {
                             1,
                             Executors.newCachedThreadPool(new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
         }
+        if (connectionWorkerGroup == null) {
+            connectionWorkerGroup =
+                    new NioEventLoopGroup();
+        }
+
+//        400,
+//                Executors.newCachedThreadPool(new NamedThreadFactory("StarNub - TCP Proxy : Connection Worker"))
+
     }
 
     public static void setSocketSettings(){
         tcpNoDelay = true;
-        socketBuffer = PooledByteBufAllocator.DEFAULT;
+        socketBuffer = new PooledByteBufAllocator(true);
+        writeHighWaterMark = 32 * 1024;
+        writeLowWaterMark = 8 * 1024;
         recvBuffer = 512 * 1024;
         sendBuffer = 512 * 1024;
-        writeHighWaterMark = 32 * 1024;
     }
 
-    /**
-     * This start() method will start a new TCP Server Socket
-     * listening on the "starnub_port" variable found in the
-     * user configuration. It will use CPU*2 of threads as
-     * users connect, each is issues their own thread. When
-     * threads have been expended new clients will start to share
-     * threads. This also uses pooled memory inside of the Java
-     * Virtual Machine (JVM) heap, which is faster but requires a little more
-     * memory allocated at start up. If it used unpooled a slower method
-     * the memory comes from outside of the JVM Heap
-     */
     public static void start() {
         ServerBootstrap starNubInbound_TCP_Socket = new ServerBootstrap();
-        starNubInbound_TCP_Socket
-                .group(connectionBossGroup, new NioEventLoopGroup())
+        BIND = starNubInbound_TCP_Socket
+                .group(connectionBossGroup, connectionWorkerGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, 99999)
-                .childOption(ChannelOption.SO_RCVBUF, recvBuffer)
-                .childOption(ChannelOption.SO_SNDBUF, sendBuffer)
-                .childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, writeHighWaterMark)
+                .option(ChannelOption.SO_BACKLOG, 9999)
+//                .childOption(ChannelOption.SO_RCVBUF, recvBuffer)
+//                .childOption(ChannelOption.SO_SNDBUF, sendBuffer)
+//                .childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, writeHighWaterMark)
+//                .childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, writeLowWaterMark)
                 .childOption(ChannelOption.TCP_NODELAY, tcpNoDelay)
                 .childOption(ChannelOption.ALLOCATOR, socketBuffer)
+//                .childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                 .childHandler(new TCPProxyServerInitializer())
-                .bind((int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port"));
+                .bind((int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port")).channel();
+        new StarNubTask("StarNub", "StarNub - TCP Connection Thread Health Check", false, 30, 30, TimeUnit.SECONDS, TCPProxyServer::healthChecks);
+
+    }
+
+    private static void healthChecks(){
+//        connectionWorkerGroup.rebuildSelectors();
+        System.out.println(connectionWorkerGroup);
     }
 
     public static void shutdownNetworkThreads(){

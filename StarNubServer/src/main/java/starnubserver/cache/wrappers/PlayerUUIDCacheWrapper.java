@@ -19,14 +19,13 @@
 package starnubserver.cache.wrappers;
 
 import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.events.events.DisconnectData;
+import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
-import utilities.cache.wrappers.CacheWrapper;
 import utilities.events.Priority;
-import utilities.events.types.Event;
 
 import java.util.UUID;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,40 +35,61 @@ import java.util.concurrent.TimeUnit;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PlayerUUIDCacheWrapper extends CacheWrapper<UUID> {
-
+public class PlayerUUIDCacheWrapper extends StarNubCacheWrapper<UUID> {
 
     /**
      * Basic constructor. RECOMMENDED.
      *
-     * @param CACHE_OWNER                    String representing the owner of this utilities.cache, should be set to the plugins exact name
-     * @param CACHE_NAME                     String representing the name for this specific utilities.cache implementation, to be used to task thread purging
-     * @param AUTO_CACHE_PURGER              boolean you must create a auto utilities.cache purger implementation if once that you need does
-     *                                       not exist already, if you will not be using this which is not recommended, use null in its place.
-     * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
-     * @param expectedElements               int representing the max number of elements that will be in the utilities.cache at one time
-     * @param expectedThreads                int representing the max number of threads you expect to be accessing the elements at one time
+     * @param CACHE_OWNER     String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_NAME      String representing the name for this specific utilities.cache implementation, to be used to task thread purging
+     * @param REGISTER_EVENTS boolean you must create a auto utilities.cache purger implementation if once that you need does
+     *                        not exist already, if you will not be using this which is not recommended, use null in its place.
+     * @param multiplier      int representing the multiplier of cache, the base cache is player expected player count from the configuration, multipliers will change this value
      */
-    public PlayerUUIDCacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean AUTO_CACHE_PURGER, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads) {
-        super(CACHE_OWNER, CACHE_NAME, AUTO_CACHE_PURGER, SCHEDULED_THREAD_POOL_EXECUTOR, expectedElements, expectedThreads);
+    public PlayerUUIDCacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean REGISTER_EVENTS, int multiplier) {
+        super(CACHE_OWNER, CACHE_NAME, REGISTER_EVENTS, multiplier);
+    }
+
+    /**
+     * Basic constructor. RECOMMENDED.
+     *
+     * @param CACHE_OWNER     String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_NAME      String representing the name for this specific utilities.cache implementation, to be used to task thread purging
+     * @param REGISTER_EVENTS boolean you must create a auto utilities.cache purger implementation if once that you need does
+     */
+    public PlayerUUIDCacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean REGISTER_EVENTS) {
+        super(CACHE_OWNER, CACHE_NAME, REGISTER_EVENTS);
     }
 
     /**
      * Time specific constructor. RECOMMENDED.
      *
-     * @param CACHE_OWNER                    String representing the owner of this utilities.cache, should be set to the plugins exact name
-     * @param CACHE_NAME                     String representing the name for this specific utilities.cache implementation, to be used to task thread purging
-     * @param AUTO_CACHE_PURGER              boolean you must create a auto utilities.cache purger implementation if once that you need does
-     *                                       not exist already, if you will not be using this which is not recommended, use null in its place.
-     * @param SCHEDULED_THREAD_POOL_EXECUTOR ScheduledThreadPoolExecutor of which we have scheduled a auto dumping task to
-     * @param expectedElements               int representing the max number of elements that will be in the utilities.cache at one time
-     * @param expectedThreads                int representing the max number of threads you expect to be accessing the elements at one time
-     * @param TIME_UNIT                      TimeUnit representing the time units to set the auto prune and purge to set 0 for off (Not recommended)
-     * @param CACHE_PRUNE_TASK_TIME          int representing the time units to to automatically remove utilities.cache of this age at the set interval of this time unit
-     * @param CACHE_PURGE_TAKE_TIME          int representing the time to purge all utilities.cache entirely
+     * @param CACHE_OWNER           String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_NAME            String representing the name for this specific utilities.cache implementation, to be used to task thread purging
+     * @param REGISTER_EVENTS       boolean you must create a auto utilities.cache purger implementation if once that you need does
+     *                              not exist already, if you will not be using this which is not recommended, use null in its place.
+     * @param multiplier            int representing the multiplier of cache, the base cache is player expected player count from the configuration, multipliers will change this value
+     * @param TIME_UNIT             TimeUnit representing the time units to set the auto prune and purge to set 0 for off (Not recommended)
+     * @param CACHE_PRUNE_TASK_TIME int representing the time units to to automatically remove cache of this age at the set interval of this time unit
+     * @param CACHE_PURGE_TAKE_TIME int representing the time to purge all utilities.cache entirely
      */
-    public PlayerUUIDCacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean AUTO_CACHE_PURGER, ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR, int expectedElements, int expectedThreads, TimeUnit TIME_UNIT, int CACHE_PRUNE_TASK_TIME, int CACHE_PURGE_TAKE_TIME) {
-        super(CACHE_OWNER, CACHE_NAME, AUTO_CACHE_PURGER, SCHEDULED_THREAD_POOL_EXECUTOR, expectedElements, expectedThreads, TIME_UNIT, CACHE_PRUNE_TASK_TIME, CACHE_PURGE_TAKE_TIME);
+    public PlayerUUIDCacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean REGISTER_EVENTS, int multiplier, TimeUnit TIME_UNIT, int CACHE_PRUNE_TASK_TIME, int CACHE_PURGE_TAKE_TIME) {
+        super(CACHE_OWNER, CACHE_NAME, REGISTER_EVENTS, multiplier, TIME_UNIT, CACHE_PRUNE_TASK_TIME, CACHE_PURGE_TAKE_TIME);
+    }
+
+    /**
+     * Time specific constructor. RECOMMENDED.
+     *
+     * @param CACHE_OWNER           String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_NAME            String representing the name for this specific utilities.cache implementation, to be used to task thread purging
+     * @param REGISTER_EVENTS       boolean you must create a auto utilities.cache purger implementation if once that you need does
+     *                              not exist already, if you will not be using this which is not recommended, use null in its place.
+     * @param TIME_UNIT             TimeUnit representing the time units to set the auto prune and purge to set 0 for off (Not recommended)
+     * @param CACHE_PRUNE_TASK_TIME int representing the time units to to automatically remove cache of this age at the set interval of this time unit
+     * @param CACHE_PURGE_TAKE_TIME int representing the time to purge all utilities.cache entirely
+     */
+    public PlayerUUIDCacheWrapper(String CACHE_OWNER, String CACHE_NAME, boolean REGISTER_EVENTS, TimeUnit TIME_UNIT, int CACHE_PRUNE_TASK_TIME, int CACHE_PURGE_TAKE_TIME) {
+        super(CACHE_OWNER, CACHE_NAME, REGISTER_EVENTS, TIME_UNIT, CACHE_PRUNE_TASK_TIME, CACHE_PURGE_TAKE_TIME);
     }
 
     /**
@@ -77,11 +97,15 @@ public class PlayerUUIDCacheWrapper extends CacheWrapper<UUID> {
      */
     @Override
     public void registerEvents() {
-        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Disconnected", new StarNubEventHandler<Event<String>>() {
+        playerDisconnectListener();
+    }
+
+    private void playerDisconnectListener(){
+        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Disconnected", new StarNubEventHandler() {
             @Override
-            @SuppressWarnings("unchecked")
-            public void onEvent(Event eventData) {
-                PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
+            public void onEvent(StarNubEvent eventData) {
+                DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
+                PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
                 getCACHE_MAP().remove(playerSession.getPlayerCharacter().getUuid());
             }
         });

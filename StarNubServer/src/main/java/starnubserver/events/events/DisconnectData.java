@@ -18,13 +18,24 @@
 
 package starnubserver.events.events;
 
-import starnubserver.events.starnub.StarNubEventRouter;
-import utilities.events.types.Event;
+import generic.DisconnectReason;
+import starnubserver.connections.player.session.PlayerSession;
 
-public class StarNubEvent extends Event<Object>{
+public class DisconnectData {
 
-    public StarNubEvent(Object EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
-        StarNubEventRouter.getInstance().eventNotify(this);
+    private final PlayerSession PLAYER_SESSION;
+    private final DisconnectReason DISCONNECT_REASON;
+
+    public DisconnectData(PlayerSession PLAYER_SESSION, DisconnectReason DISCONNECT_REASON) {
+        this.PLAYER_SESSION = PLAYER_SESSION;
+        this.DISCONNECT_REASON = DISCONNECT_REASON;
+    }
+
+    public PlayerSession getPLAYER_SESSION() {
+        return PLAYER_SESSION;
+    }
+
+    public DisconnectReason getDISCONNECT_REASON() {
+        return DISCONNECT_REASON;
     }
 }

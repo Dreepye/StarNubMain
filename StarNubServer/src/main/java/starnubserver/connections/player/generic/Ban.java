@@ -21,6 +21,7 @@ package starnubserver.connections.player.generic;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import generic.DisconnectReason;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;
@@ -137,7 +138,7 @@ public class Ban implements Serializable {
         StarNub.getConnections().getBANSList().put(this.banIdentifier, this);
         PlayerSession playerSession = StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(this.banIdentifier);
         if (playerSession != null){
-            playerSession.disconnectReason("Banned");
+            playerSession.disconnectReason(DisconnectReason.BANNED);
         }
     }
 

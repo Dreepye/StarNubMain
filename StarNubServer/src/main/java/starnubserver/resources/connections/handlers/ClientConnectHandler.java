@@ -18,6 +18,7 @@
 
 package starnubserver.resources.connections.handlers;
 
+import generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -38,7 +39,6 @@ import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import utilities.cache.objects.TimeCache;
 import utilities.events.Priority;
-import utilities.events.types.Event;
 import utilities.time.DateAndTimes;
 
 import java.util.UUID;
@@ -59,12 +59,12 @@ public class ClientConnectHandler extends PacketEventHandler {
 
     public ClientConnectHandler(Connections CONNECTIONS, int expectedThreads) {
         this.CONNECTIONS = CONNECTIONS;
-        this.ALREADY_LOGGED_ON = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Character Already Online", true, StarNub.getTaskManager(), 20, expectedThreads, TimeUnit.MINUTES, 10, 60);
-        this.RESERVED_KICKED = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Reserved Kick", true, StarNub.getTaskManager(), 20, expectedThreads, TimeUnit.MINUTES, 10, 60);
+        this.ALREADY_LOGGED_ON = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Character Already Online", true, 20, TimeUnit.MINUTES, 10, 60);
+        this.RESERVED_KICKED = new PlayerUUIDCacheWrapper("StarNub", "StarNub - Reserved Kick", true, 20, TimeUnit.MINUTES, 10, 60);
         /* Register and event handler to notify player if they were kicked for a reserved player */
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL ,"Player_Connected", new StarNubEventHandler<Event<String>>() {
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL ,"Player_Connected", new StarNubEventHandler() {
             @Override
-            public void onEvent(Event<String> eventData) {
+            public void onEvent(StarNubEvent eventData) {
                 PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
                 TimeCache timeCache = null;
                 timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
@@ -82,14 +82,13 @@ public class ClientConnectHandler extends PacketEventHandler {
      * Uses: Handles Client Connection Packets for connection attempts. Step 1 of 2 (ConnectionResponsePacket is Part 2).
      *
      * @param eventData Packet representing the packet being routed
-     * @return Packet any class representing packet can be returned
      */
     @Override
     public void onEvent(Packet eventData) {
         ClientConnectPacket clientConnectPacket = (ClientConnectPacket) eventData;
         ChannelHandlerContext clientCTX = clientConnectPacket.getSENDER_CTX();
 
-        StarNubProxyConnection starnubProxyConnection = (StarNubProxyConnection) StarNub.getConnections().getOPEN_CONNECTIONS().get(clientCTX);
+        StarNubProxyConnection starnubProxyConnection = (StarNubProxyConnection) StarNub.getConnections().getOPEN_CONNECTIONS().remove(clientCTX);
 
         String playerName = clientConnectPacket.getPlayerName();
         UUID playerUUID = clientConnectPacket.getUuid();
@@ -264,7 +263,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         if (isOnline) {
             if (ALREADY_LOGGED_ON.getCache(uuid) != null) {
                 PlayerSession playerSessionDisconnect = CONNECTIONS.getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(uuid);
-                playerSessionDisconnect.disconnectReason("Same_Character_Login");
+                playerSessionDisconnect.disconnectReason(DisconnectReason.CHARACTER_LOG_IN);
                 ALREADY_LOGGED_ON.removeCache(uuid);
             } else {
                 ALREADY_LOGGED_ON.addCache(uuid, new TimeCache());
@@ -305,7 +304,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                         spaceMade = true;
                         break;
                     } else if (!playerSessionToKick.hasPermission("starnub.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
-                        playerSession.disconnectReason("Reserved_Kick");
+                        playerSession.disconnectReason(DisconnectReason.RESERVED_KICK);
                         RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                     }
                 }
@@ -315,7 +314,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                             spaceMade = true;
                             break;
                         } else if (!playerSessionToKick.hasPermission("starnub.reserved.kick", true)) {
-                            playerSession.disconnectReason("Reserved_Kick");
+                            playerSession.disconnectReason(DisconnectReason.RESERVED_KICK);
                             RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                         }
                     }
@@ -330,7 +329,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                         spaceMade = true;
                         break;
                     } else if (!playerSessionToKick.hasPermission("starnub.reserved", true) || !playerSessionToKick.hasPermission("starnubinternals.reserved.kick", true)) {
-                        playerSession.disconnectReason("Reserved_Kick");
+                        playerSession.disconnectReason(DisconnectReason.RESERVED_KICK);
                         RESERVED_KICKED.addCache(playerSessionToKick.getPlayerCharacter().getUuid(), new TimeCache());
                     }
                 }

@@ -41,6 +41,11 @@ public class Vec2I {
         this.y = in.readInt();
     }
 
+    public void setVec2I(ByteBuf in) {
+        this.x = in.readInt();
+        this.y = in.readInt();
+    }
+
     public int getX() {
         return x;
     }

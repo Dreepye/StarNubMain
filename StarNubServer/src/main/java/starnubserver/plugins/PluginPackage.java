@@ -19,7 +19,7 @@
 package starnubserver.plugins;
 
 import starnubserver.StarNub;
-import starnubserver.events.events.ThreadEvent;
+
 import starnubserver.plugins.runnable.StarNubRunnable;
 import starnubserver.resources.files.PluginConfiguration;
 import utilities.file.utility.GetFileSize;
@@ -213,7 +213,7 @@ public abstract class PluginPackage {
         for (Thread thread : threads.keySet()){
             StarNub.getLogger().cInfoPrint("StarNub", "Starting thread: "+thread.getName()+".");
             thread.start();
-            ThreadEvent.eventSend_Permanent_Thread_Started(PLUGIN_NAME, thread);
+//            ThreadEvent.eventSend_Permanent_Thread_Started(PLUGIN_NAME, thread);
         }
     }
 
@@ -221,7 +221,7 @@ public abstract class PluginPackage {
         for (Thread thread : threads.keySet()){
             StarNub.getLogger().cInfoPrint("StarNub", "Stopping thread: "+thread.getName()+".");
             threads.get(thread).setShuttingDown(true);
-            ThreadEvent.eventSend_Permanent_Thread_Stopped(PLUGIN_NAME, thread);
+//            ThreadEvent.eventSend_Permanent_Thread_Stopped(PLUGIN_NAME, thread);
         }
     }
 }

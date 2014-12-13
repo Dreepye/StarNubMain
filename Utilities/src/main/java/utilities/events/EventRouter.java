@@ -21,6 +21,9 @@ public abstract class EventRouter<T1, T2, T3> {
 
     private final ConcurrentHashMap<T1, HashSet<EventSubscription>> EVENT_SUBSCRIPTION_MAP = new ConcurrentHashMap<>();
 
+    public EventRouter() {
+    }
+
     public ConcurrentHashMap<T1, HashSet<EventSubscription>> getEVENT_SUBSCRIPTION_MAP() {
         return EVENT_SUBSCRIPTION_MAP;
     }
