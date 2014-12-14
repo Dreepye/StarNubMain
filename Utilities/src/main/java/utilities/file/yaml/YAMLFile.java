@@ -110,6 +110,9 @@ public class YAMLFile {
         if (!(filePath).endsWith("/") && filePath.length() > 0){
             filePath = filePath + "/";
         }
+        if (filePath.endsWith(file)){
+            return filePath;
+        }
         return filePath + file;
     }
 

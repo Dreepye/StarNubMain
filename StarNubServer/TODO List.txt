@@ -17,8 +17,7 @@ Change Log:
         jsonObject.put("maxPlayers", (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit") +
                 (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit_reserved") +
                 2);
-
-///DDOS DOS - Thread crash fix
+//plugin sql db connector
 //Warp packets delay to starbound
 // Remove exception throws as much as possble bad! - Resource usage
 

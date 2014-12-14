@@ -27,6 +27,13 @@ public class YAMLFiles {
 
     private final ConcurrentHashMap<String, PluginYAMLWrapper> YAML_FILES = new ConcurrentHashMap<>();
 
+    public YAMLFiles() {
+    }
+
+    public YAMLFiles(HashSet<PluginYAMLWrapper> yamlWrapperHashSet) {
+        addPluginYamlWrappersBulk(yamlWrapperHashSet);
+    }
+
     public ConcurrentHashMap<String, PluginYAMLWrapper> getYAML_FILES() {
         return YAML_FILES;
     }

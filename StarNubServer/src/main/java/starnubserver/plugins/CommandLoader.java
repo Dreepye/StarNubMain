@@ -19,7 +19,7 @@
 package starnubserver.plugins;
 
 import starnubserver.StarNub;
-import utilities.file.utility.JarResourceLoadFromDisk;
+import utilities.file.utility.JarFromDisk;
 import utilities.file.yaml.YAMLWrapper;
 
 import java.io.File;
@@ -38,20 +38,20 @@ import java.util.stream.Collectors;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-class CommandPreload {
+class CommandLoader {
 
     /**
      * Represents the only instance of this class - Singleton Pattern
      */
-    private static final CommandPreload instance = new CommandPreload();
+    private static final CommandLoader instance = new CommandLoader();
 
     /**
      * This constructor is private - Singleton Pattern
      */
-    private CommandPreload() {
+    private CommandLoader() {
     }
 
-    public static CommandPreload getInstance() {
+    public static CommandLoader getInstance() {
         return instance;
     }
 
@@ -67,7 +67,7 @@ class CommandPreload {
         ConcurrentHashMap<ArrayList<String>, CommandPackage> commandPackages = new ConcurrentHashMap<ArrayList<String>, CommandPackage>();
 
 
-        List<String> commandFiles = new JarResourceLoadFromDisk().loadJarResources(prospectivePlugin,"commands/",".yml");
+        List<String> commandFiles = new JarFromDisk().loadJarResources(prospectivePlugin,"commands/",".yml");
             for (String command : commandFiles) {
 
                 for (ArrayList<String> commands : commandPackages.keySet())

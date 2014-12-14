@@ -44,7 +44,7 @@ public class Accounts extends TableWrapper<Account, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private Accounts(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, Account.class, Integer.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, Account.class, Integer.class);
     }
 
     public static Accounts getInstance() {

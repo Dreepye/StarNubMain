@@ -22,6 +22,8 @@ import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import starnubserver.StarNub;
 
+import java.sql.SQLException;
+
 /**
  * Represents StarNubs Database Tables
  *
@@ -34,28 +36,25 @@ public class DatabaseConnection {
      * Represents the only instance of this class - Singleton Pattern
      */
     private static final DatabaseConnection instance = new DatabaseConnection();
-    private ConnectionSource connection;
+
+    private ConnectionSource starnubConnection;
+    private ConnectionSource commonMySQLConnection;
+    private ConnectionSource commonMySQLLiteConnection;
 
     /**
      * This constructor is private - Singleton Pattern
      */
     private DatabaseConnection(){
-        String connectionString = "jdbc:";
-        String databaseType = (((String) (StarNub.getConfiguration().getNestedValue("database", "type"))).toLowerCase());
+        String databaseType = (((String) (StarNub.getConfiguration().getNestedValue("database_starnub", "type"))).toLowerCase());
         if (databaseType.equals("sqlite")) {
             try {
-                connectionString = connectionString+databaseType+":StarNub/Databases/StarNub.db";
-                connection = new JdbcPooledConnectionSource(connectionString);
+                starnubConnection = getNewPluginSQLLiteConnection("StarNub.db");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (databaseType.equals("mysql")) {
             try {
-                String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("database", "mysql_user")));
-                String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("database", "mysql_pass")));
-                String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("database", "mysql_url")));
-                connectionString = connectionString+databaseType+"://"+databaseUrl;
-                connection = new JdbcPooledConnectionSource(connectionString, databaseUsername, databasePassword);
+                starnubConnection = getStarNubMySQLConnection();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -70,9 +69,56 @@ public class DatabaseConnection {
         return instance;
     }
 
-    public ConnectionSource getConnection() {
-        return connection;
+    public ConnectionSource getStarnubConnection() {
+        return starnubConnection;
     }
+
+    public ConnectionSource getCommonMySQLLiteConnection() throws SQLException {
+        if (commonMySQLLiteConnection == null){
+            commonMySQLLiteConnection = getNewPluginSQLLiteConnection("CommonDatabase.db");
+        }
+        return commonMySQLLiteConnection;
+    }
+
+    public ConnectionSource getNewPluginSQLLiteConnection(String name) throws SQLException {
+        return getSQLLiteConnection("Databases/" + name + ".db");
+    }
+
+    private ConnectionSource getSQLLiteConnection(String path) throws SQLException {
+        String connectionString = "jdbc:sqlite:StarNub/" + path;
+        return new JdbcPooledConnectionSource(connectionString);
+    }
+
+    public ConnectionSource getCommonPluginMySQLConnection() throws SQLException {
+        boolean canCommon = ((String) (StarNub.getConfiguration().getNestedValue("database_common", "type"))).equalsIgnoreCase("mysql");
+        if (canCommon) {
+            if (commonMySQLConnection == null) {
+                String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("database_common", "mysql_user")));
+                String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("database_common", "mysql_pass")));
+                String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("database_common", "mysql_url")));
+                commonMySQLConnection = getNewMySQLConnection(databaseUrl, databaseUsername, databasePassword);
+            } else {
+                return commonMySQLConnection;
+            }
+        }
+        return null;
+    }
+
+    private ConnectionSource getStarNubMySQLConnection() throws SQLException {
+            String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("database_starnub", "mysql_user")));
+            String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("database_starnub", "mysql_pass")));
+            String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("database_starnub", "mysql_url")));
+            return getNewMySQLConnection(databaseUrl, databaseUsername, databasePassword);
+    }
+
+    public ConnectionSource getNewMySQLConnection(String url, String user, String password) throws SQLException {
+        String connectionString = "jdbc:mysql://" + url;
+        return new JdbcPooledConnectionSource(connectionString, user, password);
+    }
+
+
+
+
 
     @Override
     public String toString() {

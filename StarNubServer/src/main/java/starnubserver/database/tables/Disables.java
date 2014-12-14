@@ -43,7 +43,7 @@ public class Disables extends TableWrapper<Disabled, String> {
      * This constructor is private - Singleton Pattern
      */
     private Disables(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, Disabled.class, String.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, Disabled.class, String.class);
     }
 
     public static Disables getInstance() {

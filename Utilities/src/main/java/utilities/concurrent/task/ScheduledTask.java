@@ -67,6 +67,11 @@ public abstract class ScheduledTask {
 
     public abstract void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit);
 
+    public void removeDeactivate(){
+        scheduledFuture.cancel(true);
+        removeTask();
+    }
+
     public abstract void removeTask();
 
 }

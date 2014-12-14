@@ -43,7 +43,7 @@ public class Tags extends TableWrapper<Tag, String> {
      * This constructor is private - Singleton Pattern
      */
     private Tags(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, Tag.class, String.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, Tag.class, String.class);
     }
 
     public static Tags getInstance() {

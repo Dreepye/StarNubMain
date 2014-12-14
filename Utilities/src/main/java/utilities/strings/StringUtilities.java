@@ -256,4 +256,29 @@ public class StringUtilities {
         return 100-((StringUtils.getLevenshteinDistance(s, s2)*100)) / ((s.length()+s2.length())/2);
     }
 
+    /**
+     * This will trim a character from the end of a string and add a character of your choice
+     *
+     * @param s String representing the string to trim
+     * @return String the cleaned string
+     */
+    public static String trimCommaForPeriod(String s){
+        return trimFromString(s, ",", ".");
+    }
+
+    /**
+     * This will trim a character from the end of a string and add a character of your choice
+     *
+     * @param s String representing the string to trim
+     * @return String the cleaned string
+     */
+    public static String trimFromString(String s, String trim, String replace) {
+        try {
+            return s.substring(0, s.lastIndexOf(trim)) + replace;
+        } catch (StringIndexOutOfBoundsException e) {
+            /* Do nothing no players are online */
+        }
+        return s;
+    }
+
 }

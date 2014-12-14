@@ -21,6 +21,7 @@ package utilities.dircectories;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
@@ -79,16 +80,20 @@ public class DirectoryCheckCreate {
     }
 
     /**
-     * Constructor that after setting the values will run the dirCheck();
+     * Runs the programName through dirAdd();. Then loops through the String[]
+     * and builds new strings for dirAdd();/
      *
-     * @param programName The name of the program running this class.
-     * @param directoryNames The sub directory name(s) that will be created.
-     * @see DirectoryCheckCreate#dirCheck()
+     * @see DirectoryCheckCreate#dirAdd(String)
      */
-    public DirectoryCheckCreate(String programName, String... directoryNames){
-        this.programName = programName;
-        this.directoryNames = directoryNames;
-        dirCheck();
+    public static LinkedHashMap<String, Boolean> dirCheck(String programName, String... directoryNames) {
+        LinkedHashMap<String, Boolean> linkedHashMap = dirAdd(programName);
+        if (!programName.endsWith("/")){
+            programName = programName + "/";
+        }
+        for (String directoryFromArray : directoryNames) {
+            linkedHashMap.putAll(dirAdd(programName + directoryFromArray));
+        }
+        return linkedHashMap;
     }
 
     /**
@@ -97,11 +102,15 @@ public class DirectoryCheckCreate {
      *
      * @see DirectoryCheckCreate#dirAdd(String)
      */
-    private void dirCheck() {
-            dirAdd(programName);
-            for (String directoryFromArray : directoryNames) {
-                dirAdd(programName+"/"+directoryFromArray);
-            }
+    public static LinkedHashMap<String, Boolean> dirCheck(String programName, ArrayList<String> directoryNames) {
+        LinkedHashMap<String, Boolean> linkedHashMap = dirAdd(programName);
+        if (!programName.endsWith("/")){
+            programName = programName + "/";
+        }
+        for (String directoryFromArray : directoryNames) {
+            linkedHashMap.putAll(dirAdd(programName + directoryFromArray));
+        }
+        return linkedHashMap;
     }
 
     /**
@@ -111,7 +120,8 @@ public class DirectoryCheckCreate {
      * @param directoryString Directory String that will be converted to a Directory.
      * @see DirectoryCheckCreate#results
      */
-    private void dirAdd(String directoryString) {
+    private static LinkedHashMap<String, Boolean> dirAdd(String directoryString) {
+        LinkedHashMap<String, Boolean> results = new LinkedHashMap<>();
         try {
             File directory = new File(directoryString);
             if (!directory.exists()) {
@@ -127,5 +137,6 @@ public class DirectoryCheckCreate {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return results;
     }
 }

@@ -43,7 +43,7 @@ public class StaffEntries extends TableWrapper<StaffEntry, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private StaffEntries(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, StaffEntry.class, Integer.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, StaffEntry.class, Integer.class);
     }
 
     public static StaffEntries getInstance() {

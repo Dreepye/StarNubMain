@@ -43,7 +43,7 @@ public class DisablesHistory extends TableWrapper<DisabledHistory, String> {
      * This constructor is private - Singleton Pattern
      */
     private DisablesHistory(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, DisabledHistory.class, String.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, DisabledHistory.class, String.class);
     }
 
     public static DisablesHistory getInstance() {

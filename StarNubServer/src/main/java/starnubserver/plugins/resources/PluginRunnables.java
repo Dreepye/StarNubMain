@@ -71,7 +71,6 @@ public class PluginRunnables {
             if (starNubRunnable != null) {
                 RUNNABLES.putIfAbsent(new Thread(starNubRunnable, name), starNubRunnable);
                 results.put(classString, "Success");
-
             }
         }
         return results;

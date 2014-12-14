@@ -18,6 +18,9 @@
 
 package starnubserver.plugins;
 
+import starnubserver.StarNubTaskManager;
+import starnubserver.events.packet.PacketEventRouter;
+import starnubserver.events.starnub.StarNubEventRouter;
 import starnubserver.plugins.generic.CommandInfo;
 import starnubserver.plugins.generic.PluginDetails;
 import starnubserver.plugins.resources.PluginRunnables;
@@ -61,11 +64,19 @@ public abstract class Plugin extends PluginPackage{
 
     public void enable(){
         onPluginEnable();
+        PluginRunnables pluginRunnables = super.getPLUGIN_RUNNABLES();
+        pluginRunnables.startThreads();
         super.setEnabled(true);
     }
 
     public void disable(){
         onPluginDisable();
+        String name = super.getNAME();
+        PluginRunnables pluginRunnables = super.getPLUGIN_RUNNABLES();
+        pluginRunnables.shutdownThreads();
+        StarNubTaskManager.getInstance().purgeByOwnerName(name);
+        PacketEventRouter.getInstance().removeEventSubscription(name);
+        StarNubEventRouter.getInstance().removeEventSubscription(name);
         super.setEnabled(false);
     }
 

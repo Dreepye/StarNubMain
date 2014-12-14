@@ -21,6 +21,10 @@ package starnubserver.resources;
 import utilities.dircectories.DirectoryCheckCreate;
 import utilities.file.yaml.YAMLWrapper;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Represents StarNubs ResourceManager Singleton
  *
@@ -33,6 +37,8 @@ public class ResourceManager extends YAMLWrapper{
      * Represents the only instance of this class - Singleton Pattern
      */
     private static final ResourceManager instance = new ResourceManager();
+
+    //TODO Directory Manager
 
     /**
      * This constructor is private - Singleton Pattern
@@ -59,7 +65,7 @@ public class ResourceManager extends YAMLWrapper{
      * Notes: If a directory cannot be created the program will exit.
      */
     protected void directoryCheck() {
-        DirectoryCheckCreate directories = new DirectoryCheckCreate(
+        LinkedHashMap<String, Boolean> linkedHashMap = DirectoryCheckCreate.dirCheck(
                 "StarNub",
 //                "Resources",
                 "Plugins",
@@ -69,15 +75,26 @@ public class ResourceManager extends YAMLWrapper{
                 "Logs/Commands",
                 "Logs/Information_Warning",
                 "Logs/Error",
-                "Databases");
-        for (String directory : directories.getResults().keySet()) {
-            if (directories.getResults().get(directory)) {
-                System.out.println("Directory " + directory + " exist or was successfully created.");
+                "Databases"
+        );
+        for (Map.Entry<String, Boolean> dirEntry : linkedHashMap.entrySet()){
+            String dir = dirEntry.getKey();
+            boolean success = dirEntry.getValue();
+            if (success){
+                System.out.println("StarNub directory " + dir + " exist or was successfully created.");
             } else {
-                System.err.println("ERROR CREATING DIRECTORY \"" + directory + "\" PLEASE CHECK FILE PERMISSIONS. " +
+                System.err.println("ERROR CREATING DIRECTORY \"" + dir + "\" PLEASE CHECK FILE PERMISSIONS. " +
                         "VISIT \"WWW.STARNUB.ORG\" FOR FURTHER HELP... EXITING STARNUB.");
                 System.exit(0);
             }
         }
+    }
+
+    public void directoryCreate(HashSet<String> directories){
+
+    }
+
+    public void directoryCreate(){
+
     }
 }

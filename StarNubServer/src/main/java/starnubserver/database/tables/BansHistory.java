@@ -43,7 +43,7 @@ public class BansHistory extends TableWrapper<BanHistory, Integer> {
      * This constructor is private - Singleton Pattern
      */
     private BansHistory(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, BanHistory.class, Integer.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, BanHistory.class, Integer.class);
     }
 
     public static BansHistory getInstance() {

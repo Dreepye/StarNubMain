@@ -23,17 +23,26 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import starnubserver.StarNub;
 import starnubserver.plugins.resources.StarNubRunnable;
+import utilities.exceptions.PluginAlreadyLoaded;
+import utilities.exceptions.PluginDependencyLoadFailed;
+import utilities.exceptions.PluginDependencyNotFound;
+import utilities.exceptions.PluginDirectoryCreationFailed;
 import utilities.file.yaml.YAMLWrapper;
+import utilities.strings.StringUtilities;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
 * Represents the PluginManager Enum singleton
@@ -55,174 +64,270 @@ public class PluginManager {
      * This constructor is private - Singleton Pattern
      */
     private PluginManager() {
+
     }
 
     public static PluginManager getInstance() {
         return instance;
     }
 
-    protected final static String pluginDirString = "StarNub/Plugins/";
-    protected static ConcurrentHashMap<String, UnloadedPlugin> unloadedPlugins;
-    protected static ConcurrentHashMap<String, PluginPackage> loadedPlugins;
-    public static String getPluginDirString() {
+    private final String pluginDirString = "StarNub/Plugins/";
+    private final JavaPluginLoader JAVA_PLUGIN_LOADER = JavaPluginLoader.getInstance();
+    private final ConcurrentHashMap<String, UnloadedPlugin> UNLOADED_PLUGINS = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Plugin> LOADED_PLUGINS = new ConcurrentHashMap<>();
+
+    public String getPluginDirString() {
         return pluginDirString;
     }
-    public static ConcurrentHashMap<String, UnloadedPlugin> getUnloadedPlugins() {
-        return unloadedPlugins;
+
+    public ConcurrentHashMap<String, UnloadedPlugin> getUNLOADED_PLUGINS() {
+        return UNLOADED_PLUGINS;
     }
 
-    public static void setUnloadedPlugins(ConcurrentHashMap<String, UnloadedPlugin> unloadedPlugins) {
-        PluginManager.unloadedPlugins = unloadedPlugins;
+    public ConcurrentHashMap<String, Plugin> getLOADED_PLUGINS() {
+        return LOADED_PLUGINS;
     }
 
-    public static ConcurrentHashMap<String, PluginPackage> getLoadedPlugins() {
-        return loadedPlugins;
+    public HashSet<String> getAllUnloadedPluginNames(){
+        return UNLOADED_PLUGINS.keySet().stream().collect(Collectors.toCollection(HashSet::new));
     }
 
-    public static void setLoadedPlugins(ConcurrentHashMap<String, PluginPackage> loadedPlugins) {
-        PluginManager.loadedPlugins = loadedPlugins;
+    public HashSet<UnloadedPlugin> getAllUnloadedPlugins(){
+        return UNLOADED_PLUGINS.values().stream().collect(Collectors.toCollection(HashSet::new));
     }
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This is used to prepare this singleton for use.
-     * <p>
-     *
-     */
-    @SuppressWarnings("unchecked")
-    public void initializePluginManager() {
-        unloadedPlugins = new ConcurrentHashMap<String, UnloadedPlugin>();
-        loadedPlugins = new ConcurrentHashMap<String, PluginPackage>();
+    public HashSet<String> getAllLoadedPluginNames(){
+        return LOADED_PLUGINS.keySet().stream().collect(Collectors.toCollection(HashSet::new));
     }
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This is used on initial start up to load plugins plugins, print failures
-     * and then enable the plugins. It will also dump the info files for the plugins
-     * and commands.
-     * <p>
-     *
-     */
+    public HashSet<Plugin> getAllLoadedPlugins(){
+        return LOADED_PLUGINS.values().stream().collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public boolean isPluginUnloaded(String searchTerm, boolean nameOnly){
+        return resolveUnloadedPlugin(searchTerm, nameOnly) != null;
+    }
+
+    public String getResolvedUnloadedPluginName(String searchTerm, boolean nameOnly){
+        return resolveUnloadedPlugin(searchTerm, nameOnly).getPLUGIN_NAME();
+    }
+
+    public UnloadedPlugin resolveUnloadedPlugin(String searchTerm, boolean nameOnly){
+        for (UnloadedPlugin unloadedPlugin : UNLOADED_PLUGINS.values()) {
+            String pluginName = unloadedPlugin.getPLUGIN_NAME();
+            boolean match = pluginName.equalsIgnoreCase(searchTerm);
+            if (match) {
+                return unloadedPlugin;
+            } else if (!nameOnly) {
+                String commandsName = (String) unloadedPlugin.getPLUGIN_PLUGIN_YML().getNestedValue("commands", "name");
+                String commandsAlias = (String) unloadedPlugin.getPLUGIN_PLUGIN_YML().getNestedValue("commands", "alias");
+                boolean matched = commandsName.equalsIgnoreCase(searchTerm) || commandsAlias.equalsIgnoreCase(searchTerm);
+                if(matched){
+                    return unloadedPlugin;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isPluginLoaded(String searchTerm, boolean nameOnly){
+        return resolveLoadedPlugin(searchTerm, nameOnly) != null;
+    }
+
+    public String getResolvedLoadedPluginName(String searchTerm, boolean nameOnly){
+        return resolveLoadedPlugin(searchTerm, nameOnly).getNAME();
+    }
+
+    public Plugin resolveLoadedPlugin(String searchTerm, boolean nameOnly){
+        for (Plugin plugin : LOADED_PLUGINS.values()) {
+            String pluginName = plugin.getNAME();
+            boolean match = pluginName.equalsIgnoreCase(searchTerm);
+            if (match) {
+                return plugin;
+            } else if (!nameOnly) {
+                String commandsName = plugin.getCOMMAND_INFO().getCOMMANDS_NAME();
+                String commandsAlias = plugin.getCOMMAND_INFO().getCOMMANDS_ALIAS();
+                boolean matched = commandsName.equalsIgnoreCase(searchTerm) || commandsAlias.equalsIgnoreCase(searchTerm);
+                if(matched){
+                    return plugin;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void pluginScan(boolean isUpdating) throws MalformedURLException {
+        UNLOADED_PLUGINS.clear();
+        File[] pluginFiles = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(new File(pluginDirString), new String[]{"jar"}, false));
+        for (File pluginFile : pluginFiles) {
+            URL pluginUrl = pluginFile.toURI().toURL();
+            URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
+            YAMLWrapper data = new YAMLWrapper("StarNub", "StarNub - PluginLoader", classLoader.getResourceAsStream("plugin.yml"), "");
+            String pluginName = (String) data.getValue("name");
+            double version = (double) data.getValue("version");
+            if (UNLOADED_PLUGINS.containsKey(pluginName)) {
+                UnloadedPlugin unloadedPlugin = UNLOADED_PLUGINS.get(pluginName);
+                double storedVersion = unloadedPlugin.getPLUGIN_VERSION();
+                if (storedVersion < version) {
+                    String removeFileRecommend = unloadedPlugin.getPLUGIN_FILE().toString();
+                    UNLOADED_PLUGINS.remove(pluginName);
+                    if (!isUpdating) {
+                        StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older file named " + removeFileRecommend + ".");
+                    }
+                }
+            }
+            UNLOADED_PLUGINS.putIfAbsent(pluginName, new UnloadedPlugin(pluginName, version, pluginUrl, classLoader, data));
+        }
+    }
+
+    public void loadAllPlugins(boolean upgrade, boolean enable)  {
+        HashMap<String, String> pluginSuccess = new HashMap<>();
+        for (String unloadedPluginName : UNLOADED_PLUGINS.keySet()) {
+            String specificPlugin = null;
+
+            try {
+                specificPlugin = loadSpecificPlugin(unloadedPluginName, upgrade, enable);
+
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (PluginAlreadyLoaded pluginAlreadyLoaded) {
+                pluginAlreadyLoaded.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (PluginDependencyLoadFailed pluginDependencyLoadFailed) {
+                pluginDependencyLoadFailed.printStackTrace();
+            } catch (PluginDirectoryCreationFailed pluginDirectoryCreationFailed) {
+                pluginDirectoryCreationFailed.printStackTrace();
+            } catch (PluginDependencyNotFound pluginDependencyNotFound) {
+                pluginDependencyNotFound.printStackTrace();
+            }
+
+            pluginSuccess.put(unloadedPluginName, specificPlugin);
+
+        }
+        return pluginSuccess;
+    }
+
+    public String loadSpecificPlugin(String pluginName, boolean upgrade, boolean enable) throws NoSuchMethodException, IllegalAccessException, InstantiationException, PluginAlreadyLoaded, InvocationTargetException, ClassNotFoundException, IOException, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, PluginDependencyNotFound {
+        UnloadedPlugin unloadedPlugin = UNLOADED_PLUGINS.remove(pluginName);
+        boolean isLoaded = isPluginLoaded(pluginName, true);
+        if (!upgrade && isLoaded) {
+            throw new PluginAlreadyLoaded(pluginName);
+        }
+        JavaPlugin javaPlugin = JAVA_PLUGIN_LOADER.pluginLoader(unloadedPlugin);
+        if (upgrade) {
+           unloadSpecificPlugin(pluginName);
+           javaPlugin.enable();
+        } else if (enable){
+           javaPlugin.enable();
+        }
+        LOADED_PLUGINS.put(javaPlugin.getNAME(), javaPlugin);
+        StarNub.getLogger().cInfoPrint("StarNub", pluginName + " was successfully loaded.");
+        return pluginName + " was successfully loaded.";
+    }
+
+    public String unloadAllPlugins() {
+        LOADED_PLUGINS.values().forEach(starnubserver.plugins.Plugin::disable);
+        LOADED_PLUGINS.clear();
+        if (LOADED_PLUGINS.size() > 0) {
+            return "All plugins were successfully unloaded.";
+        } else {
+            String loadedPlugins = stringCreateLoadedPlugins();
+            return "Not all plugins were successfully unloaded." + loadedPlugins;
+        }
+    }
+
+
+    public String unloadSpecificPlugin(String pluginName) {
+        Plugin plugin = LOADED_PLUGINS.remove(pluginName);
+        plugin.disable();
+        if (!LOADED_PLUGINS.containsKey(pluginName)) {
+            return pluginName + " was successfully unloaded.";
+        } else {
+            return pluginName +" was not successfully unloaded.";
+        }
+    }
+
+    public void enableAllPlugins(boolean loadIfNotLoaded) {
+        for (PluginPackage pluginPackage : LOADED_PLUGINS.values()) {
+            //TODO Print enabled method
+            StarNub.getLogger().cInfoPrint("StarNub", "Plugin Manager: Enabling Plugins: " + pluginPackage.getPLUGIN_NAME());
+            pluginPackage.getPLUGIN().onPluginEnable();
+
+        }
+    }
+
+    public void enableSpecificPlugins(String pluginName, boolean loadIfNotLoaded) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, PluginDependencyNotFound, PluginAlreadyLoaded, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, ClassNotFoundException {
+        Plugin plugin = LOADED_PLUGINS.get(pluginName);
+        if (plugin == null){
+            if(loadIfNotLoaded){
+                loadSpecificPlugin(pluginName, false, true);
+            }
+        }
+    }
+
+    public void disableAllPlugins() {
+        LOADED_PLUGINS.values().stream().filter(PluginPackage::isEnabled).forEach(pluginPackage -> {
+            System.out.println("PLUGIN_MANAGER: Disabling Plugin: " + pluginPackage.getPLUGIN_NAME());
+            pluginPackage.getPLUGIN().onPluginDisable();
+            pluginPackage.setEnabled(false);
+        });
+    }
+
+    public void disableSpecificPlugin(String pluginName) {
+        Plugin plugin = LOADED_PLUGINS.get(pluginName);
+        if (plugin == null){
+            return;
+        }
+    }
+
+    private String stringCreateLoadedPlugins() {
+        String loadedPluginString = "Loaded Plugins: ";
+        for (Plugin plugin : LOADED_PLUGINS.values()) {
+            loadedPluginString = loadedPluginString + plugin.getNAME() + " (v" + Double.toString(plugin.getPLUGIN_DETAILS().getVERSION()) + "), ";
+        }
+        return StringUtilities.trimCommaForPeriod(loadedPluginString);
+    }
+
+
+
+
+
+
+
     public void initialStartup() {
-        setUnloadedPlugins(false);
-        loadAllPlugins(null);
+        loadAllPlugins(false);
         enableAllPlugins();
         yamlPluginAndCommandDumper();
     }
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This method well scan for "jars" inside of StarNub/Plugins and attempt to open them and look for a plugin.yml
-     * If we cannot load the plugin.yml then it may not be a plugin or a correctly made plugin.
-     * <p>
-     *
-     * @return ConcurrentHashMap representing plugins that are not loaded but exist in StarNub/Plugins
-     * @param isUpdating
-     */
-    private ConcurrentHashMap<String, UnloadedPlugin> pluginScan(boolean isUpdating) {
-        ConcurrentHashMap<String, UnloadedPlugin> unloadedPluginConcurrentHashMap = new ConcurrentHashMap<String, UnloadedPlugin>();
-        File[] pluginFiles = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(new File(pluginDirString), new String[]{"jar"}, false));
-        for (File pluginFile : pluginFiles) {
-            YAMLWrapper data;
-            URLClassLoader classLoader;
-            String pluginName;
-            double version;
-            try {
-                URL pluginUrl = pluginFile.toURI().toURL();
-                classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
-                data = new YAMLWrapper("StarNub", "StarNub - PluginLoader", classLoader.getResourceAsStream("plugin.yml"), "");
-                pluginName = (String) data.getValue("name");
-                version = (double) data.getValue("version");
-                if (unloadedPluginConcurrentHashMap.containsKey(pluginName)) {
-                    double storedVersion = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_VERSION();
-                    if (storedVersion < version) {
-                        String removeFile = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_FILE().toString();
-                        unloadedPluginConcurrentHashMap.remove(pluginName);
-                        if (!isUpdating) {
-                            StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older utilities.file named " + removeFile + ".");
-                        }
-                    }
-                }
-                unloadedPluginConcurrentHashMap.putIfAbsent(pluginName, new UnloadedPlugin(pluginName, version, pluginUrl, classLoader, data));
 
-            } catch (Exception e) {
-                StarNub.getLogger().cErrPrint("sn","Could not load a utilities.file in the plugins directory "+pluginFile.toString()+"unknown issue URI or URL. Maybe this is not a plugin?");
-            }
-        }
-        return unloadedPluginConcurrentHashMap;
-    }
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This method well set the unloaded plugins ConcurrentHashMap
-     * <p>
-     *
-     * @param isUpdating
-     */
-    private void setUnloadedPlugins(boolean isUpdating){
-        unloadedPlugins = pluginScan(isUpdating);
-        for (String unloadedPluginKey : unloadedPlugins.keySet()) {
-            UnloadedPlugin unloadedPlugin = unloadedPlugins.get(unloadedPluginKey);
-            if (loadedPlugins.containsKey(unloadedPluginKey)) {
-                PluginPackage loadedPlugin = loadedPlugins.get(unloadedPluginKey);
-                if (unloadedPlugin.getPLUGIN_VERSION() <= loadedPlugin.getVERSION()) {
-                    unloadedPlugins.remove(unloadedPluginKey);
-                }
-            }
-        }
-    }
 
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This method will reload the unloaded plugins list by clearing and rescanning the hard drive
-     * <p>
-     *
-     */
-    private void updateScan() {
-        unloadedPlugins.clear();
-        setUnloadedPlugins(true);
-    }
 
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This method will attempt to load a new version of a plugin from the hard drive and replace the current running plugin. The
-     * Plugin must support live starbounddata.packets.updates.
-     * <p>
-     *
-     */
     public void updatePlugin(Object sender, String pluginName){
         System.out.println(pluginName);
         updateScan();
         pluginName = pluginName.toLowerCase();
-        if (unloadedPlugins.size() == 0) {
+        if (UNLOADED_PLUGINS.size() == 0) {
 //            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "StarNub could not locate a Plugin with named \"" + pluginName + "\". StarNub also " +
 //                    "was unable to locate any new versions of any plugins in StarNub/Plugins.");
         }
-        for (String unloadedPluginString : unloadedPlugins.keySet()) {
+        for (String unloadedPluginString : UNLOADED_PLUGINS.keySet()) {
             if (unloadedPluginString.equalsIgnoreCase(pluginName)) {
-                UnloadedPlugin unloadedPlugin = unloadedPlugins.get(unloadedPluginString);
+                UnloadedPlugin unloadedPlugin = UNLOADED_PLUGINS.get(unloadedPluginString);
                 if ((boolean) unloadedPlugin.getPLUGIN_PLUGIN_YML().getValue("live_update")) {
                     double upgradingVersion = unloadedPlugin.getPLUGIN_VERSION();
                     loadSpecificPlugin(sender, unloadedPluginString, true, false);
-                    if (loadedPlugins.get(unloadedPluginString).getVERSION() == upgradingVersion) {
+                    if (LOADED_PLUGINS.get(unloadedPluginString).getVERSION() == upgradingVersion) {
 //                        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, unloadedPluginString + " has successfully been updated to version \"" + Double.toString(upgradingVersion) + "\".");
                     }
                 } else {
@@ -231,7 +336,7 @@ public class PluginManager {
             } else {
 //                StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "StarNub could not locate a named \"" + unloadedPluginString + "\". Here are the names of the plugins we detected that are not loaded: ");
                 String unloadedPluginList = "Unloaded Plugins: ";
-                for (UnloadedPlugin unloadedPlugin : unloadedPlugins.values()) {
+                for (UnloadedPlugin unloadedPlugin : UNLOADED_PLUGINS.values()) {
                     unloadedPluginList = unloadedPluginList + unloadedPlugin.getPLUGIN_NAME() + "(" + unloadedPlugin.getPLUGIN_VERSION() + "), ";
                 }
                 unloadedPluginList = unloadedPluginList.substring(0, unloadedPluginList.lastIndexOf(", ")) + ".";
@@ -239,115 +344,6 @@ public class PluginManager {
             }
         }
     }
-
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This method will remove a plugin from the unloaded list
-     * <p>
-     *
-     */
-    protected void removeUnloadedPluginFromList(String pluginName) {
-        unloadedPlugins.remove(pluginName);
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will attempt to load all plugins one at a time from StarNub/Plugins. If the plugin has a dependencies it will
-     * load them first.
-     * <p>
-     *
-     */
-    public void loadAllPlugins(Object sender) {
-        for (String unloadedPluginName : unloadedPlugins.keySet()) {
-            loadSpecificPlugin(sender, unloadedPluginName, false, true);
-        }
-//        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, stringCreateLoadedPlugins());
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will attempt to load a specific plugin by its plugin name by using the utilities.file scanner.
-     * <p>
-     *
-     */
-    public void loadSpecificPlugin(Object sender, String pluginName, boolean upgrade, boolean groupLoad) {
-        JavaPluginPreload.INSTANCE.pluginPackageLoader(sender, unloadedPlugins.remove(pluginName), upgrade);
-        if (!groupLoad && loadedPlugins.containsKey(pluginName)) {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was successfully loaded.");
-        } else if (!groupLoad && !loadedPlugins.containsKey(pluginName)) {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was not successfully loaded.");
-        }
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will tell you if a plugin is loaded.
-     * <p>
-     * @param pluginName String representing the plugin name that failed
-     */
-    public void isPluginLoaded(Object sender, String pluginName) {
-        if (loadedPlugins.contains(pluginName)) {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is loaded.");
-        } else {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" is not loaded.");
-        }
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will unload all plugins
-     * <p>
-     */
-    public void unloadAllPlugins(Object sender) {
-        disableAllPlugins();
-        loadedPlugins.clear();
-        if (loadedPlugins.size() > 0) {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "All plugins were successfully unloaded.");
-        } else {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  "Not all plugins were successfully unloaded.");
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  stringCreateLoadedPlugins());
-        }
-    }
-
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will tell you if a plugin is loaded.
-     * <p>
-     * @param pluginName String representing the plugin name that failed
-     *
-     */
-    public void unloadSpecificPlugin(Object sender, String pluginName) {
-        disableSpecificPlugin(pluginName);
-        loadedPlugins.remove(pluginName);
-        if (!loadedPlugins.contains(pluginName)) {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was successfully unloaded.");
-        } else {
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName+" was not successfully unloaded.");
-        }
-    }
-
-
-
-
 
 
 
@@ -362,8 +358,8 @@ public class PluginManager {
 
 
     public boolean isPluginLoadedAndEnabled(String pluginNameOrAlias) {
-        String pluginName = resolvePlugin(pluginNameOrAlias);
-        return pluginName != null && loadedPlugins.get(pluginName).isEnabled();
+        String pluginName = resolvePlugin(pluginNameOrAlias, fullName);
+        return pluginName != null && LOADED_PLUGINS.get(pluginName).isEnabled();
     }
 
 
@@ -377,32 +373,7 @@ public class PluginManager {
 //        loadSpecificPlugin(pluginName);
 ////    }
 
-    public void enableAllPlugins() {
-        for (PluginPackage pluginPackage : loadedPlugins.values()) {
-            //TODO Print enabled method
-            StarNub.getLogger().cInfoPrint("StarNub", "Plugin Manager: Enabling Plugins: " + pluginPackage.getPLUGIN_NAME());
-            pluginPackage.getPLUGIN().onPluginEnable();
-            if (pluginPackage.isHasThreads()) {
-                pluginPackage.startThreads();
-            }
-            pluginPackage.setEnabled(true);
-        }
-    }
 
-    public void enableSpecificPlugins(String pluginName) {
-
-    }
-    public void disableAllPlugins() {
-        loadedPlugins.values().stream().filter(PluginPackage::isEnabled).forEach(pluginPackage -> {
-            System.out.println("PLUGIN_MANAGER: Disabling Plugin: " + pluginPackage.getPLUGIN_NAME());
-            pluginPackage.getPLUGIN().onPluginDisable();
-            pluginPackage.setEnabled(false);
-        });
-    }
-
-    public void disableSpecificPlugin(String pluginName) {
-
-    }
 
 
 
@@ -417,61 +388,11 @@ public class PluginManager {
     }
 
 
-
-
-
-
-
-
-    public void resourceExtract(Object sender, String pluginName, String resourcePath, String folderName) {
-        String resolvedPlugin = resolvePlugin(pluginName);
-        File pluginFile = new File(pluginDirString + resolvedPlugin + ".jar");
-        if (!pluginFile.exists()){
-//            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, "Could not find plugin while trying to extract its" +
-//                    "resources.");
-            return;
-        }
-        Map<String, Object> data;
-        URLClassLoader classLoader;
-
-//        try {
-//            URL pluginUrl = pluginFile.toURI().toURL();
-//            classLoader = new URLClassLoader(
-//                    new URL[]{pluginUrl}, StarNub.class.getClassLoader());
-//            new (classLoader.getResourceAsStream(resourcePath));
-//            if (unloadedPluginConcurrentHashMap.containsKey(pluginName)) {
-//                double storedVersion = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_VERSION();
-//                if (storedVersion < version) {
-//                    String removeFile = unloadedPluginConcurrentHashMap.get(pluginName).getPLUGIN_FILE().toString();
-//                    unloadedPluginConcurrentHashMap.remove(pluginName);
-//                    if (!isUpdating) {
-//                        StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + pluginName + " plugins, some are older, we recommend you remove the older utilities.file named " + removeFile + ".");
-//                    }
-//                }
-//            }
-//            unloadedPluginConcurrentHashMap.putIfAbsent(pluginName, new UnloadedPlugin(pluginName, version, pluginUrl, classLoader, data));
-//
-//        } catch (Exception e) {
-//            StarNub.getLogger().cErrPrint("sn","Could not load a utilities.file in the plugins directory "+pluginFile.toString()+"unknown issue URI or URL. Maybe this is not a plugin?");
-//        }
-
-    }
-
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This method will save to disk each plugins plugin.yml and commands.yml so
-     * starbounddata.packets.starbounddata.packets.starnubserver owners can get further information about the plugin and commands.
-     * <p>
-     *
-     */
     private void yamlPluginAndCommandDumper () {
         DumperOptions options = new DumperOptions();
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
-        for (PluginPackage pluginPackage : loadedPlugins.values()) {
+        for (Plugin plugin : LOADED_PLUGINS.values()) {
             try {
                 Yaml yaml = new Yaml(options);
                 Writer writer = new FileWriter("StarNub/Plugins/" + pluginPackage.getPLUGIN_NAME() + "/" + pluginPackage.getPLUGIN_NAME().toLowerCase() + "_info.yml");
@@ -504,60 +425,6 @@ public class PluginManager {
 //        StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender,  stringCreateLoadedPlugins());
     }
 
-    /**
-     * This represents a lower level method for StarNubs API.
-     * <p>
-     * Recommended: For connections use with StarNub.
-     * <p>
-     * Uses: This method will return a string with all of the loaded plugins with version number.
-     * <p>
-     *
-     */
-    private String stringCreateLoadedPlugins() {
-        String loadedPluginString = "Loaded Plugins: ";
-        for (PluginPackage pluginPackage : loadedPlugins.values()) {
-            loadedPluginString = loadedPluginString + pluginPackage.getPLUGIN_NAME() + " (v" + Double.toString(pluginPackage.getVERSION()) + "), ";
-        }
-        try {
-            loadedPluginString = loadedPluginString.substring(0, loadedPluginString.lastIndexOf(",")) + ".";
-        } catch (StringIndexOutOfBoundsException e) {
-            /* Do nothing no players are online */
-        }
-        return loadedPluginString;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Upon successful plugin loading StarNub will insert it into the list of loaded plugins
-     * <p>
-     * @param pluginName String of the plugin name
-     * @param pluginPackage PluginPackage which contains all the details about a plugin
-     */
-    protected void addLoadedPlugin(String pluginName, PluginPackage pluginPackage) {
-        loadedPlugins.put(pluginName, pluginPackage);
-    }
-
-
-
-
-
-
-
 
 
     /**
@@ -567,7 +434,7 @@ public class PluginManager {
      * @return PluginPackage the whole package for the plugin if a match was found
      */
     public PluginPackage getPluginPackageClassNameString(String pluginClassString) {
-        for (PluginPackage pluginPackage : loadedPlugins.values()) {
+        for (PluginPackage pluginPackage : LOADED_PLUGINS.values()) {
             if (pluginPackage.getPLUGIN().getClass().getName().equalsIgnoreCase(pluginClassString)) {
                 return pluginPackage;
             }
@@ -576,21 +443,17 @@ public class PluginManager {
     }
 
     public CommandPackage getPluginCommandPackage(String pluginNameOrAlias, String command){
-        String pluginName = resolvePlugin(pluginNameOrAlias);
+        String pluginName = resolvePlugin(pluginNameOrAlias, fullName);
         if (pluginName != null) {
-            for (ArrayList<String> commands : loadedPlugins.get(pluginName).getCOMMAND_PACKAGES().keySet()) {
+            for (ArrayList<String> commands : LOADED_PLUGINS.get(pluginName).getCOMMAND_PACKAGES().keySet()) {
                 if (commands.contains(command.toLowerCase())){
-                    return loadedPlugins.get(pluginName).getCOMMAND_PACKAGES().get(commands);
+                    return LOADED_PLUGINS.get(pluginName).getCOMMAND_PACKAGES().get(commands);
                 }
             }
         }
         return null;
     }
 
-    public Map<String, Object> getConfiguration(String pluginNameOrAlias) {
-//        return getPluginPackageNameAlias(pluginNameOrAlias).getCONFIGURATION().getConfiguration();
-        return null;
-    }
 
     /**
      * This will return a plugin package based on the alias or name provided
@@ -599,50 +462,25 @@ public class PluginManager {
      * @return PluginPackage the whole package for the plugin if a match was found
      */
     public PluginPackage getPluginPackageNameAlias(String pluginNameOrAlias) {
-        String pluginName = resolvePlugin(pluginNameOrAlias);
+        String pluginName = resolvePlugin(pluginNameOrAlias, fullName);
         if (pluginName == null) {
             return null;
         }
-        return loadedPlugins.get(pluginName);
+        return LOADED_PLUGINS.get(pluginName);
     }
 
 
 
-    //TODO unload and reload
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This method will return a Plugins name using its name,
-     * command name or alias to search for it.
-     *
-     * @param pluginString
-     * @return
-     */
-    public String resolvePlugin(String pluginString){
-        for (PluginPackage pluginPackage : loadedPlugins.values()) {
-            if(pluginPackage.getPLUGIN_NAME() != null && pluginPackage.getPLUGIN_NAME().equalsIgnoreCase(pluginString)){
-                return pluginPackage.getPLUGIN_NAME();
-            } else if (pluginPackage.getCOMMANDS_NAME() != null && pluginPackage.getCOMMANDS_NAME().equalsIgnoreCase(pluginString)){
-                return pluginPackage.getPLUGIN_NAME();
-            } else if (pluginPackage.getCOMMANDS_ALIAS() != null && pluginPackage.getCOMMANDS_ALIAS().equalsIgnoreCase(pluginString)) {
-                return pluginPackage.getPLUGIN_NAME();
-            }
-        }
-        return null;
-    }
 
 
     public boolean hasPlugin(String pluginString) {
-        return resolvePlugin(pluginString) != null;
+        return resolvePlugin(pluginString, fullName) != null;
     }
 
     public String hasCommand(String pluginNameAlias, String command) {
-        String pluginName = resolvePlugin(pluginNameAlias);
+        String pluginName = resolvePlugin(pluginNameAlias, fullName);
         if (pluginName != null) {
-            for (ArrayList<String> commands : loadedPlugins.get(pluginName).getCOMMAND_PACKAGES().keySet()) {
+            for (ArrayList<String> commands : LOADED_PLUGINS.get(pluginName).getCOMMAND_PACKAGES().keySet()) {
                 if (commands.contains(command)){
                     return "hascommand";
                 }
@@ -658,7 +496,7 @@ public class PluginManager {
 
     public void getAllPluginsInfo() {
         System.out.println("PLUGIN_MANAGER: All loaded plugin info:");
-        for (PluginPackage pluginPackage : loadedPlugins.values()) {
+        for (PluginPackage pluginPackage : LOADED_PLUGINS.values()) {
             System.out.println(
                     "Plugin Name: " + pluginPackage.getPLUGIN_NAME() +
                             ", Plugin Version: " + pluginPackage.getVERSION() +
@@ -671,8 +509,8 @@ public class PluginManager {
 
     public void getSpecificPluginsInfo(String pluginName) {
         System.out.println("PLUGIN_MANAGER: " + pluginName + " plugin info:");
-        if (loadedPlugins.containsKey(pluginName)) {
-            PluginPackage pluginPackage = loadedPlugins.get("pluginName");
+        if (LOADED_PLUGINS.containsKey(pluginName)) {
+            PluginPackage pluginPackage = LOADED_PLUGINS.get("pluginName");
             System.out.println(
                     "Plugin Name: " + pluginPackage.getPLUGIN_NAME() +
                             ", Plugin Version: " + pluginPackage.getVERSION() +
@@ -691,7 +529,7 @@ public class PluginManager {
     public void listRunningPlugins() {
         //TODO print method
         System.out.println("Plugin Manager: Enabled Plugins: ");
-        loadedPlugins.values().stream().filter(PluginPackage::isEnabled).forEach(pluginPackage -> System.out.println(pluginPackage.getPLUGIN_NAME()));
+        LOADED_PLUGINS.values().stream().filter(PluginPackage::isEnabled).forEach(pluginPackage -> System.out.println(pluginPackage.getPLUGIN_NAME()));
     }
 
     public void listSpecificPlugins(String pluginName) {

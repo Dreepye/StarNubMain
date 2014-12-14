@@ -43,7 +43,7 @@ public class Groups extends TableWrapper<Group, String> {
      * This constructor is private - Singleton Pattern
      */
     private Groups(){
-        super(DatabaseConnection.getInstance().getConnection(), 0, Group.class, String.class);
+        super(DatabaseConnection.getInstance().getStarnubConnection(), 0, Group.class, String.class);
     }
 
     public static Groups getInstance() {

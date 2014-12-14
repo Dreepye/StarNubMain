@@ -16,29 +16,19 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.file.utility;
+package utilities.exceptions;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+/**
+ * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
+public class PluginDependencyNotFound extends Exception {
 
-public class JarResourceToDisk {
+    public PluginDependencyNotFound() {}
 
-    public static void fileUnpack(String resourceStringName, String targetFilePath, boolean overWrite) throws IOException {
-        ClassLoader cl = JarResourceToDisk.class.getClassLoader();
-        File target = new File(targetFilePath);
-        if (target.exists() && !overWrite) {
-            return;
-        }
-        try (
-        InputStream in = cl.getResourceAsStream(resourceStringName);
-        FileOutputStream out = new FileOutputStream(target)) {
-            byte[] buf = new byte[8 * 1024];
-            int len;
-            while ((len = in.read(buf)) != -1) {
-                out.write(buf, 0, len);
-            }
-        }
+    public PluginDependencyNotFound(String message){
+        super(message);
     }
 }

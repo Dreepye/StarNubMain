@@ -56,7 +56,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
      * @param taskName String representing the partial or full Task Name to purge, this will purge any task what contains this or matches
      * @param exactMatch boolean representing if we want to purge on exact match (true) or contains (false)
      */
-    public void purgeBasedOnTaskName(String taskOwner, String taskName, boolean exactMatch){
+    public void purgeByTaskName(String taskOwner, String taskName, boolean exactMatch){
         ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner = TASK_LIST.get(taskOwner);
         HashSet<String> keysToRemove = new HashSet<>();
         if (scheduledTaskOwner == null || scheduledTaskOwner.isEmpty()){
@@ -81,6 +81,24 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
         keysToRemove.forEach(scheduledTaskOwner::remove);
         if(scheduledTaskOwner.isEmpty()){
             TASK_LIST.remove(taskOwner);
+        }
+    }
+
+    /**
+     * This will purge task purge task based on the Task Owner and Task Name, exact or contains. This method is case - insensitive
+     *
+     * @param taskOwner String representing the Task Owner
+     */
+    public void purgeByOwnerName(String taskOwner){
+        ConcurrentHashMap<String, ScheduledTask> scheduledTaskOwner = TASK_LIST.remove(taskOwner);
+        if (scheduledTaskOwner == null || scheduledTaskOwner.isEmpty()){
+            return;
+        }
+        for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : scheduledTaskOwner.entrySet()){
+            String s = scheduledTaskEntry.getKey().toLowerCase();
+            if (s.equalsIgnoreCase(taskOwner)){
+                scheduledTaskOwner.remove(s).removeDeactivate();
+            }
         }
     }
 }
