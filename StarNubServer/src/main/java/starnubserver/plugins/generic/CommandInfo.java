@@ -18,15 +18,15 @@
 
 package starnubserver.plugins.generic;
 
-import starnubserver.plugins.CommandPackage;
+import starnubserver.plugins.Command;
 
 import java.util.HashSet;
 
 public class CommandInfo {
 
-    public final String COMMANDS_NAME;
-    public final String COMMANDS_ALIAS;
-    private final HashSet<CommandPackage> COMMAND_PACKAGES;
+    private final String COMMANDS_NAME;
+    private final String COMMANDS_ALIAS;
+    private final HashSet<Command> COMMAND_PACKAGES;
 
     /**
      * Used to construct information
@@ -35,7 +35,7 @@ public class CommandInfo {
      * @param COMMANDS_ALIAS   String representing the commands alias
      * @param COMMAND_PACKAGES HashSet containing command packages
      */
-    public CommandInfo(String COMMANDS_NAME, String COMMANDS_ALIAS, HashSet<CommandPackage> COMMAND_PACKAGES) {
+    public CommandInfo(String COMMANDS_NAME, String COMMANDS_ALIAS, HashSet<Command> COMMAND_PACKAGES) {
         this.COMMANDS_NAME = COMMANDS_NAME;
         this.COMMANDS_ALIAS = COMMANDS_ALIAS;
         this.COMMAND_PACKAGES = COMMAND_PACKAGES;
@@ -49,7 +49,7 @@ public class CommandInfo {
         return COMMANDS_ALIAS;
     }
 
-    public HashSet<CommandPackage> getCOMMAND_PACKAGES() {
+    public HashSet<Command> getCOMMAND_PACKAGES() {
         return COMMAND_PACKAGES;
     }
 

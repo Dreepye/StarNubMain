@@ -64,7 +64,7 @@ public abstract class Plugin extends PluginPackage{
 
     public void enable(){
         onPluginEnable();
-        PluginRunnables pluginRunnables = super.getPLUGIN_RUNNABLES();
+        PluginRunnables pluginRunnables = super.getRUNNABLES();
         pluginRunnables.startThreads();
         super.setEnabled(true);
     }
@@ -72,7 +72,7 @@ public abstract class Plugin extends PluginPackage{
     public void disable(){
         onPluginDisable();
         String name = super.getNAME();
-        PluginRunnables pluginRunnables = super.getPLUGIN_RUNNABLES();
+        PluginRunnables pluginRunnables = super.getRUNNABLES();
         pluginRunnables.shutdownThreads();
         StarNubTaskManager.getInstance().purgeByOwnerName(name);
         PacketEventRouter.getInstance().removeEventSubscription(name);

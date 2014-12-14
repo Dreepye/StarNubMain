@@ -23,6 +23,10 @@ import starnubserver.plugins.generic.PluginDetails;
 import starnubserver.plugins.resources.PluginRunnables;
 import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.files.PluginConfiguration;
+import utilities.file.yaml.YamlUtilities;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
 
 /**
  * Represents the StarNubs PluginPackage. This information
@@ -43,11 +47,11 @@ public abstract class PluginPackage {
 
     private final String NAME;
     private final String PATH;
-    private final PluginDetails PLUGIN_DETAILS;
+    private final PluginDetails DETAILS;
     private final PluginConfiguration CONFIGURATION;
     private final YAMLFiles FILES;
     private final CommandInfo COMMAND_INFO;
-    private final PluginRunnables PLUGIN_RUNNABLES;
+    private final PluginRunnables RUNNABLES;
 
     private boolean enabled;
 
@@ -57,11 +61,11 @@ public abstract class PluginPackage {
     public PluginPackage() {
         this.NAME = null;
         this.PATH = null;
-        this.PLUGIN_DETAILS = null;
+        this.DETAILS = null;
         this.CONFIGURATION = null;
         this.FILES = null;
         this.COMMAND_INFO = null;
-        this.PLUGIN_RUNNABLES = null;
+        this.RUNNABLES = null;
     }
 
     /**
@@ -69,20 +73,20 @@ public abstract class PluginPackage {
      *
      * @param NAME String name of the plugin
      * @param PATH String file path of the plugin
-     * @param PLUGIN_DETAILS PluginDetails containing plugin information
+     * @param DETAILS PluginDetails containing plugin information
      * @param CONFIGURATION PluginConfiguration contains the plugin configuration from disk
      * @param FILES YAMLFiles containing the files used in this plugin
      * @param COMMAND_INFO CommandInfo information on the command and the command packages
-     * @param PLUGIN_RUNNABLES PluginRunnables containing the plugin runnables
+     * @param RUNNABLES PluginRunnables containing the plugin runnables
      */
-    public PluginPackage(String NAME, String PATH, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
+    public PluginPackage(String NAME, String PATH, PluginDetails DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables RUNNABLES) {
         this.NAME = NAME;
         this.PATH = PATH;
-        this.PLUGIN_DETAILS = PLUGIN_DETAILS;
+        this.DETAILS = DETAILS;
         this.CONFIGURATION = CONFIGURATION;
         this.FILES = FILES;
         this.COMMAND_INFO = COMMAND_INFO;
-        this.PLUGIN_RUNNABLES = PLUGIN_RUNNABLES;
+        this.RUNNABLES = RUNNABLES;
     }
 
     public String getNAME() {
@@ -93,8 +97,8 @@ public abstract class PluginPackage {
         return PATH;
     }
 
-    public PluginDetails getPLUGIN_DETAILS() {
-        return PLUGIN_DETAILS;
+    public PluginDetails getDETAILS() {
+        return DETAILS;
     }
 
     public PluginConfiguration getCONFIGURATION() {
@@ -109,8 +113,8 @@ public abstract class PluginPackage {
         return COMMAND_INFO;
     }
 
-    public PluginRunnables getPLUGIN_RUNNABLES() {
-        return PLUGIN_RUNNABLES;
+    public PluginRunnables getRUNNABLES() {
+        return RUNNABLES;
     }
 
     public boolean isEnabled() {
@@ -119,5 +123,18 @@ public abstract class PluginPackage {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void dumpPluginData() throws IOException {
+        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("Plugin Name", NAME);
+        linkedHashMap.put("Path", PATH);
+        linkedHashMap.put("Details", getDETAILS().getPluginDetailsMap());
+        YamlUtilities.toFileYamlDump(linkedHashMap, "StarNub/Plugins/" + NAME + "/Information/", NAME + "Plugin_Details.yml");
+        for(Command command : COMMAND_INFO.getCOMMAND_PACKAGES()){
+            String commands = command.getCOMMANDS().toString();
+            LinkedHashMap<String, Object> commandDetailsMap = command.getCommandDetailsMap(NAME, COMMAND_INFO.getCOMMANDS_NAME(), COMMAND_INFO.getCOMMANDS_ALIAS());
+            YamlUtilities.toFileYamlDump(commandDetailsMap, "StarNub/Plugins/" + NAME + "/Information/Commands/", commands + "_Details.yml");
+        }
     }
 }

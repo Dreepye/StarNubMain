@@ -292,7 +292,7 @@ public class PluginManager {
     private String stringCreateLoadedPlugins() {
         String loadedPluginString = "Loaded Plugins: ";
         for (Plugin plugin : LOADED_PLUGINS.values()) {
-            loadedPluginString = loadedPluginString + plugin.getNAME() + " (v" + Double.toString(plugin.getPLUGIN_DETAILS().getVERSION()) + "), ";
+            loadedPluginString = loadedPluginString + plugin.getNAME() + " (v" + Double.toString(plugin.getDETAILS().getVERSION()) + "), ";
         }
         return StringUtilities.trimCommaForPeriod(loadedPluginString);
     }

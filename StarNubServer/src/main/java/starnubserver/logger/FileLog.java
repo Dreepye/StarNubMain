@@ -4,6 +4,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import starnubserver.StarNub;
+import utilities.file.utility.FileSizeMeasure;
 import utilities.file.utility.GetFileSize;
 
 public class FileLog {
@@ -53,8 +54,9 @@ public class FileLog {
     }
 
     public void logRotateFileSize(double maxFileSize, String fileMeasure) {
+        FileSizeMeasure fileSizeMeasure = FileSizeMeasure.valueOf(fileMeasure.toUpperCase());
         try {
-            if (GetFileSize.getFileSize(actualFile, fileMeasure) > maxFileSize) {
+            if (GetFileSize.getFileSize(actualFile, fileSizeMeasure) > maxFileSize) {
                 this.fileCount++;
                 rotateLogFile();
             }

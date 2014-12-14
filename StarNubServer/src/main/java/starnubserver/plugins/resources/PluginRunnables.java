@@ -22,9 +22,6 @@ import starnubserver.StarNub;
 import starnubserver.StarNubTask;
 import starnubserver.events.events.StarNubEvent;
 
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -41,39 +38,11 @@ public class PluginRunnables {
 
     private final ConcurrentHashMap<Thread, StarNubRunnable> RUNNABLES = new ConcurrentHashMap<>();
 
-    private HashMap<String, String> preloadRunnables(String pluginName, URLClassLoader classLoader, ArrayList<String> classes){
-        int threadCount = 0;
-        HashMap<String, String> results = new HashMap<>();
-        for (String classString : classes) {
-            String name = "Plugin - " + pluginName +" : Class - " +classString.substring(classString.lastIndexOf(".") + 1) + " : Thread - " + threadCount;
-            threadCount++;
-            Class<?> javaClass;
-            StarNubRunnable starNubRunnable = null;
-            try {
-                javaClass = classLoader.loadClass(classString);
-                try {
-                    Class<? extends StarNubRunnable> starNubRunnableClass = javaClass.asSubclass(StarNubRunnable.class);
-                    try {
-                        starNubRunnable = starNubRunnableClass.newInstance();
-                    } catch (InstantiationException e) {
-                        results.put(classString, "Failed: Runnable load error, could not instantiate StarNubRunnable.");
-                    } catch (IllegalAccessException e) {
-                        results.put(classString, "Failed: Runnable load error, could not instantiate plugin, illegal access exception.");
-                    }
-                } catch (ClassCastException e) {
-                    results.put(classString, "Failed: Runnable load error, does not represent a StarNubRunnable.");
-                }
-            } catch (ClassNotFoundException e) {
-                results.put(classString, "Failed: Runnable load error, class not found or issue with plugin imports: \"" + classString + "\".");
-            } catch (NoClassDefFoundError e) {
-                results.put(classString, "Failed: Runnable load error, package not found or issue with plugin imports: \"" + classString + "\".");
-            }
-            if (starNubRunnable != null) {
-                RUNNABLES.putIfAbsent(new Thread(starNubRunnable, name), starNubRunnable);
-                results.put(classString, "Success");
-            }
-        }
-        return results;
+    public PluginRunnables() {
+    }
+
+    public PluginRunnables(ConcurrentHashMap<Thread, StarNubRunnable> runnables){
+        RUNNABLES.putAll(runnables);
     }
 
     public void startThreads(){

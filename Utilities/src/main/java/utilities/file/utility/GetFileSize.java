@@ -22,12 +22,12 @@ import java.io.File;
 
 public class GetFileSize {
 
-    public static double getFileSize (String fileString, String fileSizeMeasure) {
+    public static double getFileSize (String fileString, FileSizeMeasure fileSizeMeasure) {
         File file =new File(fileString);
         return getFileSize(file, fileSizeMeasure);
     }
 
-    public static double getFileSize (File file, String fileSizeMeasure) {
+    public static double getFileSize (File file, FileSizeMeasure fileSizeMeasure) {
         double bytes = 0;
         if (file.exists()) {
             bytes = file.length();
@@ -37,14 +37,14 @@ public class GetFileSize {
         return fileSizeMeasure(bytes, fileSizeMeasure);
     }
 
-    private static double fileSizeMeasure (double bytes, String fileSizeMeasure) {
+    private static double fileSizeMeasure (double bytes, FileSizeMeasure fileSizeMeasure) {
         double newBytes = 0;
 
         switch (fileSizeMeasure) {
-            case "kilobytes": newBytes = (bytes / 1024); break;
-            case "megabytes": newBytes = (bytes / 1048576); break;
-            case "gigabytes": newBytes = (bytes / 1073741824); break;
-            case "terabytes": newBytes = (bytes / 1073741824); break;
+            case KILOBYTES: newBytes = (bytes / 1024); break;
+            case MEGABYTES: newBytes = (bytes / 1048576); break;
+            case GIGABYTES: newBytes = (bytes / 1073741824); break;
+            case TERABYTES: newBytes = (bytes / 1073741824); break;
         }
         return newBytes;
     }

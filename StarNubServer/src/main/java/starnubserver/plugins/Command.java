@@ -18,7 +18,7 @@
 
 package starnubserver.plugins;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Represents a Command that contains command details this command must be extended by a plugin
@@ -43,10 +43,9 @@ public abstract class Command extends CommandPackage{
      * @param PLUGIN_COMMAND_NAME String used to build plugin permissions
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
-     * @param COMMAND             Command the actual command that holds the code
      */
-    public Command(ArrayList<String> COMMANDS, ArrayList<String> MAIN_ARGS, String COMMAND_CLASS, String PLUGIN_COMMAND_NAME, int CAN_USE, String DESCRIPTION, Command COMMAND) {
-        super(COMMANDS, MAIN_ARGS, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION, COMMAND);
+    public Command(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, String COMMAND_CLASS, String PLUGIN_COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+        super(COMMANDS, MAIN_ARGS, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION);
     }
 
     /**

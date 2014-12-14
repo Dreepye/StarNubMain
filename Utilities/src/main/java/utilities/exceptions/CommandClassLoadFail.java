@@ -16,31 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.files;
+package utilities.exceptions;
 
-import utilities.file.yaml.YAMLWrapper;
+public class CommandClassLoadFail extends Exception{
 
-import java.io.InputStream;
+    public CommandClassLoadFail() {}
 
-/**
- * Represents StarNubs Configuration instance extending YAMLWrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class PluginConfiguration extends YAMLWrapper {
-
-    public PluginConfiguration(String pluginName, InputStream defaultPath) {
-        super(
-                pluginName,
-                pluginName + "_configuration.yml",
-                defaultPath,
-                "StarNub/Plugins/" + pluginName,
-                false,
-                true,
-                true,
-                true,
-                true
-        );
+    public CommandClassLoadFail(String message){
+        super(message);
     }
 }

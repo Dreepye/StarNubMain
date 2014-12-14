@@ -31,8 +31,8 @@ import java.util.*;
  */
 public class CommandPackage {
 
-    private ArrayList<String> COMMANDS;
-    private ArrayList<String> MAIN_ARGS;
+    private HashSet<String> COMMANDS;
+    private HashSet<String> MAIN_ARGS;
     private HashSet<String> PERMISSIONS;
     private CanUse CAN_USE;
     private String DESCRIPTION;
@@ -51,9 +51,8 @@ public class CommandPackage {
      * @param COMMAND_NAME        String used to build plugin permissions
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
-     * @param COMMAND             Command the actual command that holds the code
      */
-    public CommandPackage(ArrayList<String> COMMANDS, ArrayList<String> MAIN_ARGS, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION, Command COMMAND) {
+    public CommandPackage(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
         this.COMMANDS = COMMANDS;
         this.MAIN_ARGS = MAIN_ARGS;
         this.COMMAND_CLASS = COMMAND_CLASS;
@@ -68,11 +67,11 @@ public class CommandPackage {
         this.DESCRIPTION = DESCRIPTION;
     }
 
-    public ArrayList<String> getCOMMANDS() {
+    public HashSet<String> getCOMMANDS() {
         return COMMANDS;
     }
 
-    public ArrayList<String> getMAIN_ARGS() {
+    public HashSet<String> getMAIN_ARGS() {
         return MAIN_ARGS;
     }
 

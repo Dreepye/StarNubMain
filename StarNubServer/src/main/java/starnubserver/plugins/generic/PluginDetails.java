@@ -19,17 +19,18 @@
 package starnubserver.plugins.generic;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 public class PluginDetails {
 
-    public final double VERSION;
-    public final double SIZE_KBS;
-    public final HashSet<String> DEPENDENCIES;
-    public final String LANGUAGE;
-    public final String AUTHOR;
-    public final String URL;
-    public final HashSet<String> ADDITIONAL_PERMISSIONS;
-    public final String DESCRIPTION;
+    private final double VERSION;
+    private final double SIZE_KBS;
+    private final HashSet<String> DEPENDENCIES;
+    private final HashSet<String> LANGUAGE;
+    private final String AUTHOR;
+    private final String URL;
+    private final HashSet<String> ADDITIONAL_PERMISSIONS;
+    private final String DESCRIPTION;
 
     /**
      * @param VERSION                double the plugin version
@@ -41,7 +42,7 @@ public class PluginDetails {
      * @param ADDITIONAL_PERMISSIONS HashSet containing additional permission not used in commands
      * @param DESCRIPTION            String a short description of the plugin
      */
-    public PluginDetails(double VERSION, double SIZE_KBS, HashSet<String> DEPENDENCIES, String LANGUAGE, String AUTHOR, String URL, HashSet<String> ADDITIONAL_PERMISSIONS, String DESCRIPTION) {
+    public PluginDetails(double VERSION, double SIZE_KBS, HashSet<String> DEPENDENCIES, HashSet<String> LANGUAGE, String AUTHOR, String URL, HashSet<String> ADDITIONAL_PERMISSIONS, String DESCRIPTION) {
         this.VERSION = VERSION;
         this.SIZE_KBS = SIZE_KBS;
         this.DEPENDENCIES = DEPENDENCIES;
@@ -64,7 +65,7 @@ public class PluginDetails {
         return DEPENDENCIES;
     }
 
-    public String getLANGUAGE() {
+    public HashSet<String> getLANGUAGE() {
         return LANGUAGE;
     }
 
@@ -78,5 +79,18 @@ public class PluginDetails {
 
     public String getDESCRIPTION() {
         return DESCRIPTION;
+    }
+
+    public LinkedHashMap<String, Object> getPluginDetailsMap(){
+        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("Version", VERSION);
+        linkedHashMap.put("Size KBs", SIZE_KBS);
+        linkedHashMap.put("Dependencies", DEPENDENCIES);
+        linkedHashMap.put("Language", LANGUAGE);
+        linkedHashMap.put("Author", AUTHOR);
+        linkedHashMap.put("URL", URL);
+        linkedHashMap.put("Additional Permissions", ADDITIONAL_PERMISSIONS);
+        linkedHashMap.put("Description", DESCRIPTION);
+        return linkedHashMap;
     }
 }
