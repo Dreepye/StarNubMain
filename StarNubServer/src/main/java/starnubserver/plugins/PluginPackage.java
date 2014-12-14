@@ -25,6 +25,7 @@ import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.files.PluginConfiguration;
 import utilities.file.yaml.YamlUtilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
@@ -46,7 +47,7 @@ import java.util.LinkedHashMap;
 public abstract class PluginPackage {
 
     private final String NAME;
-    private final String PATH;
+    private final File FILE;
     private final PluginDetails DETAILS;
     private final PluginConfiguration CONFIGURATION;
     private final YAMLFiles FILES;
@@ -60,7 +61,7 @@ public abstract class PluginPackage {
      */
     public PluginPackage() {
         this.NAME = null;
-        this.PATH = null;
+        this.FILE = null;
         this.DETAILS = null;
         this.CONFIGURATION = null;
         this.FILES = null;
@@ -72,16 +73,16 @@ public abstract class PluginPackage {
      * Used in building a plugin
      *
      * @param NAME String name of the plugin
-     * @param PATH String file path of the plugin
+     * @param FILE String file path of the plugin
      * @param DETAILS PluginDetails containing plugin information
      * @param CONFIGURATION PluginConfiguration contains the plugin configuration from disk
      * @param FILES YAMLFiles containing the files used in this plugin
      * @param COMMAND_INFO CommandInfo information on the command and the command packages
      * @param RUNNABLES PluginRunnables containing the plugin runnables
      */
-    public PluginPackage(String NAME, String PATH, PluginDetails DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables RUNNABLES) {
+    public PluginPackage(String NAME, File FILE, PluginDetails DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables RUNNABLES) {
         this.NAME = NAME;
-        this.PATH = PATH;
+        this.FILE = FILE;
         this.DETAILS = DETAILS;
         this.CONFIGURATION = CONFIGURATION;
         this.FILES = FILES;
@@ -93,8 +94,8 @@ public abstract class PluginPackage {
         return NAME;
     }
 
-    public String getPATH() {
-        return PATH;
+    public File getFILE() {
+        return FILE;
     }
 
     public PluginDetails getDETAILS() {
@@ -128,13 +129,15 @@ public abstract class PluginPackage {
     public void dumpPluginData() throws IOException {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("Plugin Name", NAME);
-        linkedHashMap.put("Path", PATH);
+        linkedHashMap.put("Path", FILE.getAbsolutePath());
         linkedHashMap.put("Details", getDETAILS().getPluginDetailsMap());
-        YamlUtilities.toFileYamlDump(linkedHashMap, "StarNub/Plugins/" + NAME + "/Information/", NAME + "Plugin_Details.yml");
-        for(Command command : COMMAND_INFO.getCOMMAND_PACKAGES()){
-            String commands = command.getCOMMANDS().toString();
-            LinkedHashMap<String, Object> commandDetailsMap = command.getCommandDetailsMap(NAME, COMMAND_INFO.getCOMMANDS_NAME(), COMMAND_INFO.getCOMMANDS_ALIAS());
-            YamlUtilities.toFileYamlDump(commandDetailsMap, "StarNub/Plugins/" + NAME + "/Information/Commands/", commands + "_Details.yml");
+        YamlUtilities.toFileYamlDump(linkedHashMap, "StarNub/Plugins/" + NAME + "/Information/", "Plugin_Details.yml");
+        if (COMMAND_INFO != null && COMMAND_INFO.getCOMMAND_PACKAGES() != null) {
+            for (Command command : COMMAND_INFO.getCOMMAND_PACKAGES()) {
+                String commands = command.getCOMMANDS().toString();
+                LinkedHashMap<String, Object> commandDetailsMap = command.getCommandDetailsMap(NAME, COMMAND_INFO.getCOMMANDS_NAME(), COMMAND_INFO.getCOMMANDS_ALIAS());
+                YamlUtilities.toFileYamlDump(commandDetailsMap, "StarNub/Plugins/" + NAME + "/Information/Commands/", commands + "_Details.yml");
+            }
         }
     }
 }

@@ -59,9 +59,6 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         int xLen = highX - lowX;
         int yLen = highY - lowY;
         int size = xLen * yLen;
-//        if (VEC2I_POOL.size() < size){
-//
-//        }
         while (lowX <= highX) {
             int tempY = lowY;
             while (tempY <= highY) {
@@ -71,6 +68,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
             }
             lowX++;
         }
+
     }
 
     /**

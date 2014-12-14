@@ -27,6 +27,9 @@ import starnubserver.plugins.resources.PluginRunnables;
 import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.files.PluginConfiguration;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Represents the a StarNub Plugin.
  * The plugin maker must @Override the
@@ -51,21 +54,28 @@ public abstract class Plugin extends PluginPackage{
      * Used in building a plugin
      *
      * @param NAME             String name of the plugin
-     * @param PATH             String file path of the plugin
+     * @param FILE             FILE file path of the plugin
      * @param PLUGIN_DETAILS   PluginDetails containing plugin information
      * @param CONFIGURATION    PluginConfiguration contains the plugin configuration from disk
      * @param FILES            YAMLFiles containing the files used in this plugin
      * @param COMMAND_INFO     CommandInfo information on the command and the command packages
      * @param PLUGIN_RUNNABLES PluginRunnables containing the plugin runnables
      */
-    public Plugin(String NAME, String PATH, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
-        super(NAME, PATH, PLUGIN_DETAILS, CONFIGURATION, FILES, COMMAND_INFO, PLUGIN_RUNNABLES);
+    public Plugin(String NAME, File FILE, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
+        super(NAME, FILE, PLUGIN_DETAILS, CONFIGURATION, FILES, COMMAND_INFO, PLUGIN_RUNNABLES);
     }
 
     public void enable(){
         onPluginEnable();
         PluginRunnables pluginRunnables = super.getRUNNABLES();
-        pluginRunnables.startThreads();
+        if(pluginRunnables != null) {
+            pluginRunnables.startThreads();
+        }
+        try {
+            dumpPluginData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         super.setEnabled(true);
     }
 

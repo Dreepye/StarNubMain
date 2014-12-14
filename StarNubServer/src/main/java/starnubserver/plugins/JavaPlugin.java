@@ -24,6 +24,8 @@ import starnubserver.plugins.resources.PluginRunnables;
 import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.files.PluginConfiguration;
 
+import java.io.File;
+
 /**
  * Represents the StarNubs JavaPluginPackage. This information
  * is used internally when the plugin is loaded, we build this
@@ -53,15 +55,15 @@ public abstract class JavaPlugin extends Plugin {
      * Used in building a plugin
      *
      * @param NAME             String name of the plugin
-     * @param PATH             String file path of the plugin
+     * @param FILE             File file path of the plugin
      * @param PLUGIN_DETAILS   PluginDetails containing plugin information
      * @param CONFIGURATION    PluginConfiguration contains the plugin configuration from disk
      * @param FILES            YAMLFiles containing the files used in this plugin
      * @param COMMAND_INFO     CommandInfo information on the command and the command packages
      * @param PLUGIN_RUNNABLES PluginRunnables containing the plugin runnables
      */
-    public JavaPlugin(String NAME, String PATH, String MAIN_CLASS, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
-        super(NAME, PATH, PLUGIN_DETAILS, CONFIGURATION, FILES, COMMAND_INFO, PLUGIN_RUNNABLES);
+    public JavaPlugin(String NAME, File FILE, String MAIN_CLASS, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
+        super(NAME, FILE, PLUGIN_DETAILS, CONFIGURATION, FILES, COMMAND_INFO, PLUGIN_RUNNABLES);
         this.MAIN_CLASS = MAIN_CLASS;
     }
 

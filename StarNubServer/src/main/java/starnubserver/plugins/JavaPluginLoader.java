@@ -76,7 +76,7 @@ public class JavaPluginLoader {
         final YAMLWrapper PLUGIN_MANIFEST = unloadedPlugin.getPLUGIN_PLUGIN_YML();
         final String MAIN_CLASS = (String) PLUGIN_MANIFEST.getValue("class");
         final List<String> LANGUAGE = (List<String>) PLUGIN_MANIFEST.getNestedValue("details", "languages");
-        final double VERSION = (double) PLUGIN_MANIFEST.getNestedValue("details", "versions");
+        final double VERSION = (double) PLUGIN_MANIFEST.getNestedValue("details", "version");
         final String DESCRIPTION = (String) PLUGIN_MANIFEST.getNestedValue("details", "description");
         final List<String> DEPENDENCIES = (List<String>) PLUGIN_MANIFEST.getNestedValue("details", "dependencies");
         final String AUTHOR = (String) PLUGIN_MANIFEST.getNestedValue("details", "author");
@@ -85,7 +85,7 @@ public class JavaPluginLoader {
         final String COMMAND_NAME = (String) PLUGIN_MANIFEST.getNestedValue("commands", "name");
         final String COMMAND_ALIAS = (String) PLUGIN_MANIFEST.getNestedValue("commands", "alias");
         final List<String> RUNNABLE_CLASSES = (List<String>) PLUGIN_MANIFEST.getNestedValue("runnables", "runnables");
-        final List<String> ADDITIONAL_PERMISSIONS = (List<String>) PLUGIN_MANIFEST.getValue("class");
+        final List<String> ADDITIONAL_PERMISSIONS = (List<String>) PLUGIN_MANIFEST.getValue("additional_permissions");
 
         dependencyLoader(DEPENDENCIES);
 
@@ -131,12 +131,13 @@ public class JavaPluginLoader {
             COMMAND_INFO = new CommandInfo(COMMAND_NAME, COMMAND_ALIAS, commands);
         }
 
-        final Class<?> PLUGIN_CLASS = CLASS_LOADER.loadClass(MAIN_CLASS);
-        final Constructor CONSTRUCTOR = PLUGIN_CLASS.getConstructor(new Class[]{String.class, String.class, String.class, PluginDetails.class, PluginConfiguration.class, YAMLFiles.class, CommandInfo.class, PluginRunnables.class});
-        return (JavaPlugin) CONSTRUCTOR.newInstance(new Object[]{PLUGIN_NAME, PLUGIN_FILE_PATH, PLUGIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES});
+        Class<?> pluginClass = CLASS_LOADER.loadClass(MAIN_CLASS);
+        final Class<? extends JavaPlugin> JAVA_PLUGIN_CLASS = pluginClass.asSubclass(JavaPlugin.class);
+        final Constructor CONSTRUCTOR = JAVA_PLUGIN_CLASS.getConstructor(new Class[]{String.class, File.class, String.class, PluginDetails.class, PluginConfiguration.class, YAMLFiles.class, CommandInfo.class, PluginRunnables.class});
+        return (JavaPlugin) CONSTRUCTOR.newInstance(new Object[]{PLUGIN_NAME, PLUGIN_FILE_PATH, MAIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES});
     }
 
-    private void dependencyLoader(List<String> dependencies) throws PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed {
+    private void dependencyLoader(List<String> dependencies) throws PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, CommandClassLoadFail, CommandYamlLoadFailed {
         for (String dependency : dependencies) {
             boolean isDependencyLoaded = PLUGIN_MANAGER.isPluginLoaded(dependency, true);
             if (!isDependencyLoaded) {
@@ -225,8 +226,9 @@ public class JavaPluginLoader {
                 final int CAN_USE = (int) COMMAND_FILE.getValue("can_use");
                 final String DESCRIPTION = (String) COMMAND_FILE.getValue("description");
                 try {
-                    final Class<?> PLUGIN_CLASS = CLASS_LOADER.loadClass(COMMAND_CLASS);
-                    final Constructor CONSTRUCTOR = PLUGIN_CLASS.getConstructor(new Class[]{HashSet.class, HashSet.class, String.class, String.class, Integer.class, String.class});
+                    Class<?> commandClass = CLASS_LOADER.loadClass(COMMAND_CLASS);
+                    final Class<? extends JavaPlugin> JAVA_COMMAND_CLASS = commandClass.asSubclass(JavaPlugin.class);
+                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(new Class[]{HashSet.class, HashSet.class, String.class, String.class, Integer.class, String.class});
                     Command command = (Command) CONSTRUCTOR.newInstance(new Object[]{COMMANDS_HASHSET, MAIN_ARGS_HASHSET, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION});
                     commandHashSet.add(command);
                     loaded.add(COMMAND_CLASS);

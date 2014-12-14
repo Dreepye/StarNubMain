@@ -61,7 +61,7 @@ public class YAMLWrapper extends YAMLFile {
             if (loadOnConstruct) {
                 DATA.putAll(loadOnConstruct(dumpToDisk));
             }
-            if (validateOnConstruction) {
+            if (validateOnConstruction && !isFirstLoad()) {
                 mapVerifyInternally();
             }
         } catch (Exception e){
@@ -93,6 +93,16 @@ public class YAMLWrapper extends YAMLFile {
 
     public Map<String, Object> getDATA() {
         return DATA;
+    }
+
+
+    /**
+     * This will make sure the Map set here is valid
+     */
+    protected void mapVerifyInternally() throws Exception {
+        Map<String, Object> stringObjectMap = loadFromDefault();
+        DATA.putAll(mapVerify(DATA, stringObjectMap));
+        super.dumpOnModification(DATA);
     }
 
     /**
@@ -226,14 +236,6 @@ public class YAMLWrapper extends YAMLFile {
             return defaultObject;
         }
         return objectToVerify;
-    }
-
-    /**
-     * This will make sure the Map set here is valid
-     */
-    protected void mapVerifyInternally() throws Exception {
-        DATA.putAll(mapVerify(DATA, loadFromDefault()));
-        super.dumpOnModification(DATA);
     }
 
     /**

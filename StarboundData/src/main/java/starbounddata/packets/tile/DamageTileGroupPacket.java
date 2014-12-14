@@ -23,6 +23,7 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.tiles.TileDamage;
+import starbounddata.tiles.TileLayer;
 import starbounddata.vectors.Vec2F;
 import starbounddata.vectors.Vec2IArray;
 
@@ -127,7 +128,7 @@ public class DamageTileGroupPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         try {
-            tilePositions.readVec2IArray(in);
+            this.tilePositions.readVec2IArray(in);
             this.layer = TileLayer.values()[in.readUnsignedByte()];
             this.sourcePosition = new Vec2F(in);
             this.tileDamage = new TileDamage(in);
@@ -163,8 +164,5 @@ public class DamageTileGroupPacket extends Packet {
                 "} " + super.toString();
     }
 
-    public enum TileLayer {
-        FOREGROUND,
-        BACKGROUND
-    }
+
 }

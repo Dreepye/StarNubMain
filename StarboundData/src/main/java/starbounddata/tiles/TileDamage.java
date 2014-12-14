@@ -39,7 +39,7 @@ public class TileDamage {
     }
 
     public TileDamage(ByteBuf in) {
-        this.tileDamageType = TileDamage.TileDamageType.values()[in.readUnsignedByte()];
+        this.tileDamageType = TileDamageType.values()[in.readUnsignedByte()];
         this.amount = in.readFloat();
         this.harvestLevel = 1;
     }
@@ -83,17 +83,6 @@ public class TileDamage {
                 ", amount=" + amount +
                 ", harvestLevel=" + harvestLevel +
                 '}';
-    }
-
-    public enum TileDamageType {
-        NONE,
-        PLANTISH,
-        BLOCKISH,
-        BEAMISH,
-        EXPLOSIVE,
-        FIRE,
-        TILLING,
-        CRUSHING,
     }
 }
 

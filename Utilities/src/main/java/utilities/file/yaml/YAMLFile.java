@@ -38,6 +38,7 @@ public class YAMLFile {
     private final String DISK_FILE_PATH;
     private final File DISK_FILE;
     private final YAMLDumper YAML_DUMPER;
+    private boolean firstLoad;
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
@@ -94,6 +95,10 @@ public class YAMLFile {
         return YAML_DUMPER;
     }
 
+    protected boolean isFirstLoad() {
+        return firstLoad;
+    }
+
     /**
      * This insure the file filePath is correct
      *
@@ -141,11 +146,13 @@ public class YAMLFile {
         try {
             DATA = loadFromDisk();
             if (DATA != null) {
+                firstLoad = false;
                 return DATA;
             }
         } catch (FileNotFoundException e) {
             /* Silent Catch */
         }
+        firstLoad = true;
         DATA = loadFromDefault();
         if (DATA == null) {
             throw new NullPointerException();

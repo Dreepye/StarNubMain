@@ -18,10 +18,10 @@
 
 package starnubserver;
 
-import io.netty.channel.Channel;
 import org.joda.time.DateTime;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.logger.MultiOutputLogger;
+import starnubserver.plugins.PluginManager;
 import starnubserver.resources.ResourceManager;
 import starnubserver.resources.files.Configuration;
 import starnubserver.resources.files.GroupsManagement;
@@ -41,37 +41,34 @@ import starnubserver.resources.files.GroupsManagement;
 
 public final class StarNub {
 
-    private static final ResourceManager resourceManager = ResourceManager.getInstance();
-    private static final Configuration configuration = Configuration.getInstance();
-    private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
-    private static final Connections connections = Connections.getInstance();
-    private static final StarNubVersion versionInstance = StarNubVersion.getInstance();
-//    private static final PluginManager pluginManager = PluginManager.getInstance();
+    private static final ResourceManager RESOURCE_MANAGER = ResourceManager.getInstance();
+    private static final Configuration CONFIGURATION = Configuration.getInstance();
+    private static final MultiOutputLogger LOGGER = MultiOutputLogger.getInstance();
+    private static final Connections CONNECTIONS = Connections.getInstance();
+    private static final StarNubVersion VERSION_INSTANCE = StarNubVersion.getInstance();
+    private static final PluginManager PLUGIN_MANAGER = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
-    private StarNub() {
-    }
-
-    private static Channel tcpClientChannel;
+    private StarNub() {}
 
     public static Connections getConnections() {
-        return connections;
+        return CONNECTIONS;
     }
 
     public static ResourceManager getResourceManager() {
-        return resourceManager;
+        return RESOURCE_MANAGER;
     }
 
     public static Configuration getConfiguration() {
-        return configuration;
+        return CONFIGURATION;
     }
 
     public static MultiOutputLogger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     public static StarNubVersion getVersionInstance() {
-        return versionInstance;
+        return VERSION_INSTANCE;
     }
 
 
@@ -84,7 +81,7 @@ public final class StarNub {
     }
 
     private static void start () {
-                /* This Resource detector is for debugging only */
+        /* This Resource detector is for debugging only */
 //        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
 
         DateTime starnubStarTime = DateTime.now();

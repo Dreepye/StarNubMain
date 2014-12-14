@@ -36,6 +36,11 @@ public class Vec2I {
         this.y = y;
     }
 
+    public Vec2I(float x, float y){
+        this.x = Math.round(x);
+        this.y = Math.round(y);
+    }
+
     public Vec2I(ByteBuf in) {
         this.x = in.readInt();
         this.y = in.readInt();
