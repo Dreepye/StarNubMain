@@ -19,7 +19,7 @@
 package starnubserver.plugins;
 
 import starnubserver.StarNub;
-import starnubserver.plugins.runnable.StarNubRunnable;
+import starnubserver.plugins.resources.StarNubRunnable;
 import starnubserver.resources.files.PluginConfiguration;
 import utilities.dircectories.DirectoryCheckCreate;
 
@@ -31,16 +31,30 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents Java Plugin Loader.
- * <p>
- * This enum singleton holds and runs all things important
- * to loading Java Plugins
- * <p>
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-enum JavaPluginPreload {
-    INSTANCE;
+* Represents Java Plugin Loader.
+* <p>
+* This enum singleton holds and runs all things important
+* to loading Java Plugins
+* <p>
+* @author Daniel (Underbalanced) (www.StarNub.org)
+* @since 1.0
+*/
+class JavaPluginPreload {
+
+    /**
+     * Represents the only instance of this class - Singleton Pattern
+     */
+    private static final JavaPluginPreload instance = new JavaPluginPreload();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private JavaPluginPreload() {
+    }
+
+    public static JavaPluginPreload getInstance() {
+        return instance;
+    }
 
     /**
      * This represents a lower level method for StarNubs API.
@@ -148,7 +162,7 @@ enum JavaPluginPreload {
         }
 
         try {
-            JavaPluginPackage javaPluginPackage = new JavaPluginPackage(
+            JavaPlugin javaPlugin = new JavaPlugin(
                     pluginName,
                     (double) data.get("version"),
                     pluginFilePath,
@@ -170,7 +184,7 @@ enum JavaPluginPreload {
             if (isUpgrading) {
                 StarNub.getPluginManager().unloadSpecificPlugin(sender, pluginName);
             }
-            StarNub.getPluginManager().addLoadedPlugin(pluginName , javaPluginPackage);
+            StarNub.getPluginManager().addLoadedPlugin(pluginName , javaPlugin);
             StarNub.getPluginManager().removeUnloadedPluginFromList(pluginName);
         } catch (NullPointerException e) {
 //            StarNub.getMessageSender().playerOrConsoleMessage("StarNub", sender, pluginName + " Plugin Load Error: Null value or empty: \"plugin.yml\".");

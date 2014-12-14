@@ -19,8 +19,10 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
 
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> TASK_LIST = new ConcurrentHashMap<>();
 
-    public TaskManager(int TASK_THREAD_COUNT, String THREAD_NAMING){
+    public TaskManager(int TASK_THREAD_COUNT, int MAX_THREAD_COUNT, long KEEP_ALIVE, TimeUnit TIME_UNIT, String THREAD_NAMING){
         super(TASK_THREAD_COUNT, new NamedThreadFactory(THREAD_NAMING));
+        super.setMaximumPoolSize(MAX_THREAD_COUNT);
+        super.setKeepAliveTime(KEEP_ALIVE, TIME_UNIT);
         Runnable runnable = TaskManager.this::oneTimeTaskPurge;
         ScheduledFuture scheduledFuture =  this.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
         ScheduledTask scheduledTask = new InternalTask("Utilities", "Utilities - One Time Task Purger", runnable,  scheduledFuture);

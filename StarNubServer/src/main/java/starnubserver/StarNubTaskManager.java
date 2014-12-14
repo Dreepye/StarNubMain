@@ -20,6 +20,8 @@ package starnubserver;
 
 import utilities.concurrent.task.TaskManager;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Represents StarNubTask instance
  *
@@ -37,7 +39,12 @@ public class StarNubTaskManager extends TaskManager {
      * This constructor is private - Singleton Pattern
      */
     private StarNubTaskManager() {
-        super((int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "scheduled_task_thread_count"), "StarNub - Scheduled Task");
+        super(
+                (int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "task_threads", "core_count"),
+                (int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "task_threads", "max_count"),
+                (int) StarNub.getConfiguration().getNestedValue("advanced_settings", "resources", "task_threads", "keep_alive_minutes"),
+                TimeUnit.MINUTES,
+                "StarNub - Events & Scheduled Task - Worker");
     }
 
     public static StarNubTaskManager getInstance() {

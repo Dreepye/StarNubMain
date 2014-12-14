@@ -28,8 +28,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import utilities.concurrent.thread.NamedThreadFactory;
 
-import java.util.concurrent.Executors;
-
 
 public class TCPServer {
 
@@ -37,8 +35,8 @@ public class TCPServer {
     private NioEventLoopGroup connectionWorkerGroup;
 
     public TCPServer(String connectThreadName, String workerThreadName) {
-        connectionBossGroup = new NioEventLoopGroup(1, Executors.newCachedThreadPool(new NamedThreadFactory(connectThreadName)));
-        connectionWorkerGroup = new NioEventLoopGroup(1, Executors.newCachedThreadPool(new NamedThreadFactory(workerThreadName)));
+        connectionBossGroup = new NioEventLoopGroup(1, new NamedThreadFactory(connectThreadName));
+        connectionWorkerGroup = new NioEventLoopGroup(1, new NamedThreadFactory(workerThreadName));
     }
 
 

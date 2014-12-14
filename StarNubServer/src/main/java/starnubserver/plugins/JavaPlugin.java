@@ -25,23 +25,28 @@ import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.files.PluginConfiguration;
 
 /**
- * Represents the a StarNub Plugin.
- * The plugin maker must @Override the
- * onPluginEnable & onPluginDisable method.
+ * Represents the StarNubs JavaPluginPackage. This information
+ * is used internally when the plugin is loaded, we build this
+ * from the plugin.yml. This helps Server owners as well as plugin
+ * makers to get information about plugins, get configuration variables,
+ * as well as the commands that are associated with the plugin.
  * <p>
- * This Plugin class is abstract and must be extended. This is what
- * all Plugin classes should look like by default.
+ * This JavaPluginPackage extends a PluginPackage, so we can include the
+ * main JavaClass that contains the onPluginEnable & onPluginDisable.
  * <p>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public abstract class Plugin extends PluginPackage{
+public abstract class JavaPlugin extends Plugin {
+
+    private final String MAIN_CLASS;
 
     /**
      * This is for plugins to not have to construct anything but allows for StarNub to construct this
      */
-    public Plugin() {
+    public JavaPlugin() {
+        this.MAIN_CLASS = null;
     }
 
     /**
@@ -55,31 +60,12 @@ public abstract class Plugin extends PluginPackage{
      * @param COMMAND_INFO     CommandInfo information on the command and the command packages
      * @param PLUGIN_RUNNABLES PluginRunnables containing the plugin runnables
      */
-    public Plugin(String NAME, String PATH, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
+    public JavaPlugin(String NAME, String PATH, String MAIN_CLASS, PluginDetails PLUGIN_DETAILS, PluginConfiguration CONFIGURATION, YAMLFiles FILES, CommandInfo COMMAND_INFO, PluginRunnables PLUGIN_RUNNABLES) {
         super(NAME, PATH, PLUGIN_DETAILS, CONFIGURATION, FILES, COMMAND_INFO, PLUGIN_RUNNABLES);
+        this.MAIN_CLASS = MAIN_CLASS;
     }
 
-    public void enable(){
-        onPluginEnable();
-        super.setEnabled(true);
+    public String getMAIN_CLASS() {
+        return MAIN_CLASS;
     }
-
-    public void disable(){
-        onPluginDisable();
-        super.setEnabled(false);
-    }
-
-    /**
-     * What to do when the plugin is enabled.
-     */
-    public abstract void onPluginEnable();
-
-    /**
-     * What to do when the plugin is disabled.
-     */
-    public abstract void onPluginDisable();
-
 }
-
-
-

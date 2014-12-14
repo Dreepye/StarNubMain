@@ -20,6 +20,7 @@ package starnubserver.events.packet;
 
 import starbounddata.packets.Packet;
 import starnubserver.StarNub;
+import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventSubscription;
 import utilities.events.Priority;
 
@@ -80,6 +81,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     public void submitRegistration() {
         if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")) {
             PacketEventRouter.getInstance().registerEventSubscription(EVENT_KEY, this);
+            new StarNubEvent("StarNub_Packet_Subscription_Registered", this);
         }
     }
 
@@ -91,5 +93,6 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     @Override
     public void removeRegistration() {
         PacketEventRouter.getInstance().removeEventSubscription(this);
+        new StarNubEvent("StarNub_Packet_Subscription_Registration_Removed", this);
     }
 }

@@ -34,7 +34,7 @@ import java.util.HashSet;
  */
 public class Vec2IArray extends ArrayList<Vec2I> {
 
-    private final static int ARRAY_INCOMING_CAP = 100;
+    private final static int ARRAY_INCOMING_CAP = 50;
     private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_INCOMING_CAP);
 
     public Vec2IArray() {
@@ -77,12 +77,16 @@ public class Vec2IArray extends ArrayList<Vec2I> {
      * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
      */
     public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException {
+        readVec2IArray(in);
+    }
+
+    public void readVec2IArray(ByteBuf in){
         int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         if (arrayLength > ARRAY_INCOMING_CAP) {
             throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {
-            Vec2I vec2I = VEC2I_POOL.get(1);
+            Vec2I vec2I = VEC2I_POOL.get(i);
             vec2I.setVec2I(in);
             this.add(vec2I);
         }
@@ -96,6 +100,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         for (Vec2I vec2I : this) {
             vec2I.writeVec2I(out);
         }
+        this.clear();
     }
 
     /**

@@ -20,20 +20,21 @@ package utilities.connectivity.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import utilities.concurrent.thread.NamedThreadFactory;
-
-import java.util.concurrent.Executors;
 
 public class TCPClient {
 
     private final EventLoopGroup workerGroup;
 
     public TCPClient(String threadName) {
-        workerGroup = new NioEventLoopGroup(1, Executors.newCachedThreadPool(new NamedThreadFactory(threadName)));
+        workerGroup = new NioEventLoopGroup(1, new NamedThreadFactory(threadName));
     }
 
     public ChannelFuture connect(String ipAddress, int port, ChannelInitializer<SocketChannel> channelInitializer) {

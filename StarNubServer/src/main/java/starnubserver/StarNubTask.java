@@ -18,6 +18,7 @@
 
 package starnubserver;
 
+import starnubserver.events.events.StarNubEvent;
 import utilities.concurrent.task.ScheduledTask;
 import utilities.concurrent.task.TaskManager;
 
@@ -78,6 +79,7 @@ public class StarNubTask extends ScheduledTask {
     public void scheduleTask(long timeDelay, TimeUnit timeUnit) {
         super.scheduledFuture = TASK_MANAGER.schedule(super.RUNNABLE, timeDelay, timeUnit);
         insertTaskList();
+        new StarNubEvent("StarNub_Task_Registered_One_Time", this);
     }
 
     /**
@@ -93,6 +95,7 @@ public class StarNubTask extends ScheduledTask {
     public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
         super.scheduledFuture = TASK_MANAGER.scheduleAtFixedRate(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
         insertTaskList();
+        new StarNubEvent("StarNub_Task_Registered_Recurring_No_Delay", this);
     }
 
     /**
@@ -108,6 +111,7 @@ public class StarNubTask extends ScheduledTask {
     public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
         super.scheduledFuture = TASK_MANAGER.scheduleWithFixedDelay(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
         insertTaskList();
+        new StarNubEvent("StarNub_Task_Registered_Recurring_Fixed_Delay", this);
     }
 
     /**
@@ -119,6 +123,7 @@ public class StarNubTask extends ScheduledTask {
     public void removeTask() {
         try {
             TASK_MANAGER.getTASK_LIST().get(super.OWNER).remove(super.NAME).getScheduledFuture().cancel(true);
+            new StarNubEvent("StarNub_Task_Removed", this);
         }catch (NullPointerException e){
             /* Silent Catch */
         }

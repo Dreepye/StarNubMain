@@ -38,13 +38,29 @@ import java.util.stream.Collectors;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-enum CommandPreload {
-    INSTANCE;
+class CommandPreload {
 
     /**
-     * Default constructor
+     * Represents the only instance of this class - Singleton Pattern
      */
-    CommandPreload() {}
+    private static final CommandPreload instance = new CommandPreload();
+
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private CommandPreload() {
+    }
+
+    public static CommandPreload getInstance() {
+        return instance;
+    }
+
+    private void preloadPluginCommands(){
+
+
+
+    }
+
 
     @SuppressWarnings("unchecked")
     protected ConcurrentHashMap<ArrayList<String>, CommandPackage> preloadPluginCommands(Object sender, File prospectivePlugin, String pluginName, URLClassLoader classLoader, String commandName) {
@@ -68,7 +84,13 @@ enum CommandPreload {
 
         return commandPackages;
     }
-
+//    private ArrayList<String> COMMANDS;
+//    private ArrayList<String> MAIN_ARGS;
+//    private HashSet<String> PERMISSIONS;
+//    private CanUse CAN_USE;
+//    private String DESCRIPTION;
+//    private String COMMAND_CLASS;
+//    private Command COMMAND;
     @SuppressWarnings("unchecked")
     private CommandPackage commandPackageLoader(Object sender, String commandsYMLString, String pluginName, URLClassLoader classLoader, String pluginCommandName) {
         final YAMLWrapper COMMAND_FILE = new YAMLWrapper(pluginName, commandsYMLString, classLoader.getResourceAsStream(commandsYMLString), "");

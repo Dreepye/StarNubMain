@@ -38,7 +38,7 @@ import starbounddata.vectors.Vec2IArray;
  */
 public class DamageTileGroupPacket extends Packet {
 
-    private Vec2IArray tilePositions;
+    private Vec2IArray tilePositions = new Vec2IArray();
     private TileLayer layer;
     private Vec2F sourcePosition;
     private TileDamage tileDamage;
@@ -127,7 +127,7 @@ public class DamageTileGroupPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         try {
-            this.tilePositions = new Vec2IArray(in);
+            tilePositions.readVec2IArray(in);
             this.layer = TileLayer.values()[in.readUnsignedByte()];
             this.sourcePosition = new Vec2F(in);
             this.tileDamage = new TileDamage(in);

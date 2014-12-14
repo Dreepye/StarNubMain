@@ -42,7 +42,6 @@ public class DamageTileGroupHandler extends PacketEventHandler {
     @Override
     public void onEvent(Packet eventData) {
         DamageTileGroupPacket damageTileGroupPacket = (DamageTileGroupPacket) eventData;
-        long time = System.nanoTime();
         ChannelHandlerContext ctx = damageTileGroupPacket.getSENDER_CTX();
         BooleanCache cache = (BooleanCache) CTX_CACHE.getCache(ctx);
         if (!cache.isBool()){
@@ -51,8 +50,6 @@ public class DamageTileGroupHandler extends PacketEventHandler {
             if (cache.isPastDesignatedTimeRefreshTimeNowIfPast(5000)) {
                 playerSession.sendChatMessage("StarNub", ChatReceiveChannel.UNIVERSE, "You do not have permission to break tiles. Permission required: \"starnub.tile.break\".");
             }
-            return;
         }
-        System.out.println(System.nanoTime() - time);
     }
 }

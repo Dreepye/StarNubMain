@@ -22,13 +22,9 @@ import io.netty.channel.Channel;
 import org.joda.time.DateTime;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.logger.MultiOutputLogger;
-import starnubserver.plugins.PluginManager;
 import starnubserver.resources.ResourceManager;
 import starnubserver.resources.files.Configuration;
 import starnubserver.resources.files.GroupsManagement;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 
 /**
  * Represents the StarNubs core.
@@ -47,11 +43,10 @@ public final class StarNub {
 
     private static final ResourceManager resourceManager = ResourceManager.getInstance();
     private static final Configuration configuration = Configuration.getInstance();
-    private static final ExecutorService threadPool = ForkJoinPool.commonPool();
     private static final MultiOutputLogger logger = MultiOutputLogger.getInstance();
     private static final Connections connections = Connections.getInstance();
     private static final StarNubVersion versionInstance = StarNubVersion.getInstance();
-    private static final PluginManager pluginManager = PluginManager.getInstance();
+//    private static final PluginManager pluginManager = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
     private StarNub() {
@@ -71,10 +66,6 @@ public final class StarNub {
         return configuration;
     }
 
-    public static ExecutorService getThreadPool() {
-        return threadPool;
-    }
-
     public static MultiOutputLogger getLogger() {
         return logger;
     }
@@ -83,9 +74,6 @@ public final class StarNub {
         return versionInstance;
     }
 
-    public static PluginManager getPluginManager() {
-        return pluginManager;
-    }
 
     public static StarboundServer getStarboundServer() {
         return STARBOUND_SERVER;

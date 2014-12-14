@@ -115,6 +115,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      */
     public void connectedPlayerPlayedTimeUpdate(){
         for (PlayerSession players : this.values()) {
+            players.setEndTimeUtc();
             PlayerCharacter playerCharacter = players.getPlayerCharacter();
             playerCharacter.updatePlayedTimeLastSeen();
         }

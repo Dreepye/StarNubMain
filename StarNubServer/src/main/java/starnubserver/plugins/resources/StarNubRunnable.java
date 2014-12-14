@@ -1,16 +1,16 @@
-package starnubserver.plugins.runnable;
+package starnubserver.plugins.resources;
 
 public abstract class StarNubRunnable implements Runnable {
 
 
-    public boolean isShuttingDown;
+    private boolean isShuttingDown;
 
     public boolean isShuttingDown() {
         return isShuttingDown;
     }
 
-    public void setShuttingDown(boolean isShuttingDown) {
-        this.isShuttingDown = isShuttingDown;
+    public void shutdownGracefully() {
+        this.isShuttingDown = true;
     }
 
     /**

@@ -26,7 +26,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import utilities.concurrent.thread.NamedThreadFactory;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
@@ -97,11 +96,11 @@ class TCPProxyServer {
             connectionBossGroup =
                     new NioEventLoopGroup(
                             1,
-                            Executors.newCachedThreadPool(new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
+                            (new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
         }
         if (connectionWorkerGroup == null) {
             connectionWorkerGroup =
-                    new NioEventLoopGroup();
+                    new NioEventLoopGroup(1, new NamedThreadFactory("StarNub - TCP Proxy : Worker Thread"));
         }
 
 //        400,
@@ -118,7 +117,7 @@ class TCPProxyServer {
         sendBuffer = 512 * 1024;
     }
 
-    public static void start() {
+    public void start() {
         ServerBootstrap starNubInbound_TCP_Socket = new ServerBootstrap();
         BIND = starNubInbound_TCP_Socket
                 .group(connectionBossGroup, connectionWorkerGroup)
@@ -133,13 +132,13 @@ class TCPProxyServer {
 //                .childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                 .childHandler(new TCPProxyServerInitializer())
                 .bind((int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port")).channel();
-        new StarNubTask("StarNub", "StarNub - TCP Connection Thread Health Check", false, 30, 30, TimeUnit.SECONDS, TCPProxyServer::healthChecks);
+
+        new StarNubTask("StarNub", "StarNub - TCP Connection Thread Health Check", false, 30, 30, TimeUnit.SECONDS, this::healthChecks);
 
     }
 
-    private static void healthChecks(){
-//        connectionWorkerGroup.rebuildSelectors();
-        System.out.println(connectionWorkerGroup);
+    public void healthChecks(){
+
     }
 
     public static void shutdownNetworkThreads(){

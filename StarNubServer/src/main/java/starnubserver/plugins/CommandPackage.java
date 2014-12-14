@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2014 www.StarNub.org - Underbalanced
 *
-* This utilities.file is part of org.starnub a Java Wrapper for Starbound.
+* This file is part of org.starnub a Java Wrapper for Starbound.
 *
 * This above mentioned StarNub software is free software:
 * you can redistribute it and/or modify it under the terms
@@ -18,136 +18,96 @@
 
 package starnubserver.plugins;
 
-import java.util.ArrayList;
+import generic.CanUse;
+
+import java.util.*;
 
 /**
- * Represents the StarNubs CommandPackage. This information
- * is used internally when the plugin is loaded, we build this
- * from the commandname.yml so when a command is used we have
- * a reference and how to use the command inputted.
+ * Represents a CommandPackage that contains command details
  * <p>
- * NOTE: These fields are public for the sake of information dumping via YAML.
- * <p>
+ *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
 public class CommandPackage {
 
-    /**
-     * This needs to be set by the command creator.
-     * <p>
-     * When creating this field just separate the commands
-     * that you want to trigger this plugin.
-     * Example "menu"
-     * <p>
-     * /{pluginname or alias} menu
-     * /{pluginname or alias} command
-     */
-
-    public final ArrayList<String> COMMANDS;
+    private ArrayList<String> COMMANDS;
+    private ArrayList<String> MAIN_ARGS;
+    private HashSet<String> PERMISSIONS;
+    private CanUse CAN_USE;
+    private String DESCRIPTION;
+    private String COMMAND_CLASS;
 
     /**
-     * This needs to be set by the command creator.
-     * <p>
-     * When creating this field just separate the commands
-     * that you want to trigger this plugin.
-     * Example "menu"
-     * <p>
-     * /{pluginname or alias} menu
-     * /{pluginname or alias} command
+     * This is for plugins to not have to construct anything but allows for StarNub to construct this
      */
-
-    public final ArrayList<String> COMMAND_MAIN_ARGS;
+    public CommandPackage() {
+    }
 
     /**
-     * Where this command is located in the plugin
+     * @param COMMANDS            String representing the command name
+     * @param MAIN_ARGS           String the commands main args
+     * @param COMMAND_CLASS       String the location of the class in the plugin
+     * @param COMMAND_NAME        String used to build plugin permissions
+     * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
+     * @param DESCRIPTION         String description of what the command does
+     * @param COMMAND             Command the actual command that holds the code
      */
-
-    public final String COMMAND_CLASS;
-
-//    /**
-//     * Do all players have this permission by default
-//     */
-//    public final boolean PERMISSION_DEFAULT_ALL;
-
-    /**
-     * This needs to be set by the command creator. What specific permission is
-     * required by the user.
-     * <p>
-     * Example: {pluginname or alias}.permission
-     * <p>
-     * Users will have permission if they have the wildcard permission
-     * <br>
-     * {pluginname or alias}.*
-     * <p>
-     */
-
-    public final String PERMISSIONS;
-
-    /**
-     * This needs to be set by the command creator. True means the console
-     * can use this command. False will block the console from using or seeing
-     * the command. 1 = Player, 2 = Remote Player, 3 = Both
-     */
-
-    public final int CAN_USE;
-
-    /**
-     * A short description about your command.
-     */
-
-    public final String DESCRIPTION;
-
-    /**
-     * The actual command code for the this command
-     */
-
-    private final Command COMMAND;
-
-    /**
-     * @param COMMANDS String representing the command name
-     * @param COMMAND_MAIN_ARGS  String the commands main args
-     * @param COMMAND_CLASS String the location of the class in the plugin
-     * @param PERMISSIONS   String the permission that StarNub will check on command use
-     * @param CAN_USE       int 1 = Player, 2 = Remote Player, 3 = Both can use
-     * @param DESCRIPTION   String description of what the command does
-     * @param COMMAND       Command the actual command that holds the code
-     */
-    public CommandPackage(ArrayList<String> COMMANDS, ArrayList<String> COMMAND_MAIN_ARGS, String COMMAND_CLASS, String PERMISSIONS, int CAN_USE,  String DESCRIPTION, Command COMMAND) {
+    public CommandPackage(ArrayList<String> COMMANDS, ArrayList<String> MAIN_ARGS, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION, Command COMMAND) {
         this.COMMANDS = COMMANDS;
-        this.COMMAND_MAIN_ARGS = COMMAND_MAIN_ARGS;
+        this.MAIN_ARGS = MAIN_ARGS;
         this.COMMAND_CLASS = COMMAND_CLASS;
-        this.PERMISSIONS = PERMISSIONS;
-        this.CAN_USE = CAN_USE;
+        this.PERMISSIONS = new HashSet<>();
+        for (String command : COMMANDS) {
+            for (String mainArg : MAIN_ARGS) {
+                String permission = COMMAND_NAME + "." + command + "." + mainArg;
+                PERMISSIONS.add(permission);
+            }
+        }
+        this.CAN_USE = CanUse.values()[CAN_USE];
         this.DESCRIPTION = DESCRIPTION;
-        this.COMMAND = COMMAND;
     }
 
     public ArrayList<String> getCOMMANDS() {
         return COMMANDS;
     }
 
-    public ArrayList<String> getCOMMAND_MAIN_ARGS() {
-        return COMMAND_MAIN_ARGS;
+    public ArrayList<String> getMAIN_ARGS() {
+        return MAIN_ARGS;
     }
 
-    public String getCOMMAND_CLASS() {
-        return COMMAND_CLASS;
-    }
-
-    public String getPERMISSIONS() {
-        return PERMISSIONS;
-    }
-
-    public int getCAN_USE() {
+    public CanUse getCAN_USE() {
         return CAN_USE;
+    }
+
+    public HashSet<String> getPERMISSIONS() {
+        return PERMISSIONS;
     }
 
     public String getDESCRIPTION() {
         return DESCRIPTION;
     }
 
-    public Command getCOMMAND() {
-        return COMMAND;
+    public String getCOMMAND_CLASS() {
+        return COMMAND_CLASS;
+    }
+
+    public LinkedHashMap<String, Object> getCommandDetailsMap(String pluginName, String pluginCommandName, String pluginNameAlias){
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("Plugin Name", pluginName);
+        linkedHashMap.put("Command Name", pluginCommandName);
+        linkedHashMap.put("Command Alias", pluginNameAlias);
+        linkedHashMap.put("Class", COMMAND_CLASS);
+        return getCommandDetailsMap(linkedHashMap);
+    }
+
+    public LinkedHashMap<String,Object> getCommandDetailsMap(LinkedHashMap<String, String> linkedHashMap) {
+        LinkedHashMap<String, Object> linkedHashMapFinal = new LinkedHashMap<>();
+        linkedHashMapFinal.put("Plugin Command Details", linkedHashMap);
+        linkedHashMapFinal.put("Commands", COMMANDS);
+        linkedHashMapFinal.put("Main Args", MAIN_ARGS);
+        linkedHashMapFinal.put("Can Use", CAN_USE.toString());
+        linkedHashMapFinal.put("Permissions", PERMISSIONS);
+        return linkedHashMapFinal;
     }
 }

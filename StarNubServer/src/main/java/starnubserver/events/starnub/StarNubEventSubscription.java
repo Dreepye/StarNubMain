@@ -18,6 +18,7 @@
 
 package starnubserver.events.starnub;
 
+import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventHandler;
 import utilities.events.EventSubscription;
 import utilities.events.Priority;
@@ -80,6 +81,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     @Override
     public void submitRegistration() {
         StarNubEventRouter.getInstance().registerEventSubscription(EVENT_KEY, this);
+        new StarNubEvent("StarNub_Event_Subscription_Registered", this);
     }
 
     /**
@@ -90,5 +92,6 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     @Override
     public void removeRegistration() {
         StarNubEventRouter.getInstance().removeEventSubscription(this);
+        new StarNubEvent("StarNub_Event_Subscription_Registration_Removed", this);
     }
 }

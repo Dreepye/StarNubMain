@@ -22,6 +22,7 @@ import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ConnectResponsePacket;
 import starnubserver.Connections;
 import starnubserver.StarNub;
+import starnubserver.StarNubTaskManager;
 import starnubserver.cache.objects.RejectionCache;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
@@ -56,7 +57,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCONNECTION().getCLIENT_CTX(), playerSession);
                 final RejectionCache finalRejectionCache = rejectionCache;
-                StarNub.getThreadPool().execute(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache));
+                StarNubTaskManager.getInstance().execute(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache));
             }
         }
     }

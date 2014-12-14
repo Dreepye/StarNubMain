@@ -18,20 +18,38 @@
 
 package starnubserver.plugins;
 
+import java.util.ArrayList;
+
 /**
- * Represents the a StarNub Command.
- * The plugin maker must @Override the onCommand method.
- * <p>
- * This Command class is abstract and must be extended. This is what
- * all Command classes should look like by default.
+ * Represents a Command that contains command details this command must be extended by a plugin
+ * to be used as a command, as well as have a command.yml pointing to this class.
  * <p>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
+ * @since 1.0 Beta
  */
-public abstract class Command {
+public abstract class Command extends CommandPackage{
 
-     /**
+    /**
+     * This is for plugins to not have to construct anything but allows for StarNub to construct this
+     */
+    public Command() {
+    }
+
+    /**
+     * @param COMMANDS            String representing the command name
+     * @param MAIN_ARGS           String the commands main args
+     * @param COMMAND_CLASS       String the location of the class in the plugin
+     * @param PLUGIN_COMMAND_NAME String used to build plugin permissions
+     * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
+     * @param DESCRIPTION         String description of what the command does
+     * @param COMMAND             Command the actual command that holds the code
+     */
+    public Command(ArrayList<String> COMMANDS, ArrayList<String> MAIN_ARGS, String COMMAND_CLASS, String PLUGIN_COMMAND_NAME, int CAN_USE, String DESCRIPTION, Command COMMAND) {
+        super(COMMANDS, MAIN_ARGS, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION, COMMAND);
+    }
+
+    /**
      * This represents a higher level method for StarNubs API.
      * <p>
      * Recommended: For Plugin Developers & Anyone else.

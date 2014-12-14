@@ -22,7 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import starnubserver.StarNub;
-import starnubserver.plugins.runnable.StarNubRunnable;
+import starnubserver.plugins.resources.StarNubRunnable;
 import utilities.file.yaml.YAMLWrapper;
 
 import java.io.File;
@@ -36,14 +36,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents the PluginManager Enum singleton
- * <p>
- * This enum singleton holds and runs all things important
- * to Plugins and Commands
- * <p>
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
+* Represents the PluginManager Enum singleton
+* <p>
+* This enum singleton holds and runs all things important
+* to Plugins and Commands
+* <p>
+* @author Daniel (Underbalanced) (www.StarNub.org)
+* @since 1.0
+*/
 public class PluginManager {
 
     /**

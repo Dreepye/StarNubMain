@@ -1,6 +1,7 @@
 package starnubserver.events.starnub;
 
 import starnubserver.StarNub;
+import starnubserver.StarNubTaskManager;
 import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventRouter;
 import utilities.events.EventSubscription;
@@ -30,7 +31,7 @@ public class StarNubEventRouter extends EventRouter<String, StarNubEvent, Boolea
     }
 
     public void eventNotify(StarNubEvent event){
-       StarNub.getThreadPool().submit(() -> handleEvent(event));
+       StarNubTaskManager.getInstance().submit(() -> handleEvent(event));
     }
 
     @Override

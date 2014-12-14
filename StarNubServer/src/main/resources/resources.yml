@@ -92,10 +92,14 @@ file: ['starnub_configuration.yml', 'StarNub/'],
            "addresses": ['central1.starnub.org', 'central2.starnub.org'],
            "port": 666
            },
-           "scheduled_task_thread_count": 2
-         }
+           "task_threads": {
+            "core_count": 2,
+            "max_count": 8,
+            "keep_alive_minutes": 1
+            }
        }
      }
+  }
 },
 ###################### END DEFAULT CONFIGURATION ######################
 ###################### START DEFAULT GROUPS ######################

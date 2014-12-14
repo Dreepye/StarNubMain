@@ -10,14 +10,14 @@ public class ConnectionFactory {
         String connectionString = "jdbc:";
         if (databaseType.equals("sqlite")) {
             try {
-                connectionString = connectionString+databaseType+":StarNub/Databases/"+pluginName+".db";
+                connectionString = connectionString + databaseType + ":StarNub/Databases/" + pluginName + ".db";
                 connection = new JdbcPooledConnectionSource(connectionString);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (databaseType.equals("mysql")) {
             try {
-                connectionString = connectionString+databaseType+"://"+databaseUrl;
+                connectionString = connectionString + databaseType + "://" + databaseUrl;
                 connection = new JdbcPooledConnectionSource(connectionString, databaseUsername, databasePassword);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -25,6 +25,4 @@ public class ConnectionFactory {
         }
         return connection;
     }
-
-
 }
