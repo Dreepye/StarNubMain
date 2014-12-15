@@ -12,14 +12,24 @@
         <module>StarNubServer</module>
         <module>Launcher</module>
         <module>StarboundData</module>
-        <module>StarNubClient</module>
         <module>Utilities</module>
         <module>CentralServer</module>
-        <module>CentralClient</module>
         <module>Proxy</module>
         <module>StarboundManager</module>
         <module>StarNubData</module>
     </modules>
+
+    <name>starnubmain</name>
+    <url>http://www.starnub.org</url>
+    <description>StarNub is a set of libraries and tools for Starbound Servers.</description>
+    <organization>
+        <name>StarNub</name>
+        <url>http://www.starnub.org</url>
+    </organization>
+    <scm>
+        <developerConnection>Underbalanced</developerConnection>
+        <url>http://www.starnub.org</url>
+    </scm>
 
     <build>
         <plugins>
@@ -34,5 +44,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

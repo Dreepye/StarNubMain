@@ -83,14 +83,12 @@ public final class StarNub {
     private static void start () {
         /* This Resource detector is for debugging only */
 //        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
-
-        DateTime starnubStarTime = DateTime.now();
         Thread.currentThread().setName("StarNub - Main");
 
 
 
         StarboundServer.getInstance().start();
-        new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis() - starnubStarTime.getMillis());
+        new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis());
         GroupsManagement.getInstance().groupSetup();
 
 //        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", StarNub::tempTime));
