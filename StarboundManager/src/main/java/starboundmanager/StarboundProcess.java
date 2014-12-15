@@ -26,7 +26,7 @@ import java.io.InputStreamReader;
 
 /**
  * Represents StarboundProcess this will build and start a process as well as a Runnable to manage the stream.
- * It will submit events or print to screen or non depending on the settings when constructed
+ * It will submit starnubdata.events or print to screen or non depending on the settings when constructed
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -45,8 +45,8 @@ public class StarboundProcess implements Runnable {
      * Uses: This will build a new Starbound Process
      *
      * @param STARBOUND_MANAGEMENT StarboundManagement representing the reference so that we can use the event router
-     * @param STREAM_EVENT_MESSAGE boolean representing if we print event messages to the event handler from the Starbound_Server.exe output stream
-     * @param STREAM_CONSOLE_PRINT boolean representing if we should print console messages from the Starbound_Server.exe output stream
+     * @param STREAM_EVENT_MESSAGE boolean representing if we print event starnubdata.messages to the event handler from the Starbound_Server.exe output stream
+     * @param STREAM_CONSOLE_PRINT boolean representing if we should print console starnubdata.messages from the Starbound_Server.exe output stream
      * @throws IOException an exception if we cannot build the process
      */
     StarboundProcess(StarboundManager STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
@@ -81,7 +81,7 @@ public class StarboundProcess implements Runnable {
 
     /**
      * Depending on the connections settings the stream will be discarded or used
-     * to print console messages and provide basic player management functions.
+     * to print console starnubdata.messages and provide basic player management functions.
      */
     @SuppressWarnings("unchecked")
     public void run() {

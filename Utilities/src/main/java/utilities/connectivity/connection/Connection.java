@@ -96,7 +96,7 @@ public abstract class Connection {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will either print to console or send events
+     * Uses: This will either print to console or send starnubdata.events
      *
      * @param eventKey String representing the event key or console leading name
      * @param eventData Object representing the data

@@ -16,14 +16,26 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package generic;
+package starnubdata.network.handlers;
 
-public enum BanType {
-    IP,
-    UUID,
-    BOTH,
-    IP_ALL_UUIDS,
-    ALL_IPS,
-    ALL_UUIDS,
-    ALL
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import starnubdata.messages.StarNubMessage;
+
+public class StarNubMessageReaderClient extends SimpleChannelInboundHandler<StarNubMessage> {
+
+//    private final EventRouter EVENT_ROUTER;
+//
+//    public StarNubMessageReaderClient(EventRouter EVENT_ROUTER) {
+//        this.EVENT_ROUTER = EVENT_ROUTER;
+//    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, StarNubMessage starNubMessage) throws Exception {
+        System.out.println(starNubMessage);
+        switch(starNubMessage.getTYPE()){
+
+        }
+    }
 }

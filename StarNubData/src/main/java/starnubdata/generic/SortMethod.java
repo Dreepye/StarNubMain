@@ -16,10 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package generic;
+package starnubdata.generic;
 
-public enum CanUse {
-    PLAYER,
-    REMOTE_PLAYER,
-    BOTH
+public enum SortMethod {
 }

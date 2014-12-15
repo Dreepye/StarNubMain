@@ -21,7 +21,7 @@ package starnubserver.connections.player.generic;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import generic.DisconnectReason;
+import starnubdata.generic.DisconnectReason;
 import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.connections.player.character.PlayerCharacter;

@@ -16,17 +16,14 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package generic;
+package starnubdata.generic;
 
-public enum DisconnectReason {
-    QUIT,
-    KICKED,
-    BANNED,
-    RESERVED_KICK,
-    CONNECTION_LOST,
-    CONNECTION_FAILURE,
-    CHARACTER_LOG_IN,
-    DECODER_CLOSED,
-    DECODER_CLOSED_NO_DECODING,
-    OTHER
+public enum BanType {
+    IP,
+    UUID,
+    BOTH,
+    IP_ALL_UUIDS,
+    ALL_IPS,
+    ALL_UUIDS,
+    ALL
 }

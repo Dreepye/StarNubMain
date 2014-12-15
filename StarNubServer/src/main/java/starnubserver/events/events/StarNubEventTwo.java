@@ -16,37 +16,21 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package messages;
+package starnubserver.events.events;
 
-public class StarNubMessage implements java.io.Serializable {
+import starnubserver.events.starnub.StarNubEventRouter;
 
-    public enum Type {
-        LICENSE_CHECK,
-        LICENSE_CHECK_ACCEPT,
-        LICENSE_CHECK_UNLICENSED,
-        LICENSE_CHECK_DENY,
-        COUNT_CHECK,
-        COUNT_ACCEPT,
-        COUNT_DENY,
-        BAN_ADD,
-        BAN_REMOVE,
-        BAN_UPDATE
+public class StarNubEventTwo extends StarNubEvent{
+
+    private final Object EVENT_DATA_2;
+
+    public StarNubEventTwo(Object EVENT_KEY, Object EVENT_DATA, Object EVENT_DATA_2) {
+        super(EVENT_KEY, EVENT_DATA);
+        this.EVENT_DATA_2 = EVENT_DATA_2;
+        StarNubEventRouter.getInstance().eventNotify(this);
     }
 
-    private final Type TYPE;
-
-    public StarNubMessage(Type TYPE) {
-        this.TYPE = TYPE;
-    }
-
-    public Type getTYPE() {
-        return TYPE;
-    }
-
-    @Override
-    public String toString() {
-        return "StarNubMessage{" +
-                "TYPE=" + TYPE +
-                '}';
+    public Object getEVENT_DATA_2() {
+        return EVENT_DATA_2;
     }
 }

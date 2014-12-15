@@ -16,27 +16,18 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package messages;
+package starnubdata.messages;
 
+public class StarNubMessageLicense extends StarNubMessage {
 
+    private final String KEY;
 
-public class StarNubMessageBan extends StarNubMessage {
-
-//    private final Ban BAN;
-//
-    public StarNubMessageBan(Type TYPE) {
+    public StarNubMessageLicense(Type TYPE, String KEY) {
         super(TYPE);
-//        this.BAN = BAN;
+        this.KEY = KEY;
     }
-//
-//    public Ban getBAN() {
-//        return BAN;
-////    }
-//
-//    @Override
-//    public String toString() {
-//        return "StarNubMessageBan{" +
-//                "BAN=" + BAN +
-//                "} " + super.toString();
-//    }
+
+    public String getKEY() {
+        return KEY;
+    }
 }

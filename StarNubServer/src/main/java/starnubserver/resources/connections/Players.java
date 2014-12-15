@@ -18,7 +18,7 @@
 
 package starnubserver.resources.connections;
 
-import generic.DisconnectReason;
+import starnubdata.generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;

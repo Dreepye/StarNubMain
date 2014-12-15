@@ -83,7 +83,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
        "log_original_character_name_with_nick_name": false,
        "log_size": 5120.0,
        "log_levels": {
-           "events": 0,
+           "starnubdata.events": 0,
            "debug": 0,
            "information": 3,
            "chat": 3,

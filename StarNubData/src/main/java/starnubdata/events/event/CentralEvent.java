@@ -16,7 +16,15 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * utilities.starnubdata.events is the package containing all of the various event types
- */
-package utilities.events.types;
+package starnubdata.events.event;
+
+
+import starnubdata.messages.StarNubMessage;
+import utilities.events.types.Event;
+
+public class CentralEvent extends Event<StarNubMessage.Type> {
+
+    public CentralEvent(StarNubMessage.Type EVENT_KEY, Object EVENT_DATA) {
+        super(EVENT_KEY, EVENT_DATA);
+    }
+}

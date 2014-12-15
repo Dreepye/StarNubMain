@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * various levels 0 - Not Logging, 1 - Log To Screen, 2 - Log To File and
  * 3 - Log to Screen and File.
  * <p>
- * The defaults are not to log debug and events. Everything is to be logged in some fashion.
+ * The defaults are not to log debug and starnubdata.events. Everything is to be logged in some fashion.
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -746,7 +746,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Event" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param message String that represents the Chat message
@@ -762,7 +762,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Debug" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param message String that represents the Chat message
@@ -778,7 +778,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Chat" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender      Object which represents the message sender can be a string, class, player, management starnubclient
@@ -803,7 +803,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Chat" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param senderReceiver String which represents the message sender and receiver of the message
@@ -825,7 +825,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Command-Fail" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender  Object so that we can receive multiple sender types
@@ -847,7 +847,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Command-Success" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender  Object so that we can receive multiple sender types
@@ -869,7 +869,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Info" console message with a current time stamp and append it into
      * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender  Object so that we can receive multiple sender types
@@ -886,7 +886,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Warn" console message with a current time stamp and append it into
      * StarNub/Error Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender  Object so that we can receive multiple sender types
@@ -903,7 +903,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Error" console message with a current time stamp and append it into
      * StarNub/Error Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender  Object so that we can receive multiple sender types
@@ -920,7 +920,7 @@ public class MultiOutputLogger {
      * <p>
      * Uses: This will print a "Fatal" console message with a current time stamp and append it into
      * StarNub/Error Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these messages.
+     * will not see any of these starnubdata.messages.
      * <p>
      *
      * @param sender  Object so that we can receive multiple sender types

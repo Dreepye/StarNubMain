@@ -18,7 +18,7 @@
 
 package starnubserver.resources.connections.handlers;
 
-import generic.DisconnectReason;
+import starnubdata.generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -164,7 +164,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For connections use with StarNub
      * <p>
-     * Uses: This checks to see if the network is restarting
+     * Uses: This checks to see if the starnubdata.network is restarting
      *
      * @param playerSession Player player session
      * @param header rejection header
@@ -183,7 +183,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For connections use with StarNub
      * <p>
-     * Uses: This checks to see if the network is whitelisted and is the player on it
+     * Uses: This checks to see if the starnubdata.network is whitelisted and is the player on it
      *
      * @param playerSession Player player session
      * @param header rejection header
@@ -207,7 +207,7 @@ public class ClientConnectHandler extends PacketEventHandler {
             } else if (uuidWhitelisted) {
                 return null;
             } else {
-                String reason = "\n^#f5f5f5;This network is whitelisted.\n";
+                String reason = "\n^#f5f5f5;This starnubdata.network is whitelisted.\n";
                 return new RejectionCache(true, RejectionCache.Reason.WHITELIST, header + reason + footer, playerSession);
             }
         } else {
@@ -277,7 +277,7 @@ public class ClientConnectHandler extends PacketEventHandler {
     /**
      * Recommended: For connections use with StarNub
      * <p>
-     * Uses: This checks to see if the network is full. Reserved Kick can will kick regular players first, then reserved players. Reserved plays can only ick regular players
+     * Uses: This checks to see if the starnubdata.network is full. Reserved Kick can will kick regular players first, then reserved players. Reserved plays can only ick regular players
      *
      * @param playerSession Player player session
      * @param header rejection header
@@ -320,7 +320,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                     }
                 }
                 if (!spaceMade) {
-                    reason = "^#f5f5f5;This network is full and no more VIP slots are available.";
+                    reason = "^#f5f5f5;This starnubdata.network is full and no more VIP slots are available.";
                     return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP_KICK, header + reason + footer, playerSession);
                 }
             } else if (playerSession.hasPermission("starnub.reserved", true)) {
@@ -334,11 +334,11 @@ public class ClientConnectHandler extends PacketEventHandler {
                     }
                 }
                 if (!spaceMade) {
-                    reason = "^#f5f5f5;This network is full and no more VIP slots are available." + previousKick;
+                    reason = "^#f5f5f5;This starnubdata.network is full and no more VIP slots are available." + previousKick;
                     return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL_NO_VIP, header + reason + footer, playerSession);
                 }
             } else {
-                reason = "^#f5f5f5;This network is full and you do not have permission to enter." + previousKick;
+                reason = "^#f5f5f5;This starnubdata.network is full and you do not have permission to enter." + previousKick;
                 return new RejectionCache(true, RejectionCache.Reason.SERVER_FULL, header + reason + footer, playerSession);
             }
         }

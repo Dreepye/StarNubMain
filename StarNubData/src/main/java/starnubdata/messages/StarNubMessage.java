@@ -16,18 +16,37 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package messages;
+package starnubdata.messages;
 
-public class StarNubMessageLicense extends StarNubMessage {
+public class StarNubMessage implements java.io.Serializable {
 
-    private final String KEY;
-
-    public StarNubMessageLicense(Type TYPE, String KEY) {
-        super(TYPE);
-        this.KEY = KEY;
+    public enum Type {
+        LICENSE_CHECK,
+        LICENSE_CHECK_ACCEPT,
+        LICENSE_CHECK_UNLICENSED,
+        LICENSE_CHECK_DENY,
+        COUNT_CHECK,
+        COUNT_ACCEPT,
+        COUNT_DENY,
+        BAN_ADD,
+        BAN_REMOVE,
+        BAN_UPDATE
     }
 
-    public String getKEY() {
-        return KEY;
+    private final Type TYPE;
+
+    public StarNubMessage(Type TYPE) {
+        this.TYPE = TYPE;
+    }
+
+    public Type getTYPE() {
+        return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "StarNubMessage{" +
+                "TYPE=" + TYPE +
+                '}';
     }
 }

@@ -16,24 +16,24 @@
 // * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 // */
 //
-//package centralserver.events;
+//package centralserver.starnubdata.events;
 //
-//import events.event.CentralEvent;
-//import messages.StarNubMessage;
+//import starnubdata.events.event.CentralEvent;
+//import starnubdata.messages.StarNubMessage;
 //import starnubserver.StarNub;
 //import starnubserver.StarNubTask;
 //import starnubserver.plugins.runnable.StarNubRunnable;
-//import utilities.events.EventRouter;
-//import utilities.events.EventSubscription;
-//import utilities.events.types.Event;
+//import utilities.starnubdata.events.EventRouter;
+//import utilities.starnubdata.events.EventSubscription;
+//import utilities.starnubdata.events.types.Event;
 //
 //import java.util.HashSet;
 //import java.util.concurrent.ArrayBlockingQueue;
 //import java.util.concurrent.TimeUnit;
 //
 ///**
-// * Represents StarNubs StarNubEventRouter to be used with {@link starnubserver.events.starnub.StarNubEventSubscription} and
-// * {@link starnubserver.events.starnub.StarNubEventHandler}
+// * Represents StarNubs StarNubEventRouter to be used with {@link starnubserver.starnubdata.events.starnub.StarNubEventSubscription} and
+// * {@link starnubserver.starnubdata.events.starnub.StarNubEventHandler}
 // *
 // * NOTE: TODO THIS CLASS WILL BE PENDING REFACTORING ONCE MORE TO FINISH THE WORKER ALGORITHM BUT IS SUFFICIENT ENOUGH TO RUN PRODUCTION
 // *

@@ -16,7 +16,27 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package generic;
+package starnubdata.messages;
 
-public enum SortMethod {
+
+
+public class StarNubMessageBan extends StarNubMessage {
+
+//    private final Ban BAN;
+//
+    public StarNubMessageBan(Type TYPE) {
+        super(TYPE);
+//        this.BAN = BAN;
+    }
+//
+//    public Ban getBAN() {
+//        return BAN;
+////    }
+//
+//    @Override
+//    public String toString() {
+//        return "StarNubMessageBan{" +
+//                "BAN=" + BAN +
+//                "} " + super.toString();
+//    }
 }

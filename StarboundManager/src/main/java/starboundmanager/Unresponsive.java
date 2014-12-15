@@ -27,13 +27,13 @@ public class Unresponsive extends StarboundStatus {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will not work while the network is in an unresponsive state
+     * Uses: This will not work while the starnubdata.network is in an unresponsive state
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the network started
+     * @return boolean representing if the starnubdata.network started
      */
     @Override
     public boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) {
@@ -57,12 +57,12 @@ public class Unresponsive extends StarboundStatus {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This cannot be used while the network is unresponsive
+     * Uses: This cannot be used while the starnubdata.network is unresponsive
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the starbound network is responsive
+     * @return boolean representing if the starbound starnubdata.network is responsive
      */
     @Override
     public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
@@ -75,7 +75,7 @@ public class Unresponsive extends StarboundStatus {
      * <p>
      * Uses: This will attempt to stopped and enable you to use the start method in the stopped status
      *
-     * @return boolean representing if the network is stopped
+     * @return boolean representing if the starnubdata.network is stopped
      */
     @Override
     public boolean stop() {

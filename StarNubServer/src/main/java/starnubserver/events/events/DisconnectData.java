@@ -18,7 +18,7 @@
 
 package starnubserver.events.events;
 
-import generic.DisconnectReason;
+import starnubdata.generic.DisconnectReason;
 import starnubserver.connections.player.session.PlayerSession;
 
 public class DisconnectData {

@@ -36,7 +36,7 @@ import static starbounddata.variants.VLQ.writeSignedVLQNoObjectPacketEncoder;
  * <p>
  * Notes:
  * - Packet ID is a single Byte
- * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the starnubclient and starnubserver side of the socket, this is used to write network data to the session
+ * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the starnubclient and starnubserver side of the socket, this is used to write starnubdata.network data to the session
  * - recycle represents if this packet should be recycled when handled by StarNub
  * <p>
  *

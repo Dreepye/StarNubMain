@@ -18,7 +18,7 @@
 
 package starnubserver.plugins;
 
-import generic.CanUse;
+import starnubdata.generic.CanUse;
 
 import java.util.*;
 

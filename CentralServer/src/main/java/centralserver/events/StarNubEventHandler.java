@@ -16,13 +16,13 @@
 // * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 // */
 //
-//package centralserver.events;
+//package centralserver.starnubdata.events;
 //
-//import utilities.events.EventHandler;
-//import utilities.events.types.Event;
+//import utilities.starnubdata.events.EventHandler;
+//import utilities.starnubdata.events.types.Event;
 //
 ///**
-// * Represents StarNubs StarNubEventHandler that handles {@link utilities.events.types.Event} the
+// * Represents StarNubs StarNubEventHandler that handles {@link utilities.starnubdata.events.types.Event} the
 // * onEvent method is overridden so that you may conduct logic with the Event
 // *
 // * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -33,7 +33,7 @@
 //    /**
 //     * Recommended: For Plugin Developers & Anyone else.
 //     * <p>
-//     * Uses: When your {@link starnubserver.events.packet.PacketEventSubscription} is called this EventHandler
+//     * Uses: When your {@link starnubserver.starnubdata.events.packet.PacketEventSubscription} is called this EventHandler
 //     * will be called and the onEvent() method invoked.
 //     *
 //     * NOTE: - YOU WILL NEED TO CAST THE EVENT TO THE DATA TYPE BASED ON THE EVENT LIST OR PLUGIN EVENT LIST

@@ -163,7 +163,7 @@ class Yylex {
     private static final int ZZ_UNKNOWN_ERROR = 0;
     private static final int ZZ_NO_MATCH = 1;
     private static final int ZZ_PUSHBACK_2BIG = 2;
-    /* error messages for the codes above */
+    /* error starnubdata.messages for the codes above */
     private static final String ZZ_ERROR_MSG[] = {
             "Unkown connections scanner error",
             "Error: could not match input",

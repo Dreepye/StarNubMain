@@ -16,15 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package events.event;
+package starnubdata.generic;
 
-
-import messages.StarNubMessage;
-import utilities.events.types.Event;
-
-public class CentralEvent extends Event<StarNubMessage.Type> {
-
-    public CentralEvent(StarNubMessage.Type EVENT_KEY, Object EVENT_DATA) {
-        super(EVENT_KEY, EVENT_DATA);
-    }
+public enum DisconnectReason {
+    QUIT,
+    KICKED,
+    BANNED,
+    RESERVED_KICK,
+    CONNECTION_LOST,
+    CONNECTION_FAILURE,
+    CHARACTER_LOG_IN,
+    DECODER_CLOSED,
+    DECODER_CLOSED_NO_DECODING,
+    OTHER
 }

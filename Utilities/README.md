@@ -1,5 +1,5 @@
 #Utilities Library
-This library is house common code used for generic functionality
+This library is house common code used for starnubdata.generic functionality
 
 Authors: Underbalanced
 
@@ -34,7 +34,7 @@ Current Utility Functions
 
 - Events:
 	- EventHandler -  Abstract class that provides a means for onEvent(); handling and self subscription
-	- EventRouter - Provides methods for registering EventSubscription, tracking them, notifying for event ques and handlerEvent(); for handling events
+	- EventRouter - Provides methods for registering EventSubscription, tracking them, notifying for event ques and handlerEvent(); for handling starnubdata.events
 	- EventSubscription - Holds the subscribers name as well as the event handler
 	- Event Types:
 		- Event - Abstract event that holds an event key and event data
@@ -78,7 +78,7 @@ Installation
 References
 ============
 - YAML:
-	- [YAML Ain't Markup Language](Netty.io)
+	- [YAML Ain't Markup Language]()
 	- [Snake YAML for Java](https://code.google.com/p/snakeyaml/)
 	- [Online YAML Parser - Verify Your YAML!](http://yaml-online-parser.appspot.com/)
 

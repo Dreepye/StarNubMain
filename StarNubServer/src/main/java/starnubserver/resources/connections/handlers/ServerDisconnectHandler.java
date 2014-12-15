@@ -18,7 +18,7 @@
 
 package starnubserver.resources.connections.handlers;
 
-import generic.DisconnectReason;
+import starnubdata.generic.DisconnectReason;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubserver.Connections;

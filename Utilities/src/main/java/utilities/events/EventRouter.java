@@ -91,7 +91,7 @@ public abstract class EventRouter<T1, T2, T3> {
     public abstract void eventNotify(T2 event);
 
     /**
-     * This method must be extended and enhanced to handle events of specific data types which may vary
+     * This method must be extended and enhanced to handle starnubdata.events of specific data types which may vary
      *
      * @param event T2 event data of sometime
      */

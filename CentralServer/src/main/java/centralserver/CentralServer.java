@@ -19,7 +19,7 @@
 package centralserver;
 
 
-import network.StarNubMessageServerInitializer;
+import starnubdata.network.StarNubMessageServerInitializer;
 import utilities.connectivity.server.TCPServer;
 
 public final class CentralServer {

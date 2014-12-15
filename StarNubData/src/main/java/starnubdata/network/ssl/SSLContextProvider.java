@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package network.ssl;
+package starnubdata.network.ssl;
 
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 

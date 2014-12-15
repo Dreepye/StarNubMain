@@ -16,15 +16,15 @@
 // * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 // */
 //
-//package centralserver.events;
+//package centralserver.starnubdata.events;
 //
 //import starnubserver.StarNub;
-//import utilities.events.EventSubscription;
-//import utilities.events.types.Event;
+//import utilities.starnubdata.events.EventSubscription;
+//import utilities.starnubdata.events.types.Event;
 //
 ///**
 // * Represents StarNubs StarNubEventSubscription that can self register or be manually registered with the
-// * {@link starnubserver.events.starnub.StarNubE555555555ventRouter}
+// * {@link starnubserver.starnubdata.events.starnub.StarNubE555555555ventRouter}
 // *
 // * @author Daniel (Underbalanced) (www.StarNub.org)
 // * @since 1.0 Beta
@@ -69,7 +69,7 @@
 //    /**
 //     * Recommended: For Plugin Developers & Anyone else.
 //     * <p>
-//     * Uses: This will register this Event Subscription with the {@link starnubserver.events.starnub.StarNubEventRouter} - If you used auto register DO NOT USE this
+//     * Uses: This will register this Event Subscription with the {@link starnubserver.starnubdata.events.starnub.StarNubEventRouter} - If you used auto register DO NOT USE this
 //     */
 //    @Override
 //    public void submitRegistration() {
@@ -79,7 +79,7 @@
 //    /**
 //     * Recommended: For Plugin Developers & Anyone else.
 //     * <p>
-//     * Uses: This will remove this Event Subscription from the {@link starnubserver.events.starnub.StarNubEventRouter}
+//     * Uses: This will remove this Event Subscription from the {@link starnubserver.starnubdata.events.starnub.StarNubEventRouter}
 //     */
 //    @Override
 //    public void removeRegistration() {

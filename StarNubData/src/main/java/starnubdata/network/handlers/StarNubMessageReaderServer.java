@@ -16,12 +16,12 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package network.handlers;
+package starnubdata.network.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import messages.StarNubMessage;
-import messages.StarNubMessageBan;
+import starnubdata.messages.StarNubMessage;
+import starnubdata.messages.StarNubMessageBan;
 
 public class StarNubMessageReaderServer extends SimpleChannelInboundHandler<StarNubMessage> {
 

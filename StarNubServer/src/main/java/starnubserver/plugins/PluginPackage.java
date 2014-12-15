@@ -38,7 +38,7 @@ import java.util.LinkedHashMap;
  * <p>
  * NOTE: These fields are public for the sake of information dumping via YAML.
  * <p>
- * This class is abstract and how a generic PluginPackage should look.
+ * This class is abstract and how a starnubdata.generic PluginPackage should look.
  * <p>
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)

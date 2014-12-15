@@ -41,7 +41,7 @@ public abstract class StarboundStatus {
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the network started
+     * @return boolean representing if the starnubdata.network started
      */
     public abstract boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT);
 
@@ -57,13 +57,13 @@ public abstract class StarboundStatus {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will attempt to see if the Starbound network is responsive, but depending on the current status may or may not work, queries are attempted
+     * Uses: This will attempt to see if the Starbound starnubdata.network is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes.
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the starbound network is responsive
+     * @return boolean representing if the starbound starnubdata.network is responsive
      */
     public abstract boolean isResponsive(String ipAddress, int port, int queryAttempts);
 
@@ -72,18 +72,18 @@ public abstract class StarboundStatus {
      * <p>
      * Uses: This will attempt to stop the Starbound process, but depending on the current status may or may not work
      *
-     * @return boolean representing if the network is stopped
+     * @return boolean representing if the starnubdata.network is stopped
      */
     public abstract boolean stop();
 
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will attempt will query the Starbound network every 5 seconds until it is started, It will check up to 48 times which is 4 minutes
+     * Uses: This will attempt will query the Starbound starnubdata.network every 5 seconds until it is started, It will check up to 48 times which is 4 minutes
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
-     * @return boolean representing that the network has started up or not
+     * @return boolean representing that the starnubdata.network has started up or not
      */
     protected boolean startUpListener(String ipAddress, int port){
         STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Starting_Up", STARBOUND_MANAGEMENT);
@@ -94,13 +94,13 @@ public abstract class StarboundStatus {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will attempt to see if the Starbound network is responsive, but depending on the current status may or may not work, queries are attempted
+     * Uses: This will attempt to see if the Starbound starnubdata.network is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the network is started
+     * @return boolean representing if the starnubdata.network is started
      */
     protected boolean responsiveListener(String ipAddress, int port, int timeout, int queryAttempts){
         STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Responsive", STARBOUND_MANAGEMENT);
@@ -117,14 +117,14 @@ public abstract class StarboundStatus {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will attempt to see if the Starbound network is responsive, but depending on the current status may or may not work, queries are attempted
+     * Uses: This will attempt to see if the Starbound starnubdata.network is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param timeout int representing the timeout in seconds
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the network is responsive and was able to get the network version
+     * @return boolean representing if the starnubdata.network is responsive and was able to get the starnubdata.network version
      */
     protected boolean query(String ipAddress, int port, int timeout, int queryAttempts) {
         int unresponsiveCount = 0;

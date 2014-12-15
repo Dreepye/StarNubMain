@@ -58,7 +58,7 @@ Base Features:
 				- Global starbounddata.packets.chat rate limit (Prevents spamming, is configurable to the milliseconds)
 					*- Permission per user for fine grain rate limiting
 			- Auto lower caseing of mostly capitalized sentences
-			*- Block repeat messages or messages that are almost the same
+			*- Block repeat starnubdata.messages or starnubdata.messages that are almost the same
 			*- Word filter
 			- Spam reply message
 		- Server NAME and starbounddata.packets.chat - color options
@@ -75,7 +75,7 @@ Base Features:
 		- Allow colored nick names or starbounddata.packets.chat by players
 		*- Tokens for information an colors instead of ^blue; or ^#0000CC; you could use {bl} for online {online}
 		- Illegal names and nick names are automatically changed when a player joins and sent to the starbounddata.packets.starbounddata.packets.starnubserver
-		- PVP messages are no longer starbounddata.packets.global but local
+		- PVP starnubdata.messages are no longer starbounddata.packets.global but local
 		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character NAME colored or not, nick NAME, ip, uuid
 			- Example /w 2 hey = Starbound id, /w 2s hey statnubd up, /w underbalanced hey, /w 127.0.0.1 hey who is this?
 		
@@ -122,7 +122,7 @@ Base Features:
 		- Plugins can use StarNubs configuration class to enable self updating, healing and cleaning configuration
 		- Built in event system that allows event creation and subscription
 	
-   - Future support	for multi lingual starbounddata.packets.starbounddata.packets.starnubserver tool messages and plugins support
+   - Future support	for multi lingual starbounddata.packets.starbounddata.packets.starnubserver tool starnubdata.messages and plugins support
    - Future additional player, plugin and starbounddata.packets.starbounddata.packets.starnubserver stats
    
 Optional Essentials Plugin Features:

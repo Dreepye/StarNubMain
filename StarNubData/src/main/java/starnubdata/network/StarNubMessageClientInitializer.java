@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package network;
+package starnubdata.network;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -24,8 +24,8 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.ssl.SslContext;
-import messages.StarNubMessage;
-import network.handlers.StarNubMessageReaderClient;
+import starnubdata.messages.StarNubMessage;
+import starnubdata.network.handlers.StarNubMessageReaderClient;
 
 
 public class StarNubMessageClientInitializer extends ChannelInitializer<SocketChannel> {

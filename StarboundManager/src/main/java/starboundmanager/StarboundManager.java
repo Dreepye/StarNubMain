@@ -173,7 +173,7 @@ public class StarboundManager extends StarboundServerExe {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will either print to console or send events
+     * Uses: This will either print to console or send starnubdata.events
      *
      * @return StarboundConfiguration returns the starbound configuration class
      */
@@ -184,7 +184,7 @@ public class StarboundManager extends StarboundServerExe {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will either print to console or send events
+     * Uses: This will either print to console or send starnubdata.events
      *
      * @param STARBOUND_CONFIGURATION String representing the name of the starbound configuration
      * @throws FileNotFoundException throws this exception if the file does not exist
@@ -196,9 +196,9 @@ public class StarboundManager extends StarboundServerExe {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Gets the network version
+     * Uses: Gets the starnubdata.network version
      *
-     * @return int representing the network version
+     * @return int representing the starnubdata.network version
      */
     public int getServerVersion() {
         return serverVersion;
@@ -209,7 +209,7 @@ public class StarboundManager extends StarboundServerExe {
      * <p>
      * Uses: This will set the Starbound Server version
      *
-     * @param serverVersion int representing the network version
+     * @param serverVersion int representing the starnubdata.network version
      */
     protected void setServerVersion(int serverVersion) {
         this.serverVersion = serverVersion;
@@ -224,7 +224,7 @@ public class StarboundManager extends StarboundServerExe {
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the network started
+     * @return boolean representing if the starnubdata.network started
      */
     public boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT){
         return status.start(ipAddress, port, STREAM_EVENT_MESSAGE, STREAM_CONSOLE_PRINT);
@@ -244,13 +244,13 @@ public class StarboundManager extends StarboundServerExe {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will attempt to see if the Starbound network is responsive, but depending on the current status may or may not work, queries are attempted
+     * Uses: This will attempt to see if the Starbound starnubdata.network is responsive, but depending on the current status may or may not work, queries are attempted
      * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes.
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
      * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the starbound network is responsive
+     * @return boolean representing if the starbound starnubdata.network is responsive
      */
     public boolean isResponsive(String ipAddress, int port, int queryAttempts){
         return status.isResponsive(ipAddress, port, queryAttempts);
@@ -265,7 +265,7 @@ public class StarboundManager extends StarboundServerExe {
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the network STOPPED and started successfully
+     * @return boolean representing if the starnubdata.network STOPPED and started successfully
      */
     public boolean restart(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT){
         printOrEvent("Starbound_Status_Restarting", this);
@@ -277,7 +277,7 @@ public class StarboundManager extends StarboundServerExe {
      * <p>
      * Uses: This will attempt to stop the Starbound process, but depending on the current status may or may not work
      *
-     * @return boolean representing if the network is STOPPED
+     * @return boolean representing if the starnubdata.network is STOPPED
      */
     public boolean stop(){
         return status.stop();
@@ -319,7 +319,7 @@ public class StarboundManager extends StarboundServerExe {
     /**
      * Recommended: For connections use.
      * <p>
-     * Uses: This will either print to console or send events
+     * Uses: This will either print to console or send starnubdata.events
      *
      * @param eventKey String representing the event key or console leading name
      * @param eventData Object representing the data

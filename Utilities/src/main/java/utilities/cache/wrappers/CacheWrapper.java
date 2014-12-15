@@ -329,7 +329,7 @@ public abstract class CacheWrapper<E1> {
      */
     public void startEventListener() {
         if (REGISTER_EVENTS) {
-            /* Subscribe any events router in this method to the event listeners contained within */
+            /* Subscribe any starnubdata.events router in this method to the event listeners contained within */
             registerEvents();
         }
     }

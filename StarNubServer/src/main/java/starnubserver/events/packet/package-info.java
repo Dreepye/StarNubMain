@@ -17,6 +17,6 @@
  */
 
 /**
- * starnubserver.events.packet is the package containing all of the Packet Event Routing facilities
+ * starnubserver.starnubdata.events.packet is the package containing all of the Packet Event Routing facilities
  */
 package starnubserver.events.packet;
