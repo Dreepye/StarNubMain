@@ -68,12 +68,35 @@ public class HeartbeatPacket extends Packet {
         this.currentStep = currentStep;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet HeartbeatPacket representing the packet to construct from
+     */
+    public HeartbeatPacket(HeartbeatPacket packet) {
+        super(packet);
+        this.currentStep = packet.getCurrentStep();
+    }
+
     public long getCurrentStep() {
         return currentStep;
     }
 
     public void setCurrentStep(long currentStep) {
         this.currentStep = currentStep;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return HeartbeatPacket the new copied object
+     */
+    @Override
+    public HeartbeatPacket copy() {
+        return new HeartbeatPacket(this);
     }
 
     /**

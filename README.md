@@ -8,20 +8,24 @@ Project Start Date: April 2014 - Invested time approximately 30-40 hours weekly 
 Documents can be found here:
 
 [StarNub Main Documents](http://docs.starnub.org/main/)
+[StarNub Plugins Documents](http://docs.starnub.org/main/)
 
 [Twitch Stream](http://www.twitch.tv/Underbalanced/)
 
-[StarNub](starnub.org)
+[StarNub](http://starnub.org)
 
-[StarNub Repo](repo.starnub.org)
+[StarNub Repo](http://repo.starnub.org)
 
 Freenode IRC:
+
 '#starnub'
 
 Pizza Fund - Paypal
+
 admin@free-universe.com
 
 Teamspeak 3
+
 ts3.free-universe.com
 
 Code contributions are welcome. I have yet to type out specific guidelines. You will probably want to chat with me.

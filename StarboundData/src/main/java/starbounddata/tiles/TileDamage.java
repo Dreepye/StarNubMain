@@ -44,6 +44,12 @@ public class TileDamage {
         this.harvestLevel = 1;
     }
 
+    public TileDamage(TileDamage tileDamage) {
+        this.tileDamageType = tileDamage.getTileDamageType();
+        this.amount = tileDamage.getAmount();
+        this.harvestLevel = tileDamage.getHarvestLevel();
+    }
+
     public TileDamageType getTileDamageType() {
         return tileDamageType;
     }
@@ -66,6 +72,10 @@ public class TileDamage {
 
     public void setHarvestLevel(int harvestLevel) {
         this.harvestLevel = harvestLevel;
+    }
+
+    public TileDamage copy(){
+        return new TileDamage(this);
     }
 
     /**

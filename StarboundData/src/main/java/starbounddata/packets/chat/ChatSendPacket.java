@@ -81,6 +81,19 @@ public class ChatSendPacket extends Packet {
         this.message = message;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ChatSendPacket representing the packet to construct from
+     */
+    public ChatSendPacket(ChatSendPacket packet) {
+        super(packet);
+        this.channel = packet.getChannel();
+        this.message = packet.getMessage();
+    }
+
     public ChatSendChannel getChannel() {
         return channel;
     }
@@ -95,6 +108,17 @@ public class ChatSendPacket extends Packet {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ChatSendPacket the new copied object
+     */
+    @Override
+    public ChatSendPacket copy() {
+        return new ChatSendPacket(this);
     }
 
     /**

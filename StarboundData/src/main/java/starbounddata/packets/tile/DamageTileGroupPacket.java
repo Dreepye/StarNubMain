@@ -84,6 +84,21 @@ public class DamageTileGroupPacket extends Packet {
 
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet DamageTileGroupPacket representing the packet to construct from
+     */
+    public DamageTileGroupPacket(DamageTileGroupPacket packet) {
+        super(packet);
+        this.tilePositions = packet.getTilePositions().copy();
+        this.layer = packet.getLayer();
+        this.sourcePosition = packet.getSourcePosition().copy();
+        this.tileDamage = packet.getTileDamage().copy();
+    }
+
     public TileDamage getTileDamage() {
         return tileDamage;
     }
@@ -114,6 +129,17 @@ public class DamageTileGroupPacket extends Packet {
 
     public void setLayer(TileLayer layer) {
         this.layer = layer;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return DamageTileGroupPacket the new copied object
+     */
+    @Override
+    public DamageTileGroupPacket copy() {
+        return new DamageTileGroupPacket(this);
     }
 
     /**

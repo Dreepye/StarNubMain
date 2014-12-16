@@ -70,12 +70,35 @@ public class ProtocolVersionPacket extends Packet {
         this.protocolVersion = protocolVersion;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ProtocolVersionPacket representing the packet to construct from
+     */
+    public ProtocolVersionPacket(ProtocolVersionPacket packet) {
+        super(packet);
+        this.protocolVersion = packet.getProtocolVersion();
+    }
+
     public int getProtocolVersion() {
         return protocolVersion;
     }
 
     public void setProtocolVersion(int protocolVersion) {
         this.protocolVersion = protocolVersion;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ProtocolVersionPacket the new copied object
+     */
+    @Override
+    public ProtocolVersionPacket copy() {
+        return new ProtocolVersionPacket(this);
     }
 
     /**

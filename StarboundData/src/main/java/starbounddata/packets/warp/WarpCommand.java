@@ -63,6 +63,20 @@ public class WarpCommand extends Packet {
         this.playerName = playerName;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet WarpCommand representing the packet to construct from
+     */
+    public WarpCommand(WarpCommand packet) {
+        super(packet);
+        this.warpType = packet.getWarpType();
+        this.worldCoordinate = packet.getWorldCoordinate();
+        this.playerName = packet.getPlayerName();
+    }
+
     public WarpType getWarpType() {
         return warpType;
     }
@@ -85,6 +99,17 @@ public class WarpCommand extends Packet {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return WarpCommand the new copied object
+     */
+    @Override
+    public WarpCommand copy() {
+        return new WarpCommand(this);
     }
 
     /**

@@ -36,15 +36,26 @@ public class Vec2I {
         this.y = y;
     }
 
+    public Vec2I(ByteBuf in) {
+        this.x = in.readInt();
+        this.y = in.readInt();
+    }
+
+    public Vec2I(Vec2I vec2I) {
+        this.x = vec2I.getX();
+        this.y = vec2I.getY();
+    }
+
     public Vec2I(float x, float y){
         this.x = Math.round(x);
         this.y = Math.round(y);
     }
 
-    public Vec2I(ByteBuf in) {
-        this.x = in.readInt();
-        this.y = in.readInt();
+    public Vec2I(Vec2F vec2F) {
+        this.x = Math.round(vec2F.getX());
+        this.y = Math.round(vec2F.getY());
     }
+
 
     public void setVec2I(ByteBuf in) {
         this.x = in.readInt();
@@ -73,6 +84,10 @@ public class Vec2I {
     public void writeVec2I(ByteBuf out) {
         out.writeInt(this.x);
         out.writeInt(this.y);
+    }
+
+    public Vec2I copy(){
+        return new Vec2I(this);
     }
 
     @Override

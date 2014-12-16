@@ -86,6 +86,28 @@ public class ClientConnectPacket extends Packet {
         this.account = account;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ClientConnectPacket representing the packet to construct from
+     */
+    public ClientConnectPacket(ClientConnectPacket packet) {
+        super(packet);
+        this.assetDigest = packet.getAssetDigest();
+        try {
+            Claim = packet.getClaim().copy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.uuid = UUID.fromString(packet.getUuid().toString());
+        this.playerName = packet.getPlayerName();
+        this.species = packet.getSpecies();
+        this.shipWorld = packet.getShipWorld().clone();
+        this.account = packet.getAccount();
+    }
+
     public String getAssetDigest() {
         return assetDigest;
     }
@@ -141,6 +163,18 @@ public class ClientConnectPacket extends Packet {
     public void setAccount(String account) {
         this.account = account;
     }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ClientConnectPacket the new copied object
+     */
+    @Override
+    public ClientConnectPacket copy() {
+        return new ClientConnectPacket(this);
+    }
+
 
     /**
      * Recommended: For connections StarNub usage.

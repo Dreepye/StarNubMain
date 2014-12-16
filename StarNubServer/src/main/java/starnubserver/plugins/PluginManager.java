@@ -57,32 +57,10 @@ public class PluginManager {
     private PluginManager() {
         try {
             pluginScan(false);
-            loadSpecificPlugin("WorldEdit", false, true);
-        } catch (NoSuchMethodException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (PluginAlreadyLoaded pluginAlreadyLoaded) {
-            pluginAlreadyLoaded.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (PluginDependencyLoadFailed pluginDependencyLoadFailed) {
-            pluginDependencyLoadFailed.printStackTrace();
-        } catch (PluginDirectoryCreationFailed pluginDirectoryCreationFailed) {
-            pluginDirectoryCreationFailed.printStackTrace();
-        } catch (PluginDependencyNotFound pluginDependencyNotFound) {
-            pluginDependencyNotFound.printStackTrace();
-        } catch (CommandClassLoadFail commandClassLoadFail) {
-            commandClassLoadFail.printStackTrace();
-        } catch (CommandYamlLoadFailed commandYamlLoadFailed) {
-            commandYamlLoadFailed.printStackTrace();
         }
+        loadAllPlugins(false, true);
     }
 
     public static PluginManager getInstance() {

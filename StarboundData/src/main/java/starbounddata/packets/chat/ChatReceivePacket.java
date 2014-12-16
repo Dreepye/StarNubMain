@@ -87,7 +87,7 @@ public class ChatReceivePacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param world           String ToDo: Insert expected string display
+     * @param world           String
      * @param clientId        String clientID of the sender. *STARNUB RESERVES 5000*
      * @param name            String name of the Sender
      * @param message         String the message
@@ -99,6 +99,22 @@ public class ChatReceivePacket extends Packet {
         this.clientId = (int) clientId;
         this.name = name;
         this.message = message;
+    }
+
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ChatReceivePacket
+     */
+    public ChatReceivePacket(ChatReceivePacket packet) {
+        super(packet);
+        this.channel = packet.getChannel();
+        this.world = packet.getWorld();
+        this.clientId = packet.getClientId();
+        this.name = packet.getName();
+        this.message = packet.getName();
     }
 
     public ChatReceiveChannel getChannel() {
@@ -139,6 +155,17 @@ public class ChatReceivePacket extends Packet {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ChatReceivePacket the new copied object
+     */
+    @Override
+    public ChatReceivePacket copy() {
+        return new ChatReceivePacket(this);
     }
 
     /**

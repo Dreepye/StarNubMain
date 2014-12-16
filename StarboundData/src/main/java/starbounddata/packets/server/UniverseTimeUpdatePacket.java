@@ -70,12 +70,35 @@ public class UniverseTimeUpdatePacket extends Packet {
         this.universeTime = universeTime;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet UniverseTimeUpdatePacket representing the packet to construct from
+     */
+    public UniverseTimeUpdatePacket(UniverseTimeUpdatePacket packet) {
+        super(packet);
+        this.universeTime = packet.getUniverseTime();
+    }
+
     public long getUniverseTime() {
         return universeTime;
     }
 
     public void setUniverseTime(long universeTime) {
         this.universeTime = universeTime;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return UniverseTimeUpdatePacket the new copied object
+     */
+    @Override
+    public UniverseTimeUpdatePacket copy() {
+        return new UniverseTimeUpdatePacket(this);
     }
 
     /**

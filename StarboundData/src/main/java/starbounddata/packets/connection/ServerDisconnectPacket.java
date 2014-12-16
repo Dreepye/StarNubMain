@@ -67,12 +67,35 @@ public class ServerDisconnectPacket extends Packet {
         this.reason = reason;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ServerDisconnectPacket representing the packet to construct from
+     */
+    public ServerDisconnectPacket(ServerDisconnectPacket packet) {
+        super(packet);
+        this.reason = packet.getReason();
+    }
+
     public String getReason() {
         return reason;
     }
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ServerDisconnectPacket the new copied object
+     */
+    @Override
+    public ServerDisconnectPacket copy() {
+        return new ServerDisconnectPacket(this);
     }
 
     /**

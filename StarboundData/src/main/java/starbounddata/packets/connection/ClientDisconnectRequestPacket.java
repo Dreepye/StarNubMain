@@ -66,12 +66,35 @@ public class ClientDisconnectRequestPacket extends Packet {
         emptyByte = 1;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ClientDisconnectRequestPacket representing the packet to construct from
+     */
+    public ClientDisconnectRequestPacket(ClientDisconnectRequestPacket packet) {
+        super(packet);
+        this.emptyByte = packet.getEmptyByte();
+    }
+
     public byte getEmptyByte() {
         return emptyByte;
     }
 
     public void setEmptyByte(byte emptyByte) {
         this.emptyByte = emptyByte;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ClientDisconnectRequestPacket the new copied object
+     */
+    @Override
+    public ClientDisconnectRequestPacket copy() {
+        return new ClientDisconnectRequestPacket(this);
     }
 
     /**

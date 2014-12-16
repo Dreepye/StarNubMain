@@ -68,7 +68,6 @@ public class Vec2IArray extends ArrayList<Vec2I> {
             }
             lowX++;
         }
-
     }
 
     /**
@@ -76,6 +75,13 @@ public class Vec2IArray extends ArrayList<Vec2I> {
      */
     public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException {
         readVec2IArray(in);
+    }
+
+    public Vec2IArray(Vec2IArray vec2Is) {
+        for (Vec2I vec2I : vec2Is){
+            Vec2I clonedVec2I = vec2I.copy();
+            this.add(clonedVec2I);
+        }
     }
 
     public void readVec2IArray(ByteBuf in){
@@ -122,13 +128,17 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         return groups;
     }
 
-    private ArrayList<Vec2I> buildVec2ICache(int cacheSize){
+    public ArrayList<Vec2I> buildVec2ICache(int size){
         ArrayList<Vec2I> vec2IHashSet = new ArrayList<>();
-        for (int i = 0; i < cacheSize; i++) {
+        for (int i = 0; i < size; i++) {
             Vec2I vec2I = new Vec2I(0,0);
             vec2IHashSet.add(vec2I);
         }
         return vec2IHashSet;
+    }
+
+    public Vec2IArray copy(){
+        return new Vec2IArray(this);
     }
 
     @Override

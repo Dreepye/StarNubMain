@@ -18,15 +18,13 @@
 
 package starnubserver.resources.connections;
 
-import starnubdata.generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
-import starbounddata.packets.chat.ChatSendPacket;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
-import starbounddata.packets.tile.DamageTileGroupPacket;
+import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
@@ -35,7 +33,9 @@ import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.packet.PacketEventSubscription;
-import starnubserver.resources.connections.handlers.*;
+import starnubserver.resources.connections.handlers.ClientConnectHandler;
+import starnubserver.resources.connections.handlers.ConnectionResponseHandler;
+import starnubserver.resources.connections.handlers.ServerDisconnectHandler;
 import starnubserver.resources.files.Operators;
 import utilities.connectivity.ConnectionType;
 import utilities.events.Priority;
@@ -93,8 +93,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new ConnectionResponseHandler(CONNECTIONS));
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
         /* Permission Related */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ChatSendPacket.class, new ChatSendHandler());
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler());
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler());
     }
 
     public PlayerCtxCacheWrapper getACCEPT_REJECT() {

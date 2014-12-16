@@ -41,6 +41,11 @@ public class Vec2F {
         this.y = in.readFloat();
     }
 
+    public Vec2F(Vec2F vec2F) {
+        this.x = vec2F.getX();
+        this.y = vec2F.getY();
+    }
+
     public float getX() {
         return x;
     }
@@ -63,6 +68,10 @@ public class Vec2F {
     public void writeVec2F(ByteBuf out) {
         out.writeFloat(this.x);
         out.writeFloat(this.y);
+    }
+
+    public Vec2F copy(){
+        return new Vec2F(this);
     }
 
     @Override

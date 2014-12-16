@@ -155,6 +155,10 @@ public class Variant {
         }
     }
 
+    public Variant copy() throws Exception {
+        return new Variant(this.value);
+    }
+
     @Override
     public String toString() {
         return "Variant{" +

@@ -91,6 +91,20 @@ public class ConnectResponsePacket extends Packet {
 //
 //    }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+     *
+     * @param packet ConnectResponsePacket representing the packet to construct from
+     */
+    public ConnectResponsePacket(ConnectResponsePacket packet) {
+        super(packet);
+        this.success = packet.isSuccess();
+        this.clientId = packet.getClientId();
+        this.rejectionReason = packet.getRejectionReason();
+        this.tempByteArray = packet.getTempByteArray().clone();
+    }
 
     public boolean isSuccess() {
         return success;
@@ -234,6 +248,17 @@ public class ConnectResponsePacket extends Packet {
 
     public void setTempByteArray(byte[] tempByteArray) {
         this.tempByteArray = tempByteArray;
+    }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return ConnectResponsePacket the new copied object
+     */
+    @Override
+    public ConnectResponsePacket copy() {
+        return new ConnectResponsePacket(this);
     }
 
     /**

@@ -68,6 +68,20 @@ public abstract class Packet {
         this.DESTINATION_CTX = DESTINATION_CTX;
     }
 
+    /**
+     * Recommended: For internal StarNub use with copying
+     * <p>
+     * Uses: This will construct a new packet from a packet
+
+     * @param packet Packet representing the packet to construct from
+     */
+    public Packet(Packet packet) {
+        this.DIRECTION = packet.getDIRECTION();
+        this.PACKET_ID = packet.getPACKET_ID();
+        this.SENDER_CTX = packet.getSENDER_CTX();
+        this.DESTINATION_CTX = packet.getDESTINATION_CTX();
+    }
+
     public Direction getDIRECTION() {
         return DIRECTION;
     }
@@ -106,6 +120,14 @@ public abstract class Packet {
     public void resetRecycle() {
         this.recycle = false;
     }
+
+    /**
+     * This will provide a new object while copying all of the internal data as well into this
+     * new Object
+     *
+     * @return Packet new copied Object
+     */
+    public abstract Packet copy();
 
     /**
      * Recommended: For connections StarNub usage.
