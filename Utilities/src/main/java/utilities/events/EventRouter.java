@@ -86,14 +86,21 @@ public abstract class EventRouter<T1, T2, T3> {
     /**
      * This method must be extended and enhanced to handle event notification of specific data types which may vary
      *
-     * @param event T2 event data of sometime
+     * @param event T2 event data of some type
      */
     public abstract void eventNotify(T2 event);
 
     /**
+     * This method can be used to check if the Executors are null or now before submitting a task
+     *
+     * @param event T2 event data of some type
+     */
+    public abstract void eventNotifyNullCheck(T2 event);
+
+    /**
      * This method must be extended and enhanced to handle starnubdata.events of specific data types which may vary
      *
-     * @param event T2 event data of sometime
+     * @param event T2 event data of some type
      */
     public abstract void handleEvent(T2 event);
 

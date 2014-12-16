@@ -18,6 +18,7 @@
 
 package starnubserver.plugins;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -31,21 +32,16 @@ import java.util.HashSet;
 public abstract class Command extends CommandPackage{
 
     /**
-     * This is for plugins to not have to construct anything but allows for StarNub to construct this
-     */
-    public Command() {
-    }
-
-    /**
-     * @param COMMANDS            String representing the command name
-     * @param MAIN_ARGS           String the commands main args
+     * @param COMMANDS            HashMap representing the command name
+     * @param MAIN_ARGS           HashMap the commands main args
+     * @param CUSTOM_SPLIT        HashMap containing a map of commands with a integer for when to split the command
      * @param COMMAND_CLASS       String the location of the class in the plugin
-     * @param PLUGIN_COMMAND_NAME String used to build plugin permissions
+     * @param COMMAND_NAME        String used to build plugin permissions
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
      */
-    public Command(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, String COMMAND_CLASS, String PLUGIN_COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
-        super(COMMANDS, MAIN_ARGS, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION);
+    public Command(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+        super(COMMANDS, MAIN_ARGS, CUSTOM_SPLIT, COMMAND_CLASS, COMMAND_NAME, CAN_USE, DESCRIPTION);
     }
 
     /**

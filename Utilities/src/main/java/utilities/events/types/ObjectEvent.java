@@ -6,9 +6,9 @@ package utilities.events.types;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public class ObjectEvent extends Event<String> {
+public class ObjectEvent extends Event<Object> {
 
-    public ObjectEvent(String EVENT_KEY, Object EVENT_DATA) {
+    public ObjectEvent(Object EVENT_KEY, Object EVENT_DATA) {
         super(EVENT_KEY, EVENT_DATA);
     }
 

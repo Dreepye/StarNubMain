@@ -66,24 +66,26 @@ file: ['starnub_configuration.yml', 'StarNub/'],
          "server_name": "StarNub",
          "server_url": "http://www.starnubserver.org"
        },
-     "database_starnub": {
-         "type": "sqlite",
-         "mysql_url": "192.168.254.250:3306/StarNubTest",
-         "mysql_user": "StarNubTest",
-         "mysql_pass": "ZXstarnub+-*/"
-     },
-    "database_common": {
-        "type": "mysql",
-        "mysql_url": "192.168.254.250:3306/StarNubTestCommon",
-        "mysql_user": "StarNubTest",
-        "mysql_pass": "ZXstarnub+-*/"
+     "databases": {
+         "starnub": {
+            "type": "sqlite",
+            "mysql_url": "192.168.254.250:3306/StarNubTest",
+            "mysql_user": "StarNubTest",
+            "mysql_pass": "ZXstarnub+-*/"
+         },
+         "common": {
+            "type": "mysql",
+            "mysql_url": "192.168.254.250:3306/StarNubTestCommon",
+            "mysql_user": "StarNubTest",
+            "mysql_pass": "ZXstarnub+-*/"
+         }
     },
      "advanced_settings": {
        "packet_decoding": true,
        "log_original_character_name_with_nick_name": false,
        "log_size": 5120.0,
        "log_levels": {
-           "starnubdata.events": 0,
+           "events": 0,
            "debug": 0,
            "information": 3,
            "chat": 3,

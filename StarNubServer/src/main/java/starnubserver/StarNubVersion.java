@@ -19,7 +19,7 @@
 package starnubserver;
 
 import starnubserver.resources.ResourceManager;
-import utilities.file.yaml.YAMLWrapper;
+import starnubserver.resources.StarNubYamlWrapper;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class StarNubVersion {
      * This constructor is private - Singleton Pattern
      */
     private StarNubVersion() {
-        YAMLWrapper starnubVersionYaml = new YAMLWrapper(
+        StarNubYamlWrapper starnubVersionYaml = new StarNubYamlWrapper(
                 "StarNub",
                 (String) ResourceManager.getInstance().getListNestedValue(0, "starnub_version", "file"),
                 ResourceManager.getInstance().getNestedValue("starnub_version", "map"),

@@ -46,7 +46,7 @@ public class YAMLFiles {
         return YAML_FILES.values().stream().map(PluginYAMLWrapper::getDISK_FILE).collect(Collectors.toCollection(HashSet::new));
     }
 
-    public PluginYAMLWrapper getYamlWrapper(String filename){
+    public PluginYAMLWrapper getPluginYamlWrapper(String filename){
         return YAML_FILES.get(filename.toLowerCase());
     }
 

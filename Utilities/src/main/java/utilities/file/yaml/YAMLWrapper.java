@@ -19,6 +19,8 @@
 package utilities.file.yaml;
 
 import org.yaml.snakeyaml.Yaml;
+import utilities.events.EventRouter;
+import utilities.events.types.ObjectEvent;
 import utilities.exceptions.CollectionDoesNotExistException;
 
 import java.io.IOException;
@@ -45,6 +47,7 @@ public class YAMLWrapper extends YAMLFile {
      * Note: Absolute file paths are not support and can only be references as such "" - For base starbound directory or StarNub/ for starnub directory, ect...
      * Resource paths are references by "/" or /StarNub/, we will build out the full path using the file and path you supply.
      *
+     * @param EVENT_ROUTER         EventRouter in which to notify events
      * @param OWNER                  String owner of this YAMLFile
      * @param FILE_NAME              String file name of the file
      * @param DEFAULT_FILE_PATH      Object default path to the file
@@ -55,8 +58,8 @@ public class YAMLWrapper extends YAMLFile {
      * @param validateOnConstruction boolean validate the Map against the Default Map on construction
      * @param dumpToDisk             boolean representing if we are going to save the file to disk, this is usually if the file is only used internally
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean defaultPathResource, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction,  boolean dumpToDisk) {
-        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, defaultPathResource, DUMP_ON_MODIFICATION);
+    public YAMLWrapper(EventRouter EVENT_ROUTER, String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean defaultPathResource, boolean DUMP_ON_MODIFICATION, boolean loadOnConstruct, boolean validateOnConstruction,  boolean dumpToDisk) {
+        super(EVENT_ROUTER, OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, defaultPathResource, DUMP_ON_MODIFICATION);
         try {
             if (loadOnConstruct) {
                 DATA.putAll(loadOnConstruct(dumpToDisk));
@@ -67,6 +70,7 @@ public class YAMLWrapper extends YAMLFile {
         } catch (Exception e){
             e.printStackTrace();
         }
+        getEVENT_ROUTER().eventNotifyNullCheck(new ObjectEvent("YAMLWrapper_Loaded_" + getOWNER() + "_" + getFILE_NAME(), this));
     }
 
     /**
@@ -77,13 +81,14 @@ public class YAMLWrapper extends YAMLFile {
      * Note: Absolute file paths are not support and can only be references as such "" - For base starbound directory or StarNub/ for starnub directory, ect...
      * Resource paths are references by "/" or /StarNub/, we will build out the full path using the file and path you supply.
      *
+     * @param EVENT_ROUTER         EventRouter in which to notify events
      * @param OWNER                  String owner of this YAMLFile
      * @param FILE_NAME              String file name of the file
      * @param DEFAULT_FILE_PATH      Object default path to the file
      * @param DISK_FILE_PATH         String default path to file on the disk
      */
-    public YAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH) {
-        super(OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, true, false);
+    public YAMLWrapper(EventRouter EVENT_ROUTER, String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH) {
+        super(EVENT_ROUTER, OWNER, FILE_NAME, DEFAULT_FILE_PATH, DISK_FILE_PATH, true, false);
         try {
             DATA.putAll(loadOnConstruct(false));
         } catch (Exception e){
@@ -95,6 +100,11 @@ public class YAMLWrapper extends YAMLFile {
         return DATA;
     }
 
+    public void reload() throws Exception {
+        DATA.putAll(loadOnConstruct(false));
+        mapVerifyInternally();
+        getEVENT_ROUTER().eventNotifyNullCheck(new ObjectEvent("YAMLWrapper_Reloaded_" + getOWNER() + "_" + getFILE_NAME(), this));
+    }
 
     /**
      * This will make sure the Map set here is valid

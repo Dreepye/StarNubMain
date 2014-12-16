@@ -20,7 +20,9 @@ package starnubserver.plugins;
 
 import starnubdata.generic.CanUse;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 /**
  * Represents a CommandPackage that contains command details
@@ -31,18 +33,13 @@ import java.util.*;
  */
 public class CommandPackage {
 
-    private HashSet<String> COMMANDS;
-    private HashSet<String> MAIN_ARGS;
-    private HashSet<String> PERMISSIONS;
-    private CanUse CAN_USE;
-    private String DESCRIPTION;
-    private String COMMAND_CLASS;
-
-    /**
-     * This is for plugins to not have to construct anything but allows for StarNub to construct this
-     */
-    public CommandPackage() {
-    }
+    private final HashSet<String> COMMANDS;
+    private final HashSet<String> MAIN_ARGS;
+    private final HashSet<String> PERMISSIONS;
+    private final HashMap<String, Integer> CUSTOM_SPLIT;
+    private final CanUse CAN_USE;
+    private final String DESCRIPTION;
+    private final String COMMAND_CLASS;
 
     /**
      * @param COMMANDS            String representing the command name
@@ -52,7 +49,7 @@ public class CommandPackage {
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
      */
-    public CommandPackage(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+    public CommandPackage(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT,  String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
         this.COMMANDS = COMMANDS;
         this.MAIN_ARGS = MAIN_ARGS;
         this.COMMAND_CLASS = COMMAND_CLASS;
@@ -63,6 +60,7 @@ public class CommandPackage {
                 PERMISSIONS.add(permission);
             }
         }
+        this.CUSTOM_SPLIT = CUSTOM_SPLIT;
         this.CAN_USE = CanUse.values()[CAN_USE];
         this.DESCRIPTION = DESCRIPTION;
     }
@@ -83,6 +81,10 @@ public class CommandPackage {
         return PERMISSIONS;
     }
 
+    public HashMap<String, Integer> getCUSTOM_SPLIT() {
+        return CUSTOM_SPLIT;
+    }
+
     public String getDESCRIPTION() {
         return DESCRIPTION;
     }
@@ -90,6 +92,8 @@ public class CommandPackage {
     public String getCOMMAND_CLASS() {
         return COMMAND_CLASS;
     }
+
+
 
     public LinkedHashMap<String, Object> getCommandDetailsMap(String pluginName, String pluginCommandName, String pluginNameAlias){
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
@@ -106,6 +110,7 @@ public class CommandPackage {
         linkedHashMapFinal.put("Commands", COMMANDS);
         linkedHashMapFinal.put("Main Args", MAIN_ARGS);
         linkedHashMapFinal.put("Can Use", CAN_USE.toString());
+        linkedHashMapFinal.put("Custom Split", CUSTOM_SPLIT);
         linkedHashMapFinal.put("Permissions", PERMISSIONS);
         return linkedHashMapFinal;
     }

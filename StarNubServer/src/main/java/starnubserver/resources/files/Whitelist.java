@@ -19,8 +19,8 @@
 package starnubserver.resources.files;
 
 import starnubserver.resources.ResourceManager;
+import starnubserver.resources.StarNubYamlWrapper;
 import utilities.exceptions.CollectionDoesNotExistException;
-import utilities.file.yaml.YAMLWrapper;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Whitelist extends YAMLWrapper {
+public class Whitelist extends StarNubYamlWrapper {
 
     /**
      * Represents the only instance of this class - Singleton Pattern

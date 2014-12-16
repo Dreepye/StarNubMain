@@ -18,6 +18,7 @@
 
 package starnubserver.resources.files;
 
+import starnubserver.resources.StarNubYamlWrapper;
 import utilities.file.yaml.YAMLWrapper;
 
 import java.io.InputStream;
@@ -28,7 +29,7 @@ import java.io.InputStream;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PluginConfiguration extends YAMLWrapper {
+public class PluginConfiguration extends StarNubYamlWrapper {
 
     public PluginConfiguration(String pluginName, InputStream defaultPath) {
         super(

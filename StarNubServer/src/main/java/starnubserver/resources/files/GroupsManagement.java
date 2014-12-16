@@ -22,7 +22,7 @@ import starnubserver.StarNub;
 import starnubserver.connections.player.groups.Group;
 import starnubserver.database.tables.Groups;
 import starnubserver.resources.ResourceManager;
-import utilities.file.yaml.YAMLWrapper;
+import starnubserver.resources.StarNubYamlWrapper;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class GroupsManagement extends YAMLWrapper {
+public class GroupsManagement extends StarNubYamlWrapper {
 
     /**
      * Represents the only instance of this class - Singleton Pattern

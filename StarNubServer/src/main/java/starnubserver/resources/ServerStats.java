@@ -18,15 +18,13 @@
 
 package starnubserver.resources;
 
-import utilities.file.yaml.YAMLWrapper;
-
 /**
  * Represents StarNubs ServerStats instance extending YAMLWrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class ServerStats extends YAMLWrapper {
+public class ServerStats extends StarNubYamlWrapper {
 
     public ServerStats() {
         super(

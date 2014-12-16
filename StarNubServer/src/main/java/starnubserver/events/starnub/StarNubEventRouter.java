@@ -2,9 +2,9 @@ package starnubserver.events.starnub;
 
 import starnubserver.StarNub;
 import starnubserver.StarNubTaskManager;
-import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventRouter;
 import utilities.events.EventSubscription;
+import utilities.events.types.ObjectEvent;
 
 import java.util.HashSet;
 
@@ -15,7 +15,7 @@ import java.util.HashSet;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class StarNubEventRouter extends EventRouter<String, StarNubEvent, Boolean> {
+public class StarNubEventRouter extends EventRouter<String, ObjectEvent, Boolean> {
 
     /**
      * This is instantiated to build out the Packet Event Router
@@ -30,13 +30,22 @@ public class StarNubEventRouter extends EventRouter<String, StarNubEvent, Boolea
         return INSTANCE;
     }
 
-    public void eventNotify(StarNubEvent event){
-       StarNubTaskManager.getInstance().submit(() -> handleEvent(event));
+    public void eventNotify(ObjectEvent event){
+        StarNubTaskManager.getInstance().submit(() -> handleEvent(event));
+    }
+
+    public void eventNotifyNullCheck(ObjectEvent event){
+        if (StarNub.getConfiguration() != null) {
+            StarNubTaskManager starNubTaskManager = StarNubTaskManager.getInstance();
+            if (starNubTaskManager != null) {
+                starNubTaskManager.submit(() -> handleEvent(event));
+            }
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void handleEvent(StarNubEvent event) {
+    public void handleEvent(ObjectEvent event) {
             Object eventKey = event.getEVENT_KEY();
             HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
             if (eventSubscriptions != null){

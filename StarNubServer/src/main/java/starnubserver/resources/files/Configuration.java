@@ -19,7 +19,7 @@
 package starnubserver.resources.files;
 
 import starnubserver.resources.ResourceManager;
-import utilities.file.yaml.YAMLWrapper;
+import starnubserver.resources.StarNubYamlWrapper;
 
 /**
  * Represents StarNubs Configuration instance extending YAMLWrapper
@@ -27,7 +27,7 @@ import utilities.file.yaml.YAMLWrapper;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Configuration extends YAMLWrapper {
+public class Configuration extends StarNubYamlWrapper {
 
     /**
      * Represents the only instance of this class - Singleton Pattern

@@ -20,8 +20,8 @@ package starnubserver.plugins;
 
 import org.apache.commons.io.FileUtils;
 import starnubserver.StarNub;
+import starnubserver.resources.StarNubYamlWrapper;
 import utilities.exceptions.*;
-import utilities.file.yaml.YAMLWrapper;
 import utilities.strings.StringUtilities;
 
 import java.io.File;
@@ -158,7 +158,7 @@ public class PluginManager {
         for (File pluginFile : pluginFiles) {
             URL pluginUrl = pluginFile.toURI().toURL();
             URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
-            YAMLWrapper data = new YAMLWrapper("StarNub", "StarNub - PluginLoader", classLoader.getResourceAsStream("plugin.yml"), "");
+            StarNubYamlWrapper data = new StarNubYamlWrapper("StarNub", "StarNub - PluginLoader", classLoader.getResourceAsStream("plugin.yml"), "");
             String pluginName = (String) data.getValue("name");
             double version = (double) data.getNestedValue("details", "version");
             if (UNLOADED_PLUGINS.containsKey(pluginName)) {

@@ -18,9 +18,9 @@
 
 package starnubserver.plugins.resources;
 
-import utilities.file.yaml.YAMLWrapper;
+import starnubserver.resources.StarNubYamlWrapper;
 
-public class PluginYAMLWrapper extends YAMLWrapper {
+public class PluginYAMLWrapper extends StarNubYamlWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
@@ -45,5 +45,4 @@ public class PluginYAMLWrapper extends YAMLWrapper {
               true
         );
     }
-
 }

@@ -602,7 +602,11 @@ public class PlayerSession {
         if (concurrentHashMap == null){
             return null;
         }
-        return concurrentHashMap.get(subPermission).get(0);
+        ArrayList<String> arrayList = concurrentHashMap.get(subPermission);
+        if (arrayList.size() == 0){
+            return null;
+        }
+        return arrayList.get(0);
     }
 
     public String getSpecificPermission(String permission){

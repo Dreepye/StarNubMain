@@ -19,6 +19,8 @@
 package utilities.file.yaml;
 
 import org.yaml.snakeyaml.Yaml;
+import utilities.events.EventRouter;
+import utilities.events.types.ObjectEvent;
 
 import java.io.*;
 import java.util.Map;
@@ -32,6 +34,7 @@ import java.util.Map;
  */
 public class YAMLFile {
 
+    private final EventRouter EVENT_ROUTER;
     private final String OWNER;
     private final String FILE_NAME;
     private final Object DEFAULT_FILE_PATH;
@@ -46,6 +49,7 @@ public class YAMLFile {
      * Note: Absolute file paths are not support and can only be references as such "" - For base starbound directory or StarNub/ for starnub directory, ect...
      * Resource paths are references by "/" or /StarNub/, we will build out the full path using the file and path you supply.
      *
+     * @param EVENT_ROUTER         EventRouter in which to notify events
      * @param OWNER                String owner of this YAMLFile
      * @param FILE_NAME            String file name of the file
      * @param DEFAULT_FILE_PATH    Object default path to the file (String, InputString, Map)
@@ -53,7 +57,8 @@ public class YAMLFile {
      * @param DISK_FILE_PATH       String default path to file on the disk
      * @param DUMP_ON_MODIFICATION boolean are we dumping on modification
      */
-    public YAMLFile(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean defaultPathResource, boolean DUMP_ON_MODIFICATION) {
+    public YAMLFile(EventRouter EVENT_ROUTER, String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH, boolean defaultPathResource, boolean DUMP_ON_MODIFICATION) {
+        this.EVENT_ROUTER = EVENT_ROUTER;
         this.OWNER = OWNER;
         this.FILE_NAME = FILE_NAME;
         if (DEFAULT_FILE_PATH instanceof String) {
@@ -69,6 +74,10 @@ public class YAMLFile {
         this.DISK_FILE_PATH = buildPath(DISK_FILE_PATH, FILE_NAME);
         this.DISK_FILE = new File(this.DISK_FILE_PATH);
         this.YAML_DUMPER = new YAMLDumper(null, DUMP_ON_MODIFICATION);
+    }
+
+    public EventRouter getEVENT_ROUTER() {
+        return EVENT_ROUTER;
     }
 
     public String getOWNER() {
@@ -160,6 +169,7 @@ public class YAMLFile {
         if (dumpToDisk) {
             dumpToFile(DATA);
         }
+
         return DATA;
     }
 
@@ -203,6 +213,7 @@ public class YAMLFile {
     protected void dumpOnModification(Map map) throws IOException {
         if (YAML_DUMPER.isDUMP_ON_MODIFICATION()) {
             dumpToFile(map);
+            EVENT_ROUTER.eventNotifyNullCheck(new ObjectEvent("YAMLWrapper_Dumped_" + OWNER + "_" + FILE_NAME, this));
         }
     }
 

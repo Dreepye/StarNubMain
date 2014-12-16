@@ -24,6 +24,7 @@ import starnubserver.plugins.resources.PluginRunnables;
 import starnubserver.plugins.resources.PluginYAMLWrapper;
 import starnubserver.plugins.resources.StarNubRunnable;
 import starnubserver.plugins.resources.YAMLFiles;
+import starnubserver.resources.StarNubYamlWrapper;
 import starnubserver.resources.files.PluginConfiguration;
 import utilities.dircectories.DirectoryCheckCreate;
 import utilities.exceptions.*;
@@ -61,9 +62,16 @@ public class JavaPluginLoader {
     private static final JavaPluginLoader instance = new JavaPluginLoader();
     private static final PluginManager PLUGIN_MANAGER = PluginManager.getInstance();
 
-    public JavaPluginLoader() {
+    /**
+     * This constructor is private - Singleton Pattern
+     */
+    private JavaPluginLoader() {
     }
 
+    /**
+     *
+     * @return MessageSender Singleton Instance
+     */
     public static JavaPluginLoader getInstance() {
         return instance;
     }
@@ -207,10 +215,10 @@ public class JavaPluginLoader {
         HashSet<String> loaded = new HashSet<>();
         for (JarEntry jarEntry : commandJarEntries) {
             String jarEntryPath = jarEntry.toString();
-            final YAMLWrapper COMMAND_FILE;
+            final StarNubYamlWrapper COMMAND_FILE;
             try {
                 try (InputStream resourceAsStream = CLASS_LOADER.getResourceAsStream(jarEntryPath)) {
-                    COMMAND_FILE = new YAMLWrapper(PLUGIN_NAME, jarEntryPath, resourceAsStream, "");
+                    COMMAND_FILE = new StarNubYamlWrapper(PLUGIN_NAME, jarEntryPath, resourceAsStream, "");
                 }
             } catch (IOException e) {
                 throw new CommandYamlLoadFailed(e.getMessage());
@@ -223,13 +231,16 @@ public class JavaPluginLoader {
                 List<String> main_args = (List<String>) COMMAND_FILE.getValue("main_args");
                 HashSet<String> MAIN_ARGS_HASHSET = new HashSet<>();
                 MAIN_ARGS_HASHSET.addAll(main_args);
+                Map<String, Integer> customSplit = (Map) COMMAND_FILE.getValue("custom_split");
+                final HashMap<String, Integer> CUSTOM_SPLIT = new HashMap<>();
+                CUSTOM_SPLIT.putAll(customSplit);
                 final int CAN_USE = (int) COMMAND_FILE.getValue("can_use");
                 final String DESCRIPTION = (String) COMMAND_FILE.getValue("description");
                 try {
                     Class<?> commandClass = CLASS_LOADER.loadClass(COMMAND_CLASS);
                     final Class<? extends JavaPlugin> JAVA_COMMAND_CLASS = commandClass.asSubclass(JavaPlugin.class);
-                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(new Class[]{HashSet.class, HashSet.class, String.class, String.class, Integer.class, String.class});
-                    Command command = (Command) CONSTRUCTOR.newInstance(new Object[]{COMMANDS_HASHSET, MAIN_ARGS_HASHSET, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION});
+                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(new Class[]{HashSet.class, HashSet.class, HashMap.class, String.class, String.class, Integer.class, String.class});
+                    Command command = (Command) CONSTRUCTOR.newInstance(new Object[]{COMMANDS_HASHSET, MAIN_ARGS_HASHSET, CUSTOM_SPLIT, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION});
                     commandHashSet.add(command);
                     loaded.add(COMMAND_CLASS);
                 } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {

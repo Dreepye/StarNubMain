@@ -19,7 +19,6 @@
 package starnubserver.resources;
 
 import utilities.dircectories.DirectoryCheckCreate;
-import utilities.file.yaml.YAMLWrapper;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -31,7 +30,7 @@ import java.util.Map;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class ResourceManager extends YAMLWrapper{
+public class ResourceManager extends StarNubYamlWrapper{
 
     /**
      * Represents the only instance of this class - Singleton Pattern

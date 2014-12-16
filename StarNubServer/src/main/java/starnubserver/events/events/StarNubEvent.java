@@ -19,9 +19,9 @@
 package starnubserver.events.events;
 
 import starnubserver.events.starnub.StarNubEventRouter;
-import utilities.events.types.Event;
+import utilities.events.types.ObjectEvent;
 
-public class StarNubEvent extends Event<Object>{
+public class StarNubEvent extends ObjectEvent{
 
     public StarNubEvent(Object EVENT_KEY, Object EVENT_DATA) {
         super(EVENT_KEY, EVENT_DATA);
