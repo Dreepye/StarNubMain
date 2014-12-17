@@ -90,6 +90,8 @@ public final class StarNub {
         StarboundServer.getInstance().start();
         new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis());
         GroupsManagement.getInstance().groupSetup();
+        PluginManager pluginManager = PluginManager.getInstance();
+        pluginManager.loadAllPlugins(false, true);
 
 //        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", StarNub::tempTime));
     }

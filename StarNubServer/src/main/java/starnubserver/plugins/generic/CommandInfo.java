@@ -26,19 +26,19 @@ public class CommandInfo {
 
     private final String COMMANDS_NAME;
     private final String COMMANDS_ALIAS;
-    private final HashSet<Command> COMMAND_PACKAGES;
+    private final HashSet<Command> COMMANDS = new HashSet<>();
 
     /**
      * Used to construct information
      *
      * @param COMMANDS_NAME    String representing the commands name
      * @param COMMANDS_ALIAS   String representing the commands alias
-     * @param COMMAND_PACKAGES HashSet containing command packages
+     * @param COMMANDS HashSet containing command packages
      */
-    public CommandInfo(String COMMANDS_NAME, String COMMANDS_ALIAS, HashSet<Command> COMMAND_PACKAGES) {
+    public CommandInfo(String COMMANDS_NAME, String COMMANDS_ALIAS, HashSet<Command> COMMANDS) {
         this.COMMANDS_NAME = COMMANDS_NAME;
         this.COMMANDS_ALIAS = COMMANDS_ALIAS;
-        this.COMMAND_PACKAGES = COMMAND_PACKAGES;
+        this.COMMANDS.addAll(COMMANDS);
     }
 
     public String getCOMMANDS_NAME() {
@@ -49,9 +49,18 @@ public class CommandInfo {
         return COMMANDS_ALIAS;
     }
 
-    public HashSet<Command> getCOMMAND_PACKAGES() {
-        return COMMAND_PACKAGES;
+    public HashSet<Command> getCOMMANDS() {
+        return COMMANDS;
     }
 
-
+    public Command getCommandByName(String commandString){
+        commandString = commandString.toLowerCase();
+        for (Command command : COMMANDS){
+            HashSet<String> commandNameStrings = command.getCOMMANDS();
+            if (commandNameStrings.contains(commandString)){
+                return command;
+            }
+        }
+        return null;
+    }
 }

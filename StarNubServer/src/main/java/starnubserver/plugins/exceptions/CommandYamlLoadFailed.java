@@ -16,19 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.exceptions;
+package starnubserver.plugins.exceptions;
 
-/**
- * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class PluginAlreadyLoaded extends Exception {
+public class CommandYamlLoadFailed extends Exception{
 
-    public PluginAlreadyLoaded() {}
+    public CommandYamlLoadFailed() {}
 
-    public PluginAlreadyLoaded(String message){
+    public CommandYamlLoadFailed(String message){
         super(message);
     }
 }

@@ -18,6 +18,8 @@
 
 package starnubserver.plugins;
 
+import starnubserver.connections.player.session.PlayerSession;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -52,11 +54,11 @@ public abstract class Command extends CommandPackage{
      * Uses: This method is required when a plugin is making a command they will make a command class that extends Command and
       * this method is what StarNub will invoke when running a command for a user.
      *
-     * @param senderClass  the starnubclient utilities.file of the sender, 0 will be console (remote or local) management. You can use this item to look up
+     * @param playerSession     PlayerSession for the person who used the command
      *                          the Connected Player records use  variableName  = StarNub.getServer().getConnectedPlayers().get(senderClientID);
      * @param command           String the command that was used
      * @param args              String[] the actual arguments accessible by args[0], args[1],... etc
      */
-    public abstract void onCommand(Object senderClass, String command, String[] args);
+    public abstract void onCommand(PlayerSession playerSession, String command, String[] args);
 
 }

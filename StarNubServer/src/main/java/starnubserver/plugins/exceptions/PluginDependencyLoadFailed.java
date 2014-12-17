@@ -16,13 +16,19 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.exceptions;
+package starnubserver.plugins.exceptions;
 
-public class CommandClassLoadFail extends Exception{
+/**
+ * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
+ */
+public class PluginDependencyLoadFailed extends Exception {
 
-    public CommandClassLoadFail() {}
+    public PluginDependencyLoadFailed() {}
 
-    public CommandClassLoadFail(String message){
+    public PluginDependencyLoadFailed(String message){
         super(message);
     }
 }

@@ -126,6 +126,11 @@ public class YAMLWrapper extends YAMLFile {
      * @param defaultMap  Map the default map to be used as the verification map*/
     @SuppressWarnings("unchecked")
     public static Map<String, Object> mapVerify(Map<String, Object> mapToVerify, Map<String, Object> defaultMap) {
+        if (defaultMap == null){
+            defaultMap = new HashMap<>();
+            defaultMap.put("NO_DEFAULT_CONFIGURATION", "PLEASE HAVE PLUGIN DEVELOPER SET THE CONFIGURATION VALUE TO FALSE IN THE PLUGIN.YML.");
+            return defaultMap;
+        }
         mapToVerify = mapPurge(mapToVerify, defaultMap);
         for (Map.Entry <String, Object> entrySet : defaultMap.entrySet()) {
             String s = entrySet.getKey();

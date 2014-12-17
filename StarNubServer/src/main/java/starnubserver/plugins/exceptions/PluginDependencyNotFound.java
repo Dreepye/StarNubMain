@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.exceptions;
+package starnubserver.plugins.exceptions;
 
 /**
  * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper

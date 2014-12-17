@@ -264,8 +264,8 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             if (packet.getDirection() != CONNECTION_SIDE) {
                 direction = CONNECTION_SIDE == Packet.Direction.TO_STARBOUND_CLIENT ? Packet.Direction.TO_STARBOUND_SERVER : Packet.Direction.TO_STARBOUND_CLIENT;
                 try {
-                    constructor = packetClass.getConstructor(new Class[]{Packet.Direction.class, ChannelHandlerContext.class, ChannelHandlerContext.class});
-                    packetToConstruct = (Packet) constructor.newInstance(new Object[]{direction, ctx, destinationCTX});
+                    constructor = packetClass.getConstructor(Packet.Direction.class, ChannelHandlerContext.class, ChannelHandlerContext.class);
+                    packetToConstruct = (Packet) constructor.newInstance(direction, ctx, destinationCTX);
                     PACKET_POOL.put(packet.getPacketId(), packetToConstruct);
                 } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                     e.printStackTrace();

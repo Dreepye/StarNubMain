@@ -23,6 +23,7 @@ import utilities.events.EventRouter;
 import utilities.events.types.ObjectEvent;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -117,6 +118,9 @@ public class YAMLFile {
      */
     @SuppressWarnings("unchecked")
     private String buildPath(String filePath, String file){
+        if (filePath.endsWith(file)){
+            filePath = filePath.replace(file, "");
+        }
         File dir = new File(filePath);
         if (!dir.exists()){
             dir.mkdirs();
@@ -164,7 +168,8 @@ public class YAMLFile {
         firstLoad = true;
         DATA = loadFromDefault();
         if (DATA == null) {
-            throw new NullPointerException();
+            DATA = new HashMap<>();
+            DATA.put("NO_DEFAULT_CONFIGURATION", "PLEASE HAVE PLUGIN DEVELOPER SET THE CONFIGURATION VALUE TO FALSE IN THE PLUGIN.YML.");
         }
         if (dumpToDisk) {
             dumpToFile(DATA);

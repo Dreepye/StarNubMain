@@ -18,8 +18,6 @@
 
 package starnubserver.events.events;
 
-import starnubserver.events.starnub.StarNubEventRouter;
-
 public class StarNubEventTwo extends StarNubEvent{
 
     private final Object EVENT_DATA_2;
@@ -27,7 +25,6 @@ public class StarNubEventTwo extends StarNubEvent{
     public StarNubEventTwo(Object EVENT_KEY, Object EVENT_DATA, Object EVENT_DATA_2) {
         super(EVENT_KEY, EVENT_DATA);
         this.EVENT_DATA_2 = EVENT_DATA_2;
-        StarNubEventRouter.getInstance().eventNotify(this);
     }
 
     public Object getEVENT_DATA_2() {

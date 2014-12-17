@@ -20,8 +20,10 @@ package starnubserver.plugins;
 
 import org.apache.commons.io.FileUtils;
 import starnubserver.StarNub;
+import starnubserver.events.events.StarNubEvent;
+import starnubserver.plugins.exceptions.*;
+import starnubserver.plugins.generic.CommandInfo;
 import starnubserver.resources.StarNubYamlWrapper;
-import utilities.exceptions.*;
 import utilities.strings.StringUtilities;
 
 import java.io.File;
@@ -60,7 +62,6 @@ public class PluginManager {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        loadAllPlugins(false, true);
     }
 
     public static PluginManager getInstance() {
@@ -152,6 +153,21 @@ public class PluginManager {
         return null;
     }
 
+    public Plugin resolveLoadedPluginByCommand(String searchTerm){
+        for (Plugin plugin : LOADED_PLUGINS.values()) {
+            CommandInfo commandInfo = plugin.getCOMMAND_INFO();
+            if (commandInfo != null) {
+                String commandsName = commandInfo.getCOMMANDS_NAME();
+                String commandsAlias = commandInfo.getCOMMANDS_ALIAS();
+                boolean matched = commandsName.equalsIgnoreCase(searchTerm) || commandsAlias.equalsIgnoreCase(searchTerm);
+                if (matched) {
+                    return plugin;
+                }
+            }
+        }
+        return null;
+    }
+
     private void pluginScan(boolean isUpdating) throws MalformedURLException {
         UNLOADED_PLUGINS.clear();
         File[] pluginFiles = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(new File(pluginDirString), new String[]{"jar"}, false));
@@ -206,6 +222,7 @@ public class PluginManager {
         }
         LOADED_PLUGINS.put(javaPlugin.getNAME(), javaPlugin);
         StarNub.getLogger().cInfoPrint("StarNub", pluginName + " was successfully loaded.");
+        new StarNubEvent("StarNub_Plugin_Loaded", javaPlugin);
         return pluginName + " was successfully loaded.";
     }
 
@@ -225,6 +242,7 @@ public class PluginManager {
         Plugin plugin = LOADED_PLUGINS.remove(pluginName);
         plugin.disable();
         if (!LOADED_PLUGINS.containsKey(pluginName)) {
+            new StarNubEvent("StarNub_Plugin_Unloaded", plugin);
             return pluginName + " was successfully unloaded.";
         } else {
             return pluginName +" was not successfully unloaded.";
@@ -374,7 +392,7 @@ public class PluginManager {
 //                yaml.dump(pluginPackage, writer);
 //                writer.close();
 //
-//                ConcurrentHashMap<ArrayList<String>, CommandPackage> commandPackages = pluginPackage.getCOMMAND_PACKAGES();
+//                ConcurrentHashMap<ArrayList<String>, CommandPackage> commandPackages = pluginPackage.getCOMMANDS();
 //                for (CommandPackage commandPackage : commandPackages.values()) {
 //                    Yaml yamlCom = new Yaml(options);
 //                    Writer writerCom = new FileWriter("StarNub/Plugins/" + pluginPackage.getPLUGIN_NAME() + "/CommandsInfo/" + pluginPackage.getPLUGIN_NAME().toLowerCase() +"_command_"+commandPackage.COMMAND_MAIN_ARGS +".yml");
@@ -420,9 +438,9 @@ public class PluginManager {
 //    public CommandPackage getPluginCommandPackage(String pluginNameOrAlias, String command){
 //        String pluginName = resolvePlugin(pluginNameOrAlias, fullName);
 //        if (pluginName != null) {
-//            for (ArrayList<String> commands : LOADED_PLUGINS.get(pluginName).getCOMMAND_PACKAGES().keySet()) {
+//            for (ArrayList<String> commands : LOADED_PLUGINS.get(pluginName).getCOMMANDS().keySet()) {
 //                if (commands.contains(command.toLowerCase())){
-//                    return LOADED_PLUGINS.get(pluginName).getCOMMAND_PACKAGES().get(commands);
+//                    return LOADED_PLUGINS.get(pluginName).getCOMMANDS().get(commands);
 //                }
 //            }
 //        }
@@ -455,7 +473,7 @@ public class PluginManager {
 //    public String hasCommand(String pluginNameAlias, String command) {
 //        String pluginName = resolvePlugin(pluginNameAlias, fullName);
 //        if (pluginName != null) {
-//            for (ArrayList<String> commands : LOADED_PLUGINS.get(pluginName).getCOMMAND_PACKAGES().keySet()) {
+//            for (ArrayList<String> commands : LOADED_PLUGINS.get(pluginName).getCOMMANDS().keySet()) {
 //                if (commands.contains(command)){
 //                    return "hascommand";
 //                }

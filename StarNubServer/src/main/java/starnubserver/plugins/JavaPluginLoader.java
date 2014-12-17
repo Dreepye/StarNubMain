@@ -18,6 +18,7 @@
 
 package starnubserver.plugins;
 
+import starnubserver.plugins.exceptions.*;
 import starnubserver.plugins.generic.CommandInfo;
 import starnubserver.plugins.generic.PluginDetails;
 import starnubserver.plugins.resources.PluginRunnables;
@@ -27,7 +28,6 @@ import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.StarNubYamlWrapper;
 import starnubserver.resources.files.PluginConfiguration;
 import utilities.dircectories.DirectoryCheckCreate;
-import utilities.exceptions.*;
 import utilities.file.utility.FileSizeMeasure;
 import utilities.file.utility.GetFileSize;
 import utilities.file.utility.JarFromDisk;
@@ -76,6 +76,7 @@ public class JavaPluginLoader {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public JavaPlugin pluginLoader(UnloadedPlugin unloadedPlugin) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, PluginAlreadyLoaded, PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, IOException, CommandClassLoadFail, CommandYamlLoadFailed {
         final String PLUGIN_NAME = unloadedPlugin.getPLUGIN_NAME();
         final URLClassLoader CLASS_LOADER = unloadedPlugin.getPLUGIN_URL_CLASS_LOADER();
@@ -101,8 +102,14 @@ public class JavaPluginLoader {
 
         JarFromDisk jarFromDisk = new JarFromDisk(PLUGIN_FILE_PATH);
         List<JarEntry> otherJarFiles = jarFromDisk.getJarEntries("other_files/", null);
+        List<JarEntry> yamlJarEntries = jarFromDisk.getJarEntries("yaml_files/", null);
 
-        otherFilesExtractor(PLUGIN_NAME, PLUGIN_DIR, jarFromDisk, otherJarFiles);
+        ArrayList<String> directories = new ArrayList<>();
+        directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+        directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+        createDirectories(PLUGIN_DIR, PLUGIN_NAME, directories);
+
+        otherFilesExtractor(PLUGIN_DIR, jarFromDisk, otherJarFiles);
 
         final double FILE_SIZE = GetFileSize.getFileSize(PLUGIN_FILE_PATH, FileSizeMeasure.KILOBYTES);
 
@@ -124,7 +131,7 @@ public class JavaPluginLoader {
             }
         }
 
-        final YAMLFiles YAML_FILES = yamlFiles(PLUGIN_NAME, PLUGIN_DIR, CLASS_LOADER, jarFromDisk);
+        final YAMLFiles YAML_FILES = yamlFiles(PLUGIN_NAME, PLUGIN_DIR, CLASS_LOADER, yamlJarEntries, jarFromDisk);
 
         PluginRunnables RUNNABLES = null;
         if (RUNNABLE_CLASSES.size() > 0) {
@@ -134,25 +141,25 @@ public class JavaPluginLoader {
 
         List<JarEntry> commandsJarEntries = jarFromDisk.getJarEntries("commands/", ".yml");
         CommandInfo COMMAND_INFO = null;
-        if(commandsJarEntries.size() > 1) {
+        if(commandsJarEntries.size() >= 1) {
             HashSet<Command> commands = commandsPackage(PLUGIN_NAME, COMMAND_NAME, CLASS_LOADER, commandsJarEntries);
             COMMAND_INFO = new CommandInfo(COMMAND_NAME, COMMAND_ALIAS, commands);
         }
 
         Class<?> pluginClass = CLASS_LOADER.loadClass(MAIN_CLASS);
         final Class<? extends JavaPlugin> JAVA_PLUGIN_CLASS = pluginClass.asSubclass(JavaPlugin.class);
-        final Constructor CONSTRUCTOR = JAVA_PLUGIN_CLASS.getConstructor(new Class[]{String.class, File.class, String.class, PluginDetails.class, PluginConfiguration.class, YAMLFiles.class, CommandInfo.class, PluginRunnables.class});
-        return (JavaPlugin) CONSTRUCTOR.newInstance(new Object[]{PLUGIN_NAME, PLUGIN_FILE_PATH, MAIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES});
+        final Constructor CONSTRUCTOR = JAVA_PLUGIN_CLASS.getConstructor(String.class, File.class, String.class, PluginDetails.class, PluginConfiguration.class, YAMLFiles.class, CommandInfo.class, PluginRunnables.class);
+        return (JavaPlugin) CONSTRUCTOR.newInstance(PLUGIN_NAME, PLUGIN_FILE_PATH, MAIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES);
     }
 
     private void dependencyLoader(List<String> dependencies) throws PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, CommandClassLoadFail, CommandYamlLoadFailed {
         for (String dependency : dependencies) {
-            boolean isDependencyLoaded = PLUGIN_MANAGER.isPluginLoaded(dependency, true);
+            boolean isDependencyLoaded = PluginManager.getInstance().isPluginLoaded(dependency, true);
             if (!isDependencyLoaded) {
-                boolean isPluginUnloaded = PLUGIN_MANAGER.isPluginUnloaded(dependency, true);
+                boolean isPluginUnloaded = PluginManager.getInstance().isPluginUnloaded(dependency, true);
                 if (isPluginUnloaded) {
                     try {
-                        PLUGIN_MANAGER.loadSpecificPlugin(dependency, false, true);
+                        PluginManager.getInstance().loadSpecificPlugin(dependency, false, true);
                     } catch (IOException| NoSuchMethodException | IllegalAccessException | PluginAlreadyLoaded | InstantiationException | ClassNotFoundException | InvocationTargetException e) {
                         throw new PluginDependencyLoadFailed(e.getMessage());
                     }
@@ -163,9 +170,7 @@ public class JavaPluginLoader {
         }
     }
 
-    private void otherFilesExtractor(String PLUGIN_NAME, String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws PluginDirectoryCreationFailed, IOException {
-        ArrayList<String> directories = new ArrayList<>();
-        directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+    private void createDirectories(String PLUGIN_DIR, String PLUGIN_NAME, ArrayList<String> directories) throws PluginDirectoryCreationFailed {
         LinkedHashMap<String, Boolean> linkedHashMap = DirectoryCheckCreate.dirCheck(PLUGIN_DIR, directories);
         for (Map.Entry<String, Boolean> dirEntry : linkedHashMap.entrySet()){
             String dir = dirEntry.getKey();
@@ -177,6 +182,9 @@ public class JavaPluginLoader {
                         "CONSULT THE PLUGIN DEVELOPER FOR FURTHER HELP.");
             }
         }
+    }
+
+    private void otherFilesExtractor(String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws PluginDirectoryCreationFailed, IOException {
         for (JarEntry jarEntry : otherJarFiles) {
             if (!jarEntry.isDirectory()) {
                 jarFromDisk.extractEntry(jarEntry,  PLUGIN_DIR + jarEntry.toString());
@@ -184,13 +192,16 @@ public class JavaPluginLoader {
         }
     }
 
-    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, URLClassLoader CLASS_LOADER, JarFromDisk jarFromDisk){
-        List<JarEntry> yamlJarEntries = jarFromDisk.getJarEntries("yaml_files/", null);
+    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, URLClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, PluginDirectoryCreationFailed {
         HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet = new HashSet<>();
-        for (JarEntry jarEntry : yamlJarEntries) {
-            String fileName = jarFromDisk.getJarEntryFileName(jarEntry);
-            final PluginYAMLWrapper pluginYAMLWrapper = new PluginYAMLWrapper(PLUGIN_NAME, fileName, CLASS_LOADER.getResourceAsStream(fileName), PLUGIN_DIR + jarEntry.toString());
-            pluginYAMLWrapperHashSet.add(pluginYAMLWrapper);
+        for (JarEntry jarEntry :yamlJarEntries) {
+            if (!jarEntry.isDirectory()) {
+                String fileName = jarFromDisk.getJarEntryFileName(jarEntry);
+                try (InputStream resourceAsStream = CLASS_LOADER.getResourceAsStream(jarEntry.toString())) {
+                    final PluginYAMLWrapper pluginYAMLWrapper = new PluginYAMLWrapper(PLUGIN_NAME, fileName, resourceAsStream, PLUGIN_DIR + jarEntry.toString());
+                    pluginYAMLWrapperHashSet.add(pluginYAMLWrapper);
+                }
+            }
         }
         return new YAMLFiles(pluginYAMLWrapperHashSet);
     }
@@ -210,6 +221,7 @@ public class JavaPluginLoader {
         return runnables;
     }
 
+    @SuppressWarnings("unchecked")
     private HashSet<Command> commandsPackage(String PLUGIN_NAME, String PLUGIN_COMMAND_NAME, URLClassLoader CLASS_LOADER, List<JarEntry> commandJarEntries) throws CommandYamlLoadFailed, CommandClassLoadFail {
         final HashSet<Command> commandHashSet = new HashSet<>();
         HashSet<String> loaded = new HashSet<>();
@@ -225,25 +237,28 @@ public class JavaPluginLoader {
             }
             final String COMMAND_CLASS = (String) COMMAND_FILE.getValue("class");
             if (!loaded.contains(COMMAND_CLASS)) {
+
                 List<String> commands = (List<String>) COMMAND_FILE.getValue("commands");
-                HashSet<String> COMMANDS_HASHSET = new HashSet<>();
-                COMMANDS_HASHSET.addAll(commands);
+                HashSet<String> COMMANDS_HASHSET = commands.stream().map(String::toLowerCase).collect(Collectors.toCollection(HashSet::new));
+
                 List<String> main_args = (List<String>) COMMAND_FILE.getValue("main_args");
-                HashSet<String> MAIN_ARGS_HASHSET = new HashSet<>();
-                MAIN_ARGS_HASHSET.addAll(main_args);
+                HashSet<String> MAIN_ARGS_HASHSET = main_args.stream().map(String::toLowerCase).collect(Collectors.toCollection(HashSet::new));
+
                 Map<String, Integer> customSplit = (Map) COMMAND_FILE.getValue("custom_split");
-                final HashMap<String, Integer> CUSTOM_SPLIT = new HashMap<>();
-                CUSTOM_SPLIT.putAll(customSplit);
+                final HashMap<String, Integer> CUSTOM_SPLIT_HASHMAP = new HashMap<>();
+                CUSTOM_SPLIT_HASHMAP.putAll(customSplit);
+
                 final int CAN_USE = (int) COMMAND_FILE.getValue("can_use");
                 final String DESCRIPTION = (String) COMMAND_FILE.getValue("description");
                 try {
                     Class<?> commandClass = CLASS_LOADER.loadClass(COMMAND_CLASS);
-                    final Class<? extends JavaPlugin> JAVA_COMMAND_CLASS = commandClass.asSubclass(JavaPlugin.class);
-                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(new Class[]{HashSet.class, HashSet.class, HashMap.class, String.class, String.class, Integer.class, String.class});
-                    Command command = (Command) CONSTRUCTOR.newInstance(new Object[]{COMMANDS_HASHSET, MAIN_ARGS_HASHSET, CUSTOM_SPLIT, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION});
+                    final Class<? extends Command> JAVA_COMMAND_CLASS = commandClass.asSubclass(Command.class);
+                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(HashSet.class, HashSet.class, HashMap.class, String.class, String.class, int.class, String.class);
+                    Command command = (Command) CONSTRUCTOR.newInstance(COMMANDS_HASHSET, MAIN_ARGS_HASHSET, CUSTOM_SPLIT_HASHMAP, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION);
                     commandHashSet.add(command);
                     loaded.add(COMMAND_CLASS);
                 } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+                    e.printStackTrace();
                     throw new CommandClassLoadFail(e.getMessage());
                 }
             }

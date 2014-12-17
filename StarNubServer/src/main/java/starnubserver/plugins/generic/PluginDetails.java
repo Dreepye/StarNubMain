@@ -18,6 +18,7 @@
 
 package starnubserver.plugins.generic;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
@@ -85,11 +86,14 @@ public class PluginDetails {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("Version", VERSION);
         linkedHashMap.put("Size KBs", SIZE_KBS);
-        linkedHashMap.put("Dependencies", DEPENDENCIES);
-        linkedHashMap.put("Language", LANGUAGE);
+        ArrayList<String> dependancyList = new ArrayList<>(DEPENDENCIES);
+        linkedHashMap.put("Dependencies", dependancyList);
+        ArrayList<String> languageList = new ArrayList<>(LANGUAGE);
+        linkedHashMap.put("Language", languageList);
         linkedHashMap.put("Author", AUTHOR);
         linkedHashMap.put("URL", URL);
-        linkedHashMap.put("Additional Permissions", ADDITIONAL_PERMISSIONS);
+        ArrayList<String> additionalPermissionList = new ArrayList<>(ADDITIONAL_PERMISSIONS);
+        linkedHashMap.put("Additional Permissions", additionalPermissionList);
         linkedHashMap.put("Description", DESCRIPTION);
         return linkedHashMap;
     }

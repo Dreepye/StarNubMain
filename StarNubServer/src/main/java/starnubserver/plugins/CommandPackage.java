@@ -20,6 +20,7 @@ package starnubserver.plugins;
 
 import starnubdata.generic.CanUse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -57,7 +58,7 @@ public class CommandPackage {
         for (String command : COMMANDS) {
             for (String mainArg : MAIN_ARGS) {
                 String permission = COMMAND_NAME + "." + command + "." + mainArg;
-                PERMISSIONS.add(permission);
+                PERMISSIONS.add(permission.toLowerCase());
             }
         }
         this.CUSTOM_SPLIT = CUSTOM_SPLIT;
@@ -93,8 +94,6 @@ public class CommandPackage {
         return COMMAND_CLASS;
     }
 
-
-
     public LinkedHashMap<String, Object> getCommandDetailsMap(String pluginName, String pluginCommandName, String pluginNameAlias){
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("Plugin Name", pluginName);
@@ -107,11 +106,14 @@ public class CommandPackage {
     public LinkedHashMap<String,Object> getCommandDetailsMap(LinkedHashMap<String, String> linkedHashMap) {
         LinkedHashMap<String, Object> linkedHashMapFinal = new LinkedHashMap<>();
         linkedHashMapFinal.put("Plugin Command Details", linkedHashMap);
-        linkedHashMapFinal.put("Commands", COMMANDS);
-        linkedHashMapFinal.put("Main Args", MAIN_ARGS);
+        ArrayList<String> commandsList = new ArrayList<>(COMMANDS);
+        linkedHashMapFinal.put("Commands", commandsList);
+        ArrayList<String> mainArgsList = new ArrayList<>(MAIN_ARGS);
+        linkedHashMapFinal.put("Main Args", mainArgsList);
         linkedHashMapFinal.put("Can Use", CAN_USE.toString());
         linkedHashMapFinal.put("Custom Split", CUSTOM_SPLIT);
-        linkedHashMapFinal.put("Permissions", PERMISSIONS);
+        ArrayList<String> permissionsList = new ArrayList<>(PERMISSIONS);
+        linkedHashMapFinal.put("Permissions", permissionsList);
         return linkedHashMapFinal;
     }
 }

@@ -132,8 +132,8 @@ public abstract class PluginPackage {
         linkedHashMap.put("Path", FILE.getAbsolutePath());
         linkedHashMap.put("Details", getDETAILS().getPluginDetailsMap());
         YamlUtilities.toFileYamlDump(linkedHashMap, "StarNub/Plugins/" + NAME + "/Information/", "Plugin_Details.yml");
-        if (COMMAND_INFO != null && COMMAND_INFO.getCOMMAND_PACKAGES() != null) {
-            for (Command command : COMMAND_INFO.getCOMMAND_PACKAGES()) {
+        if (COMMAND_INFO != null && COMMAND_INFO.getCOMMANDS() != null) {
+            for (Command command : COMMAND_INFO.getCOMMANDS()) {
                 String commands = command.getCOMMANDS().toString();
                 LinkedHashMap<String, Object> commandDetailsMap = command.getCommandDetailsMap(NAME, COMMAND_INFO.getCOMMANDS_NAME(), COMMAND_INFO.getCOMMANDS_ALIAS());
                 YamlUtilities.toFileYamlDump(commandDetailsMap, "StarNub/Plugins/" + NAME + "/Information/Commands/", commands + "_Details.yml");
