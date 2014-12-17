@@ -18,15 +18,13 @@
 
 package starnubserver.plugins.generic;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class PluginDetails {
 
     private final double VERSION;
     private final double SIZE_KBS;
-    private final HashSet<String> DEPENDENCIES;
+    private final HashSet<Map<String, Object>> DEPENDENCIES;
     private final HashSet<String> LANGUAGE;
     private final String AUTHOR;
     private final String URL;
@@ -43,7 +41,7 @@ public class PluginDetails {
      * @param ADDITIONAL_PERMISSIONS HashSet containing additional permission not used in commands
      * @param DESCRIPTION            String a short description of the plugin
      */
-    public PluginDetails(double VERSION, double SIZE_KBS, HashSet<String> DEPENDENCIES, HashSet<String> LANGUAGE, String AUTHOR, String URL, HashSet<String> ADDITIONAL_PERMISSIONS, String DESCRIPTION) {
+    public PluginDetails(double VERSION, double SIZE_KBS, HashSet<Map<String, Object>> DEPENDENCIES, HashSet<String> LANGUAGE, String AUTHOR, String URL, HashSet<String> ADDITIONAL_PERMISSIONS, String DESCRIPTION) {
         this.VERSION = VERSION;
         this.SIZE_KBS = SIZE_KBS;
         this.DEPENDENCIES = DEPENDENCIES;
@@ -62,7 +60,7 @@ public class PluginDetails {
         return SIZE_KBS;
     }
 
-    public HashSet<String> getDEPENDENCIES() {
+    public HashSet<Map<String, Object>> getDEPENDENCIES() {
         return DEPENDENCIES;
     }
 
@@ -86,7 +84,7 @@ public class PluginDetails {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("Version", VERSION);
         linkedHashMap.put("Size KBs", SIZE_KBS);
-        ArrayList<String> dependancyList = new ArrayList<>(DEPENDENCIES);
+        ArrayList<Map<String, Object>> dependancyList = new ArrayList<>(DEPENDENCIES);
         linkedHashMap.put("Dependencies", dependancyList);
         ArrayList<String> languageList = new ArrayList<>(LANGUAGE);
         linkedHashMap.put("Language", languageList);

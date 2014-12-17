@@ -5,7 +5,7 @@ Change Log:
         - Modified the decoder by adding the Variant Length Quantity equation in the method, vice making it a object (Means its not stored in the memory heap)
         - Changed all socket settings, increasing the buffer allocation and write amount, per right
 
-
+//dependacy versions
 
 //planet who
 //EPOLL
@@ -37,26 +37,12 @@ After the above I am going to get to work to finishing StarNub and preparing it 
         -	Server Query’s from external websites need to be handled better
         - Connection clean up disconnects, epoll
 
-    •	 Python and Lua Support
-        -	This will be for commands only, making commands should become simpler
-
-    •	Command API changes to how they are stored and executed, I do not like the shortcut and non-shortcut. I will most likely detach the command from the plugin and store it internally rather than the current method. Perhaps look at .Java plugins instead of full blown jars, flexibility and easy fast creation is my goal. *Note utilities.file dump null  permission *
-
-    •	Fix the plugin loader to support the above
-
-    •	YAML Abstract Wrapper Class
-        -	List form YAML class to convert all text files to YAML (Easier editing, load and saving)
-        -	word filter white list,  nick whitelist, word filter, nick blacklist, whitelist, Ops, blocked ip’s to all be changed into YAML storage (500 line code reduction)
-
-
     •	StarNub Launcher Jar
 
     •	StarNub Update Available Notification
 
     •	Player Location Tracking
         -	StarNub to handle local starbounddata.packets.chat as well
-
-    •	Configuration Reloading, Variable Updating
 
     •	Wrapper internals
         -	Full shutdown
@@ -65,8 +51,7 @@ After the above I am going to get to work to finishing StarNub and preparing it 
         -	Resource Usage tracking
         -	Player history tracking (Load purposes)
         -	Thread Checking
-        -	DOS/DDOS protection suite (Have frame work in place)
-        -	Plugin utilities.file locking, removal after update or removal of plugin
+
 
     •	API to complete (Ability to manipulate data)(Needed for commands)
          -	Plugin resource extraction
@@ -84,12 +69,6 @@ After the above I am going to get to work to finishing StarNub and preparing it 
         -	AFK vs IDLE tracking (Needs Location Tracking)
 
     •	Events Created
-
-    •	Code Clean Up
-
-    •	Java Document fill in if missing
-
-    •	Fix Limbok Library and Javadoc Generation
 
 Small Changes:
     •	Create a couple new classes for Database Data (Detailed Data Entity (Date, REJECTION_REASON, Date Expires, Imposer, Imposer ID))

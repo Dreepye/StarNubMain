@@ -87,7 +87,7 @@ public class JavaPluginLoader {
         final List<String> LANGUAGE = (List<String>) PLUGIN_MANIFEST.getNestedValue("details", "languages");
         final double VERSION = (double) PLUGIN_MANIFEST.getNestedValue("details", "version");
         final String DESCRIPTION = (String) PLUGIN_MANIFEST.getNestedValue("details", "description");
-        final List<String> DEPENDENCIES = (List<String>) PLUGIN_MANIFEST.getNestedValue("details", "dependencies");
+        final List<Map<String, Object>> DEPENDENCIES = (List<Map<String, Object>>) PLUGIN_MANIFEST.getNestedValue("details", "dependencies");
         final String AUTHOR = (String) PLUGIN_MANIFEST.getNestedValue("details", "author");
         final String URL = (String) PLUGIN_MANIFEST.getNestedValue("details", "url");
         final boolean HAS_CONFIGURATION = (boolean) PLUGIN_MANIFEST.getValue("configuration");
@@ -96,7 +96,7 @@ public class JavaPluginLoader {
         final List<String> RUNNABLE_CLASSES = (List<String>) PLUGIN_MANIFEST.getNestedValue("runnables", "runnables");
         final List<String> ADDITIONAL_PERMISSIONS = (List<String>) PLUGIN_MANIFEST.getValue("additional_permissions");
 
-        dependencyLoader(DEPENDENCIES);
+        dependencyLoader(DEPENDENCIES, PLUGIN_NAME);
 
         final String PLUGIN_DIR = "StarNub/Plugins/" + PLUGIN_NAME + "/";
 
@@ -113,8 +113,8 @@ public class JavaPluginLoader {
 
         final double FILE_SIZE = GetFileSize.getFileSize(PLUGIN_FILE_PATH, FileSizeMeasure.KILOBYTES);
 
-        final HashSet<String> DEPENDENCY_HASHSET = new HashSet<>();
-        DEPENDENCY_HASHSET.addAll(DEPENDENCIES);
+        final HashSet<Map<String, Object>> DEPENDENCY_HASHMAP = new HashSet<>();
+        DEPENDENCY_HASHMAP.addAll(DEPENDENCIES);
 
         final HashSet<String> LANGUAGE_HASHSET = new HashSet<>();
         LANGUAGE_HASHSET.addAll(LANGUAGE);
@@ -122,7 +122,7 @@ public class JavaPluginLoader {
         final HashSet<String> PERMISSIONS_HASHSET = new HashSet<>();
         PERMISSIONS_HASHSET.addAll(ADDITIONAL_PERMISSIONS);
 
-        final PluginDetails DETAILS = new PluginDetails(VERSION, FILE_SIZE, DEPENDENCY_HASHSET, LANGUAGE_HASHSET, AUTHOR, URL, PERMISSIONS_HASHSET, DESCRIPTION);
+        final PluginDetails DETAILS = new PluginDetails(VERSION, FILE_SIZE, DEPENDENCY_HASHMAP, LANGUAGE_HASHSET, AUTHOR, URL, PERMISSIONS_HASHSET, DESCRIPTION);
 
         PluginConfiguration CONFIGURATION = null;
         if (HAS_CONFIGURATION) {
@@ -152,19 +152,32 @@ public class JavaPluginLoader {
         return (JavaPlugin) CONSTRUCTOR.newInstance(PLUGIN_NAME, PLUGIN_FILE_PATH, MAIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES);
     }
 
-    private void dependencyLoader(List<String> dependencies) throws PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, CommandClassLoadFail, CommandYamlLoadFailed {
-        for (String dependency : dependencies) {
-            boolean isDependencyLoaded = PluginManager.getInstance().isPluginLoaded(dependency, true);
-            if (!isDependencyLoaded) {
-                boolean isPluginUnloaded = PluginManager.getInstance().isPluginUnloaded(dependency, true);
-                if (isPluginUnloaded) {
-                    try {
-                        PluginManager.getInstance().loadSpecificPlugin(dependency, false, true);
-                    } catch (IOException| NoSuchMethodException | IllegalAccessException | PluginAlreadyLoaded | InstantiationException | ClassNotFoundException | InvocationTargetException e) {
-                        throw new PluginDependencyLoadFailed(e.getMessage());
+    private void dependencyLoader(List<Map<String, Object>> dependencies, String PLUGIN_NAME) throws PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, CommandClassLoadFail, CommandYamlLoadFailed {
+        for (Map<String, Object> dependencyMap : dependencies) {
+
+            for (Map.Entry<String, Object> dependencyEntry : dependencyMap.entrySet()) {
+                String dependency = dependencyEntry.getKey();
+                List<Double> versions = (List<Double>) dependencyEntry.getValue();
+                Plugin loadedPlugin = PluginManager.getInstance().resolveLoadedPlugin(dependency, true);
+                if (loadedPlugin != null){
+                    double version = loadedPlugin.getDETAILS().getVERSION();
+                    if(!versions.contains(version)){
+                        throw new PluginDependencyLoadFailed(PLUGIN_NAME + " has a dependency for Plugin: " + dependency + ", Versions: " + versions.toString() + ". The current " + dependency + " version is " + version);
                     }
                 } else {
-                    throw new PluginDependencyNotFound(dependency);
+                    UnloadedPlugin unloadedPlugin = PluginManager.getInstance().resolveUnloadedPlugin(dependency, true);
+                    if (unloadedPlugin != null) {
+                        double version = unloadedPlugin.getPLUGIN_VERSION();
+                        if (!versions.contains(version)) {
+                            throw new PluginDependencyLoadFailed(PLUGIN_NAME + " has a dependency for Plugin: " + dependency + ", Versions: " + versions.toString() + ". The current " + dependency + " version is " + version);
+                        }
+                    } else {
+                        try {
+                            PluginManager.getInstance().loadSpecificPlugin(dependency, false, true);
+                        } catch (IOException | NoSuchMethodException | IllegalAccessException | PluginAlreadyLoaded | InstantiationException | ClassNotFoundException | InvocationTargetException e) {
+                            throw new PluginDependencyLoadFailed(e.getMessage());
+                        }
+                    }
                 }
             }
         }
