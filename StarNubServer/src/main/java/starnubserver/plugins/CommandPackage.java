@@ -34,6 +34,8 @@ import java.util.LinkedHashMap;
  */
 public class CommandPackage {
 
+    private final String PLUGIN_NAME;
+    private final Plugin PLUGIN;
     private final HashSet<String> COMMANDS;
     private final HashSet<String> MAIN_ARGS;
     private final HashSet<String> PERMISSIONS;
@@ -43,6 +45,8 @@ public class CommandPackage {
     private final String COMMAND_CLASS;
 
     /**
+     * @param PLUGIN_NAME         String representing the plugin that owns this command
+     * @param PLUGIN              Plugin representing the plugin this command belongs to
      * @param COMMANDS            String representing the command name
      * @param MAIN_ARGS           String the commands main args
      * @param COMMAND_CLASS       String the location of the class in the plugin
@@ -50,7 +54,9 @@ public class CommandPackage {
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
      */
-    public CommandPackage(HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT,  String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+    public CommandPackage(String PLUGIN_NAME, Plugin PLUGIN, HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT,  String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+        this.PLUGIN_NAME = PLUGIN_NAME;
+        this.PLUGIN = PLUGIN;
         this.COMMANDS = COMMANDS;
         this.MAIN_ARGS = MAIN_ARGS;
         this.COMMAND_CLASS = COMMAND_CLASS;
@@ -64,6 +70,14 @@ public class CommandPackage {
         this.CUSTOM_SPLIT = CUSTOM_SPLIT;
         this.CAN_USE = CanUse.values()[CAN_USE];
         this.DESCRIPTION = DESCRIPTION;
+    }
+
+    public String getPLUGIN_NAME() {
+        return PLUGIN_NAME;
+    }
+
+    public Plugin getPLUGIN() {
+        return PLUGIN;
     }
 
     public HashSet<String> getCOMMANDS() {

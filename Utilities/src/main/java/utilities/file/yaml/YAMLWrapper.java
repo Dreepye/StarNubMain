@@ -301,6 +301,15 @@ public class YAMLWrapper extends YAMLFile {
     }
 
     /**
+     * This methos will return if this YAMLWrapper contains a specified key
+     *
+     * @return boolean representing if the key is contained
+     */
+    public boolean hasKey(String key){
+        return DATA.containsKey(key.toLowerCase());
+    }
+
+    /**
      * This will insert this value and key into the base data.
      * <p>
      * Example: addKeyValue(true, "Key1")
@@ -707,8 +716,8 @@ public class YAMLWrapper extends YAMLFile {
             } else {
                 throw new CollectionDoesNotExistException();
             }
-            dumpOnModification(DATA);
         }
+        dumpOnModification(DATA);
         return collection.contains(value);
     }
 
@@ -787,6 +796,88 @@ public class YAMLWrapper extends YAMLFile {
     }
 
     /**
+     * This method will add a value to your List or Set and if the collection does not exist, create it
+     *
+     * @param value the Collection of elements that you would like to add to your list or set
+     * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
+     * @param key   the key that the list or set belongs to
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    @SuppressWarnings("unchecked")
+    public boolean addCollectionToCollectionUnique(Collection value, boolean hashSet, String key) throws IOException, CollectionDoesNotExistException {
+        Collection collection = (Collection) DATA.get(key);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
+                HashSet<Object> objects = new HashSet<>(collection);
+                objects.addAll(value);
+                collection.clear();
+                collection.addAll(value);
+            }
+        }  else {
+            if (hashSet){
+                createNestedSet(key);
+            } else {
+                createNestedList(key);
+            }
+            collection = (Collection) DATA.get(key);
+            if (collection !=null) {
+                synchronized (LOCK_OBJECT) {
+                    HashSet<Object> objects = new HashSet<>(collection);
+                    objects.addAll(value);
+                    collection.clear();
+                    collection.addAll(value);
+                }
+            } else {
+                throw new CollectionDoesNotExistException();
+            }
+        }
+        dumpOnModification(DATA);
+        return collection.contains(value);
+    }
+
+    /**
+     * This method will add a value to your List or Set and if the collection does not exist, create it
+     *
+     * @param value the Collection of elements that you would like to add to your list or set
+     * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
+     * @param keys   the key that the list or set belongs to
+     * @return boolean if the item was added to the list or set
+     * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
+     */
+    @SuppressWarnings("unchecked")
+    public boolean addCollectionToCollectionUnique(Collection value, boolean hashSet, String... keys) throws IOException, CollectionDoesNotExistException {
+        Collection collection = (Collection) mapUnwrapper(keys);
+        if (collection != null) {
+            synchronized (LOCK_OBJECT) {
+                HashSet<Object> objects = new HashSet<>(collection);
+                objects.addAll(value);
+                collection.clear();
+                collection.addAll(value);
+            }
+        }  else {
+            if (hashSet){
+                createNestedSet(keys);
+            } else {
+                createNestedList(keys);
+            }
+            collection = (Collection) DATA.get(keys);
+            if (collection !=null) {
+                synchronized (LOCK_OBJECT) {
+                    HashSet<Object> objects = new HashSet<>(collection);
+                    objects.addAll(value);
+                    collection.clear();
+                    collection.addAll(value);
+                }
+            } else {
+                throw new CollectionDoesNotExistException();
+            }
+        }
+        dumpOnModification(DATA);
+        return collection.contains(value);
+    }
+
+    /**
      * This method will add a value to your nested List or Set and if the collection does not exist, create it
      *
      * @param value the Collection of elements that you would like to add to your list or set
@@ -797,7 +888,7 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     public boolean addCollectionToCollection(Collection value, boolean hashSet ,String... keys) throws IOException, CollectionDoesNotExistException {
-        Collection collection= (Collection) mapUnwrapper(keys);
+        Collection collection = (Collection) mapUnwrapper(keys);
         if (collection != null) {
             synchronized (LOCK_OBJECT) {
                 collection.addAll(value);
@@ -826,7 +917,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Object that you would like to remove to your list or set
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the item is in the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromCollection(Object value, String key) throws IOException {
@@ -835,9 +926,11 @@ public class YAMLWrapper extends YAMLFile {
             synchronized (LOCK_OBJECT) {
                 collection.remove(value);
             }
+        } else {
+            return false;
         }
         dumpOnModification(DATA);
-        return collection != null && collection.contains(value);
+        return !collection.contains(value);
     }
 
     /**
@@ -845,7 +938,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Object that you would like to remove to your list or set
      * @param keys  the keys that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the item is in the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromCollection(Object value, String... keys) throws IOException {
@@ -854,9 +947,11 @@ public class YAMLWrapper extends YAMLFile {
             synchronized (LOCK_OBJECT) {
                 collection.remove(value);
             }
+        } else {
+            return false;
         }
         dumpOnModification(DATA);
-        return collection != null && collection.contains(value);
+        return !collection.contains(value);
     }
 
     /**

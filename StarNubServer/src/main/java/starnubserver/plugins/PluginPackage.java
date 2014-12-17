@@ -126,6 +126,11 @@ public abstract class PluginPackage {
         this.enabled = enabled;
     }
 
+    public boolean hasCommands() {
+        return COMMAND_INFO != null && COMMAND_INFO.getCOMMANDS().size() > 0;
+    }
+
+
     public void dumpPluginData() throws IOException {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("Plugin Name", NAME);

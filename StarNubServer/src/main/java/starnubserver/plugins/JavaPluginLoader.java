@@ -138,18 +138,19 @@ public class JavaPluginLoader {
             final ConcurrentHashMap<Thread, StarNubRunnable> runnables = runnables(RUNNABLE_CLASSES, PLUGIN_NAME, CLASS_LOADER);
             RUNNABLES = new PluginRunnables(runnables);
         }
-
+        JavaPlugin futurePlugin = null;
         List<JarEntry> commandsJarEntries = jarFromDisk.getJarEntries("commands/", ".yml");
         CommandInfo COMMAND_INFO = null;
         if(commandsJarEntries.size() >= 1) {
-            HashSet<Command> commands = commandsPackage(PLUGIN_NAME, COMMAND_NAME, CLASS_LOADER, commandsJarEntries);
+            HashSet<Command> commands = commandsPackage(PLUGIN_NAME, futurePlugin, COMMAND_NAME, CLASS_LOADER, commandsJarEntries);
             COMMAND_INFO = new CommandInfo(COMMAND_NAME, COMMAND_ALIAS, commands);
         }
 
         Class<?> pluginClass = CLASS_LOADER.loadClass(MAIN_CLASS);
         final Class<? extends JavaPlugin> JAVA_PLUGIN_CLASS = pluginClass.asSubclass(JavaPlugin.class);
         final Constructor CONSTRUCTOR = JAVA_PLUGIN_CLASS.getConstructor(String.class, File.class, String.class, PluginDetails.class, PluginConfiguration.class, YAMLFiles.class, CommandInfo.class, PluginRunnables.class);
-        return (JavaPlugin) CONSTRUCTOR.newInstance(PLUGIN_NAME, PLUGIN_FILE_PATH, MAIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES);
+        futurePlugin = (JavaPlugin) CONSTRUCTOR.newInstance(PLUGIN_NAME, PLUGIN_FILE_PATH, MAIN_CLASS, DETAILS, CONFIGURATION, YAML_FILES, COMMAND_INFO, RUNNABLES);
+        return futurePlugin;
     }
 
     private void dependencyLoader(List<Map<String, Object>> dependencies, String PLUGIN_NAME) throws PluginDependencyNotFound, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, CommandClassLoadFail, CommandYamlLoadFailed {
@@ -235,7 +236,7 @@ public class JavaPluginLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private HashSet<Command> commandsPackage(String PLUGIN_NAME, String PLUGIN_COMMAND_NAME, URLClassLoader CLASS_LOADER, List<JarEntry> commandJarEntries) throws CommandYamlLoadFailed, CommandClassLoadFail {
+    private HashSet<Command> commandsPackage(String PLUGIN_NAME, Plugin futurePlugin, String PLUGIN_COMMAND_NAME, URLClassLoader CLASS_LOADER, List<JarEntry> commandJarEntries) throws CommandYamlLoadFailed, CommandClassLoadFail {
         final HashSet<Command> commandHashSet = new HashSet<>();
         HashSet<String> loaded = new HashSet<>();
         for (JarEntry jarEntry : commandJarEntries) {
@@ -266,8 +267,8 @@ public class JavaPluginLoader {
                 try {
                     Class<?> commandClass = CLASS_LOADER.loadClass(COMMAND_CLASS);
                     final Class<? extends Command> JAVA_COMMAND_CLASS = commandClass.asSubclass(Command.class);
-                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(HashSet.class, HashSet.class, HashMap.class, String.class, String.class, int.class, String.class);
-                    Command command = (Command) CONSTRUCTOR.newInstance(COMMANDS_HASHSET, MAIN_ARGS_HASHSET, CUSTOM_SPLIT_HASHMAP, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION);
+                    final Constructor CONSTRUCTOR = JAVA_COMMAND_CLASS.getConstructor(String.class, Plugin.class, HashSet.class, HashSet.class, HashMap.class, String.class, String.class, int.class, String.class);
+                    Command command = (Command) CONSTRUCTOR.newInstance(PLUGIN_NAME, futurePlugin, COMMANDS_HASHSET, MAIN_ARGS_HASHSET, CUSTOM_SPLIT_HASHMAP, COMMAND_CLASS, PLUGIN_COMMAND_NAME, CAN_USE, DESCRIPTION);
                     commandHashSet.add(command);
                     loaded.add(COMMAND_CLASS);
                 } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
