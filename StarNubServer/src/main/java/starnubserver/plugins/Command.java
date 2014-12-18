@@ -35,7 +35,6 @@ public abstract class Command extends CommandPackage{
 
     /**
      * @param PLUGIN_NAME         String representing the plugin that owns this command
-     * @param PLUGIN              Plugin representing the plugin this command belongs to
      * @param COMMANDS            HashMap representing the command name
      * @param MAIN_ARGS           HashMap the commands main args
      * @param CUSTOM_SPLIT        HashMap containing a map of commands with a integer for when to split the command
@@ -44,8 +43,8 @@ public abstract class Command extends CommandPackage{
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
      */
-    public Command(String PLUGIN_NAME, Plugin PLUGIN,  HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
-        super(PLUGIN_NAME, PLUGIN, COMMANDS, MAIN_ARGS, CUSTOM_SPLIT, COMMAND_CLASS, COMMAND_NAME, CAN_USE, DESCRIPTION);
+    public Command(String PLUGIN_NAME ,  HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT, String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+        super(PLUGIN_NAME, COMMANDS, MAIN_ARGS, CUSTOM_SPLIT, COMMAND_CLASS, COMMAND_NAME, CAN_USE, DESCRIPTION);
     }
 
     /**

@@ -84,7 +84,6 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         registerPacketHandlers(concurrencyLevel);
         new StarNubTask("StarNub", "StarNub - Connection Lost Purge", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerLostConnectionCheck);
         new StarNubTask("StarNub", "StarNub - Player Time Update", true, 30, 30, TimeUnit.SECONDS, this::connectedPlayerPlayedTimeUpdate);
-        new StarNubTask("StarNub", "StarNub - Players Online - Debug Print", true, 30, 30, TimeUnit.SECONDS, this::getOnlinePlayerListTask);
     }
 
     private void registerPacketHandlers(int concurrencyLevel){
@@ -353,11 +352,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
             PlayerSession senderSession = getOnlinePlayerByAnyIdentifier(sender);
             if (senderSession.hasPermission("starnub.bypass.appear_offline", true)) {
                 return true;
-            } else if (playerSessionSession.getPlayerCharacter().getAccount() != null) {
-                return !playerSessionSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
-            } else {
-                return true;
-            }
+            } else
+                return playerSessionSession.getPlayerCharacter().getAccount() == null || !playerSessionSession.getPlayerCharacter().getAccount().getAccountSettings().isAppearOffline();
         } else {
             return true;
         }

@@ -35,7 +35,6 @@ import java.util.LinkedHashMap;
 public class CommandPackage {
 
     private final String PLUGIN_NAME;
-    private final Plugin PLUGIN;
     private final HashSet<String> COMMANDS;
     private final HashSet<String> MAIN_ARGS;
     private final HashSet<String> PERMISSIONS;
@@ -43,10 +42,10 @@ public class CommandPackage {
     private final CanUse CAN_USE;
     private final String DESCRIPTION;
     private final String COMMAND_CLASS;
+    private Plugin PLUGIN;
 
     /**
      * @param PLUGIN_NAME         String representing the plugin that owns this command
-     * @param PLUGIN              Plugin representing the plugin this command belongs to
      * @param COMMANDS            String representing the command name
      * @param MAIN_ARGS           String the commands main args
      * @param COMMAND_CLASS       String the location of the class in the plugin
@@ -54,9 +53,8 @@ public class CommandPackage {
      * @param CAN_USE             int 0 = Player, 1 = Remote Player, 2 = Both can use
      * @param DESCRIPTION         String description of what the command does
      */
-    public CommandPackage(String PLUGIN_NAME, Plugin PLUGIN, HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT,  String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
+    public CommandPackage(String PLUGIN_NAME, HashSet<String> COMMANDS, HashSet<String> MAIN_ARGS, HashMap<String, Integer> CUSTOM_SPLIT,  String COMMAND_CLASS, String COMMAND_NAME, int CAN_USE, String DESCRIPTION) {
         this.PLUGIN_NAME = PLUGIN_NAME;
-        this.PLUGIN = PLUGIN;
         this.COMMANDS = COMMANDS;
         this.MAIN_ARGS = MAIN_ARGS;
         this.COMMAND_CLASS = COMMAND_CLASS;
@@ -74,6 +72,10 @@ public class CommandPackage {
 
     public String getPLUGIN_NAME() {
         return PLUGIN_NAME;
+    }
+
+    public void setPLUGIN(Plugin PLUGIN) {
+        this.PLUGIN = PLUGIN;
     }
 
     public Plugin getPLUGIN() {
@@ -124,7 +126,13 @@ public class CommandPackage {
         linkedHashMapFinal.put("Commands", commandsList);
         ArrayList<String> mainArgsList = new ArrayList<>(MAIN_ARGS);
         linkedHashMapFinal.put("Main Args", mainArgsList);
-        linkedHashMapFinal.put("Can Use", CAN_USE.toString());
+        String canUse = "";
+        switch (CAN_USE){
+            case PLAYER: canUse = "Players"; break;
+            case REMOTE_PLAYER: canUse = "Remote Player"; break;
+            case BOTH: canUse = "Players and Remote Players"; break;
+        }
+        linkedHashMapFinal.put("Can Use", canUse);
         linkedHashMapFinal.put("Custom Split", CUSTOM_SPLIT);
         ArrayList<String> permissionsList = new ArrayList<>(PERMISSIONS);
         linkedHashMapFinal.put("Permissions", permissionsList);

@@ -221,7 +221,8 @@ public class PluginManager {
            javaPlugin.enable();
         }
         LOADED_PLUGINS.put(javaPlugin.getNAME(), javaPlugin);
-        StarNub.getLogger().cInfoPrint("StarNub", pluginName + " was successfully loaded.");
+        double version = javaPlugin.getDETAILS().getVERSION();
+        StarNub.getLogger().cInfoPrint("StarNub", pluginName + " (" + version + ") " + "was successfully loaded.");
         new StarNubEvent("StarNub_Plugin_Loaded", javaPlugin);
         return pluginName + " was successfully loaded.";
     }

@@ -530,6 +530,9 @@ public class PlayerSession {
     }
 
     private boolean hasSubPermission(String basePermission, String subPermission, boolean checkWildCards){
+        if (PERMISSIONS.containsKey("*") && checkWildCards){
+            return true;
+        }
         ConcurrentHashMap<String, ArrayList<String>> concurrentHashMap = PERMISSIONS.get(basePermission);
         if (concurrentHashMap == null){
             return false;
@@ -537,14 +540,20 @@ public class PlayerSession {
         if (checkWildCards){
             return concurrentHashMap.containsKey("*") || concurrentHashMap.containsKey(subPermission);
         } else {
-            return concurrentHashMap.containsKey(subPermission);
+            return false;
         }
     }
 
     private boolean hasFullPermission(String basePermission, String subPermission, String fullPermission, boolean checkWildCards){
+        if (PERMISSIONS.containsKey("*") && checkWildCards){
+            return true;
+        }
         ConcurrentHashMap<String, ArrayList<String>> concurrentHashMap = PERMISSIONS.get(basePermission);
         if (concurrentHashMap == null) {
             return false;
+        }
+        if (concurrentHashMap.containsKey("*") && checkWildCards){
+            return true;
         }
         ArrayList<String> strings = concurrentHashMap.get(subPermission);
         if (strings == null){
@@ -553,7 +562,7 @@ public class PlayerSession {
         if (checkWildCards){
             return strings.contains("*") || strings.contains(fullPermission);
         } else {
-            return strings.contains(fullPermission);
+            return false;
         }
     }
 
