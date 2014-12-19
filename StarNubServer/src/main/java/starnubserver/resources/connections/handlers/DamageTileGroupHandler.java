@@ -19,7 +19,7 @@
 package starnubserver.resources.connections.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.chat.Mode;
+import starbounddata.types.chat.Mode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.tile.DamageTileGroupPacket;
 import starnubserver.cache.wrappers.PermissionCacheWrapper;

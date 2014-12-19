@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.chat;
+package starbounddata.types.chat;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.packets.Packet;

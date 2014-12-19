@@ -16,11 +16,11 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.ship;
+package starbounddata.types.ship;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.packets.Packet;
-import starbounddata.variants.VLQ;
+import starbounddata.types.variants.VLQ;
 
 import java.util.HashSet;
 
@@ -28,18 +28,15 @@ public class Capabilities extends HashSet<String> {
 
     private final static int HASHSET_SIZE_LIMIT = 50;
 
-    public Capabilities(){
-    }//TODO CLONE
+    public Capabilities() {
+    }
+
+    public Capabilities(Capabilities capabilities){
+        capabilities.forEach(this::add);
+    }
 
     public Capabilities(ByteBuf in){
-        int hastSetLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (hastSetLength > HASHSET_SIZE_LIMIT) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-        for (int i = 0; i < hastSetLength; i++) {
-            String string = Packet.readStringVLQ(in);
-            this.add(string);
-        }
+        readCapabilitiees(in);
     }
 
     public Capabilities(HashSet<String> capabilities){
@@ -67,6 +64,10 @@ public class Capabilities extends HashSet<String> {
             Packet.writeStringVLQ(out, string);
         }
         this.clear();
+    }
+
+    public Capabilities copy(){
+        return new Capabilities(this);
     }
 
     @Override

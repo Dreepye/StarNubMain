@@ -16,9 +16,11 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.chat;
+package starbounddata.types.maybe;
 
-public enum ChatSendChannel {
-    UNIVERSE,
-    PLANET
+import utilities.datatypes.maybe.Maybe;
+
+public class MaybeString extends Maybe<String> {
+
+
 }

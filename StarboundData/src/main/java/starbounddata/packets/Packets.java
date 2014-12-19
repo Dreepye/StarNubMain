@@ -34,12 +34,12 @@ import java.util.Set;
 public enum Packets {
     PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     SERVERDISCONNECT("ServerDisconnectPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
+    CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.NOT_USED), // Packet.Direction.TO_STARBOUND_CLIENT
     HANDSHAKECHALLENGE("", Packet.Direction.NOT_USED),
     CHATRECEIVE("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CELESTIALRESPONSE("", Packet.Direction.NOT_USED),
-    CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.NOT_USED),// Packet.Direction.TO_STARBOUND_SERVER
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
     PLAYERWARP("", Packet.Direction.NOT_USED),
@@ -100,33 +100,8 @@ public enum Packets {
         return packetClasses;
     }
 
-    /**
-     * Recommended: For connections StarNub usage.
-     * <p>
-     * Uses: This method will scan the class path starbounddata.packets and this enum and match class paths with packet types
-     * to be pre loaded for incoming connections
-     */
-    public static HashMap<Packets, Class> setPrePacketCache() {
-        Reflections reflections = new Reflections("starbounddata.packets");
-        Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
-        HashMap<String, Class> packetPaths = new HashMap<String, Class>();
-        for (Class c : allClasses) {
-            String className = c.getName();
-            packetPaths.put(className.substring(className.lastIndexOf(".") + 1), c);
-        }
-        HashMap<Packets, Class> packetCacheToSet = new HashMap<>();
-        for (Packets packet : Packets.values()) {
-            if (!packet.classString.isEmpty() || !(packet.classString.length() < 4) || packet.direction != Packet.Direction.NOT_USED) {
-                String packetName = packet.classString.substring(0, packet.classString.lastIndexOf("."));
-                Class packetPath = packetPaths.get(packetName);
-                packetCacheToSet.put(packet, packetPath);
-            }
-        }
-        return packetCacheToSet;
-    }
-
-    public byte getPacketId() {
-        return (byte) this.ordinal();
+    public static void setPacketClasses(HashMap<Packets, Class> packetClasses) {
+        Packets.packetClasses = packetClasses;
     }
 
     public String getClassString() {
@@ -143,6 +118,45 @@ public enum Packets {
 
     public void setDirection(Packet.Direction direction) {
         this.direction = direction;
+    }
+
+    public byte getPacketId() {
+        return (byte) this.ordinal();
+    }
+
+    /**
+     * Recommended: For connections StarNub usage.
+     * <p>
+     * Uses: This method will scan the class path starbounddata.packets and this enum and match class paths with packet types
+     * to be pre loaded for incoming connections
+     */
+    public static HashMap<Packets, Class> setPrePacketCache() {
+        Reflections reflections = new Reflections("starbounddata.packets");
+        Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
+        HashMap<String, Class> packetPaths = new HashMap<String, Class>();
+        for (Class c : allClasses) {
+            String className = c.getName();
+            packetPaths.put(className.substring(className.lastIndexOf(".") + 1), c);
+        }
+        HashMap<Packets, Class> packetCacheToSet = new HashMap<>();
+        for (Packets packet : Packets.values()) {
+            if (!packet.classString.isEmpty() && !(packet.classString.length() < 4) && packet.direction != Packet.Direction.NOT_USED) {
+                String packetName = packet.classString.substring(0, packet.classString.lastIndexOf("."));
+                Class packetPath = packetPaths.get(packetName);
+                packetCacheToSet.put(packet, packetPath);
+            }
+        }
+        return packetCacheToSet;
+    }
+
+    public static Packets fromString(String string){
+        for(Packets p : Packets.values()){
+            String packetClassString = p.getClassString();
+            if (packetClassString.equalsIgnoreCase(string)){
+                return p;
+            }
+        }
+        return null;
     }
 
     @Override

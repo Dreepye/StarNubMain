@@ -22,8 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.ship.ShipUpgrades;
-import starbounddata.variants.Variant;
+import starbounddata.types.ship.ShipUpgrades;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -180,12 +179,26 @@ public class ClientConnectPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.assetDigest = readVLQArray(in);
+//        System.out.println(in.readerIndex());
+//        System.out.println(in.readableBytes());
+//        ByteBufferUtilities.search(in, "Underbalanced");
+//        try {
+//            ByteBufferUtilities.search(in, UUIDUtilities.fromString("2c9400bee71f66c3ea36d9bdd816c723"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(in.readerIndex());
+//        System.out.println(in.readableBytes());
+
+        this.assetDigest = in.readBytes(35).array();
         this.playerUuid = readUUID(in);
         this.playerName = readStringVLQ(in);
         this.playerSpecies = readStringVLQ(in);
-        this.shipWorld = readVLQArray(in);
+        this.shipData = readVLQArray(in);
+        this.shipUpgrades.readShipUpgrades(in);
         this.account = readStringVLQ(in);
+        System.out.println(in.readerIndex());
+        System.out.println(in.readableBytes());
     }
 
     /**
@@ -198,33 +211,27 @@ public class ClientConnectPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        writeStringVLQ(out, this.assetDigest);
-        try {
-            this.Claim.writeToByteBuffer(out);
-        } catch (Exception e) {
-//            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e)); // ToDo some return facility for this
-        }
-        writeBoolean(out, this.uuid != null);
-        if (this.uuid != null) {
-            writeUUID(out, this.uuid);
-        }
+        out.writeBytes(assetDigest);
+        writeUUID(out, this.playerUuid);
         writeStringVLQ(out, this.playerName);
         writeStringVLQ(out, this.playerSpecies);
-        writeVLQArray(out, this.shipWorld);
-        writeStringVLQ(out, this.account);
+        writeVLQArray(out, this.shipData);
+        this.shipUpgrades.writeShipUpgrades(out);
+        if (account != null) {
+            writeStringVLQ(out, this.account);
+        }
     }
 
     @Override
     public String toString() {
         return "ClientConnectPacket{" +
-                "assetDigest='" + assetDigest + '\'' +
-                ", Claim=" + Claim +
-                ", uuid=" + uuid +
+                "assetDigest=" + Arrays.toString(assetDigest) +
+                ", playerUuid=" + playerUuid +
                 ", playerName='" + playerName + '\'' +
                 ", playerSpecies='" + playerSpecies + '\'' +
-                ", shipWorld=" + Arrays.toString(shipWorld) +
+                ", shipData=" + Arrays.toString(shipData) +
+                ", shipUpgrades=" + shipUpgrades +
                 ", account='" + account + '\'' +
                 "} " + super.toString();
     }
-
 }

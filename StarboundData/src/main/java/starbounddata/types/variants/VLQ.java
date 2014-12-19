@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starbounddata.variants;
+package starbounddata.types.variants;
 
 import io.netty.buffer.ByteBuf;
 
@@ -41,6 +41,8 @@ public class VLQ {
      */
     private long value;
 
+    private byte [] bytes;
+
     public VLQ() {
     }
 
@@ -49,16 +51,17 @@ public class VLQ {
         this.value = value;
     }
 
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will created a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will created a s{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
      * <p>
      *
      * @param in ByteBuf in which is to be read
-     * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.variants.VLQ}
+     * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.types.variants.VLQ}
      */
     public static VLQ signedFromBuffer(ByteBuf in) {
         VLQ value = unsignedFromBuffer(in);
@@ -74,14 +77,14 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will created a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will created a u{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
      * <p>
      *
      * @param in ByteBuf in which is to be read
-     * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.variants.VLQ}
-     * @throws IndexOutOfBoundsException if the {@link starbounddata.variants.VLQ} ran out of bytes while reading
+     * @return VLQ which represent how many reason bytes exist after the {@link starbounddata.types.variants.VLQ}
+     * @throws IndexOutOfBoundsException if the {@link starbounddata.types.variants.VLQ} ran out of bytes while reading
      */
     public static VLQ unsignedFromBuffer(ByteBuf in) throws IndexOutOfBoundsException {
         long value = 0L;
@@ -109,7 +112,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will created a s{@link starbounddata.variants.VLQ} from a long
+     * Uses: This will created a s{@link starbounddata.types.variants.VLQ} from a long
      * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
      * <p>
@@ -130,7 +133,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will created a u{@link starbounddata.variants.VLQ} from a long
+     * Uses: This will created a u{@link starbounddata.types.variants.VLQ} from a long
      * <p>
      * Notes: This will create a VLQ object and SHOULD NOT be used when possible
      * <p>
@@ -157,7 +160,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will read a s{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will read a s{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>
@@ -178,7 +181,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will read a u{@link starbounddata.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will read a u{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>
@@ -205,7 +208,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will read a s{@link starbounddata.variants.VLQ} from a byte[]
+     * Uses: This will read a s{@link starbounddata.types.variants.VLQ} from a byte[]
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>
@@ -226,7 +229,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will read a u{@link starbounddata.variants.VLQ} from a byte[]
+     * Uses: This will read a u{@link starbounddata.types.variants.VLQ} from a byte[]
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>
@@ -251,7 +254,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will write a s{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will write a s{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>
@@ -271,7 +274,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will write a u{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will write a u{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>
@@ -299,7 +302,7 @@ public class VLQ {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will write a u{@link starbounddata.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will write a u{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
      * <p>
      * Notes: This will not create a VLQ object and should be used
      * <p>

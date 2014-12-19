@@ -117,7 +117,7 @@ public class WarpCommand extends Packet {
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
-     * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.vectors.Vec2IArray} constructor
+     * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.types.vectors.Vec2IArray} constructor
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */

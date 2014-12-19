@@ -280,5 +280,4 @@ public class StringUtilities {
         }
         return s;
     }
-
 }

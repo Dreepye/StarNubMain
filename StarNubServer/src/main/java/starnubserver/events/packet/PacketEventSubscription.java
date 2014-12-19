@@ -19,6 +19,7 @@
 package starnubserver.events.packet;
 
 import starbounddata.packets.Packet;
+import starbounddata.packets.Packets;
 import starnubserver.StarNub;
 import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventSubscription;
@@ -79,7 +80,12 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      */
     @Override
     public void submitRegistration() {
-        if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")) {
+        boolean decoding = (boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding");
+        String packetClassString = EVENT_KEY.toString();
+        String subString = packetClassString.substring(packetClassString.lastIndexOf(".") + 1) + ".class";
+        Packets packet = Packets.fromString(subString);
+        boolean packetEventUsed = packet.getDirection() != Packet.Direction.NOT_USED;
+        if (decoding && packetEventUsed) {
             PacketEventRouter.getInstance().registerEventSubscription(EVENT_KEY, this);
             new StarNubEvent("StarNub_Packet_Subscription_Registered", this);
         }

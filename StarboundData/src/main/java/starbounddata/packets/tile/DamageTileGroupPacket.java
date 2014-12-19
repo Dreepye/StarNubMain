@@ -22,10 +22,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.tiles.TileDamage;
-import starbounddata.tiles.TileLayer;
-import starbounddata.vectors.Vec2F;
-import starbounddata.vectors.Vec2IArray;
+import starbounddata.types.tiles.TileDamage;
+import starbounddata.types.tiles.TileLayer;
+import starbounddata.types.vectors.Vec2F;
+import starbounddata.types.vectors.Vec2IArray;
 
 /**
  * Represents the DamageTileGroup and methods to generate a packet data for StarNub and Plugins
@@ -149,7 +149,7 @@ public class DamageTileGroupPacket extends Packet {
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
-     * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.vectors.Vec2IArray} constructor
+     * Note: This particular read will discard the packet if the tile radius exceed that of the {@link starbounddata.types.vectors.Vec2IArray} constructor
      *
      * @param in ByteBuf representing the reason to be read into the packet
      */

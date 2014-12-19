@@ -21,7 +21,7 @@ package starnubserver.connections.player.generic;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starbounddata.color.GameColors;
+import starbounddata.types.color.GameColors;
 import starnubserver.database.tables.Tags;
 
 import java.util.List;

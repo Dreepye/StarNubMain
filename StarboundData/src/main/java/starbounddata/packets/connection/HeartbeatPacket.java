@@ -22,7 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.variants.VLQ;
+import starbounddata.types.variants.VLQ;
 
 /**
  * Represents the HeartbeatPacket and methods to generate a packet data for StarNub and Plugins

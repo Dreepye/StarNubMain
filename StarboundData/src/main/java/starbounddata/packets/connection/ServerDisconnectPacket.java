@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
+import starbounddata.types.variants.VLQ;
 
 
 /**
@@ -108,6 +109,9 @@ public class ServerDisconnectPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
+//        System.err.println(Arrays.toString(in.array()));
+        System.err.println(VLQ.readSignedFromBufferNoObject(in));
+        System.err.println(in.readableBytes());
         this.reason = readStringVLQ(in);
     }
 

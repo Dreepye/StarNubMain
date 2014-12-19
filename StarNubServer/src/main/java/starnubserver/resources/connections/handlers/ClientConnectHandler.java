@@ -21,7 +21,7 @@ package starnubserver.resources.connections.handlers;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import starbounddata.chat.Mode;
+import starbounddata.types.chat.Mode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starboundmanager.Starting;
@@ -91,7 +91,7 @@ public class ClientConnectHandler extends PacketEventHandler {
         StarNubProxyConnection starnubProxyConnection = (StarNubProxyConnection) StarNub.getConnections().getOPEN_CONNECTIONS().remove(clientCTX);
 
         String playerName = clientConnectPacket.getPlayerName();
-        UUID playerUUID = clientConnectPacket.getUuid();
+        UUID playerUUID = clientConnectPacket.getPlayerUuid();
 
         PlayerSession playerSession = new PlayerSession(starnubProxyConnection, playerName, playerUUID);
 

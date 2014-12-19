@@ -16,7 +16,7 @@
 * this CodeHome Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starbounddata.variants;
+package starbounddata.types.variants;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.packets.Packet;
@@ -67,12 +67,12 @@ public class Variant {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will created a {@link starbounddata.variants.Variant} from a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will created a {@link starbounddata.types.variants.Variant} from a {@link io.netty.buffer.ByteBuf}
      * <p>
      *
-     * @param in ByteBuf representing the bytes to be read into a {@link starbounddata.variants.Variant}
-     * @return Variant representing the {@link starbounddata.variants.Variant} object
-     * @throws Exception if this ByteBuf does not represent a {@link starbounddata.variants.Variant}
+     * @param in ByteBuf representing the bytes to be read into a {@link starbounddata.types.variants.Variant}
+     * @return Variant representing the {@link starbounddata.types.variants.Variant} object
+     * @throws Exception if this ByteBuf does not represent a {@link starbounddata.types.variants.Variant}
      */
     public Variant readFromByteBuffer(ByteBuf in) throws Exception {
         Variant variant = new Variant();
@@ -116,7 +116,7 @@ public class Variant {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will write a {@link starbounddata.variants.Variant} to a {@link io.netty.buffer.ByteBuf}
+     * Uses: This will write a {@link starbounddata.types.variants.Variant} to a {@link io.netty.buffer.ByteBuf}
      * <p>
      *
      * @param out ByteBuf representing the buffer to write the variant to

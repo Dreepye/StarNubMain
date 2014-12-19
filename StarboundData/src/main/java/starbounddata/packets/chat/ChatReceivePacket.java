@@ -21,8 +21,8 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.chat.MessageContext;
-import starbounddata.chat.Mode;
+import starbounddata.types.chat.MessageContext;
+import starbounddata.types.chat.Mode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 

@@ -16,10 +16,9 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.chat;
+package starbounddata.types.tiles;
 
-public enum ChatSendMode {
-    BROADCAST,
-    LOCAL,
-    PARTY
+public enum TileLayer {
+    FOREGROUND,
+    BACKGROUND
 }

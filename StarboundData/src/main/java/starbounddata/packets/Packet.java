@@ -21,15 +21,15 @@ package starbounddata.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.variants.VLQ;
+import starbounddata.types.variants.VLQ;
 import utilities.compression.Zlib;
 
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static starbounddata.variants.VLQ.createVLQNoObject;
-import static starbounddata.variants.VLQ.writeSignedVLQNoObjectPacketEncoder;
+import static starbounddata.types.variants.VLQ.createVLQNoObject;
+import static starbounddata.types.variants.VLQ.writeSignedVLQNoObjectPacketEncoder;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -229,17 +229,6 @@ public abstract class Packet {
         return msgOut;
     }
 
-    @Override
-    public String toString() {
-        return "Packet{" +
-                "DIRECTION=" + DIRECTION +
-                ", PACKET_ID=" + PACKET_ID +
-                ", SENDER_CTX=" + SENDER_CTX +
-                ", DESTINATION_CTX=" + DESTINATION_CTX +
-                ", recycle=" + recycle +
-                '}';
-    }
-
     /**
      * This represents the direction the packet travels to.
      */
@@ -260,7 +249,9 @@ public abstract class Packet {
      * @return uuid the uuid that was read
      */
     public static UUID readUUID(ByteBuf in) {
-        return UUID.nameUUIDFromBytes(in.readBytes(16).array());
+        long mostSignificantBits = in.readLong();
+        long leastSignificantBits = in.readLong();
+        return new UUID(mostSignificantBits, leastSignificantBits);
     }
 
     /**
@@ -359,5 +350,16 @@ public abstract class Packet {
      */
     public static void writeBoolean(ByteBuf out, boolean value) {
         out.writeByte(value ? (byte) 1 : (byte) 0);
+    }
+
+    @Override
+    public String toString() {
+        return "Packet{" +
+                "DIRECTION=" + DIRECTION +
+                ", PACKET_ID=" + PACKET_ID +
+                ", SENDER_CTX=" + SENDER_CTX +
+                ", DESTINATION_CTX=" + DESTINATION_CTX +
+                ", recycle=" + recycle +
+                '}';
     }
 }

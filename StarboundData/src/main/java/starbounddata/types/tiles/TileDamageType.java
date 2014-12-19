@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.tiles;
+package starbounddata.types.tiles;
 
 public enum TileDamageType {
     NONE,

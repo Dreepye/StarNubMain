@@ -16,9 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.tiles;
+package utilities.uuid;
 
-public enum TileLayer {
-    FOREGROUND,
-    BACKGROUND
+import java.util.UUID;
+
+public class UUIDUtilities {
+
+    public static UUID fromString(String uuid){
+        if (uuid.contains("-")){
+            return UUID.fromString(uuid);
+        } else {
+            return UUID.fromString(uuid.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
+        }
+    }
 }

@@ -18,7 +18,7 @@
 
 package starnubserver.resources;
 
-import starbounddata.color.GameColors;
+import starbounddata.types.color.GameColors;
 import starbounddata.packets.Packet;
 import starnubserver.connections.player.account.Settings;
 import starnubserver.connections.player.session.PlayerSession;

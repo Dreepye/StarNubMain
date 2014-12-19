@@ -23,8 +23,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.variants.VLQ;
-import starbounddata.variants.Variant;
+import starbounddata.types.variants.VLQ;
+import starbounddata.types.variants.Variant;
 
 import java.util.Arrays;
 

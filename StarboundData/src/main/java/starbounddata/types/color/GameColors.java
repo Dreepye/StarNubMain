@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starbounddata.color;
+package starbounddata.types.color;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 
 /**
  * Represents the default colors set by the Server Owners configuration, contained with are
- * the {@link starbounddata.color.GameColors.Colors} enumeration and methods as well as
- * the {@link starbounddata.color.GameColors.Colors.Color} class used to create colors representations
+ * the {@link starbounddata.types.color.GameColors.Colors} enumeration and methods as well as
+ * the {@link starbounddata.types.color.GameColors.Colors.Color} class used to create colors representations
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -101,7 +101,7 @@ public final class GameColors {
 
     /**
      * Represents Starbound colors represented in Verb Name, Hex, and StarNub shortcut annotation, this enumeration also contains
-     * the {@link starbounddata.color.GameColors.Colors.Color} class
+     * the {@link starbounddata.types.color.GameColors.Colors.Color} class
      * <p>
      *
      * @author Daniel (Underbalanced) (www.StarNub.org)
@@ -507,11 +507,11 @@ public final class GameColors {
         /**
          * Recommended: For Plugin Developers & Anyone else.
          * <p>
-         * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code
+         * Uses: This method will create a HashSet of {@link starbounddata.types.color.GameColors.Colors.Color}'s to be returned to the calling code
          * <p>
-         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         * Note: {@link starbounddata.types.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
          *
-         * @return HashSet representing all of the {@link starbounddata.color.GameColors.Colors.Color}'s available
+         * @return HashSet representing all of the {@link starbounddata.types.color.GameColors.Colors.Color}'s available
          */
         public static HashSet<Color> colorList() {
             HashSet<Color> colors = new HashSet<Color>();
@@ -524,9 +524,9 @@ public final class GameColors {
         /**
          * Recommended: For connections StarNub usage.
          * <p>
-         * Uses: This method will create a new Color using the enumeration {@link starbounddata.color.GameColors.Colors.Color}
+         * Uses: This method will create a new Color using the enumeration {@link starbounddata.types.color.GameColors.Colors.Color}
          * <p>
-         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         * Note: {@link starbounddata.types.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
          *
          * @param c Enumeration representing the color
          * @return Color representing the build color
@@ -538,15 +538,15 @@ public final class GameColors {
         /**
          * Recommended: For Plugin Developers & Anyone else.
          * <p>
-         * Uses: This method will create a HashSet of {@link starbounddata.color.GameColors.Colors.Color}'s to be returned to the calling code based on a provided search term.
+         * Uses: This method will create a HashSet of {@link starbounddata.types.color.GameColors.Colors.Color}'s to be returned to the calling code based on a provided search term.
          * The method will return anything contains the searched text, Example: findColors("Blue") or findColors("bLuE") would return (Aliceblue, blue, blueviolet,
          * cadetblue, darkslateblue, deepskyblue, dodgerblue, lightskyblue, lightsteelblue, midnightblue, powderblue, royalblue, skyblue, slateblue, steelblue). This
          * search is case insensitive.
          * <p>
-         * Note: {@link starbounddata.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
+         * Note: {@link starbounddata.types.color.GameColors.Colors.Color} represents a Starbound Color by Name, Hex and StarNub shortcut
          *
          * @param searchTerm String representing the color or colors to be searched
-         * @return HashSet representing all of the found {@link starbounddata.color.GameColors.Colors.Color}'s
+         * @return HashSet representing all of the found {@link starbounddata.types.color.GameColors.Colors.Color}'s
          */
         public static HashSet<Color> findColors(String searchTerm) {
             HashSet<Color> colors = new HashSet<Color>();

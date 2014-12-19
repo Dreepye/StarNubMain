@@ -21,7 +21,7 @@ package starnubserver.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import starbounddata.chat.*;
+import starbounddata.types.chat.*;
 import starnubdata.generic.BanType;
 import starnubdata.generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;

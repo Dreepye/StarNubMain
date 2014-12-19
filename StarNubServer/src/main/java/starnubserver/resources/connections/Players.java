@@ -21,8 +21,9 @@ package starnubserver.resources.connections;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
-import starbounddata.packets.connection.ClientConnectPacket;
-import starbounddata.packets.connection.ConnectResponsePacket;
+import starbounddata.packets.chat.ChatReceivePacket;
+import starbounddata.packets.chat.ChatSendPacket;
+import starbounddata.packets.connection.ClientDisconnectRequestPacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
@@ -32,10 +33,8 @@ import starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.events.packet.PacketEventHandler;
 import starnubserver.events.packet.PacketEventSubscription;
-import starnubserver.resources.connections.handlers.ClientConnectHandler;
-import starnubserver.resources.connections.handlers.ConnectionResponseHandler;
-import starnubserver.resources.connections.handlers.ServerDisconnectHandler;
 import starnubserver.resources.files.Operators;
 import utilities.connectivity.ConnectionType;
 import utilities.events.Priority;
@@ -88,11 +87,40 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 
     private void registerPacketHandlers(int concurrencyLevel){
         /* Connection Related */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new ConnectionResponseHandler(CONNECTIONS));
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new ConnectionResponseHandler(CONNECTIONS));
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
         /* Permission Related */
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler());
+        packetDebug();
+    }
+
+    private void packetDebug() {
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientDisconnectRequestPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ChatReceivePacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ChatSendPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
     }
 
     public PlayerCtxCacheWrapper getACCEPT_REJECT() {

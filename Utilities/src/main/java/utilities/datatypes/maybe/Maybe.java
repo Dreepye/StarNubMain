@@ -16,11 +16,37 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.chat;
+package utilities.datatypes.maybe;
 
-public enum ChatReceiveChannel {
-    PLANET,
-    UNIVERSE,
-    WHISPER,
-    COMMAND
+public class Maybe<T> {
+
+    private Is is;
+    private T object;
+
+    public Maybe() {
+    }
+
+    public Is getIs() {
+        return is;
+    }
+
+    public void setIs(Is is) {
+        this.is = is;
+    }
+
+    public T getObject() {
+        return object;
+    }
+
+    public void setObject(T object) {
+        this.object = object;
+    }
+
+    @Override
+    public String toString() {
+        return "Maybe{" +
+                "is=" + is +
+                ", object=" + object +
+                '}';
+    }
 }

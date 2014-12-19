@@ -16,10 +16,10 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starbounddata.vectors;
+package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.variants.VLQ;
+import starbounddata.types.variants.VLQ;
 
 import java.util.ArrayList;
 import java.util.HashSet;
