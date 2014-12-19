@@ -60,9 +60,14 @@ public class CommandPackage {
         this.COMMAND_CLASS = COMMAND_CLASS;
         this.PERMISSIONS = new HashSet<>();
         for (String command : COMMANDS) {
-            for (String mainArg : MAIN_ARGS) {
-                String permission = COMMAND_NAME + "." + command + "." + mainArg;
+            if (MAIN_ARGS.size() == 0){
+                String permission = COMMAND_NAME + "." + command;
                 PERMISSIONS.add(permission.toLowerCase());
+            } else {
+                for (String mainArg : MAIN_ARGS) {
+                    String permission = COMMAND_NAME + "." + command + "." + mainArg;
+                    PERMISSIONS.add(permission.toLowerCase());
+                }
             }
         }
         this.CUSTOM_SPLIT = CUSTOM_SPLIT;

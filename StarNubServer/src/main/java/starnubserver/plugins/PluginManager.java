@@ -142,11 +142,13 @@ public class PluginManager {
             if (match) {
                 return plugin;
             } else if (!nameOnly) {
-                String commandsName = plugin.getCOMMAND_INFO().getCOMMANDS_NAME();
-                String commandsAlias = plugin.getCOMMAND_INFO().getCOMMANDS_ALIAS();
-                boolean matched = commandsName.equalsIgnoreCase(searchTerm) || commandsAlias.equalsIgnoreCase(searchTerm);
-                if(matched){
-                    return plugin;
+                if(plugin.getCOMMAND_INFO() !=  null) {
+                    String commandsName = plugin.getCOMMAND_INFO().getCOMMANDS_NAME();
+                    String commandsAlias = plugin.getCOMMAND_INFO().getCOMMANDS_ALIAS();
+                    boolean matched = commandsName.equalsIgnoreCase(searchTerm) || commandsAlias.equalsIgnoreCase(searchTerm);
+                    if (matched) {
+                        return plugin;
+                    }
                 }
             }
         }

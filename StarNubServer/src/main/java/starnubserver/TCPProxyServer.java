@@ -26,8 +26,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import utilities.concurrent.thread.NamedThreadFactory;
 
-import java.util.concurrent.TimeUnit;
-
 
 /**
  * Represents the TCPProxyServer (Public Facing).
@@ -133,13 +131,8 @@ class TCPProxyServer {
                 .childHandler(new TCPProxyServerInitializer())
                 .bind((int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port")).channel();
 
-        new StarNubTask("StarNub", "StarNub - TCP Connection Thread Health Check", false, 30, 30, TimeUnit.SECONDS, this::healthChecks);
-
     }
 
-    public void healthChecks(){
-
-    }
 
     public static void shutdownNetworkThreads(){
         if (connectionBossGroup != null) {

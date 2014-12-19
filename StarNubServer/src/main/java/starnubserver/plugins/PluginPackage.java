@@ -128,7 +128,7 @@ public abstract class PluginPackage {
 
     public boolean hasCommands() {
         return COMMAND_INFO != null && COMMAND_INFO.getCOMMANDS().size() > 0;
-    }
+     }
 
 
     public void dumpPluginData() throws IOException {
@@ -139,7 +139,12 @@ public abstract class PluginPackage {
         YamlUtilities.toFileYamlDump(linkedHashMap, "StarNub/Plugins/" + NAME + "/Information/", "Plugin_Details.yml");
         if (COMMAND_INFO != null && COMMAND_INFO.getCOMMANDS() != null) {
             for (Command command : COMMAND_INFO.getCOMMANDS()) {
-                String commands = command.getCOMMANDS().toString();
+                String commands;
+                if(command.getCOMMANDS().size() > 5){
+                    commands = "multiple_commands";
+                } else {
+                    commands = command.getCOMMANDS().toString();
+                }
                 LinkedHashMap<String, Object> commandDetailsMap = command.getCommandDetailsMap(NAME, COMMAND_INFO.getCOMMANDS_NAME(), COMMAND_INFO.getCOMMANDS_ALIAS());
                 YamlUtilities.toFileYamlDump(commandDetailsMap, "StarNub/Plugins/" + NAME + "/Information/Commands/", commands + "_Details.yml");
             }

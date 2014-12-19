@@ -6,7 +6,7 @@ Change Log:
         - Changed all socket settings, increasing the buffer allocation and write amount, per right
 
 //dependacy versions
-
+EDEN SPACE FAST USASE
 //planet who
 //EPOLL
 //Payer session permination time update

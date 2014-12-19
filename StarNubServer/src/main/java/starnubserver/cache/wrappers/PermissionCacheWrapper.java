@@ -94,7 +94,7 @@ public class PermissionCacheWrapper extends PlayerCtxCacheWrapper {
     }
 
     private void cacheVerifyCleanTask() {
-        new StarNubTask(getCACHE_OWNER(), getCACHE_NAME(), true, 1, 1, TimeUnit.MINUTES, this::cacheVerifyClean);
+        new StarNubTask(getCACHE_OWNER(), getCACHE_NAME(), true, 5, 5, TimeUnit.MINUTES, this::cacheVerifyClean);
     }
 
     private void cacheVerifyClean(){
