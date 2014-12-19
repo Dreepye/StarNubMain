@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
+import starbounddata.ship.ShipUpgrades;
 import starbounddata.variants.Variant;
 
 import java.util.Arrays;
@@ -42,15 +43,13 @@ import java.util.UUID;
  */
 public class ClientConnectPacket extends Packet {
 
-    private String assetDigest;
-    @Deprecated
-    private Variant Claim;
-    private java.util.UUID uuid;
+    private byte[] assetDigest;
+    private UUID playerUuid;
     private String playerName;
-    private String species;
-    private byte[] shipWorld;
+    private String playerSpecies;
+    private byte[] shipData;
+    private ShipUpgrades shipUpgrades = new ShipUpgrades();
     private String account;
-
 
     /**
      * Recommended: For connections StarNub usage.
@@ -75,14 +74,13 @@ public class ClientConnectPacket extends Packet {
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, String assetDigest, UUID uuid, String playerName, String species, byte[] shipWorld, String account) {
+    public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, byte[] assetDigest, UUID playerUuid, String playerName, String playerSpecies, byte[] shipData, String account) {
         super(Packets.CLIENTCONNECT.getDirection(), Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
         this.assetDigest = assetDigest;
-//        Claim = claim;
-        this.uuid = uuid;
+        this.playerUuid = playerUuid;
         this.playerName = playerName;
-        this.species = species;
-        this.shipWorld = shipWorld;
+        this.playerSpecies = playerSpecies;
+        this.shipData = shipData;
         this.account = account;
     }
 
@@ -96,40 +94,28 @@ public class ClientConnectPacket extends Packet {
     public ClientConnectPacket(ClientConnectPacket packet) {
         super(packet);
         this.assetDigest = packet.getAssetDigest();
-        try {
-            Claim = packet.getClaim().copy();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.uuid = UUID.fromString(packet.getUuid().toString());
+        this.playerUuid = UUID.fromString(packet.getPlayerUuid().toString());
         this.playerName = packet.getPlayerName();
-        this.species = packet.getSpecies();
-        this.shipWorld = packet.getShipWorld().clone();
+        this.playerSpecies = packet.getPlayerSpecies();
+        this.shipData = packet.getShipData().clone();
+        this.setShipUpgrades(packet.getShipUpgrades());
         this.account = packet.getAccount();
     }
 
-    public String getAssetDigest() {
+    public byte[] getAssetDigest() {
         return assetDigest;
     }
 
-    public void setAssetDigest(String assetDigest) {
+    public void setAssetDigest(byte[] assetDigest) {
         this.assetDigest = assetDigest;
     }
 
-    public Variant getClaim() {
-        return Claim;
+    public UUID getPlayerUuid() {
+        return playerUuid;
     }
 
-    public void setClaim(Variant claim) {
-        Claim = claim;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setPlayerUuid(UUID playerUuid) {
+        this.playerUuid = playerUuid;
     }
 
     public String getPlayerName() {
@@ -140,20 +126,28 @@ public class ClientConnectPacket extends Packet {
         this.playerName = playerName;
     }
 
-    public String getSpecies() {
-        return species;
+    public String getPlayerSpecies() {
+        return playerSpecies;
     }
 
-    public void setSpecies(String species) {
-        this.species = species;
+    public void setPlayerSpecies(String playerSpecies) {
+        this.playerSpecies = playerSpecies;
     }
 
-    public byte[] getShipWorld() {
-        return shipWorld;
+    public byte[] getShipData() {
+        return shipData;
     }
 
-    public void setShipWorld(byte[] shipWorld) {
-        this.shipWorld = shipWorld;
+    public void setShipData(byte[] shipData) {
+        this.shipData = shipData;
+    }
+
+    public ShipUpgrades getShipUpgrades() {
+        return shipUpgrades;
+    }
+
+    public void setShipUpgrades(ShipUpgrades shipUpgrades) {
+        this.shipUpgrades = shipUpgrades;
     }
 
     public String getAccount() {
@@ -186,18 +180,10 @@ public class ClientConnectPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.assetDigest = readStringVLQ(in);
-        try {
-            this.Claim = new Variant(in);
-        } catch (Exception e) {
-//            StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e)); // ToDo some return facility for this
-        }
-        boolean uuid = readBoolean(in);
-        if (uuid) {
-            this.uuid = readUUID(in);
-        }
+        this.assetDigest = readVLQArray(in);
+        this.playerUuid = readUUID(in);
         this.playerName = readStringVLQ(in);
-        this.species = readStringVLQ(in);
+        this.playerSpecies = readStringVLQ(in);
         this.shipWorld = readVLQArray(in);
         this.account = readStringVLQ(in);
     }
@@ -223,7 +209,7 @@ public class ClientConnectPacket extends Packet {
             writeUUID(out, this.uuid);
         }
         writeStringVLQ(out, this.playerName);
-        writeStringVLQ(out, this.species);
+        writeStringVLQ(out, this.playerSpecies);
         writeVLQArray(out, this.shipWorld);
         writeStringVLQ(out, this.account);
     }
@@ -235,7 +221,7 @@ public class ClientConnectPacket extends Packet {
                 ", Claim=" + Claim +
                 ", uuid=" + uuid +
                 ", playerName='" + playerName + '\'' +
-                ", species='" + species + '\'' +
+                ", playerSpecies='" + playerSpecies + '\'' +
                 ", shipWorld=" + Arrays.toString(shipWorld) +
                 ", account='" + account + '\'' +
                 "} " + super.toString();

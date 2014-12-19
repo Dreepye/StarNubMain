@@ -30,15 +30,14 @@ import starbounddata.packets.Packets;
  * be able to connect to the starnubserver and received a wrong starnubclient version message. This is the first packet sent after a starnubclient completes a 3 way TCP handshake
  * <p>
  * Packet Direction: Server -> Client
+ * <p>
+ * Starbound 1.0 Compliant
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class ProtocolVersionPacket extends Packet {
 
-    /**
-     * Some int set by the starnubserver based on the servers Starbound version
-     */
     private int protocolVersion;
 
     /**

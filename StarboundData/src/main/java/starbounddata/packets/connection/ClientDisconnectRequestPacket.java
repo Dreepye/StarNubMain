@@ -49,7 +49,7 @@ public class ClientDisconnectRequestPacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
     public ClientDisconnectRequestPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.CLIENTDISCONNECT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+        super(DIRECTION, Packets.CLIENTDISCONNECTREQUEST.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -62,7 +62,7 @@ public class ClientDisconnectRequestPacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
     public ClientDisconnectRequestPacket(ChannelHandlerContext DESTINATION_CTX) {
-        super(Packets.CLIENTDISCONNECT.getDirection(), Packets.CLIENTDISCONNECT.getPacketId(), null, DESTINATION_CTX);
+        super(Packets.CLIENTDISCONNECTREQUEST.getDirection(), Packets.CLIENTDISCONNECTREQUEST.getPacketId(), null, DESTINATION_CTX);
         emptyByte = 1;
     }
 

@@ -21,7 +21,8 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.chat.ChatReceiveChannel;
+import starbounddata.chat.MessageContext;
+import starbounddata.chat.Mode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -31,38 +32,18 @@ import starbounddata.packets.Packets;
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient
  * <p>
  * Packet Direction: Server -> Client
+ * <p>
+ * Starbound 1.0 Compliant
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class ChatReceivePacket extends Packet {
 
-    /**
-     * <br>
-     * 0 - Planet (String: ship_d07cdd7eb5bcba7a306edcf0fe610010 or Alpha Eta Car 0368 II a)
-     * <br>
-     * 1 - Universe
-     * <br>
-     * 2 - Whisper
-     * <br>
-     * 3 - Command
-     */
-    private ChatReceiveChannel channel;
-    /**
-     * ToDo: Insert expected string display
-     */
-    private String world;
-    /**
-     * ClientId of the sender which is assigned by the Starbound starnubserver
-     */
+
+    private MessageContext messageContext = new MessageContext();
     private int clientId;
-    /**
-     * Name of who sent the message
-     */
-    private String name;
-    /**
-     * Message sent from the starnubserver
-     */
+    private String fromName;
     private String message;
 
     /**
@@ -76,7 +57,7 @@ public class ChatReceivePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
     public ChatReceivePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.CHATRECEIVED.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+        super(DIRECTION, Packets.CHATRECEIVE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -87,17 +68,16 @@ public class ChatReceivePacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param world           String
+     * @param channelName           String
      * @param clientId        String clientID of the sender. *STARNUB RESERVES 5000*
-     * @param name            String name of the Sender
+     * @param fromName            String name of the Sender
      * @param message         String the message
      */
-    public ChatReceivePacket(ChannelHandlerContext DESTINATION_CTX, ChatReceiveChannel channel, String world, long clientId, String name, String message) {
-        super(Packets.CHATRECEIVED.getDirection(), Packets.CHATRECEIVED.getPacketId(), null, DESTINATION_CTX);
-        this.channel = channel;
-        this.world = world;
+    public ChatReceivePacket(ChannelHandlerContext DESTINATION_CTX, Mode mode, String channelName, long clientId, String fromName, String message) {
+        super(Packets.CHATRECEIVE.getDirection(), Packets.CHATRECEIVE.getPacketId(), null, DESTINATION_CTX);
+        messageContext.readMessageContext(mode, channelName);
         this.clientId = (int) clientId;
-        this.name = name;
+        this.fromName = fromName;
         this.message = message;
     }
 
@@ -110,27 +90,18 @@ public class ChatReceivePacket extends Packet {
      */
     public ChatReceivePacket(ChatReceivePacket packet) {
         super(packet);
-        this.channel = packet.getChannel();
-        this.world = packet.getWorld();
+        this.messageContext = packet.getMessageContext();
         this.clientId = packet.getClientId();
-        this.name = packet.getName();
-        this.message = packet.getName();
+        this.fromName = packet.getFromName();
+        this.message = packet.getMessage();
     }
 
-    public ChatReceiveChannel getChannel() {
-        return channel;
+    public MessageContext getMessageContext() {
+        return messageContext;
     }
 
-    public void setChannel(ChatReceiveChannel channel) {
-        this.channel = channel;
-    }
-
-    public String getWorld() {
-        return world;
-    }
-
-    public void setWorld(String world) {
-        this.world = world;
+    public void setMessageContext(MessageContext messageContext) {
+        this.messageContext = messageContext;
     }
 
     public int getClientId() {
@@ -141,12 +112,12 @@ public class ChatReceivePacket extends Packet {
         this.clientId = clientId;
     }
 
-    public String getName() {
-        return name;
+    public String getFromName() {
+        return fromName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
     }
 
     public String getMessage() {
@@ -178,10 +149,9 @@ public class ChatReceivePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.channel = ChatReceiveChannel.values()[in.readUnsignedByte()];
-        this.world = readStringVLQ(in);
+        this.messageContext.readMessageContext(in);
         this.clientId = in.readInt();
-        this.name = readStringVLQ(in);
+        this.fromName = readStringVLQ(in);
         this.message = readStringVLQ(in);
     }
 
@@ -195,20 +165,18 @@ public class ChatReceivePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeByte(this.channel.ordinal());
-        writeStringVLQ(out, this.world);
+        messageContext.writeMessageContext(out);
         out.writeInt(this.clientId);
-        writeStringVLQ(out, this.name);
+        writeStringVLQ(out, this.fromName);
         writeStringVLQ(out, this.message);
     }
 
     @Override
     public String toString() {
         return "ChatReceivePacket{" +
-                "channel=" + channel +
-                ", world='" + world + '\'' +
+                "messageContext=" + messageContext +
                 ", clientId=" + clientId +
-                ", name='" + name + '\'' +
+                ", fromName='" + fromName + '\'' +
                 ", message='" + message + '\'' +
                 "} " + super.toString();
     }

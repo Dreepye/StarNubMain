@@ -21,7 +21,7 @@ package starbounddata.packets.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.chat.ChatSendChannel;
+import starbounddata.chat.ChatSendMode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 
@@ -31,24 +31,16 @@ import starbounddata.packets.Packets;
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient
  * <p>
  * Packet Direction: Client -> Server
+ * <p>
+ * Starbound 1.0 Compliant
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class ChatSendPacket extends Packet {
 
-    /**
-     * <br>
-     * 0 - Universe
-     * <br>
-     * 1 - Planet  (String: ship_d07cdd7eb5bcba7a306edcf0fe610010  or Alpha Eta Car 0368 II a))
-     * <br>
-     */
-    private ChatSendChannel channel;
-    /**
-     * Message sent from the starnubclient
-     */
     private String message;
+    private ChatSendMode chatSendMode;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -61,7 +53,7 @@ public class ChatSendPacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
     public ChatSendPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.CHATSENT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+        super(DIRECTION, Packets.CHATSEND.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -72,12 +64,12 @@ public class ChatSendPacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param channel         ChatSendChannel representing the chanel to be sent on
+     * @param chatSendMode         ChatSentMode representing the chanel to be sent on
      * @param message         String representing the message
      */
-    public ChatSendPacket(ChannelHandlerContext DESTINATION_CTX, ChatSendChannel channel, String message) {
-        super(Packets.CHATSENT.getDirection(), Packets.CHATSENT.getPacketId(), null, DESTINATION_CTX);
-        this.channel = channel;
+    public ChatSendPacket(ChannelHandlerContext DESTINATION_CTX, ChatSendMode chatSendMode, String message) {
+        super(Packets.CHATSEND.getDirection(), Packets.CHATSEND.getPacketId(), null, DESTINATION_CTX);
+        this.chatSendMode = chatSendMode;
         this.message = message;
     }
 
@@ -90,16 +82,8 @@ public class ChatSendPacket extends Packet {
      */
     public ChatSendPacket(ChatSendPacket packet) {
         super(packet);
-        this.channel = packet.getChannel();
+        this.chatSendMode = packet.getChatSendMode();
         this.message = packet.getMessage();
-    }
-
-    public ChatSendChannel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(ChatSendChannel channel) {
-        this.channel = channel;
     }
 
     public String getMessage() {
@@ -108,6 +92,14 @@ public class ChatSendPacket extends Packet {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public ChatSendMode getChatSendMode() {
+        return chatSendMode;
+    }
+
+    public void setChatSendMode(ChatSendMode chatSendMode) {
+        this.chatSendMode = chatSendMode;
     }
 
     /**
@@ -132,7 +124,7 @@ public class ChatSendPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         this.message = readStringVLQ(in);
-        this.channel = ChatSendChannel.values()[in.readUnsignedByte()];
+        this.chatSendMode = ChatSendMode.values()[in.readUnsignedByte()];
     }
 
     /**
@@ -146,14 +138,14 @@ public class ChatSendPacket extends Packet {
     @Override
     public void write(ByteBuf out) {
         writeStringVLQ(out, this.message);
-        out.writeByte(this.channel.ordinal());
+        out.writeByte(this.chatSendMode.ordinal());
     }
 
     @Override
     public String toString() {
         return "ChatSendPacket{" +
-                "channel=" + channel +
-                ", message='" + message + '\'' +
+                "message='" + message + '\'' +
+                ", chatSendMode=" + chatSendMode +
                 "} " + super.toString();
     }
 }

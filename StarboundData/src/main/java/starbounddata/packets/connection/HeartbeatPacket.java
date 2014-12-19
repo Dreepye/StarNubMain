@@ -31,6 +31,8 @@ import starbounddata.variants.VLQ;
  * Starbound Server and sent to the Client, The starnubclient responds after 3 steps
  * <p>
  * Packet Direction: Server -> Client / Client -> Server
+ * <p>
+ * Starbound 1.0 Compliant
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta

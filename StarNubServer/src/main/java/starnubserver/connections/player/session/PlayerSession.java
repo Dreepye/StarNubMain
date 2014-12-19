@@ -21,13 +21,12 @@ package starnubserver.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starbounddata.chat.*;
 import starnubdata.generic.BanType;
 import starnubdata.generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import starbounddata.chat.ChatReceiveChannel;
-import starbounddata.chat.ChatSendChannel;
 import starbounddata.packets.Packet;
 import starbounddata.packets.chat.ChatReceivePacket;
 import starbounddata.packets.chat.ChatSendPacket;
@@ -377,11 +376,11 @@ public class PlayerSession {
     //TODO Get game tags
     //TODO Get console tags
 
-    public void sendChatMessage(Object sender, ChatReceiveChannel channel, String message) {
+    public void sendChatMessage(Object sender, Mode mode, String message) {
         ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
             String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
-            ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, channel, "Server", 1, nameOfSender, message);
+            ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, mode, "Server", 1, nameOfSender, message);
             chatReceivePacket.routeToDestinationNoFlush();
             StarNub.getLogger().cChatPrint("StarNub", message, chatReceivePacket);
         } else if (CONNECTION_TYPE == ConnectionType.REMOTE) {
@@ -389,10 +388,10 @@ public class PlayerSession {
         }
     }
 
-    public void sendServerChatMessage(ChatSendChannel channel, String message) {
+    public void sendServerChatMessage(ChatSendMode chatSendMode, String message) {
         ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
-            ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, channel, message);
+            ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, chatSendMode, message);
             chatSendPacket.routeToDestinationNoFlush();
         }
     }

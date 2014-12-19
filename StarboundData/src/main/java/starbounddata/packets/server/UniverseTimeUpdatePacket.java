@@ -22,7 +22,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.variants.VLQ;
 
 /**
  * Represents the UniverseTimeUpdate and methods to generate a packet data for StarNub and Plugins
@@ -30,16 +29,15 @@ import starbounddata.variants.VLQ;
  * Notes: This packet SHOULD NOT be edited freely.
  * <p>
  * Packet Direction: Server -> Client
+ * <p>
+ * Starbound 1.0 Compliant
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class UniverseTimeUpdatePacket extends Packet {
 
-    /**
-     * A time that increments up when sent by the Starbound Server
-     */
-    private long universeTime;
+    private double universeTime;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -82,7 +80,7 @@ public class UniverseTimeUpdatePacket extends Packet {
         this.universeTime = packet.getUniverseTime();
     }
 
-    public long getUniverseTime() {
+    public double getUniverseTime() {
         return universeTime;
     }
 
@@ -111,7 +109,7 @@ public class UniverseTimeUpdatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.universeTime = VLQ.readSignedFromBufferNoObject(in);
+        this.universeTime = in.readDouble();
     }
 
     /**
@@ -124,7 +122,7 @@ public class UniverseTimeUpdatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        VLQ.writeVLQNoObjectPacketEncoder(out, this.universeTime);
+        out.writeDouble(universeTime);
     }
 
     @Override

@@ -74,7 +74,7 @@ public class ConnectResponsePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
     public ConnectResponsePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.CONNECTIONRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+        super(DIRECTION, Packets.CONNECTRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
 //    /**

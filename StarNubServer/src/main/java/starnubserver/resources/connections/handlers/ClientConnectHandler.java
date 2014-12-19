@@ -18,14 +18,14 @@
 
 package starnubserver.resources.connections.handlers;
 
-import starnubdata.generic.DisconnectReason;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import starbounddata.chat.ChatReceiveChannel;
+import starbounddata.chat.Mode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starboundmanager.Starting;
+import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.cache.objects.RejectionCache;
@@ -69,7 +69,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                 TimeCache timeCache = null;
                 timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
                 if (timeCache != null) {
-                    playerSession.sendChatMessage("StarNub", ChatReceiveChannel.UNIVERSE, "You were disconnected to make room for a player" +
+                    playerSession.sendChatMessage("StarNub", Mode.BROADCAST, "You were disconnected to make room for a player" +
                             " who has a Reserved Server Slot.");
                 }
             }

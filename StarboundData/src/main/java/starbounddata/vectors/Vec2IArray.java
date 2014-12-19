@@ -34,8 +34,8 @@ import java.util.HashSet;
  */
 public class Vec2IArray extends ArrayList<Vec2I> {
 
-    private final static int ARRAY_INCOMING_CAP = 50;
-    private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_INCOMING_CAP);
+    private final static int ARRAY_SIZE_LIMIT = 50;
+    private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_SIZE_LIMIT);
 
     public Vec2IArray() {
         super();
@@ -86,7 +86,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
 
     public void readVec2IArray(ByteBuf in){
         int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (arrayLength > ARRAY_INCOMING_CAP) {
+        if (arrayLength > ARRAY_SIZE_LIMIT) {
             throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {

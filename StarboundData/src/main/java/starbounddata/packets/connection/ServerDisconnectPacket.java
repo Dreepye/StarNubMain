@@ -49,7 +49,7 @@ public class ServerDisconnectPacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
     public ServerDisconnectPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.DISCONNECTRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+        super(DIRECTION, Packets.SERVERDISCONNECT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -63,7 +63,7 @@ public class ServerDisconnectPacket extends Packet {
      * @param reason          String representing the reason
      */
     public ServerDisconnectPacket(ChannelHandlerContext DESTINATION_CTX, String reason) {
-        super(Packets.DISCONNECTRESPONSE.getDirection(), Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
+        super(Packets.SERVERDISCONNECT.getDirection(), Packets.SERVERDISCONNECT.getPacketId(), null, DESTINATION_CTX);
         this.reason = reason;
     }
 

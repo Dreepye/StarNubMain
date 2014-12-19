@@ -57,7 +57,7 @@ public class WarpCommand extends Packet {
      * @param playerName String representing the layer name
      */
     public WarpCommand(ChannelHandlerContext DESTINATION_CTX, WarpType warpType, String worldCoordinate, String playerName){
-        super(Packets.WARPCOMMAND.getDirection(),Packets.WARPCOMMAND.getPacketId(), null, DESTINATION_CTX);
+        super(Packets.PLAYERWARP.getDirection(),Packets.PLAYERWARP.getPacketId(), null, DESTINATION_CTX);
         this.warpType = warpType;
         this.worldCoordinate = worldCoordinate;
         this.playerName = playerName;
