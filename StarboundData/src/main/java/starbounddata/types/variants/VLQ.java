@@ -51,6 +51,21 @@ public class VLQ {
         this.value = value;
     }
 
+    public long getValue() {
+        return value;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -99,14 +114,6 @@ public class VLQ {
         return new VLQ(length, value);
     }
 
-    public long getValue() {
-        return value;
-    }
-
-    public void setValue(long value) {
-        this.value = value;
-    }
-
     ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
 
     /**
@@ -120,14 +127,14 @@ public class VLQ {
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual sVLQ field
      */
-    public static byte[] createSignedVLQNoObject(long value) {
+    public static byte[] writeSignedVLQNoObject(long value) {
         long result;
         if (value < 0) {
             result = ((-(value + 1)) << 1) | 1;
         } else {
             result = value << 1;
         }
-        return createVLQNoObject(result);
+        return writeVLQNoObject(result);
     }
 
     /**
@@ -141,7 +148,7 @@ public class VLQ {
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual VLQ field
      */
-    public static byte[] createVLQNoObject(long value) {
+    public static byte[] writeVLQNoObject(long value) {
         int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
         int numBytes = (numRelevantBits + 6) / 7;
         if (numBytes == 0)
@@ -168,15 +175,17 @@ public class VLQ {
      * @param in ByteBuf representing the bytes to be read for a reason length from a signed vlq
      * @return int representing the reason length
      */
-    public static int readSignedFromBufferNoObject(ByteBuf in) {
-        int payloadLength = readUnsignedFromBufferNoObject(in);
-        if ((payloadLength & 1) == 0x00) {
-            payloadLength = payloadLength >> 1;
+    public static long readSignedFromBufferNoObject(ByteBuf in) {
+        long payloadLength = readUnsignedFromBufferNoObject(in);
+        if (payloadLength < 0) {
+            payloadLength = ((-(payloadLength + 1)) << 1) | 1;
         } else {
-            payloadLength = -((payloadLength >> 1) + 1);
+            payloadLength = payloadLength << 1;
         }
         return payloadLength;
     }
+
+
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -189,7 +198,7 @@ public class VLQ {
      * @param in ByteBuf representing the bytes to be read for a reason length from a vlq
      * @return int representing the reason length
      */
-    public static int readUnsignedFromBufferNoObject(ByteBuf in) {
+    public static long readUnsignedFromBufferNoObject(ByteBuf in) {
         int vlqLength = 0;
         int payloadLength = 0;
         while (vlqLength <= 10) {
@@ -204,136 +213,6 @@ public class VLQ {
     }
 
     ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will read a s{@link starbounddata.types.variants.VLQ} from a byte[]
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param in byte[] representing the bytes to be read for a reason length from a signed vlq
-     * @return int representing the reason length
-     */
-    public static int readSignedFromBufferNoObject(byte[] in) {
-        int payloadLength = readUnsignedFromBufferNoObject(in);
-        if ((payloadLength & 1) == 0x00) {
-            payloadLength = payloadLength >> 1;
-        } else {
-            payloadLength = -((payloadLength >> 1) + 1);
-        }
-        return payloadLength;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will read a u{@link starbounddata.types.variants.VLQ} from a byte[]
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param in byte[] representing the bytes to be read for a reason length from a vlq
-     * @return int representing the reason length
-     */
-    public static int readUnsignedFromBufferNoObject(byte[] in) {
-        int vlqLength = 0;
-        int payloadLength = 0;
-        while (vlqLength <= 10) {
-            int tmpByte = in[vlqLength];
-            payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);
-            vlqLength++;
-            if ((tmpByte & 0x80) == 0) {
-                break;
-            }
-        }
-        return payloadLength;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will write a s{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param out   ByteBuf in which is to be read
-     * @param value long representing the VLQ value to be written out
-     */
-    public static void writeSignedVLQNoObjectPacketEncoder(ByteBuf out, long value) {
-        if (value < 0) {
-            value = ((-(value + 1)) << 1) | 1;
-        } else {
-            value = value << 1;
-        }
-        writeVLQNoObjectPacketEncoder(out, value);
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will write a u{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param out   ByteBuf in which is to be read
-     * @param value long representing the VLQ value to be written out
-     */
-    public static void writeVLQNoObjectPacketEncoder(ByteBuf out, long value) {
-        int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
-        int numBytes = (numRelevantBits + 6) / 7;
-        if (numBytes == 0) {
-            numBytes = 1;
-        }
-        out.writerIndex(numBytes + 1); /* Sets the write index at the number of bytes + 1 byte for packet id */
-        for (int i = numBytes - 1; i >= 0; i--) {
-            int curByte = (int) (value & 0x7F);
-            if (i != (numBytes - 1)) {
-                curByte |= 0x80;
-            }
-            out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */
-            value >>>= 7;
-        }
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will write a u{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param out   ByteBuf in which is to be read
-     * @param value long representing the VLQ value to be written out
-     */
-    public static void writeVLQNoObject(ByteBuf out, int offSet, long value) {
-        int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
-        int numBytes = (numRelevantBits + 6) / 7;
-        if (numBytes == 0) {
-            numBytes = 1;
-        }
-        out.writerIndex(numBytes + offSet); /* Sets the write index at the number of bytes + offSet byte for */
-        for (int i = numBytes - 1; i >= 0; i--) {
-            int curByte = (int) (value & 0x7F);
-            if (i != (numBytes - 1)) {
-                curByte |= 0x80;
-            }
-            out.setByte(i + offSet, curByte); /* Sets the byte at index + offSet byte for */
-            value >>>= 7;
-        }
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
 
     @Override
     public String toString() {

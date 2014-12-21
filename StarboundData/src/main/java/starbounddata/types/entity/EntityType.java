@@ -16,12 +16,16 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.tiles;
+package starbounddata.types.entity;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum TileLayer {
-    FOREGROUND,
-    BACKGROUND
+public enum EntityType {
+    PLAYER,
+    MONSTER,
+    OBJECT,
+    ITEM_DROP,
+    PROJECTILE,
+    PLANET,
+    PLANT_DROP,
+    EFFECT,
+    NPC
 }

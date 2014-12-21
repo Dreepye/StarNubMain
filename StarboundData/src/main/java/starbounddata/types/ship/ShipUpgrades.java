@@ -22,33 +22,35 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.HashSet;
 
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
 public class ShipUpgrades {
 
-    private byte shipLevel;
-    private byte fuelLevel;
-    private Capabilities CAPABILITIES = new Capabilities();
+    private int shipLevel;
+    private int fuelLevel;
+    private Capabilities capabilities = new Capabilities();
 
     public ShipUpgrades() {
-
     }
 
     public ShipUpgrades(ShipUpgrades shipUpgrades) {
         this.shipLevel = shipUpgrades.getShipLevel();
         this.fuelLevel = shipUpgrades.getFuelLevel();
-        this.CAPABILITIES = shipUpgrades.getCAPABILITIES().copy();
+        this.capabilities = shipUpgrades.getCapabilities().copy();
     }
 
     public ShipUpgrades(byte shipLevel, byte fuelLevel, HashSet<String> capabilities) {
         this.shipLevel = shipLevel;
         this.fuelLevel = fuelLevel;
-        this.CAPABILITIES.addAll(capabilities);
+        this.capabilities.addAll(capabilities);
     }
 
     public ShipUpgrades(ByteBuf in) {
         readShipUpgrades(in);
     }
 
-    public byte getShipLevel() {
+    public int getShipLevel() {
         return shipLevel;
     }
 
@@ -56,7 +58,7 @@ public class ShipUpgrades {
         this.shipLevel = shipLevel;
     }
 
-    public byte getFuelLevel() {
+    public int getFuelLevel() {
         return fuelLevel;
     }
 
@@ -64,32 +66,21 @@ public class ShipUpgrades {
         this.fuelLevel = fuelLevel;
     }
 
-    public Capabilities getCAPABILITIES() {
-        return CAPABILITIES;
+    public Capabilities getCapabilities() {
+        return capabilities;
     }
 
     public void readShipUpgrades(ByteBuf in) {
-        if (in.readableBytes() > 0) {
-            this.shipLevel = (byte) in.readUnsignedByte();
-        }
-        if (in.readableBytes() > 0) {
-            this.fuelLevel = (byte) in.readUnsignedByte();
-        }
-        if (in.readableBytes() != 0) {
-            this.CAPABILITIES.readCapabilitiees(in);
-        }
+        this.shipLevel = in.readInt();
+        this.fuelLevel = in.readInt();
+        this.capabilities.readCapabilities(in);
+
     }
 
     public void writeShipUpgrades(ByteBuf out){
-        if (shipLevel != 0) {
-            out.writeInt(shipLevel);
-        }
-        if (shipLevel != 0) {
-            out.writeInt(fuelLevel);
-        }
-        if (CAPABILITIES.size() != 0) {
-            CAPABILITIES.writeCapabilities(out);
-        }
+        out.writeInt(shipLevel);
+        out.writeInt(fuelLevel);
+        capabilities.writeCapabilities(out);
     }
 
     public ShipUpgrades copy(){
@@ -101,7 +92,7 @@ public class ShipUpgrades {
         return "ShipUpgrades{" +
                 "shipLevel=" + shipLevel +
                 ", fuelLevel=" + fuelLevel +
-                ", CAPABILITIES=" + CAPABILITIES +
+                ", capabilities=" + capabilities +
                 '}';
     }
 }

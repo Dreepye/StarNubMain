@@ -34,21 +34,21 @@ import java.util.Set;
 public enum Packets {
     PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     SERVERDISCONNECT("ServerDisconnectPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.NOT_USED), // Packet.Direction.TO_STARBOUND_CLIENT
+    CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), // Packet.Direction.TO_STARBOUND_CLIENT
     HANDSHAKECHALLENGE("", Packet.Direction.NOT_USED),
     CHATRECEIVE("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CELESTIALRESPONSE("", Packet.Direction.NOT_USED),
-    CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.NOT_USED),// Packet.Direction.TO_STARBOUND_SERVER
+    CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),// Packet.Direction.TO_STARBOUND_SERVER
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
-    PLAYERWARP("", Packet.Direction.NOT_USED),
+    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL),
     FLYSHIP("", Packet.Direction.NOT_USED),
     CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CELESTIALREQUEST("", Packet.Direction.NOT_USED),
     CLIENTCONTEXTUPDATE("", Packet.Direction.NOT_USED),
     WORLDSTART("", Packet.Direction.NOT_USED),
-    WORLDSTOP("", Packet.Direction.NOT_USED),
+    WORLDSTOP("WorldStopPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CENTRALSTRUCTUREUPDATE("", Packet.Direction.NOT_USED),
     TILEARRAYUPDATE("", Packet.Direction.NOT_USED),
     TILEUPDATE("", Packet.Direction.NOT_USED),
@@ -77,11 +77,11 @@ public enum Packets {
     BURNCONTAINER("", Packet.Direction.NOT_USED),
     CLEARCONTAINER("", Packet.Direction.NOT_USED),
     WORLDCLIENTSTATEUPDATE("", Packet.Direction.NOT_USED),
-    ENTITYCREATE("", Packet.Direction.NOT_USED),
+    ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL),
     ENTITYUPDATE("", Packet.Direction.NOT_USED),
     ENTITYDESTROY("", Packet.Direction.NOT_USED),
     HITREQUEST("", Packet.Direction.NOT_USED),
-    DAMAGEREQUEST("", Packet.Direction.NOT_USED),
+    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Nearly finished
     DAMAGENOTIFICATION("", Packet.Direction.NOT_USED),
     CALLSCRIPTEDENTITY("", Packet.Direction.NOT_USED),
     UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED),

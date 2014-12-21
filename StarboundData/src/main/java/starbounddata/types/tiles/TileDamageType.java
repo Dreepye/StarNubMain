@@ -18,6 +18,9 @@
 
 package starbounddata.types.tiles;
 
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
 public enum TileDamageType {
     NONE,
     PLANTISH,

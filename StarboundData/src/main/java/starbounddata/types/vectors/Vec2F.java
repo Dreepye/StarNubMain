@@ -22,6 +22,8 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * Represents a 2 dimensional floating point vector of (x, y)
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -31,19 +33,26 @@ public class Vec2F {
     private float x;
     private float y;
 
+    public Vec2F() {
+    }
+
     public Vec2F(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
     public Vec2F(ByteBuf in) {
-        this.x = in.readFloat();
-        this.y = in.readFloat();
+        readVec2F(in);
     }
 
     public Vec2F(Vec2F vec2F) {
         this.x = vec2F.getX();
         this.y = vec2F.getY();
+    }
+
+    public void readVec2F(ByteBuf in){
+        this.x = in.readFloat();
+        this.y = in.readFloat();
     }
 
     public float getX() {

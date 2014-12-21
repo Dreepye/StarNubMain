@@ -2,8 +2,12 @@ package starbounddata.packets.warp;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
+import starbounddata.types.warp.ClientShipWorld;
+import starbounddata.types.warp.WarpId;
+import starbounddata.types.warp.WarpType;
 
 /**
  * Represents the WarpCommand and methods to generate a packet data for StarNub and Plugins
@@ -16,19 +20,11 @@ import starbounddata.packets.Packets;
  *         Tim    (r00t-s)
  * @since 1.0 Beta
  */
-public class WarpCommand extends Packet {
-
-    public enum WarpType {
-        MOVE_SHIP,
-        WARP_TO_MY_SHIP,
-        WARP_TO_PLAYER_SHIP,
-        WARP_TO_PLANET,
-        WARP_TO_HOME
-    }
+public class PlayerWarp extends Packet {
 
     private WarpType warpType;
-    private String worldCoordinate;
-    private String playerName;
+    private WarpId warpId;
+    private Object locationId;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -40,8 +36,8 @@ public class WarpCommand extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public WarpCommand(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.DAMAGETILEGROUP.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public PlayerWarp(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.PLAYERWARP.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -53,14 +49,11 @@ public class WarpCommand extends Packet {
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param warpType WarpType representing the warpType enumeration
-     * @param worldCoordinate String representing the world coordinate
-     * @param playerName String representing the layer name
      */
-    public WarpCommand(ChannelHandlerContext DESTINATION_CTX, WarpType warpType, String worldCoordinate, String playerName){
+    public PlayerWarp(ChannelHandlerContext DESTINATION_CTX, WarpType warpType){
         super(Packets.PLAYERWARP.getDirection(),Packets.PLAYERWARP.getPacketId(), null, DESTINATION_CTX);
         this.warpType = warpType;
-        this.worldCoordinate = worldCoordinate;
-        this.playerName = playerName;
+        //TODO
     }
 
     /**
@@ -70,11 +63,11 @@ public class WarpCommand extends Packet {
      *
      * @param packet WarpCommand representing the packet to construct from
      */
-    public WarpCommand(WarpCommand packet) {
+    public PlayerWarp(PlayerWarp packet) {
         super(packet);
         this.warpType = packet.getWarpType();
-        this.worldCoordinate = packet.getWorldCoordinate();
-        this.playerName = packet.getPlayerName();
+        this.warpId = packet.getWarpId();
+        this.locationId = packet.getLocationId();
     }
 
     public WarpType getWarpType() {
@@ -85,20 +78,20 @@ public class WarpCommand extends Packet {
         this.warpType = warpType;
     }
 
-    public String getWorldCoordinate() {
-        return worldCoordinate;
+    public WarpId getWarpId() {
+        return warpId;
     }
 
-    public void setWorldCoordinate(String worldCoordinate) {
-        this.worldCoordinate = worldCoordinate;
+    public void setWarpId(WarpId warpId) {
+        this.warpId = warpId;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public Object getLocationId() {
+        return locationId;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setLocationId(Object locationId) {
+        this.locationId = locationId;
     }
 
     /**
@@ -108,8 +101,8 @@ public class WarpCommand extends Packet {
      * @return WarpCommand the new copied object
      */
     @Override
-    public WarpCommand copy() {
-        return new WarpCommand(this);
+    public PlayerWarp copy() {
+        return new PlayerWarp(this);
     }
 
     /**
@@ -123,9 +116,14 @@ public class WarpCommand extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
+        ByteBufferUtilities.print(in);
         this.warpType = WarpType.values()[in.readUnsignedByte()];
-        this.worldCoordinate = readStringVLQ(in);
-        this.playerName = readStringVLQ(in);
+        this.warpId =  WarpId.values()[in.readUnsignedByte()];
+        if(warpId == WarpId.CLIENT_SHIP_WORLD){
+            this.locationId = new ClientShipWorld(in);
+        } else {
+            locationId = in.readBytes(in.readableBytes()).array();
+        }
     }
 
     /**
@@ -139,16 +137,20 @@ public class WarpCommand extends Packet {
     @Override
     public void write(ByteBuf out) {
         out.writeByte(warpType.ordinal());
-        writeStringVLQ(out, this.worldCoordinate);
-        writeStringVLQ(out, this.playerName);
+        out.writeByte(warpId.ordinal());
+        if(warpId == WarpId.CLIENT_SHIP_WORLD){
+            ((ClientShipWorld) this.locationId).writeClientShipWorld(out);
+        } else {
+            out.writeBytes((byte[]) locationId);
+        }
     }
 
     @Override
     public String toString() {
-        return "WarpCommand{" +
+        return "PlayerWarp{" +
                 "warpType=" + warpType +
-                ", worldCoordinate='" + worldCoordinate + '\'' +
-                ", playerName='" + playerName + '\'' +
+                ", warpId=" + warpId +
+                ", locationId=" + locationId +
                 "} " + super.toString();
     }
 }

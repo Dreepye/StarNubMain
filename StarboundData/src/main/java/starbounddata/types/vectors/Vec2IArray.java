@@ -28,6 +28,8 @@ import java.util.HashSet;
  * Represents a Vec2I Array which contains 0-SomeNumber of 2 dimensional integer vector of (x, y)
  * <p>
  * Note: This Array is not a synchronized collection. This should not make a deference as only one thread should be handling this packet at a time
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -85,13 +87,13 @@ public class Vec2IArray extends ArrayList<Vec2I> {
     }
 
     public void readVec2IArray(ByteBuf in){
-        int arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
+        long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         if (arrayLength > ARRAY_SIZE_LIMIT) {
             throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {
             Vec2I vec2I = VEC2I_POOL.get(i);
-            vec2I.setVec2I(in);
+            vec2I.readVec2I(in);
             this.add(vec2I);
         }
     }
@@ -100,7 +102,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
      * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2IArray to
      */
     public void writeVec2IArray(ByteBuf out) {
-        out.writeBytes(VLQ.createVLQNoObject((long) this.size()));
+        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
         for (Vec2I vec2I : this) {
             vec2I.writeVec2I(out);
         }

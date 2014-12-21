@@ -24,9 +24,10 @@ import starbounddata.types.variants.VLQ;
 
 import java.util.HashSet;
 
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
 public class Capabilities extends HashSet<String> {
-
-    private final static int HASHSET_SIZE_LIMIT = 50;
 
     public Capabilities() {
     }
@@ -36,30 +37,23 @@ public class Capabilities extends HashSet<String> {
     }
 
     public Capabilities(ByteBuf in){
-        readCapabilitiees(in);
+        readCapabilities(in);
     }
 
     public Capabilities(HashSet<String> capabilities){
         this.addAll(capabilities);
     }
 
-    public static int getHashsetSizeLimit() {
-        return HASHSET_SIZE_LIMIT;
-    }
-
-    public void readCapabilitiees(ByteBuf in){
-        int hastSetLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (hastSetLength > HASHSET_SIZE_LIMIT) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
+    public void readCapabilities(ByteBuf in){
+        long  hastSetLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < hastSetLength; i++) {
-            String string = Packet.readStringVLQ(in);
+            String string = Packet.readVLQString(in);
             this.add(string);
         }
     }
 
     public  void writeCapabilities(ByteBuf out){
-        out.writeBytes(VLQ.createVLQNoObject((long) this.size()));
+        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
         for (String string : this) {
             Packet.writeStringVLQ(out, string);
         }

@@ -34,7 +34,7 @@ import starbounddata.types.vectors.Vec2IArray;
  * <p>
  * Packet Direction: Client -> Server
  * <p>
- * Starbound 1.0 Compliant
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -43,8 +43,8 @@ public class DamageTileGroupPacket extends Packet {
 
     private Vec2IArray tilePositions = new Vec2IArray();
     private TileLayer layer;
-    private Vec2F sourcePosition;
-    private TileDamage tileDamage;
+    private Vec2F sourcePosition = new Vec2F();
+    private TileDamage tileDamage = new TileDamage();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -158,8 +158,8 @@ public class DamageTileGroupPacket extends Packet {
         try {
             this.tilePositions.readVec2IArray(in);
             this.layer = TileLayer.values()[in.readUnsignedByte()];
-            this.sourcePosition = new Vec2F(in);
-            this.tileDamage = new TileDamage(in);
+            this.sourcePosition.readVec2F(in);
+            this.tileDamage.readTileDamage(in);
         } catch (ArrayIndexOutOfBoundsException e) {
             super.recycle();
             in.skipBytes(in.readableBytes());
@@ -191,6 +191,4 @@ public class DamageTileGroupPacket extends Packet {
                 ", sourcePosition=" + sourcePosition +
                 "} " + super.toString();
     }
-
-
 }

@@ -16,11 +16,12 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.maybe;
+package starbounddata.types.warp;
 
-import utilities.datatypes.maybe.Maybe;
-
-public class MaybeString extends Maybe<String> {
-
-
+public enum WarpType {
+    WARP_TO,
+    WARP_RETURN,
+    WARP_TO_HOMEWORLD,
+    WARP_TO_ORBITED_WORLD,
+    WARP_TO_OWN_SHIP
 }

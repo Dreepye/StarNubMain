@@ -91,19 +91,19 @@ public class Variant {
                 variant.value = VLQ.readUnsignedFromBufferNoObject(in);
                 break;
             case 5:
-                variant.value = Packet.readStringVLQ(in);
+                variant.value = Packet.readVLQString(in);
                 break;
             case 6:
-                Variant[] array = new Variant[VLQ.readUnsignedFromBufferNoObject(in)];
+                Variant[] array = new Variant[(int) VLQ.readUnsignedFromBufferNoObject(in)];
                 for (int i = 0; i < array.length; i++)
                     array[i] = this.readFromByteBuffer(in);
                 variant.value = array;
                 break;
             case 7:
                 Map<String, Variant> dict = new HashMap<String, Variant>();
-                int length = VLQ.readUnsignedFromBufferNoObject(in);
+                long length = VLQ.readUnsignedFromBufferNoObject(in);
                 while (length-- > 0)
-                    dict.put(Packet.readStringVLQ(in), this.readFromByteBuffer(in));
+                    dict.put(Packet.readVLQString(in), this.readFromByteBuffer(in));
                 variant.value = dict;
                 break;
             default:
@@ -133,21 +133,21 @@ public class Variant {
             out.writeBoolean((Boolean) value);
         } else if (value instanceof Long) {
             out.writeByte(4);
-            VLQ.writeVLQNoObjectPacketEncoder(out, (Long) value);
+            out.writeBytes(VLQ.writeVLQNoObject((Long) value));
         } else if (value instanceof String) {
             out.writeByte(5);
             Packet.writeStringVLQ(out, (String) value);
         } else if (value instanceof Variant[]) {
             out.writeByte(6);
             Variant[] array = (Variant[]) value;
-            out.writeBytes(VLQ.createVLQNoObject((long) array.length));
+            out.writeBytes(VLQ.writeVLQNoObject((long) array.length));
             for (Variant anArray : array) {
                 anArray.writeToByteBuffer(out);
             }
         } else if (value instanceof Map<?, ?>) {
             out.writeByte(7);
             Map<String, Variant> dict = (Map<String, Variant>) value;
-            out.writeBytes(VLQ.createVLQNoObject((long) dict.size()));
+            out.writeBytes(VLQ.writeVLQNoObject((long) dict.size()));
             for (Map.Entry<String, Variant> kvp : dict.entrySet()) {
                 Packet.writeStringVLQ(out, kvp.getKey());
                 kvp.getValue().writeToByteBuffer(out);

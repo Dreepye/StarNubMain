@@ -186,11 +186,10 @@ public class StarboundManager extends StarboundServerExe {
      * <p>
      * Uses: This will either print to console or send starnubdata.events
      *
-     * @param STARBOUND_CONFIGURATION String representing the name of the starbound configuration
      * @throws FileNotFoundException throws this exception if the file does not exist
      */
-    public void setStarboundConfiguration(String STARBOUND_CONFIGURATION) throws FileNotFoundException {
-        this.starboundConfiguration = new StarboundConfiguration(this, STARBOUND_CONFIGURATION);
+    public void setStarboundConfiguration() throws FileNotFoundException {
+        this.starboundConfiguration = new StarboundConfiguration(this);
     }
 
     /**
@@ -288,12 +287,11 @@ public class StarboundManager extends StarboundServerExe {
      * <p>
      * Uses: This will attempt to generate a Starbound Configuration if one does not exist
      *
-     * @param STARBOUND_CONFIGURATION String representing the name of the starbound configuration
      * @throws IOException various exceptions can be thrown, IO or File related
      */
-    public void configurationGenerator(String STARBOUND_CONFIGURATION) throws IOException {
+    public void configurationGenerator() throws IOException {
         if (starboundConfiguration == null) {
-            setStarboundConfiguration(STARBOUND_CONFIGURATION);
+            setStarboundConfiguration();
         }
         starboundConfiguration.generateConfiguration();
     }
@@ -304,13 +302,12 @@ public class StarboundManager extends StarboundServerExe {
      * Uses: This will attempt configure starbound using a Map with String keys and Object Values you provided to
      * be updated in the starbound configuration
      *
-     * @param STARBOUND_CONFIGURATION String representing the name of the starbound configuration
      * @param configurationValues Map representing the string keys and objects to place in the Starbound Configuration
      * @throws IOException various exceptions can be thrown, IO or File related
      */
-    public void configureConfiguration(String STARBOUND_CONFIGURATION, Map<String, Object> configurationValues) throws IOException, ParseException {
+    public void configureConfiguration(Map<String, Object> configurationValues) throws IOException, ParseException {
         if (starboundConfiguration == null) {
-            setStarboundConfiguration(STARBOUND_CONFIGURATION);
+            setStarboundConfiguration();
         }
         starboundConfiguration.generateConfiguration();
         starboundConfiguration.configure(configurationValues);

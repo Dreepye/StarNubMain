@@ -37,7 +37,7 @@ import java.util.Map;
 public class StarboundConfiguration {
 
     private final StarboundManager STARBOUND_MANAGEMENT;
-    private final String STARBOUND_CONFIGURATION;
+    private final String STARBOUND_CONFIGURATION = "storage_unstable/";
     private final String STARBOUND_CONFIGURATION_BACKUP;
     private final File STARBOUND_CONFIGURATION_FILE;
     private final File STARBOUND_CONFIGURATION_FILE_BACKUP;
@@ -49,12 +49,10 @@ public class StarboundConfiguration {
      * as a per status bases
      *
      * @param STARBOUND_MANAGEMENT StarboundManagement representing the class that constructed this instance
-     * @param STARBOUND_CONFIGURATION String representing the name of the starbound configuration
      * @throws FileNotFoundException throws this exception if the file does not exist
      */
-    public StarboundConfiguration(StarboundManager STARBOUND_MANAGEMENT, String STARBOUND_CONFIGURATION) throws FileNotFoundException {
+    public StarboundConfiguration(StarboundManager STARBOUND_MANAGEMENT) throws FileNotFoundException {
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
-        this.STARBOUND_CONFIGURATION = STARBOUND_CONFIGURATION;
         this.STARBOUND_CONFIGURATION_BACKUP = STARBOUND_CONFIGURATION + ".bak";
         this.STARBOUND_CONFIGURATION_FILE = new File(STARBOUND_CONFIGURATION);
         if (!STARBOUND_CONFIGURATION_FILE.exists()){

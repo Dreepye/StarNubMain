@@ -23,10 +23,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
+import starbounddata.types.planet.CelestialBaseInformation;
 import starbounddata.types.variants.VLQ;
-import starbounddata.types.variants.Variant;
-
-import java.util.Arrays;
 
 
 /**
@@ -37,6 +35,8 @@ import java.util.Arrays;
  * of the loading data
  * <p>
  * Packet Direction: Server -> Client
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -46,22 +46,7 @@ public class ConnectResponsePacket extends Packet {
     private boolean success;
     private long clientId;
     private String rejectionReason;
-    private boolean celestialInformation;
-    private int orbitalLevels;
-    private int ChunkSize;
-    private int XYCoordinateMin;
-    private int XYCoordinateMax;
-    private int ZCoordinateMin;
-    private int ZCoordinateMax;
-    private long NumberofSectors;
-    private String SectorId;
-    private String SectorName;
-    private long SectorSeed;
-    private String SectorPrefix;
-    private Variant Parameters;
-    private Variant SectorConfig;
-    private byte[] tempByteArray;
-
+    private CelestialBaseInformation celestialBaseInformation;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -77,19 +62,22 @@ public class ConnectResponsePacket extends Packet {
         super(DIRECTION, Packets.CONNECTRESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
-//    /**
-//     * Recommended: For connections StarNub usage.
-//     * <p/>
-//     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
-//     * router this packet
-//     * <p/>
-//     *
-//     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-//     */
-//    public ConnectResponsePacket(ChannelHandlerContext DESTINATION_CTX) {
-//        super(Packets.DISCONNECTRESPONSE.getDirection(), Packets.DISCONNECTRESPONSE.getPacketId(), null, DESTINATION_CTX);
-//
-//    }
+    /**
+     * Recommended: For connections StarNub usage.
+     * <p>
+     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
+     * router this packet
+     * <p>
+     *
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public ConnectResponsePacket(ChannelHandlerContext DESTINATION_CTX, boolean success, int clientId, String rejectionReason, CelestialBaseInformation celestialBaseInformation) {
+        super(Packets.CLIENTCONNECT.getDirection(), Packets.CLIENTCONNECT.getPacketId(), null, DESTINATION_CTX);
+        this.success = success;
+        this.clientId = clientId;
+        this.rejectionReason = rejectionReason;
+        this.celestialBaseInformation = celestialBaseInformation;
+    }
 
     /**
      * Recommended: For internal StarNub use with copying
@@ -103,15 +91,19 @@ public class ConnectResponsePacket extends Packet {
         this.success = packet.isSuccess();
         this.clientId = packet.getClientId();
         this.rejectionReason = packet.getRejectionReason();
-        this.tempByteArray = packet.getTempByteArray().clone();
+        this.celestialBaseInformation = packet.getCelestialBaseInformation().copy();
     }
 
     public boolean isSuccess() {
         return success;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void makeSuccessful() {
+        this.success = true;
+    }
+
+    public void makeUnsuccessful() {
+        this.success = false;
     }
 
     public long getClientId() {
@@ -130,124 +122,12 @@ public class ConnectResponsePacket extends Packet {
         this.rejectionReason = rejectionReason;
     }
 
-    public boolean isCelestialInformation() {
-        return celestialInformation;
+    public CelestialBaseInformation getCelestialBaseInformation() {
+        return celestialBaseInformation;
     }
 
-    public void setCelestialInformation(boolean celestialInformation) {
-        this.celestialInformation = celestialInformation;
-    }
-
-    public int getOrbitalLevels() {
-        return orbitalLevels;
-    }
-
-    public void setOrbitalLevels(int orbitalLevels) {
-        this.orbitalLevels = orbitalLevels;
-    }
-
-    public int getChunkSize() {
-        return ChunkSize;
-    }
-
-    public void setChunkSize(int chunkSize) {
-        ChunkSize = chunkSize;
-    }
-
-    public int getXYCoordinateMin() {
-        return XYCoordinateMin;
-    }
-
-    public void setXYCoordinateMin(int XYCoordinateMin) {
-        this.XYCoordinateMin = XYCoordinateMin;
-    }
-
-    public int getXYCoordinateMax() {
-        return XYCoordinateMax;
-    }
-
-    public void setXYCoordinateMax(int XYCoordinateMax) {
-        this.XYCoordinateMax = XYCoordinateMax;
-    }
-
-    public int getZCoordinateMin() {
-        return ZCoordinateMin;
-    }
-
-    public void setZCoordinateMin(int ZCoordinateMin) {
-        this.ZCoordinateMin = ZCoordinateMin;
-    }
-
-    public int getZCoordinateMax() {
-        return ZCoordinateMax;
-    }
-
-    public void setZCoordinateMax(int ZCoordinateMax) {
-        this.ZCoordinateMax = ZCoordinateMax;
-    }
-
-    public long getNumberofSectors() {
-        return NumberofSectors;
-    }
-
-    public void setNumberofSectors(long numberofSectors) {
-        NumberofSectors = numberofSectors;
-    }
-
-    public String getSectorId() {
-        return SectorId;
-    }
-
-    public void setSectorId(String sectorId) {
-        SectorId = sectorId;
-    }
-
-    public String getSectorName() {
-        return SectorName;
-    }
-
-    public void setSectorName(String sectorName) {
-        SectorName = sectorName;
-    }
-
-    public long getSectorSeed() {
-        return SectorSeed;
-    }
-
-    public void setSectorSeed(long sectorSeed) {
-        SectorSeed = sectorSeed;
-    }
-
-    public String getSectorPrefix() {
-        return SectorPrefix;
-    }
-
-    public void setSectorPrefix(String sectorPrefix) {
-        SectorPrefix = sectorPrefix;
-    }
-
-    public Variant getParameters() {
-        return Parameters;
-    }
-
-    public void setParameters(Variant parameters) {
-        Parameters = parameters;
-    }
-
-    public Variant getSectorConfig() {
-        return SectorConfig;
-    }
-
-    public void setSectorConfig(Variant sectorConfig) {
-        SectorConfig = sectorConfig;
-    }
-
-    public byte[] getTempByteArray() {
-        return tempByteArray;
-    }
-
-    public void setTempByteArray(byte[] tempByteArray) {
-        this.tempByteArray = tempByteArray;
+    public void setCelestialBaseInformation(CelestialBaseInformation celestialBaseInformation) {
+        this.celestialBaseInformation = celestialBaseInformation;
     }
 
     /**
@@ -271,25 +151,13 @@ public class ConnectResponsePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.success = readBoolean(in);
+        this.success = in.readBoolean();
         this.clientId = VLQ.readUnsignedFromBufferNoObject(in);
-        this.rejectionReason = readStringVLQ(in);
-        this.tempByteArray = in.readBytes(in.readableBytes()).array();
-//        celestialInformation = stream.readBoolean();
-//        if (celestialInformation) {
-//            orbitalLevels = stream.readUnsignedInt();
-//            ChunkSize = stream.readUnsignedInt();
-//            XYCoordinateMin = stream.readUnsignedInt();
-//            XYCoordinateMax = stream.readUnsignedInt();
-//            ZCoordinateMin = stream.readUnsignedInt();
-//            ZCoordinateMax = stream.readUnsignedInt();
-//            NumberofSectors = stream.readVLQ().getValue();
-//            SectorId = stream.readStringVLQ();
-//            SectorName = stream.readStringVLQ();
-//            SectorSeed = stream.readLong();
-//            SectorPrefix = stream.readStringVLQ();
-//            try { Parameters = stream.readVariant(); } catch (Exception e) {StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e)); }
-//            try { SectorConfig = stream.readVariant(); } catch (Exception e) {StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e)); }
+        this.rejectionReason = readVLQString(in);
+        boolean hasCelestialBaseInformation =  in.readBoolean();
+        if(hasCelestialBaseInformation){
+            this.celestialBaseInformation = new CelestialBaseInformation(in);
+        }
     }
 
     /**
@@ -302,10 +170,15 @@ public class ConnectResponsePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        writeBoolean(out, this.success);
-        VLQ.writeSignedVLQNoObjectPacketEncoder(out, this.clientId);
+        out.writeBoolean(this.success);
+        out.writeBytes(VLQ.writeSignedVLQNoObject(this.clientId));
         writeStringVLQ(out, this.rejectionReason);
-        out.writeBytes(this.tempByteArray);
+        if (celestialBaseInformation == null){
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            celestialBaseInformation.writeCelestialBaseInformation(out);
+        }
     }
 
     @Override
@@ -314,21 +187,7 @@ public class ConnectResponsePacket extends Packet {
                 "success=" + success +
                 ", clientId=" + clientId +
                 ", rejectionReason='" + rejectionReason + '\'' +
-                ", celestialInformation=" + celestialInformation +
-                ", orbitalLevels=" + orbitalLevels +
-                ", ChunkSize=" + ChunkSize +
-                ", XYCoordinateMin=" + XYCoordinateMin +
-                ", XYCoordinateMax=" + XYCoordinateMax +
-                ", ZCoordinateMin=" + ZCoordinateMin +
-                ", ZCoordinateMax=" + ZCoordinateMax +
-                ", NumberofSectors=" + NumberofSectors +
-                ", SectorId='" + SectorId + '\'' +
-                ", SectorName='" + SectorName + '\'' +
-                ", SectorSeed=" + SectorSeed +
-                ", SectorPrefix='" + SectorPrefix + '\'' +
-                ", Parameters=" + Parameters +
-                ", SectorConfig=" + SectorConfig +
-                ", tempByteArray=" + Arrays.toString(tempByteArray) +
+                ", celestialBaseInformation=" + celestialBaseInformation +
                 "} " + super.toString();
     }
 }

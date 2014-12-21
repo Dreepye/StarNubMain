@@ -16,37 +16,14 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package utilities.datatypes.maybe;
+package starbounddata.types.damage;
 
-public class Maybe<T> {
-
-    private Is is;
-    private T object;
-
-    public Maybe() {
-    }
-
-    public Is getIs() {
-        return is;
-    }
-
-    public void setIs(Is is) {
-        this.is = is;
-    }
-
-    public T getObject() {
-        return object;
-    }
-
-    public void setObject(T object) {
-        this.object = object;
-    }
-
-    @Override
-    public String toString() {
-        return "Maybe{" +
-                "is=" + is +
-                ", object=" + object +
-                '}';
-    }
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
+public enum DamageType {
+    NO_DAMAGE,
+    DAMAGE,
+    IGNORES_DEFENSE,
+    KNOCK_BACK
 }

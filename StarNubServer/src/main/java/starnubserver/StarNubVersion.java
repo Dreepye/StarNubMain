@@ -21,7 +21,7 @@ package starnubserver;
 import starnubserver.resources.ResourceManager;
 import starnubserver.resources.StarNubYamlWrapper;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents StarNubsVersion instance
@@ -39,7 +39,8 @@ public class StarNubVersion {
     private final String PHASE;
     private final double VERSION;
     private final String PHASE_VERSION;
-    private final ArrayList<String> LANGUAGES;
+    private final List<Integer> STARBOUND_VERSION;
+    private final List<String> LANGUAGES;
     private final double SIZE_MBS;
     private final String DESCRIPTION;
 
@@ -56,9 +57,11 @@ public class StarNubVersion {
         PHASE = (String) starnubVersionYaml.getValue("phase");
         VERSION = (double) starnubVersionYaml.getValue("version");
         PHASE_VERSION = PHASE + "-" + Double.toString(VERSION);
-        LANGUAGES = (ArrayList<String>) starnubVersionYaml.getValue("languages");
+        STARBOUND_VERSION = (List<Integer>) starnubVersionYaml.getValue("starbound_versions");
+        LANGUAGES = (List<String>) starnubVersionYaml.getValue("languages");
         SIZE_MBS = (double) starnubVersionYaml.getValue("size");
         DESCRIPTION = (String) starnubVersionYaml.getValue("description");
+        System.out.println(versionBanner());
     }
 
     /**
@@ -81,7 +84,11 @@ public class StarNubVersion {
         return PHASE_VERSION;
     }
 
-    public ArrayList<String> getLANGUAGES() {
+    public List<Integer> getSTARBOUND_VERSION() {
+        return STARBOUND_VERSION;
+    }
+
+    public List<String> getLANGUAGES() {
         return LANGUAGES;
     }
 
@@ -103,8 +110,11 @@ public class StarNubVersion {
     public String versionBanner() {
         return "\n"
                 + "=======================================================\n"
-                + "                   StarNub " + PHASE + "\n"
-                + "                   Version " + VERSION + "\n"
+                + "                StarNub " + PHASE                   + "\n"
+                + "                Version " + VERSION                 + "\n"
+                + ""                                                   + "\n"
+                + "                Starbound Versions: " + STARBOUND_VERSION  + "\n"
+                + "                www.StarNub.org "                   + "\n"
                 + "=======================================================\n";
     }
 
@@ -114,6 +124,7 @@ public class StarNubVersion {
                 "PHASE='" + PHASE + '\'' +
                 ", VERSION=" + VERSION +
                 ", PHASE_VERSION='" + PHASE_VERSION + '\'' +
+                ", STARBOUND_VERSION=" + STARBOUND_VERSION +
                 ", LANGUAGES=" + LANGUAGES +
                 ", SIZE_MBS=" + SIZE_MBS +
                 ", DESCRIPTION='" + DESCRIPTION + '\'' +

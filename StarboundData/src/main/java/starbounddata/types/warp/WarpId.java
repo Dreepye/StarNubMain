@@ -16,12 +16,11 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.tiles;
+package starbounddata.types.warp;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum TileLayer {
-    FOREGROUND,
-    BACKGROUND
+public enum WarpId {
+    UNIQUE_WORLD,
+    CELESTIAL_WORLD,
+    MISSION_WORLD,
+    CLIENT_SHIP_WORLD
 }

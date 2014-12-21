@@ -33,7 +33,7 @@ import starbounddata.packets.Packets;
  * <p>
  * Packet Direction: Server -> Client
  * <p>
- * Starbound 1.0 Compliant
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -151,8 +151,8 @@ public class ChatReceivePacket extends Packet {
     public void read(ByteBuf in) {
         this.messageContext.readMessageContext(in);
         this.clientId = in.readInt();
-        this.fromName = readStringVLQ(in);
-        this.message = readStringVLQ(in);
+        this.fromName = readVLQString(in);
+        this.message = readVLQString(in);
     }
 
     /**

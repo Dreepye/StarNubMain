@@ -30,13 +30,18 @@ import java.util.UUID;
 
 public class ByteBufferUtilities {
 
+    public static void print(ByteBuf in){
+        System.err.println(Arrays.toString(in.array()));
+    }
+
     public static void search(ByteBuf in, String string){
+        System.err.println("Searching for String: " + string);
         search(in, string.getBytes(Charset.forName("UTF-8")));
     }
 
 
     public static void search(ByteBuf in, UUID uuid) throws IOException {
-        System.err.println(uuid);
+        System.err.println("Searching for UUID: " + uuid);
         long mostSignificantBits = uuid.getMostSignificantBits();
         long leastSignificantBits = uuid.getLeastSignificantBits();
         byte[] uuidByteArray;
@@ -54,19 +59,37 @@ public class ByteBufferUtilities {
 
     public static void search(ByteBuf in, byte[] byteArray){
         byte[] searchable = in.array();
-        int searchBytesSize = byteArray.length;
         int searchableBytesSize = searchable.length;
-        byte[] vlqByteArray = VLQ.createVLQNoObject(searchBytesSize);
+        int searchBytesSize = byteArray.length;
+        byte[] vlqByteArray = VLQ.writeVLQNoObject(searchBytesSize);
         int vlqLength = vlqByteArray.length;
         System.err.println("Searchable Bytes Size: " + searchableBytesSize + ". Search Bytes Size: " + searchBytesSize);
         System.err.println("VLQ Byte Pattern: " + Arrays.toString(vlqByteArray) + ". VLQ Length: " + vlqLength +  ". VLQ Value: " + searchBytesSize);
         System.err.println("Search Bytes: " + Arrays.toString(byteArray));
         System.err.println("Searchable Byte Array: " + Arrays.toString(searchable));
-        int indexVLQStartIndex = 0;
-        int indexVLQEndIndex = 0;
         int searchBytesStartIndex = 0;
         int searchBytesEndIndex = 0;
-
-
+        int matched = 0;
+        int tempIndex = 0;
+        for (byte byteSearched : searchable){
+            byte searchByte = byteArray[matched];
+            if (byteSearched == searchByte) {
+                matched++;
+                if (matched == searchBytesSize) {
+                    searchBytesEndIndex = tempIndex;
+                    searchBytesStartIndex = searchBytesEndIndex - searchBytesSize + 1;
+                    break;
+                }
+            } else {
+                matched = 0;
+            }
+            tempIndex++;
+        }
+        int indexVLQEndIndex = searchBytesStartIndex - 1 ;
+        int indexVLQStartIndex = (indexVLQEndIndex - vlqLength) + 1;
+        System.err.println("VLQ Start: " + indexVLQStartIndex);
+        System.err.println("VLQ End: " + indexVLQEndIndex);
+        System.err.println("Byte Array Match Start: " + searchBytesStartIndex);
+        System.err.println("Byte Array Match End: " + searchBytesEndIndex);
     }
 }

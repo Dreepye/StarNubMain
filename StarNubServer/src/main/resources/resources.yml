@@ -6,7 +6,8 @@
 starnub_version: {
     file: ['starnub_version.yml', 'Starnub/'],
     map: {phase: beta,
-         version: 1.0,
+         version: 1.5,
+         starbound_versions: [662],
          languages: [english],
          size: 12.50,
              }},

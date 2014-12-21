@@ -22,6 +22,8 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * Represents a 2 dimensional integer vector of (x, y)
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -31,14 +33,16 @@ public class Vec2I {
     private int x;
     private int y;
 
+    public Vec2I() {
+    }
+
     public Vec2I(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
     public Vec2I(ByteBuf in) {
-        this.x = in.readInt();
-        this.y = in.readInt();
+        readVec2I(in);
     }
 
     public Vec2I(Vec2I vec2I) {
@@ -57,7 +61,7 @@ public class Vec2I {
     }
 
 
-    public void setVec2I(ByteBuf in) {
+    public void readVec2I(ByteBuf in) {
         this.x = in.readInt();
         this.y = in.readInt();
     }

@@ -16,12 +16,12 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.tiles;
+package starbounddata.types.damage;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public enum TileLayer {
-    FOREGROUND,
-    BACKGROUND
+public enum HitType {
+    HIT,
+    SHIELD_HIT,
 }

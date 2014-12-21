@@ -52,7 +52,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
         if (rejectionCache != null) {
             playerSession = rejectionCache.getPLAYERSession();
             if (rejectionCache.isREJECTED()) {
-                connectResponsePacket.setSuccess(false);
+                connectResponsePacket.makeUnsuccessful();
                 connectResponsePacket.setRejectionReason(rejectionCache.getPACKET_MESSAGE());
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCONNECTION().getCLIENT_CTX(), playerSession);

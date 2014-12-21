@@ -32,7 +32,7 @@ import starbounddata.types.variants.VLQ;
  * <p>
  * Packet Direction: Server -> Client / Client -> Server
  * <p>
- * Starbound 1.0 Compliant
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -120,7 +120,7 @@ public class HeartbeatPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        VLQ.writeSignedVLQNoObjectPacketEncoder(out, this.currentStep);
+        out.writeBytes(VLQ.writeSignedVLQNoObject(this.currentStep));
     }
 
     @Override

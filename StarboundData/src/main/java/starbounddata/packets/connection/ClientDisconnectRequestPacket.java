@@ -30,6 +30,8 @@ import starbounddata.packets.Packets;
  * Notes: This packet can be edited freely. This packet will send the starnubserver a disconnect request
  * <p>
  * Packet Direction: Client -> Server
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta

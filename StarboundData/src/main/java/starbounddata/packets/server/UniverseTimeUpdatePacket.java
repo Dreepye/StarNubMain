@@ -30,7 +30,7 @@ import starbounddata.packets.Packets;
  * <p>
  * Packet Direction: Server -> Client
  * <p>
- * Starbound 1.0 Compliant
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta

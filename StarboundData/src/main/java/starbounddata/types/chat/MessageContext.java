@@ -36,7 +36,7 @@ public class MessageContext {
 
     public MessageContext(ByteBuf in) {
         this.MODE = Mode.values()[in.readUnsignedByte()];
-        this.CHANNEL_NAME = Packet.readStringVLQ(in);
+        this.CHANNEL_NAME = Packet.readVLQString(in);
     }
 
     public Mode getMODE() {
@@ -57,7 +57,7 @@ public class MessageContext {
 
     public void readMessageContext(ByteBuf in) {
         this.MODE = Mode.values()[in.readUnsignedByte()];
-        this.CHANNEL_NAME = Packet.readStringVLQ(in);
+        this.CHANNEL_NAME = Packet.readVLQString(in);
     }
 
     public void readMessageContext(Mode mode, String channelName) {

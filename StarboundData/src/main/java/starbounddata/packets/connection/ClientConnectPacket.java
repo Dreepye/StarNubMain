@@ -36,6 +36,8 @@ import java.util.UUID;
  * the {@link starbounddata.packets.server.ProtocolVersionPacket}
  * <p>
  * Packet Direction: Client -> Server
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -168,7 +170,6 @@ public class ClientConnectPacket extends Packet {
         return new ClientConnectPacket(this);
     }
 
-
     /**
      * Recommended: For connections StarNub usage.
      * <p>
@@ -179,26 +180,16 @@ public class ClientConnectPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-//        System.out.println(in.readerIndex());
-//        System.out.println(in.readableBytes());
-//        ByteBufferUtilities.search(in, "Underbalanced");
-//        try {
-//            ByteBufferUtilities.search(in, UUIDUtilities.fromString("2c9400bee71f66c3ea36d9bdd816c723"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println(in.readerIndex());
-//        System.out.println(in.readableBytes());
-
-        this.assetDigest = in.readBytes(35).array();
-        this.playerUuid = readUUID(in);
-        this.playerName = readStringVLQ(in);
-        this.playerSpecies = readStringVLQ(in);
+        this.assetDigest = readVLQArray(in);
+        boolean hasUUID = in.readBoolean();
+        if (hasUUID) {
+            this.playerUuid = readUUID(in);
+        }
+        this.playerName = readVLQString(in);
+        this.playerSpecies = readVLQString(in);
         this.shipData = readVLQArray(in);
         this.shipUpgrades.readShipUpgrades(in);
-        this.account = readStringVLQ(in);
-        System.out.println(in.readerIndex());
-        System.out.println(in.readableBytes());
+        this.account = readVLQString(in);
     }
 
     /**
@@ -211,15 +202,18 @@ public class ClientConnectPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeBytes(assetDigest);
-        writeUUID(out, this.playerUuid);
+        writeVLQArray(out, this.assetDigest);
+        if (this.playerUuid == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            writeUUID(out, this.playerUuid);
+        }
         writeStringVLQ(out, this.playerName);
         writeStringVLQ(out, this.playerSpecies);
         writeVLQArray(out, this.shipData);
         this.shipUpgrades.writeShipUpgrades(out);
-        if (account != null) {
-            writeStringVLQ(out, this.account);
-        }
+        writeStringVLQ(out, this.account);
     }
 
     @Override
@@ -229,8 +223,8 @@ public class ClientConnectPacket extends Packet {
                 ", playerUuid=" + playerUuid +
                 ", playerName='" + playerName + '\'' +
                 ", playerSpecies='" + playerSpecies + '\'' +
-                ", shipData=" + Arrays.toString(shipData) +
-                ", shipUpgrades=" + shipUpgrades +
+//                ", shipData=" + Arrays.toString(shipData) + //TO LARGE TO PRINT IN THIS FORM
+//                ", shipUpgrades=" + shipUpgrades +  //TO LARGE TO PRINT IN THIS FORM
                 ", account='" + account + '\'' +
                 "} " + super.toString();
     }

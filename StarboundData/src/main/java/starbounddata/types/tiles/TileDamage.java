@@ -22,6 +22,8 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * Represents a TileDamage which contains the class is a Enum for Damage Type, Amount, Harvest Level
+ * <p>
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
@@ -32,6 +34,9 @@ public class TileDamage {
     private float amount;
     private int harvestLevel;
 
+    public TileDamage() {
+    }
+
     public TileDamage(TileDamageType tileDamageType, float amount, int harvestLevel) {
         this.tileDamageType = tileDamageType;
         this.amount = amount;
@@ -39,15 +44,19 @@ public class TileDamage {
     }
 
     public TileDamage(ByteBuf in) {
-        this.tileDamageType = TileDamageType.values()[in.readUnsignedByte()];
-        this.amount = in.readFloat();
-        this.harvestLevel = 1;
+        readTileDamage(in);
     }
 
     public TileDamage(TileDamage tileDamage) {
         this.tileDamageType = tileDamage.getTileDamageType();
         this.amount = tileDamage.getAmount();
         this.harvestLevel = tileDamage.getHarvestLevel();
+    }
+
+    public void readTileDamage(ByteBuf in){
+        this.tileDamageType = TileDamageType.values()[in.readUnsignedByte()];
+        this.amount = in.readFloat();
+        this.harvestLevel = in.readInt();
     }
 
     public TileDamageType getTileDamageType() {
@@ -84,6 +93,7 @@ public class TileDamage {
     public void writeTileDamage(ByteBuf out) {
         out.writeByte(tileDamageType.ordinal());
         out.writeFloat(amount);
+        out.writeInt(harvestLevel);
     }
 
     @Override

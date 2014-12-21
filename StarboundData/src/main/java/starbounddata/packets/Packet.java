@@ -28,8 +28,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static starbounddata.types.variants.VLQ.createVLQNoObject;
-import static starbounddata.types.variants.VLQ.writeSignedVLQNoObjectPacketEncoder;
+import static starbounddata.types.variants.VLQ.writeVLQNoObject;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -224,9 +223,42 @@ public abstract class Packet {
         }
         msgOut.clear();
         msgOut.writeByte(PACKET_ID);
-        writeSignedVLQNoObjectPacketEncoder(msgOut, payloadLengthOut);
+        writeSVLQPacketEncoder(msgOut, payloadLengthOut);
         msgOut.writeBytes(dataOut);
         return msgOut;
+    }
+
+    /**
+     * Recommended: For internal use with StarNub packet decoding
+     * <p>
+     * Uses: This will write a s{@link starbounddata.types.variants.VLQ} to a {@link io.netty.buffer.ByteBuf}
+     * <p>
+     * Notes: This will not create a VLQ object and should be used
+     * <p>
+     *
+     * @param out   ByteBuf in which is to be read
+     * @param value long representing the VLQ value to be written out
+     */
+    public static void writeSVLQPacketEncoder(ByteBuf out, long value) {
+        if (value < 0) {
+            value = ((-(value + 1)) << 1) | 1;
+        } else {
+            value = value << 1;
+        }
+        int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
+        int numBytes = (numRelevantBits + 6) / 7;
+        if (numBytes == 0) {
+            numBytes = 1;
+        }
+        out.writerIndex(numBytes + 1); /* Sets the write index at the number of bytes + 1 byte for packet id */
+        for (int i = numBytes - 1; i >= 0; i--) {
+            int curByte = (int) (value & 0x7F);
+            if (i != (numBytes - 1)) {
+                curByte |= 0x80;
+            }
+            out.setByte(i + 1, curByte); /* Sets the byte at index + 1 byte for packet id */
+            value >>>= 7;
+        }
     }
 
     /**
@@ -263,12 +295,9 @@ public abstract class Packet {
      * @param in ByteBuf representing the data to be read
      * @return String the String that was read
      */
-    public static String readStringVLQ(ByteBuf in) {
-        try {
-            return new String(readVLQArray(in), Charset.forName("UTF-8"));
-        } catch (Exception e) {
-            return null;
-        }
+    public static String readVLQString(ByteBuf in) {
+        byte[] bytes = readVLQArray(in);
+        return new String(bytes, Charset.forName("UTF-8"));
     }
 
     /**
@@ -281,21 +310,8 @@ public abstract class Packet {
      * @return byte[] the byte[] that was read
      */
     public static byte[] readVLQArray(ByteBuf in) {
-        int len = VLQ.readUnsignedFromBufferNoObject(in);
-        return in.readBytes(len).array();
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will read 1 byte and form a boolean value from a {@link io.netty.buffer.ByteBuf} and advanced the buffer reader index by 1 byte
-     * <p>
-     *
-     * @param in ByteBuf representing the data to be read
-     * @return boolean the boolean that was read
-     */
-    public static boolean readBoolean(ByteBuf in) {
-        return in.readUnsignedByte() != 0;
+        long len = VLQ.readUnsignedFromBufferNoObject(in);
+        return in.readBytes((int) len).array();
     }
 
     /**
@@ -335,21 +351,8 @@ public abstract class Packet {
      * @param bytes bytes[] value to be written to the buffer
      */
     public static void writeVLQArray(ByteBuf out, byte[] bytes) {
-        out.writeBytes(createVLQNoObject(bytes.length));
+        out.writeBytes(writeVLQNoObject(bytes.length));
         out.writeBytes(bytes);
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will write a boolean value to a {@link io.netty.buffer.ByteBuf} and advanced the buffer writer index by 1 bytes
-     * <p>
-     *
-     * @param out   ByteBuf representing the buffer to be written to
-     * @param value voolean value to be written to the buffer
-     */
-    public static void writeBoolean(ByteBuf out, boolean value) {
-        out.writeByte(value ? (byte) 1 : (byte) 0);
     }
 
     @Override
