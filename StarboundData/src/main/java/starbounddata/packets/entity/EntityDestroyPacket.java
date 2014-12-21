@@ -22,28 +22,24 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.entity.EntityIdVLQ;
-import starbounddata.types.entity.EntityType;
-
-import java.util.Arrays;
+import starbounddata.types.variants.VLQ;
 
 /**
- * Represents the EntityCreate and methods to generate a packet data for StarNub and Plugins
+ * Represents the EntityDestroy and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
- * Packet Direction: Client -> Server//DEBUG UNKNOWN
+ * Packet Direction: Bidirectional
  * <p>
- * Starbound 1.0 Compliant (Versions 622, Update 1)  //DEBUG - NOT COMPLIANT - NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityCreatePacket extends Packet {
+public class EntityDestroyPacket extends Packet {
 
-    private EntityType entityType;
-    private byte[] storeData;
-    private EntityIdVLQ entityId = new EntityIdVLQ();
+    private long entityId;
+    private boolean death;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -55,8 +51,8 @@ public class EntityCreatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityCreatePacket(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYCREATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public EntityDestroyPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.ENTITYDESTROY.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -67,13 +63,13 @@ public class EntityCreatePacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param
+     * @param entityId long representing the entity id
+     * @param death boolean representing if we should kill the entity
      */
-    public EntityCreatePacket(ChannelHandlerContext DESTINATION_CTX, EntityType entityType, byte[] storeData, EntityIdVLQ entityId) {
-        super(Packets.ENTITYCREATE.getDirection(), Packets.ENTITYCREATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityType = entityType;
-        this.storeData = storeData;
+    public EntityDestroyPacket(ChannelHandlerContext DESTINATION_CTX, long entityId, boolean death) {
+        super(Packets.ENTITYDESTROY.getDirection(), Packets.ENTITYDESTROY.getPacketId(), null, DESTINATION_CTX);
         this.entityId = entityId;
+        this.death = death;
     }
 
     /**
@@ -83,35 +79,26 @@ public class EntityCreatePacket extends Packet {
      *
      * @param packet DamageRequestPacket representing the packet to construct from
      */
-    public EntityCreatePacket(EntityCreatePacket packet) {
+    public EntityDestroyPacket(EntityDestroyPacket packet) {
         super(packet);
-        this.entityType = packet.getEntityType();
-        this.storeData = packet.getStoreData().clone();
         this.entityId = packet.getEntityId();
+        this.death = packet.isDeath();
     }
 
-    public EntityType getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
-
-    public byte[] getStoreData() {
-        return storeData;
-    }
-
-    public void setStoreData(byte[] storeData) {
-        this.storeData = storeData;
-    }
-
-    public EntityIdVLQ getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(EntityIdVLQ entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
+    }
+
+    public boolean isDeath() {
+        return death;
+    }
+
+    public void setDeath(boolean death) {
+        this.death = true;
     }
 
     /**
@@ -121,8 +108,8 @@ public class EntityCreatePacket extends Packet {
      * @return DamageRequestPacket the new copied object
      */
     @Override
-    public EntityCreatePacket copy() {
-        return new EntityCreatePacket(this);
+    public EntityDestroyPacket copy() {
+        return new EntityDestroyPacket(this);
     }
 
     /**
@@ -133,10 +120,8 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-//        ByteBufferUtilities.print(in);
-        this.entityType =  EntityType.values()[in.readUnsignedByte()];
-        this.storeData = readVLQArray(in);
-        this.entityId.readEntityId(in);
+        this.entityId = VLQ.readSignedFromBufferNoObject(in);
+        this.death = in.readBoolean();
     }
 
     /**
@@ -149,19 +134,15 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeByte(entityType.ordinal());
-        out.writeBytes(storeData);
-        this.entityId.writeEntityId(out);
+        out.writeBytes(VLQ.writeSignedVLQNoObject(entityId));
+        out.writeBoolean(death);
     }
 
     @Override
     public String toString() {
-        return "EntityCreatePacket{" +
-                "entityType=" + entityType +
-                ", storeData=" + Arrays.toString(storeData) +
-                ", entityId=" + entityId +
+        return "EntityDestroyPacket{" +
+                "entityId=" + entityId +
+                ", death=" + death +
                 "} " + super.toString();
     }
-
-
 }

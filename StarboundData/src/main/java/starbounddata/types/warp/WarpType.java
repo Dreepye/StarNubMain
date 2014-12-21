@@ -18,6 +18,9 @@
 
 package starbounddata.types.warp;
 
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
 public enum WarpType {
     WARP_TO,
     WARP_RETURN,

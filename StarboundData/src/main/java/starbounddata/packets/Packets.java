@@ -42,7 +42,7 @@ public enum Packets {
     CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),// Packet.Direction.TO_STARBOUND_SERVER
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
-    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL),
+    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG
     FLYSHIP("", Packet.Direction.NOT_USED),
     CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CELESTIALREQUEST("", Packet.Direction.NOT_USED),
@@ -65,7 +65,7 @@ public enum Packets {
     COLLECTLIQUID("", Packet.Direction.NOT_USED),
     REQUESTDROP("", Packet.Direction.NOT_USED),
     SPAWNENTITY("", Packet.Direction.NOT_USED),
-    ENTITYINTERACT("", Packet.Direction.NOT_USED),
+    ENTITYINTERACT("EntityInteractPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
     CONNECTWIRE("", Packet.Direction.NOT_USED),
     DISCONNECTALLWIRES("", Packet.Direction.NOT_USED),
     OPENCONTAINER("", Packet.Direction.NOT_USED),
@@ -77,12 +77,12 @@ public enum Packets {
     BURNCONTAINER("", Packet.Direction.NOT_USED),
     CLEARCONTAINER("", Packet.Direction.NOT_USED),
     WORLDCLIENTSTATEUPDATE("", Packet.Direction.NOT_USED),
-    ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL),
+    ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues
     ENTITYUPDATE("", Packet.Direction.NOT_USED),
-    ENTITYDESTROY("", Packet.Direction.NOT_USED),
-    HITREQUEST("", Packet.Direction.NOT_USED),
-    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Nearly finished
-    DAMAGENOTIFICATION("", Packet.Direction.NOT_USED),
+    ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
+    HITREQUEST("HitRequestPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
+    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues
+    DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG
     CALLSCRIPTEDENTITY("", Packet.Direction.NOT_USED),
     UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED),
     HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL);

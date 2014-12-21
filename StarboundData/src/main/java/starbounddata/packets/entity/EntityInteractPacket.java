@@ -20,15 +20,14 @@ package starbounddata.packets.entity;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.entity.EntityIdVLQ;
-import starbounddata.types.entity.EntityType;
-
-import java.util.Arrays;
+import starbounddata.types.entity.EntityId;
+import starbounddata.types.vectors.Vec2F;
 
 /**
- * Represents the EntityCreate and methods to generate a packet data for StarNub and Plugins
+ * Represents the EntityInteract and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
@@ -39,11 +38,12 @@ import java.util.Arrays;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityCreatePacket extends Packet {
+public class EntityInteractPacket extends Packet {
 
-    private EntityType entityType;
-    private byte[] storeData;
-    private EntityIdVLQ entityId = new EntityIdVLQ();
+    private EntityId sourceEntityId = new EntityId();
+    private Vec2F position = new Vec2F();
+    private EntityId targetEntityId = new EntityId();
+
 
     /**
      * Recommended: For connections StarNub usage.
@@ -55,8 +55,8 @@ public class EntityCreatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityCreatePacket(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYCREATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public EntityInteractPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.ENTITYINTERACT.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -69,11 +69,11 @@ public class EntityCreatePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param
      */
-    public EntityCreatePacket(ChannelHandlerContext DESTINATION_CTX, EntityType entityType, byte[] storeData, EntityIdVLQ entityId) {
-        super(Packets.ENTITYCREATE.getDirection(), Packets.ENTITYCREATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityType = entityType;
-        this.storeData = storeData;
-        this.entityId = entityId;
+    public EntityInteractPacket(ChannelHandlerContext DESTINATION_CTX, EntityId sourceEntityId, Vec2F position , EntityId targetEntityId) {
+        super(Packets.ENTITYINTERACT.getDirection(), Packets.ENTITYINTERACT.getPacketId(), null, DESTINATION_CTX);
+        this.sourceEntityId = sourceEntityId;
+        this.position = position;
+        this.targetEntityId = targetEntityId;
     }
 
     /**
@@ -83,35 +83,35 @@ public class EntityCreatePacket extends Packet {
      *
      * @param packet DamageRequestPacket representing the packet to construct from
      */
-    public EntityCreatePacket(EntityCreatePacket packet) {
+    public EntityInteractPacket(EntityInteractPacket packet) {
         super(packet);
-        this.entityType = packet.getEntityType();
-        this.storeData = packet.getStoreData().clone();
-        this.entityId = packet.getEntityId();
+        this.sourceEntityId = packet.getSourceEntityId();
+        this.position = packet.getPosition();
+        this.targetEntityId = packet.getTargetEntityId();
     }
 
-    public EntityType getEntityType() {
-        return entityType;
+    public EntityId getSourceEntityId() {
+        return sourceEntityId;
     }
 
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
+    public void setSourceEntityId(EntityId sourceEntityId) {
+        this.sourceEntityId = sourceEntityId;
     }
 
-    public byte[] getStoreData() {
-        return storeData;
+    public Vec2F getPosition() {
+        return position;
     }
 
-    public void setStoreData(byte[] storeData) {
-        this.storeData = storeData;
+    public void setPosition(Vec2F position) {
+        this.position = position;
     }
 
-    public EntityIdVLQ getEntityId() {
-        return entityId;
+    public EntityId getTargetEntityId() {
+        return targetEntityId;
     }
 
-    public void setEntityId(EntityIdVLQ entityId) {
-        this.entityId = entityId;
+    public void setTargetEntityId(EntityId targetEntityId) {
+        this.targetEntityId = targetEntityId;
     }
 
     /**
@@ -121,8 +121,8 @@ public class EntityCreatePacket extends Packet {
      * @return DamageRequestPacket the new copied object
      */
     @Override
-    public EntityCreatePacket copy() {
-        return new EntityCreatePacket(this);
+    public EntityInteractPacket copy() {
+        return new EntityInteractPacket(this);
     }
 
     /**
@@ -133,10 +133,10 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-//        ByteBufferUtilities.print(in);
-        this.entityType =  EntityType.values()[in.readUnsignedByte()];
-        this.storeData = readVLQArray(in);
-        this.entityId.readEntityId(in);
+        ByteBufferUtilities.print(in);
+        this.sourceEntityId.readEntityId(in);
+        this.position.readVec2F(in);
+        this.targetEntityId.readEntityId(in);
     }
 
     /**
@@ -149,19 +149,17 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeByte(entityType.ordinal());
-        out.writeBytes(storeData);
-        this.entityId.writeEntityId(out);
+        this.sourceEntityId.writeEntityId(out);
+        this.position.writeVec2F(out);
+        this.targetEntityId.writeEntityId(out);
     }
 
     @Override
     public String toString() {
-        return "EntityCreatePacket{" +
-                "entityType=" + entityType +
-                ", storeData=" + Arrays.toString(storeData) +
-                ", entityId=" + entityId +
+        return "EntityInteractPacket{" +
+                "sourceEntityId=" + sourceEntityId +
+                ", position=" + position +
+                ", targetEntityId=" + targetEntityId +
                 "} " + super.toString();
     }
-
-
 }

@@ -16,43 +16,39 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.damage;
+package starbounddata.types.hit;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.entity.EntityId;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class RemoteDamageRequest {
+public class RemoteHitRequest {
 
     private EntityId causingEntityId = new EntityId();
-    private EntityId targetEntityId = new EntityId();
-    private DamageRequest damageRequest = new DamageRequest();
+    private EntityId targetEntityId =  new EntityId();
 
-    public RemoteDamageRequest() {
+    public RemoteHitRequest() {
     }
 
-    public RemoteDamageRequest(EntityId causingEntityId, EntityId targetEntityId, DamageRequest damageRequest) {
+    public RemoteHitRequest(EntityId causingEntityId, EntityId targetEntityId) {
         this.causingEntityId = causingEntityId;
         this.targetEntityId = targetEntityId;
-        this.damageRequest = damageRequest;
     }
 
-    public RemoteDamageRequest(ByteBuf in) {
-        readRemoteDamageRequest(in);
+    public RemoteHitRequest(ByteBuf in) {
+        readRemoteHitRequest(in);
     }
 
-    public RemoteDamageRequest(RemoteDamageRequest remoteDamageRequest) {
-        this.causingEntityId = remoteDamageRequest.getCausingEntityId().copy();
-        this.targetEntityId = remoteDamageRequest.getTargetEntityId().copy();
-        this.damageRequest = remoteDamageRequest.getDamageRequest().copy();
+    public RemoteHitRequest(RemoteHitRequest remoteHitRequest) {
+        this.causingEntityId = remoteHitRequest.getCausingEntityId().copy();
+        this.targetEntityId = remoteHitRequest.getTargetEntityId().copy();
     }
 
-    public void readRemoteDamageRequest(ByteBuf in) {
+    public void readRemoteHitRequest(ByteBuf in) {
         this.causingEntityId.readEntityId(in);
         this.targetEntityId.readEntityId(in);
-        this.damageRequest.readDamageRequest(in);
     }
 
     public EntityId getCausingEntityId() {
@@ -71,30 +67,20 @@ public class RemoteDamageRequest {
         this.targetEntityId = targetEntityId;
     }
 
-    public DamageRequest getDamageRequest() {
-        return damageRequest;
-    }
-
-    public void setDamageRequest(DamageRequest damageRequest) {
-        this.damageRequest = damageRequest;
-    }
-
-    public void writeRemoteDamageRequest(ByteBuf out){
+    public void writeRemoteHitRequest(ByteBuf out){
         this.causingEntityId.writeEntityId(out);
         this.targetEntityId.writeEntityId(out);
-        this.damageRequest.writeDamageRequest(out);
     }
 
-    public RemoteDamageRequest copy(){
-        return new RemoteDamageRequest(this);
+    public RemoteHitRequest copy(){
+        return new RemoteHitRequest(this);
     }
 
     @Override
     public String toString() {
-        return "RemoteDamageRequest{" +
+        return "RemoteHitRequest{" +
                 "causingEntityId=" + causingEntityId +
                 ", targetEntityId=" + targetEntityId +
-                ", damageRequest=" + damageRequest +
                 '}';
     }
 }

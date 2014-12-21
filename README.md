@@ -7,7 +7,7 @@ Project Start Date: April 2014 - Invested time approximately 30-40 hours weekly 
 
 Documents can be found here:
 
-[StarNub starnubdesktop.Main Documents](http://docs.starnub.org/main/)
+[StarNub Main Documents](http://docs.starnub.org/main/)
 [StarNub Plugins Documents](http://docs.starnub.org/main/)
 
 [Twitch Stream](http://www.twitch.tv/Underbalanced/)

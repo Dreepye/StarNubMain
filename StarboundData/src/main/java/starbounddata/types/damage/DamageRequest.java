@@ -19,12 +19,14 @@
 package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.packets.Packet;
-import starbounddata.types.variants.VLQ;
+import starbounddata.types.entity.EntityId;
 import starbounddata.types.vectors.Vec2F;
 
+import static starbounddata.packets.Packet.readVLQString;
+import static starbounddata.packets.Packet.writeStringVLQ;
+
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
+ * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING
  */
 public class DamageRequest {
 
@@ -32,14 +34,14 @@ public class DamageRequest {
     private DamageType damageType;
     private float damage;
     private Vec2F knockbackMomentum = new Vec2F();
-    private long sourceEntityId;
+    private EntityId sourceEntityId = new EntityId();
     private String damageSourceKind;
     private EphemeralStatusEffects statusEffects = new EphemeralStatusEffects();
 
     public DamageRequest() {
     }
 
-    public DamageRequest(HitType hitType, DamageType damageType, float damage, Vec2F knockbackMomentum, int sourceEntityId, String damageSourceKind, EphemeralStatusEffects statusEffects) {
+    public DamageRequest(HitType hitType, DamageType damageType, float damage, Vec2F knockbackMomentum, EntityId sourceEntityId, String damageSourceKind, EphemeralStatusEffects statusEffects) {
         this.hitType = hitType;
         this.damageType = damageType;
         this.damage = damage;
@@ -58,7 +60,7 @@ public class DamageRequest {
         this.damageType = damageRequest.getDamageType();
         this.damage = damageRequest.getDamage();
         this.knockbackMomentum = damageRequest.getKnockbackMomentum().copy();
-        this.sourceEntityId = damageRequest.getSourceEntityId();
+        this.sourceEntityId = damageRequest.getSourceEntityId().copy();
         this.damageSourceKind = damageRequest.getDamageSourceKind();
         this.statusEffects = damageRequest.getStatusEffects().copy();
     }
@@ -68,8 +70,8 @@ public class DamageRequest {
         this.damageType = DamageType.values()[in.readUnsignedByte()];
         this.damage = in.readFloat();
         this.knockbackMomentum.readVec2F(in);
-        this.sourceEntityId = VLQ.readUnsignedFromBufferNoObject(in);
-        this.damageSourceKind = Packet.readVLQString(in);
+        this.sourceEntityId.readEntityId(in);
+        this.damageSourceKind = readVLQString(in);
         this.statusEffects.readEphemeralStatusEffects(in);
     }
 
@@ -105,11 +107,11 @@ public class DamageRequest {
         this.knockbackMomentum = knockbackMomentum;
     }
 
-    public long getSourceEntityId() {
+    public EntityId getSourceEntityId() {
         return sourceEntityId;
     }
 
-    public void setSourceEntityId(int sourceEntityId) {
+    public void setSourceEntityId(EntityId sourceEntityId) {
         this.sourceEntityId = sourceEntityId;
     }
 
@@ -140,10 +142,10 @@ public class DamageRequest {
         out.writeByte(hitType.ordinal());
         out.writeByte(damageType.ordinal());
         out.writeFloat(damage);
-        knockbackMomentum.writeVec2F(out);
-        out.writeBytes(VLQ.writeSignedVLQNoObject(sourceEntityId));
-        Packet.writeStringVLQ(out, damageSourceKind);
-        statusEffects.writeEphemeralStatusEffects(out);
+        this.knockbackMomentum.writeVec2F(out);
+        this.sourceEntityId.writeEntityId(out);
+        writeStringVLQ(out, damageSourceKind);
+        this.statusEffects.writeEphemeralStatusEffects(out);
     }
 
     @Override

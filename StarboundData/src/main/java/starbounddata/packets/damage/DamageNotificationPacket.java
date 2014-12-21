@@ -16,19 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.packets.entity;
+package starbounddata.packets.damage;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.entity.EntityIdVLQ;
-import starbounddata.types.entity.EntityType;
-
-import java.util.Arrays;
+import starbounddata.types.damage.RemoteDamageNotification;
 
 /**
- * Represents the EntityCreate and methods to generate a packet data for StarNub and Plugins
+ * Represents the DamageNotification and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
@@ -39,11 +37,9 @@ import java.util.Arrays;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityCreatePacket extends Packet {
+public class DamageNotificationPacket extends Packet {
 
-    private EntityType entityType;
-    private byte[] storeData;
-    private EntityIdVLQ entityId = new EntityIdVLQ();
+    private RemoteDamageNotification remoteDamageNotification = new RemoteDamageNotification();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -55,8 +51,8 @@ public class EntityCreatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityCreatePacket(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYCREATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public DamageNotificationPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.DAMAGENOTIFICATION.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -67,13 +63,11 @@ public class EntityCreatePacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param
+     * @param remoteDamageNotification int representing the Starbounds protocol version
      */
-    public EntityCreatePacket(ChannelHandlerContext DESTINATION_CTX, EntityType entityType, byte[] storeData, EntityIdVLQ entityId) {
-        super(Packets.ENTITYCREATE.getDirection(), Packets.ENTITYCREATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityType = entityType;
-        this.storeData = storeData;
-        this.entityId = entityId;
+    public DamageNotificationPacket(ChannelHandlerContext DESTINATION_CTX, RemoteDamageNotification remoteDamageNotification) {
+        super(Packets.DAMAGENOTIFICATION.getDirection(), Packets.DAMAGENOTIFICATION.getPacketId(), null, DESTINATION_CTX);
+        this.remoteDamageNotification = remoteDamageNotification;
     }
 
     /**
@@ -83,35 +77,17 @@ public class EntityCreatePacket extends Packet {
      *
      * @param packet DamageRequestPacket representing the packet to construct from
      */
-    public EntityCreatePacket(EntityCreatePacket packet) {
+    public DamageNotificationPacket(DamageNotificationPacket packet) {
         super(packet);
-        this.entityType = packet.getEntityType();
-        this.storeData = packet.getStoreData().clone();
-        this.entityId = packet.getEntityId();
+        this.remoteDamageNotification = packet.getRemoteDamageNotification().copy();
     }
 
-    public EntityType getEntityType() {
-        return entityType;
+    public RemoteDamageNotification getRemoteDamageNotification() {
+        return remoteDamageNotification;
     }
 
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
-
-    public byte[] getStoreData() {
-        return storeData;
-    }
-
-    public void setStoreData(byte[] storeData) {
-        this.storeData = storeData;
-    }
-
-    public EntityIdVLQ getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(EntityIdVLQ entityId) {
-        this.entityId = entityId;
+    public void setRemoteDamageNotification(RemoteDamageNotification remoteDamageNotification) {
+        this.remoteDamageNotification = remoteDamageNotification;
     }
 
     /**
@@ -121,8 +97,8 @@ public class EntityCreatePacket extends Packet {
      * @return DamageRequestPacket the new copied object
      */
     @Override
-    public EntityCreatePacket copy() {
-        return new EntityCreatePacket(this);
+    public DamageNotificationPacket copy() {
+        return new DamageNotificationPacket(this);
     }
 
     /**
@@ -133,10 +109,8 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-//        ByteBufferUtilities.print(in);
-        this.entityType =  EntityType.values()[in.readUnsignedByte()];
-        this.storeData = readVLQArray(in);
-        this.entityId.readEntityId(in);
+        ByteBufferUtilities.print(in);
+        this.remoteDamageNotification.readRemoteDamageNotification(in);
     }
 
     /**
@@ -149,19 +123,13 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeByte(entityType.ordinal());
-        out.writeBytes(storeData);
-        this.entityId.writeEntityId(out);
+        this.remoteDamageNotification.writeRemoteDamageNotification(out);
     }
 
     @Override
     public String toString() {
-        return "EntityCreatePacket{" +
-                "entityType=" + entityType +
-                ", storeData=" + Arrays.toString(storeData) +
-                ", entityId=" + entityId +
+        return "DamageNotificationPacket{" +
+                "remoteDamageNotification=" + remoteDamageNotification +
                 "} " + super.toString();
     }
-
-
 }

@@ -18,9 +18,13 @@
 
 package starbounddata.types.warp;
 
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT CORRECT MISSING A DATA
+ */
 public enum WarpId {
     UNIQUE_WORLD,
     CELESTIAL_WORLD,
-    MISSION_WORLD,
-    CLIENT_SHIP_WORLD
+    //MISSING SOMETHING
+    CLIENT_SHIP_WORLD, // 3 -
+    MISSION_WORLD  // 4 - Mission
 }

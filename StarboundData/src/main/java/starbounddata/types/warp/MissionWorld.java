@@ -19,37 +19,50 @@
 package starbounddata.types.warp;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.packets.Packet;
 
 import java.util.UUID;
+
+import static starbounddata.packets.Packet.*;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class ClientShipWorld {
+public class MissionWorld {
 
+    private String name;
     private UUID uuid;
 
-    public ClientShipWorld() {
+    public MissionWorld() {
     }
 
-    public ClientShipWorld(UUID uuid) {
+    public MissionWorld(String name, UUID uuid) {
         this.uuid = uuid;
+        this.name = name;
     }
 
-    public ClientShipWorld(ByteBuf in) {
-        readClientShipWorld(in);
+    public MissionWorld(ByteBuf in) {
+        readMissionWorld(in);
     }
 
-    public ClientShipWorld(ClientShipWorld clientShipWorld) {
-        this.uuid = clientShipWorld.getUuid();
+    public MissionWorld(MissionWorld missionWorld) {
+        this.name = missionWorld.getName();
+        this.uuid = missionWorld.getUuid();
     }
 
-    public void readClientShipWorld(ByteBuf in){
+    public void readMissionWorld(ByteBuf in){
+        this.name = readVLQString(in);
         boolean hasUUID = in.readBoolean();
         if (hasUUID) {
-            this.uuid = Packet.readUUID(in);
+            this.uuid = readUUID(in);
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public UUID getUuid() {
@@ -63,23 +76,25 @@ public class ClientShipWorld {
     /**
      * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2F to
      */
-    public void writeClientShipWorld(ByteBuf out) {
+    public void writeMissionWorld(ByteBuf out) {
+        writeStringVLQ(out, name);
         if(uuid == null){
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            Packet.writeUUID(out, uuid);
+            writeUUID(out, uuid);
         }
     }
 
-    public ClientShipWorld copy(){
-        return new ClientShipWorld(this);
+    public MissionWorld copy(){
+        return new MissionWorld(this);
     }
 
     @Override
     public String toString() {
-        return "ClientShipWorld{" +
-                "uuid=" + uuid +
+        return "MissionWorld{" +
+                "name='" + name + '\'' +
+                ", uuid=" + uuid +
                 '}';
     }
 }

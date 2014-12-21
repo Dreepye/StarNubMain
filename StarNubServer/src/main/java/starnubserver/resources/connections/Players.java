@@ -23,6 +23,9 @@ import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
+import starbounddata.packets.damage.DamageNotificationPacket;
+import starbounddata.packets.entity.EntityInteractPacket;
+import starbounddata.packets.hit.HitRequestPacket;
 import starbounddata.packets.warp.PlayerWarp;
 import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
@@ -97,7 +100,31 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     }
 
     private void packetDebug() {
+        //// KEEP TEMPORARY ////
+        /*Debugging WorldID and Data*/
         new PacketEventSubscription("StarNub", Priority.CRITICAL, PlayerWarp.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+        /*Debugging Direction*/
+         new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+        /*Debugging Direction */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, HitRequestPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        //// KEEP TEMPORARY ////
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageNotificationPacket.class, new PacketEventHandler() {
             @Override
             public void onEvent(Packet eventData) {
                 System.out.println(eventData);
@@ -110,7 +137,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 //                System.out.println(eventData);
 //            }
 //        });
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new PacketEventHandler() {
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageRequestPacket.class, new PacketEventHandler() {
 //            @Override
 //            public void onEvent(Packet eventData) {
 //                System.out.println(eventData);
@@ -130,12 +157,12 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 //            }
 //        });
 
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 //        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "Player_Connected", new StarNubEventHandler() {
 //            @Override

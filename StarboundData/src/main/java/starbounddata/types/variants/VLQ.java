@@ -67,6 +67,8 @@ public class VLQ {
         this.length = length;
     }
 
+    ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
@@ -82,9 +84,9 @@ public class VLQ {
         VLQ value = unsignedFromBuffer(in);
         long val = value.getValue();
         if ((value.getValue() & 1) == 0x00)
-            val = (long) val >> 1;
+            val = val >> 1;
         else
-            val = -((long) (val >> 1) + 1);
+            val = -((val >> 1) + 1);
         value.setValue(val);
         return value;
     }
@@ -114,7 +116,53 @@ public class VLQ {
         return new VLQ(length, value);
     }
 
-    ///////////////////     REPRESENTS VLQ OBJECT CREATION METHODS     ///////////////////
+    ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will read a s{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * <p>
+     * Notes: This will not create a VLQ object and should be used
+     * <p>
+     *
+     * @param in ByteBuf representing the bytes to be read for a reason length from a signed vlq
+     * @return int representing the reason length
+     */
+    public static long readSignedFromBufferNoObject(ByteBuf in) {
+        long payloadLength = readUnsignedFromBufferNoObject(in);
+        if ((payloadLength & 1) == 0x00) {
+            payloadLength = payloadLength >> 1;
+        } else {
+            payloadLength = -((payloadLength >> 1) + 1);
+        }
+        return payloadLength;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will read a u{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
+     * <p>
+     * Notes: This will not create a VLQ object and should be used
+     * <p>
+     *
+     * @param in ByteBuf representing the bytes to be read for a reason length from a vlq
+     * @return int representing the reason length
+     */
+    public static long readUnsignedFromBufferNoObject(ByteBuf in) {
+        int vlqLength = 0;
+        int payloadLength = 0;
+        while (vlqLength <= 10) {
+            int tmpByte = in.readByte();
+            payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);
+            vlqLength++;
+            if ((tmpByte & 0x80) == 0) {
+                break;
+            }
+        }
+        return payloadLength;
+    }
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -163,56 +211,6 @@ public class VLQ {
         }
         return output;
     }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will read a s{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param in ByteBuf representing the bytes to be read for a reason length from a signed vlq
-     * @return int representing the reason length
-     */
-    public static long readSignedFromBufferNoObject(ByteBuf in) {
-        long payloadLength = readUnsignedFromBufferNoObject(in);
-        if (payloadLength < 0) {
-            payloadLength = ((-(payloadLength + 1)) << 1) | 1;
-        } else {
-            payloadLength = payloadLength << 1;
-        }
-        return payloadLength;
-    }
-
-
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will read a u{@link starbounddata.types.variants.VLQ} from a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     * Notes: This will not create a VLQ object and should be used
-     * <p>
-     *
-     * @param in ByteBuf representing the bytes to be read for a reason length from a vlq
-     * @return int representing the reason length
-     */
-    public static long readUnsignedFromBufferNoObject(ByteBuf in) {
-        int vlqLength = 0;
-        int payloadLength = 0;
-        while (vlqLength <= 10) {
-            int tmpByte = in.readByte();
-            payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);
-            vlqLength++;
-            if ((tmpByte & 0x80) == 0) {
-                break;
-            }
-        }
-        return payloadLength;
-    }
-
-    ///////////////////     REPRESENTS NO VLQ OBJECT CREATION METHODS     ///////////////////
 
     @Override
     public String toString() {

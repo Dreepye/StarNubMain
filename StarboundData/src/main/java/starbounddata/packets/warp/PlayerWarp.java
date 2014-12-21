@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.warp.ClientShipWorld;
 import starbounddata.types.warp.WarpId;
 import starbounddata.types.warp.WarpType;
 
@@ -118,12 +117,19 @@ public class PlayerWarp extends Packet {
     public void read(ByteBuf in) {
         ByteBufferUtilities.print(in);
         this.warpType = WarpType.values()[in.readUnsignedByte()];
-        this.warpId =  WarpId.values()[in.readUnsignedByte()];
-        if(warpId == WarpId.CLIENT_SHIP_WORLD){
-            this.locationId = new ClientShipWorld(in);
-        } else {
+
+//        this.warpId =  WarpId.values()[in.readUnsignedByte()];
+//            switch (warpId){
+//                case CLIENT_SHIP_WORLD: {
+//                    this.locationId = new ClientShipWorld(in); break;
+//                }
+//                case MISSION_WORLD: {
+//                    this.locationId = new MissionWorld(in); break;
+//                }
+//            }
+
             locationId = in.readBytes(in.readableBytes()).array();
-        }
+//        }
     }
 
     /**
@@ -137,12 +143,17 @@ public class PlayerWarp extends Packet {
     @Override
     public void write(ByteBuf out) {
         out.writeByte(warpType.ordinal());
-        out.writeByte(warpId.ordinal());
-        if(warpId == WarpId.CLIENT_SHIP_WORLD){
-            ((ClientShipWorld) this.locationId).writeClientShipWorld(out);
-        } else {
+//        out.writeByte(warpId.ordinal());
+//            switch (warpId){
+//                case CLIENT_SHIP_WORLD: {
+//                    this.locationId = new ClientShipWorld(in); break;
+//                }
+//                case MISSION_WORLD: {
+//                    this.locationId = new MissionWorld(in); break;
+//                }
+//            }
             out.writeBytes((byte[]) locationId);
-        }
+
     }
 
     @Override

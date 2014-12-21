@@ -40,7 +40,6 @@ import starbounddata.packets.Packets;
  */
 public class ChatReceivePacket extends Packet {
 
-
     private MessageContext messageContext = new MessageContext();
     private int clientId;
     private String fromName;
