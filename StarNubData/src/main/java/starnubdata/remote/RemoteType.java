@@ -16,10 +16,20 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.generic;
+package starnubdata.remote;
 
-public enum CanUse {
-    PLAYER,
-    REMOTE_PLAYER,
-    BOTH
+public enum RemoteType {
+    LICENSE_CHECK,
+    LICENSE_CHECK_ACCEPT,
+    LICENSE_CHECK_UNLICENSED,
+    LICENSE_CHECK_DENY,
+    COUNT_CHECK,
+    COUNT_ACCEPT,
+    COUNT_DENY,
+    BAN_ADD,
+    BAN_REMOVE,
+    BAN_UPDATE
 }
+
+
+//INSERT STUFF HERE

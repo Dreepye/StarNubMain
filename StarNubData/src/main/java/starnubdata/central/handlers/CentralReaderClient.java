@@ -16,18 +16,16 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.messages;
+package starnubdata.central.handlers;
 
-public class StarNubMessageLicense extends StarNubMessage {
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import starnubdata.central.CentralMessage;
 
-    private final String KEY;
+public class CentralReaderClient extends SimpleChannelInboundHandler<CentralMessage> {
 
-    public StarNubMessageLicense(Type TYPE, String KEY) {
-        super(TYPE);
-        this.KEY = KEY;
-    }
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, CentralMessage centralMessage) throws Exception {
 
-    public String getKEY() {
-        return KEY;
     }
 }

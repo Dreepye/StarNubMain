@@ -16,42 +16,32 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.network;
+package starnubdata.network.initializer;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import io.netty.handler.ssl.SslContext;
-import starnubdata.messages.StarNubMessage;
-import starnubdata.network.handlers.StarNubMessageReaderClient;
+import starnubdata.central.handlers.CentralReaderClient;
 
 
-public class StarNubMessageClientInitializer extends ChannelInitializer<SocketChannel> {
+public class StarNubDataClientInitializer extends ChannelInitializer<SocketChannel> {
 
-//    private final EventRouter EVENT_ROUTER;
-//
-//    public StarNubMessageClientInitializer(EventRouter EVENT_ROUTER) {
-//        this.EVENT_ROUTER = EVENT_ROUTER;
-//    }
-    private final SslContext SSL_CTX;
     private final String HOST;
     private final int PORT;
+    private final Object MESSAGE_TYPE;
 
-    public StarNubMessageClientInitializer(SslContext SSL_CTX, String HOST, int PORT) {
-        this.SSL_CTX = SSL_CTX;
+    public StarNubDataClientInitializer(Object MESSAGE_TYPE, String HOST, int PORT) {
         this.HOST = HOST;
         this.PORT = PORT;
+        this.MESSAGE_TYPE = MESSAGE_TYPE;
     }
 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
-//        SslContext sslContext = SslContext.newClientContext(new File("c_pub.pem"));
-//        SSLEngine sslEngine = sslContext.newEngine(ch.alloc());
-//        ch.pipeline().addFirst(new SslHandler(sslEngine));
-        ch.pipeline().addFirst(new ObjectDecoder(ClassResolvers.weakCachingResolver(StarNubMessage.class.getClassLoader())));
+        ch.pipeline().addFirst(new ObjectDecoder(ClassResolvers.weakCachingResolver(MESSAGE_TYPE.getClass().getClassLoader())));
         ch.pipeline().addFirst(new ObjectEncoder());
-        ch.pipeline().addLast(new StarNubMessageReaderClient());
+        ch.pipeline().addLast(new CentralReaderClient());
     }
 }

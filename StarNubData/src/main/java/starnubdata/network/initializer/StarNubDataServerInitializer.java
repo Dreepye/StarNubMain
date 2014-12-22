@@ -16,37 +16,27 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.network;
+package starnubdata.network.initializer;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import starnubdata.messages.StarNubMessage;
-import starnubdata.network.handlers.StarNubMessageReaderServer;
+import starnubdata.central.handlers.CentralReaderServer;
 
-public class StarNubMessageServerInitializer extends ChannelInitializer<SocketChannel> {
+public class StarNubDataServerInitializer extends ChannelInitializer<SocketChannel> {
 
-//    private final EventRouter EVENT_ROUTER;
-//
-//    public StarNubMessageServerInitializer(EventRouter EVENT_ROUTER) {
-//        this.EVENT_ROUTER = EVENT_ROUTER;
-//    }
+    private final Object MESSAGE_TYPE;
 
-//    private final SslContext SSL_CTX;
-//
-//    public StarNubMessageServerInitializer() {
-//        this.SSL_CTX = SSL_CTX;
-//    }
+    public StarNubDataServerInitializer(Object MESSAGE_TYPE) {
+        this.MESSAGE_TYPE = MESSAGE_TYPE;
+    }
 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
-//        SslContext sslContext = SslContext.newServerContext(new File("c_priv.pem"), new File("s.pem"), "secret");
-//        SSLEngine sslEngine = sslContext.newEngine(ch.alloc());
-//        ch.pipeline().addFirst(new SslHandler(sslEngine));
-        ch.pipeline().addFirst(new ObjectDecoder(ClassResolvers.weakCachingResolver(StarNubMessage.class.getClassLoader())));
+        ch.pipeline().addFirst(new ObjectDecoder(ClassResolvers.weakCachingResolver(MESSAGE_TYPE.getClass().getClassLoader())));
         ch.pipeline().addFirst(new ObjectEncoder());
-        ch.pipeline().addLast(new StarNubMessageReaderServer());
+        ch.pipeline().addLast(new CentralReaderServer());
     }
 }

@@ -16,27 +16,37 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.messages;
+package starnubdata.central;
 
+public class CentralMessage implements java.io.Serializable {
 
-
-public class StarNubMessageBan extends StarNubMessage {
-
-//    private final Ban BAN;
-//
-    public StarNubMessageBan(Type TYPE) {
-        super(TYPE);
-//        this.BAN = BAN;
+    public enum Type {
+        LICENSE_CHECK,
+        LICENSE_CHECK_ACCEPT,
+        LICENSE_CHECK_UNLICENSED,
+        LICENSE_CHECK_DENY,
+        COUNT_CHECK,
+        COUNT_ACCEPT,
+        COUNT_DENY,
+        BAN_ADD,
+        BAN_REMOVE,
+        BAN_UPDATE
     }
-//
-//    public Ban getBAN() {
-//        return BAN;
-////    }
-//
-//    @Override
-//    public String toString() {
-//        return "StarNubMessageBan{" +
-//                "BAN=" + BAN +
-//                "} " + super.toString();
-//    }
+
+    private final Type TYPE;
+
+    public CentralMessage(Type TYPE) {
+        this.TYPE = TYPE;
+    }
+
+    public Type getTYPE() {
+        return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "StarNubMessage{" +
+                "TYPE=" + TYPE +
+                '}';
+    }
 }

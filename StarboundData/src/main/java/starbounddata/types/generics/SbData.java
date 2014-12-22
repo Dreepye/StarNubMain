@@ -16,17 +16,33 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.generic;
+package starbounddata.types.generics;
 
-public enum DisconnectReason {
-    QUIT,
-    KICKED,
-    BANNED,
-    RESERVED_KICK,
-    CONNECTION_LOST,
-    CONNECTION_FAILURE,
-    CHARACTER_LOG_IN,
-    DECODER_CLOSED,
-    DECODER_CLOSED_NO_DECODING,
-    OTHER
+import io.netty.buffer.ByteBuf;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+public abstract class SbData<T> {
+
+    public SbData() {
+    }
+
+    public SbData(ByteBuf in){
+        read(in);
+    }
+
+    public abstract void read(ByteBuf in);
+    public abstract void write(ByteBuf out);
+
+    public T copy(){
+        Class<? extends SbData> clazz = this.getClass();
+        try {
+            Constructor constructor = clazz.getConstructor(clazz);
+            return (T) constructor.newInstance(this);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+            e.printStackTrace(); /* THIS SHOULD NEVER HAPPEN */
+        }
+        return null;
+    }
 }

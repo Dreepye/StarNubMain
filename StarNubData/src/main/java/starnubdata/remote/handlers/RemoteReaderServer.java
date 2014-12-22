@@ -16,9 +16,16 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.chat;
+package starnubdata.remote.handlers;
 
-public class ChatSentMessage {
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import starnubdata.remote.RemoteMessage;
 
+public class RemoteReaderServer extends SimpleChannelInboundHandler<RemoteMessage> {
 
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RemoteMessage remoteMessage) throws Exception {
+
+    }
 }

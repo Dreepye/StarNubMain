@@ -16,14 +16,16 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.generic;
+package starnubdata.central.handlers;
 
-public enum BanType {
-    IP,
-    UUID,
-    BOTH,
-    IP_ALL_UUIDS,
-    ALL_IPS,
-    ALL_UUIDS,
-    ALL
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import starnubdata.central.CentralMessage;
+
+public class CentralReaderServer extends SimpleChannelInboundHandler<CentralMessage> {
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, CentralMessage centralMessage) throws Exception {
+
+    }
 }

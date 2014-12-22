@@ -16,26 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.network.handlers;
+package starnubdata.central;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import starnubdata.messages.StarNubMessage;
-
-public class StarNubMessageReaderClient extends SimpleChannelInboundHandler<StarNubMessage> {
-
-//    private final EventRouter EVENT_ROUTER;
-//
-//    public StarNubMessageReaderClient(EventRouter EVENT_ROUTER) {
-//        this.EVENT_ROUTER = EVENT_ROUTER;
-//    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, StarNubMessage starNubMessage) throws Exception {
-        System.out.println(starNubMessage);
-        switch(starNubMessage.getTYPE()){
-
-        }
-    }
+public enum CentralType {
+    LICENSE_CHECK,
+    LICENSE_CHECK_ACCEPT,
+    LICENSE_CHECK_UNLICENSED,
+    LICENSE_CHECK_DENY,
+    COUNT_CHECK,
+    COUNT_ACCEPT,
+    COUNT_DENY,
+    BAN_ADD,
+    BAN_REMOVE,
+    BAN_UPDATE
 }

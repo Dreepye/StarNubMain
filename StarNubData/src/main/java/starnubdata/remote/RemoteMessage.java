@@ -16,37 +16,31 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubdata.messages;
+package starnubdata.remote;
 
-public class StarNubMessage implements java.io.Serializable {
+public class RemoteMessage {
 
-    public enum Type {
-        LICENSE_CHECK,
-        LICENSE_CHECK_ACCEPT,
-        LICENSE_CHECK_UNLICENSED,
-        LICENSE_CHECK_DENY,
-        COUNT_CHECK,
-        COUNT_ACCEPT,
-        COUNT_DENY,
-        BAN_ADD,
-        BAN_REMOVE,
-        BAN_UPDATE
+    final RemoteType remoteType;
+    final Object objectType;
+
+    public RemoteMessage(RemoteType remoteType, Object objectType) {
+        this.remoteType = remoteType;
+        this.objectType = objectType;
     }
 
-    private final Type TYPE;
-
-    public StarNubMessage(Type TYPE) {
-        this.TYPE = TYPE;
+    public RemoteType getRemoteType() {
+        return remoteType;
     }
 
-    public Type getTYPE() {
-        return TYPE;
+    public Object getObjectType() {
+        return objectType;
     }
 
     @Override
     public String toString() {
-        return "StarNubMessage{" +
-                "TYPE=" + TYPE +
+        return "StarNubRemote{" +
+                "remoteType=" + remoteType +
+                ", objectType=" + objectType +
                 '}';
     }
 }
