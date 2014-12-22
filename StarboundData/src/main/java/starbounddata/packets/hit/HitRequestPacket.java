@@ -108,7 +108,7 @@ public class HitRequestPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.remoteHitRequest.readRemoteHitRequest(in);
+        this.remoteHitRequest.read(in);
     }
 
     /**
@@ -121,7 +121,7 @@ public class HitRequestPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.remoteHitRequest.writeRemoteHitRequest(out);
+        this.remoteHitRequest.write(out);
     }
 
     @Override

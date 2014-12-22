@@ -19,14 +19,17 @@
 package starbounddata.types.warp;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.packets.Packet;
+import starbounddata.types.SbData;
 
 import java.util.UUID;
+
+import static starbounddata.packets.Packet.readUUID;
+import static starbounddata.packets.Packet.writeUUID;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class ClientShipWorld {
+public class ClientShipWorld extends SbData<ClientShipWorld> {
 
     private UUID uuid;
 
@@ -38,18 +41,11 @@ public class ClientShipWorld {
     }
 
     public ClientShipWorld(ByteBuf in) {
-        readClientShipWorld(in);
+        super(in);
     }
 
     public ClientShipWorld(ClientShipWorld clientShipWorld) {
         this.uuid = clientShipWorld.getUuid();
-    }
-
-    public void readClientShipWorld(ByteBuf in){
-        boolean hasUUID = in.readBoolean();
-        if (hasUUID) {
-            this.uuid = Packet.readUUID(in);
-        }
     }
 
     public UUID getUuid() {
@@ -60,20 +56,22 @@ public class ClientShipWorld {
         this.uuid = uuid;
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2F to
-     */
-    public void writeClientShipWorld(ByteBuf out) {
+    @Override
+    public void read(ByteBuf in){
+        boolean hasUUID = in.readBoolean();
+        if (hasUUID) {
+            this.uuid = readUUID(in);
+        }
+    }
+
+    @Override
+    public void write(ByteBuf out) {
         if(uuid == null){
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            Packet.writeUUID(out, uuid);
+            writeUUID(out, uuid);
         }
-    }
-
-    public ClientShipWorld copy(){
-        return new ClientShipWorld(this);
     }
 
     @Override

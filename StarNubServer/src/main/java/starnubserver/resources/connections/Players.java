@@ -23,9 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
-import starbounddata.packets.damage.DamageNotificationPacket;
-import starbounddata.packets.entity.EntityInteractPacket;
 import starbounddata.packets.hit.HitRequestPacket;
+import starbounddata.packets.tile.DamageTileGroupPacket;
 import starbounddata.packets.warp.PlayerWarp;
 import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
@@ -109,12 +108,12 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
             }
         });
         /*Debugging Direction*/
-         new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
+//         new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
         /*Debugging Direction */
         new PacketEventSubscription("StarNub", Priority.CRITICAL, HitRequestPacket.class, new PacketEventHandler() {
             @Override
@@ -124,12 +123,27 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         });
 
         //// KEEP TEMPORARY ////
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageNotificationPacket.class, new PacketEventHandler() {
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
+
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new PacketEventHandler() {
             @Override
             public void onEvent(Packet eventData) {
                 System.out.println(eventData);
             }
         });
+
+
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageNotificationPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityCreatePacket.class, new PacketEventHandler() {
 //            @Override
@@ -143,19 +157,19 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 //                System.out.println(eventData);
 //            }
 //        });
-//            new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
+            new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
 
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
 
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
 //            @Override

@@ -16,17 +16,17 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.packets.damage;
+package starbounddata.packets.misc;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.damage.RemoteDamageRequest;
+import starbounddata.types.items.ItemDescriptor;
 
 /**
- * Represents the DamageRequest and methods to generate a packet data for StarNub and Plugins
+ * Represents the GiveItemPacket and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
@@ -37,9 +37,9 @@ import starbounddata.types.damage.RemoteDamageRequest;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class DamageRequestPacket extends Packet {
+public class GiveItemPacket extends Packet {
 
-    private RemoteDamageRequest remoteDamageRequest = new RemoteDamageRequest();
+    private ItemDescriptor itemDescriptor = new ItemDescriptor();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -51,8 +51,8 @@ public class DamageRequestPacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public DamageRequestPacket(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.DAMAGEREQUEST.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public GiveItemPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.GIVEITEM.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -63,11 +63,11 @@ public class DamageRequestPacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param remoteDamageRequest int representing the Starbounds protocol version
+     * @param itemDescriptor int representing the Starbounds protocol version
      */
-    public DamageRequestPacket(ChannelHandlerContext DESTINATION_CTX, RemoteDamageRequest remoteDamageRequest) {
-        super(Packets.DAMAGEREQUEST.getDirection(), Packets.DAMAGEREQUEST.getPacketId(), null, DESTINATION_CTX);
-        this.remoteDamageRequest = remoteDamageRequest;
+    public GiveItemPacket(ChannelHandlerContext DESTINATION_CTX, ItemDescriptor itemDescriptor) {
+        super(Packets.GIVEITEM.getDirection(), Packets.GIVEITEM.getPacketId(), null, DESTINATION_CTX);
+        this.itemDescriptor = itemDescriptor;
     }
 
     /**
@@ -77,17 +77,17 @@ public class DamageRequestPacket extends Packet {
      *
      * @param packet DamageRequestPacket representing the packet to construct from
      */
-    public DamageRequestPacket(DamageRequestPacket packet) {
+    public GiveItemPacket(GiveItemPacket packet) {
         super(packet);
-        this.remoteDamageRequest = packet.getRemoteDamageRequest().copy();
+        this.itemDescriptor = packet.getItemDescriptor().copy();
     }
 
-    public RemoteDamageRequest getRemoteDamageRequest() {
-        return remoteDamageRequest;
+    public ItemDescriptor getItemDescriptor() {
+        return itemDescriptor;
     }
 
-    public void setRemoteDamageRequest(RemoteDamageRequest remoteDamageRequest) {
-        this.remoteDamageRequest = remoteDamageRequest;
+    public void setItemDescriptor(ItemDescriptor itemDescriptor) {
+        this.itemDescriptor = itemDescriptor;
     }
 
     /**
@@ -97,8 +97,8 @@ public class DamageRequestPacket extends Packet {
      * @return DamageRequestPacket the new copied object
      */
     @Override
-    public DamageRequestPacket copy() {
-        return new DamageRequestPacket(this);
+    public GiveItemPacket copy() {
+        return new GiveItemPacket(this);
     }
 
     /**
@@ -110,7 +110,7 @@ public class DamageRequestPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         ByteBufferUtilities.print(in);
-        this.remoteDamageRequest.read(in);
+        this.itemDescriptor.read(in);
     }
 
     /**
@@ -123,13 +123,13 @@ public class DamageRequestPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.remoteDamageRequest.write(out);
+        this.itemDescriptor.write(out);
     }
 
     @Override
     public String toString() {
-        return "DamageRequestPacket{" +
-                "remoteDamageRequest=" + remoteDamageRequest +
+        return "GiveItemPacket{" +
+                "itemDescriptor=" + itemDescriptor +
                 "} " + super.toString();
     }
 }

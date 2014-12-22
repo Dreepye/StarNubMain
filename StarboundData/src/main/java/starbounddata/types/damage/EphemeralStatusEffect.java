@@ -19,14 +19,15 @@
 package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.packets.Packet;
+import starbounddata.types.SbData;
+
+import static starbounddata.packets.Packet.readVLQString;
+import static starbounddata.packets.Packet.writeStringVLQ;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
- *
- * TODO: Effects generators
  */
-public class EphemeralStatusEffect {
+public class EphemeralStatusEffect extends SbData<EphemeralStatusEffect>{
 
     private String uniqueStatusEffect;
     private float duration;
@@ -34,26 +35,19 @@ public class EphemeralStatusEffect {
     public EphemeralStatusEffect() {
     }
 
+    public EphemeralStatusEffect(ByteBuf in) {
+        super(in);
+    }
+
     public EphemeralStatusEffect(String uniqueStatusEffect, float duration) {
         this.uniqueStatusEffect = uniqueStatusEffect;
         this.duration = duration;
     }
 
-    public EphemeralStatusEffect(ByteBuf in) {
-        readEphemeralStatusEffect(in);
-    }
 
     public EphemeralStatusEffect(EphemeralStatusEffect ephemeralStatusEffect) {
         this.uniqueStatusEffect = ephemeralStatusEffect.getUniqueStatusEffect();
         this.duration = ephemeralStatusEffect.getDuration();
-    }
-
-    public void readEphemeralStatusEffect(ByteBuf in){
-        this.uniqueStatusEffect = Packet.readVLQString(in);
-        boolean hasDuration = in.readBoolean();
-        if (hasDuration) {
-            this.duration = in.readFloat();
-        }
     }
 
     public String getUniqueStatusEffect() {
@@ -72,15 +66,18 @@ public class EphemeralStatusEffect {
         this.duration = duration;
     }
 
-    public EphemeralStatusEffect copy(){
-        return new EphemeralStatusEffect(this);
+    @Override
+    public void read(ByteBuf in){
+        this.uniqueStatusEffect = readVLQString(in);
+        boolean hasDuration = in.readBoolean();
+        if (hasDuration) {
+            this.duration = in.readFloat();
+        }
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this TileDamage to
-     */
-    public void writeEphemeralStatusEffect(ByteBuf out) {
-        Packet.writeStringVLQ(out, uniqueStatusEffect);
+    @Override
+    public void write(ByteBuf out) {
+        writeStringVLQ(out, uniqueStatusEffect);
         if (duration == 0){
             out.writeBoolean(false);
         } else {

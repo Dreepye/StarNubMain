@@ -46,7 +46,7 @@ public class ConnectResponsePacket extends Packet {
     private boolean success;
     private long clientId;
     private String rejectionReason;
-    private CelestialBaseInformation celestialBaseInformation;
+    private CelestialBaseInformation celestialBaseInformation = new CelestialBaseInformation();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -156,7 +156,7 @@ public class ConnectResponsePacket extends Packet {
         this.rejectionReason = readVLQString(in);
         boolean hasCelestialBaseInformation =  in.readBoolean();
         if(hasCelestialBaseInformation){
-            this.celestialBaseInformation = new CelestialBaseInformation(in);
+            this.celestialBaseInformation.read(in);
         }
     }
 
@@ -177,7 +177,7 @@ public class ConnectResponsePacket extends Packet {
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            celestialBaseInformation.writeCelestialBaseInformation(out);
+            celestialBaseInformation.write(out);
         }
     }
 

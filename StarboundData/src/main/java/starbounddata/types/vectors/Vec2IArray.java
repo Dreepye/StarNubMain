@@ -19,6 +19,7 @@
 package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.CollectInterface;
 import starbounddata.types.variants.VLQ;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.HashSet;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Vec2IArray extends ArrayList<Vec2I> {
+public class Vec2IArray extends ArrayList<Vec2I> implements CollectInterface<Vec2IArray> {
 
     private final static int ARRAY_SIZE_LIMIT = 50;
     private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_SIZE_LIMIT);
@@ -76,7 +77,7 @@ public class Vec2IArray extends ArrayList<Vec2I> {
      * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
      */
     public Vec2IArray(ByteBuf in) throws ArrayIndexOutOfBoundsException {
-        readVec2IArray(in);
+        read(in);
     }
 
     public Vec2IArray(Vec2IArray vec2Is) {
@@ -84,29 +85,6 @@ public class Vec2IArray extends ArrayList<Vec2I> {
             Vec2I clonedVec2I = vec2I.copy();
             this.add(clonedVec2I);
         }
-    }
-
-    public void readVec2IArray(ByteBuf in){
-        long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (arrayLength > ARRAY_SIZE_LIMIT) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-        for (int i = 0; i < arrayLength; i++) {
-            Vec2I vec2I = VEC2I_POOL.get(i);
-            vec2I.readVec2I(in);
-            this.add(vec2I);
-        }
-    }
-
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2IArray to
-     */
-    public void writeVec2IArray(ByteBuf out) {
-        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
-        for (Vec2I vec2I : this) {
-            vec2I.writeVec2I(out);
-        }
-        this.clear();
     }
 
     /**
@@ -139,6 +117,29 @@ public class Vec2IArray extends ArrayList<Vec2I> {
         return vec2IHashSet;
     }
 
+    @Override
+    public void read(ByteBuf in){
+        long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
+        if (arrayLength > ARRAY_SIZE_LIMIT) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        for (int i = 0; i < arrayLength; i++) {
+            Vec2I vec2I = VEC2I_POOL.get(i);
+            vec2I.read(in);
+            this.add(vec2I);
+        }
+    }
+
+    @Override
+    public void write(ByteBuf out) {
+        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
+        for (Vec2I vec2I : this) {
+            vec2I.write(out);
+        }
+        this.clear();
+    }
+
+    @Override
     public Vec2IArray copy(){
         return new Vec2IArray(this);
     }

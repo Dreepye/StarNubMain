@@ -20,11 +20,12 @@ package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.entity.EntityId;
+import starbounddata.types.SbData;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING PROBABLE FLOAT POINT
  */
-public class RemoteDamageNotification {
+public class RemoteDamageNotification extends SbData<RemoteDamageNotification> {
 
     private EntityId sourceEntityId = new EntityId();
     private DamageNotification damageNotification = new DamageNotification();
@@ -32,19 +33,18 @@ public class RemoteDamageNotification {
     public RemoteDamageNotification() {
     }
 
-    public RemoteDamageNotification(RemoteDamageNotification remoteDamageRequest) {
-        this.sourceEntityId = remoteDamageRequest.getSourceEntityId().copy();
-        this.damageNotification = remoteDamageRequest.getDamageNotification().copy();
-    }
-
     public RemoteDamageNotification(EntityId sourceEntityId, DamageNotification damageNotification) {
         this.sourceEntityId = sourceEntityId;
         this.damageNotification = damageNotification;
     }
 
-    public void readRemoteDamageNotification(ByteBuf in) {
-        this.sourceEntityId.readEntityId(in);
-        this.damageNotification.readDamageNotification(in);
+    public RemoteDamageNotification(ByteBuf in){
+        super(in);
+    }
+
+    public RemoteDamageNotification(RemoteDamageNotification remoteDamageRequest) {
+        this.sourceEntityId = remoteDamageRequest.getSourceEntityId().copy();
+        this.damageNotification = remoteDamageRequest.getDamageNotification().copy();
     }
 
     public EntityId getSourceEntityId() {
@@ -63,13 +63,16 @@ public class RemoteDamageNotification {
         this.damageNotification = damageNotification;
     }
 
-    public void writeRemoteDamageNotification(ByteBuf out){
-        this.sourceEntityId.writeEntityId(out);
-        this.damageNotification.writeDamageNotification(out);
+    @Override
+    public void read(ByteBuf in) {
+        this.sourceEntityId.read(in);
+        this.damageNotification.read(in);
     }
 
-    public RemoteDamageNotification copy(){
-        return new RemoteDamageNotification(this);
+    @Override
+    public void write(ByteBuf out){
+        this.sourceEntityId.write(out);
+        this.damageNotification.write(out);
     }
 
     @Override

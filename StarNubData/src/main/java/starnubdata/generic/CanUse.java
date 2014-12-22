@@ -16,15 +16,10 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.warp;
+package starnubdata.generic;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum WarpId {
-    UNUSED,
-    UNIQUE_WORLD,
-    CELESTIAL_WORLD,
-    CLIENT_SHIP_WORLD,
-    MISSION_WORLD
+public enum CanUse {
+    PLAYER,
+    REMOTE_PLAYER,
+    BOTH
 }

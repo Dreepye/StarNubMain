@@ -74,7 +74,8 @@ public class ChatReceivePacket extends Packet {
      */
     public ChatReceivePacket(ChannelHandlerContext DESTINATION_CTX, Mode mode, String channelName, long clientId, String fromName, String message) {
         super(Packets.CHATRECEIVE.getDirection(), Packets.CHATRECEIVE.getPacketId(), null, DESTINATION_CTX);
-        messageContext.readMessageContext(mode, channelName);
+        this.messageContext.setMODE(mode);
+        this.messageContext.setCHANNEL_NAME(channelName);
         this.clientId = (int) clientId;
         this.fromName = fromName;
         this.message = message;
@@ -148,7 +149,7 @@ public class ChatReceivePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.messageContext.readMessageContext(in);
+        this.messageContext.read(in);
         this.clientId = in.readInt();
         this.fromName = readVLQString(in);
         this.message = readVLQString(in);
@@ -164,7 +165,7 @@ public class ChatReceivePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        messageContext.writeMessageContext(out);
+        messageContext.write(out);
         out.writeInt(this.clientId);
         writeStringVLQ(out, this.fromName);
         writeStringVLQ(out, this.message);

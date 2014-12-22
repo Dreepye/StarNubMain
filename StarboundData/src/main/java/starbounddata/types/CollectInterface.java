@@ -16,15 +16,14 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.warp;
+package starbounddata.types;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum WarpId {
-    UNUSED,
-    UNIQUE_WORLD,
-    CELESTIAL_WORLD,
-    CLIENT_SHIP_WORLD,
-    MISSION_WORLD
+import io.netty.buffer.ByteBuf;
+
+public interface CollectInterface<T> {
+
+    public abstract void read(ByteBuf in);
+    public abstract void write(ByteBuf out);
+    public abstract T copy();
+
 }

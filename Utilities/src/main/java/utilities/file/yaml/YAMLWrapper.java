@@ -599,7 +599,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Object that you would like to add to your list or set
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -621,7 +621,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Object that you would like to add to your list or set
      * @param keys  the keys that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -643,7 +643,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Collection of elements that you would like to add to your list or set
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -665,7 +665,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Collection of elements that you would like to add to your list or set
      * @param keys  the keys that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -688,7 +688,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param value the Object that you would like to add to your list or set
      * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -727,7 +727,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param value the Object that you would like to add to your list or set
      * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
      * @param keys  the keys that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -766,7 +766,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param value the Collection of elements that you would like to add to your list or set
      * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -801,7 +801,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param value the Collection of elements that you would like to add to your list or set
      * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -842,7 +842,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param value the Collection of elements that you would like to add to your list or set
      * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
      * @param keys   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -883,7 +883,7 @@ public class YAMLWrapper extends YAMLFile {
      * @param value the Collection of elements that you would like to add to your list or set
      * @param hashSet boolean representing if the collection does not exist do we want to create a Set (true), or a List (false)
      * @param keys  the keys that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     @SuppressWarnings("unchecked")
@@ -917,7 +917,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Object that you would like to remove to your list or set
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item is in the list or set
+     * @return boolean if the items is in the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromCollection(Object value, String key) throws IOException {
@@ -938,7 +938,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value the Object that you would like to remove to your list or set
      * @param keys  the keys that the list or set belongs to
-     * @return boolean if the item is in the list or set
+     * @return boolean if the items is in the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromCollection(Object value, String... keys) throws IOException {
@@ -959,7 +959,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value Object to check the list or set for
      * @param key   the key that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean collectionContains(Object value, String key) throws IOException, NullPointerException {
@@ -973,7 +973,7 @@ public class YAMLWrapper extends YAMLFile {
      *
      * @param value Object to check the list or set for
      * @param keys  keys that the list or set belongs to
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean collectionContains(Object value, String... keys) throws IOException, NullPointerException {

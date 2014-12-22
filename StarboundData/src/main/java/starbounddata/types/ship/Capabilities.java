@@ -20,6 +20,7 @@ package starbounddata.types.ship;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.packets.Packet;
+import starbounddata.types.CollectInterface;
 import starbounddata.types.variants.VLQ;
 
 import java.util.HashSet;
@@ -27,7 +28,7 @@ import java.util.HashSet;
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class Capabilities extends HashSet<String> {
+public class Capabilities extends HashSet<String> implements CollectInterface<Capabilities> {
 
     public Capabilities() {
     }
@@ -37,14 +38,15 @@ public class Capabilities extends HashSet<String> {
     }
 
     public Capabilities(ByteBuf in){
-        readCapabilities(in);
+        read(in);
     }
 
     public Capabilities(HashSet<String> capabilities){
         this.addAll(capabilities);
     }
 
-    public void readCapabilities(ByteBuf in){
+    @Override
+    public void read(ByteBuf in){
         long  hastSetLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < hastSetLength; i++) {
             String string = Packet.readVLQString(in);
@@ -52,7 +54,8 @@ public class Capabilities extends HashSet<String> {
         }
     }
 
-    public  void writeCapabilities(ByteBuf out){
+    @Override
+    public  void write(ByteBuf out){
         out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
         for (String string : this) {
             Packet.writeStringVLQ(out, string);
@@ -60,6 +63,7 @@ public class Capabilities extends HashSet<String> {
         this.clear();
     }
 
+    @Override
     public Capabilities copy(){
         return new Capabilities(this);
     }

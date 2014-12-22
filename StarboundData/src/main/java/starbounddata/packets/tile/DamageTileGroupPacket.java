@@ -156,10 +156,10 @@ public class DamageTileGroupPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         try {
-            this.tilePositions.readVec2IArray(in);
+            this.tilePositions.read(in);
             this.layer = TileLayer.values()[in.readUnsignedByte()];
-            this.sourcePosition.readVec2F(in);
-            this.tileDamage.readTileDamage(in);
+            this.sourcePosition.read(in);
+            this.tileDamage.read(in);
         } catch (ArrayIndexOutOfBoundsException e) {
             super.recycle();
             in.skipBytes(in.readableBytes());
@@ -176,10 +176,10 @@ public class DamageTileGroupPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.tilePositions.writeVec2IArray(out);
+        this.tilePositions.remove(out);
         out.writeByte(this.layer.ordinal());
-        this.sourcePosition.writeVec2F(out);
-        this.tileDamage.writeTileDamage(out);
+        this.sourcePosition.write(out);
+        this.tileDamage.write(out);
     }
 
     @Override

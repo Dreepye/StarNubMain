@@ -16,34 +16,33 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.damage;
+package starbounddata.types.variants;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.CollectInterface;
-import starbounddata.types.variants.VLQ;
 
 import java.util.ArrayList;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class EphemeralStatusEffects extends ArrayList<EphemeralStatusEffect> implements CollectInterface<EphemeralStatusEffects>{
+public class VariantList extends ArrayList<Variant> implements CollectInterface<VariantList>{
 
-    public EphemeralStatusEffects() {
+    public VariantList() {
         super();
     }
 
     /**
      * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
      */
-    public EphemeralStatusEffects(ByteBuf in) throws ArrayIndexOutOfBoundsException {
+    public VariantList(ByteBuf in) throws ArrayIndexOutOfBoundsException {
         read(in);
     }
 
-    public EphemeralStatusEffects(EphemeralStatusEffects ephemeralStatusEffects) {
-        for (EphemeralStatusEffect ephemeralStatusEffect : ephemeralStatusEffects){
-            EphemeralStatusEffect ephemeralStatusEffectCopy = ephemeralStatusEffect.copy();
-            this.add(ephemeralStatusEffectCopy);
+    public VariantList(VariantList variantList) {
+        for (Variant variant : variantList){
+            Variant variantCopy = variant.copy();
+            this.add(variantCopy);
         }
     }
 
@@ -51,23 +50,23 @@ public class EphemeralStatusEffects extends ArrayList<EphemeralStatusEffect> imp
     public void read(ByteBuf in){
         long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < arrayLength; i++) {
-            EphemeralStatusEffect ephemeralStatusEffect = new EphemeralStatusEffect(in);
-            this.add(ephemeralStatusEffect);
+            Variant variant = new Variant(in);
+            this.add(variant);
         }
     }
 
     @Override
     public void write(ByteBuf out) {
         out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
-        for (EphemeralStatusEffect ephemeralStatusEffect : this) {
-            ephemeralStatusEffect.write(out);
+        for (Variant variant : this) {
+            variant.write(out);
         }
         this.clear();
     }
 
     @Override
-    public EphemeralStatusEffects copy(){
-        return new EphemeralStatusEffects(this);
+    public VariantList copy(){
+        return new VariantList(this);
     }
 
     @Override

@@ -20,9 +20,13 @@ package starbounddata.types.variants;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.packets.Packet;
+import starbounddata.types.SbData;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static starbounddata.packets.Packet.readVLQString;
+import static starbounddata.types.variants.VLQ.readUnsignedFromBufferNoObject;
 
 /**
  * Represents a Variant  which can be a byte, string, boolean, double, variant array, variant map.
@@ -32,21 +36,22 @@ import java.util.Map;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Variant {
+public class Variant extends SbData<Variant>{
 
+    private VariantType variantType;
     private Object value;
 
     public Variant() {
     }
 
-    public Variant(ByteBuf in) throws Exception {
-        readFromByteBuffer(in);
+    public Variant(ByteBuf in) {
+        read(in);
     }
 
     public Variant(Object value) throws Exception {
         if (!(value == null ||
                 value instanceof String ||
-                value instanceof Double ||
+                value instanceof Float ||
                 value instanceof Boolean ||
                 value instanceof Byte ||
                 value instanceof Variant[] ||
@@ -64,65 +69,46 @@ public class Variant {
         this.value = value;
     }
 
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will created a {@link starbounddata.types.variants.Variant} from a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     *
-     * @param in ByteBuf representing the bytes to be read into a {@link starbounddata.types.variants.Variant}
-     * @return Variant representing the {@link starbounddata.types.variants.Variant} object
-     * @throws Exception if this ByteBuf does not represent a {@link starbounddata.types.variants.Variant}
-     */
-    public Variant readFromByteBuffer(ByteBuf in) throws Exception {
-        Variant variant = new Variant();
-        byte type = (byte) in.readUnsignedByte();
-        switch (type) {
-            case 1:
-                variant.value = null;
+    @Override
+    public void read(ByteBuf in) {
+        this.variantType = VariantType.values()[in.readUnsignedByte()];
+        switch (variantType) {
+            case NIL:
+                value = null;
                 break;
-            case 2:
-                variant.value = in.readDouble();
+            case FLOAT:
+                value = in.readFloat();
                 break;
-            case 3:
-                variant.value = in.readBoolean();
+            case BOOLEAN:
+                value = in.readBoolean();
                 break;
-            case 4:
-                variant.value = VLQ.readUnsignedFromBufferNoObject(in);
+            case INTEGER:
+                value = readUnsignedFromBufferNoObject(in);
                 break;
-            case 5:
-                variant.value = Packet.readVLQString(in);
+            case STRING:
+                value = readVLQString(in);
                 break;
-            case 6:
-                Variant[] array = new Variant[(int) VLQ.readUnsignedFromBufferNoObject(in)];
+            case LIST://Variant List TODO is a list of variants // Size
+
+                Variant[] array = new Variant[(int) readUnsignedFromBufferNoObject(in)];
                 for (int i = 0; i < array.length; i++)
-                    array[i] = this.readFromByteBuffer(in);
-                variant.value = array;
+//                    array[i] = this.readFromByteBuffer(in);
+                    value = array;
                 break;
-            case 7:
+            case MAP://VARIANT MAP TODO
                 Map<String, Variant> dict = new HashMap<String, Variant>();
-                long length = VLQ.readUnsignedFromBufferNoObject(in);
+                long length = readUnsignedFromBufferNoObject(in);
                 while (length-- > 0)
-                    dict.put(Packet.readVLQString(in), this.readFromByteBuffer(in));
-                variant.value = dict;
+//                    dict.put(readVLQString(in), this.readFromByteBuffer(in));
+                    value = dict;
                 break;
             default:
-                System.err.println("Unknown Variant Type: " + type);
-                throw new Exception("Unknown Variant type");
+                System.err.println("Unknown Variant Type: " + variantType);
         }
-        return variant;
     }
 
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will write a {@link starbounddata.types.variants.Variant} to a {@link io.netty.buffer.ByteBuf}
-     * <p>
-     *
-     * @param out ByteBuf representing the buffer to write the variant to
-     */
-    @SuppressWarnings("unchecked")
-    public void writeToByteBuffer(ByteBuf out) {
+    @Override
+    public void write(ByteBuf out) {
         if (value == null) {
             out.writeByte(1);
         } else if (value instanceof Double) {
@@ -142,7 +128,7 @@ public class Variant {
             Variant[] array = (Variant[]) value;
             out.writeBytes(VLQ.writeVLQNoObject((long) array.length));
             for (Variant anArray : array) {
-                anArray.writeToByteBuffer(out);
+                anArray.write(out);
             }
         } else if (value instanceof Map<?, ?>) {
             out.writeByte(7);
@@ -150,13 +136,9 @@ public class Variant {
             out.writeBytes(VLQ.writeVLQNoObject((long) dict.size()));
             for (Map.Entry<String, Variant> kvp : dict.entrySet()) {
                 Packet.writeStringVLQ(out, kvp.getKey());
-                kvp.getValue().writeToByteBuffer(out);
+                kvp.getValue().write(out);
             }
         }
-    }
-
-    public Variant copy() throws Exception {
-        return new Variant(this.value);
     }
 
     @Override

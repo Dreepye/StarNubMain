@@ -134,9 +134,9 @@ public class EntityInteractPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         ByteBufferUtilities.print(in);
-        this.sourceEntityId.readEntityId(in);
-        this.position.readVec2F(in);
-        this.targetEntityId.readEntityId(in);
+        this.sourceEntityId.read(in);
+        this.position.read(in);
+        this.targetEntityId.read(in);
     }
 
     /**
@@ -149,9 +149,9 @@ public class EntityInteractPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.sourceEntityId.writeEntityId(out);
-        this.position.writeVec2F(out);
-        this.targetEntityId.writeEntityId(out);
+        this.sourceEntityId.write(out);
+        this.position.write(out);
+        this.targetEntityId.write(out);
     }
 
     @Override

@@ -19,6 +19,7 @@
 package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 import starbounddata.types.entity.EntityId;
 import starbounddata.types.vectors.Vec2F;
 
@@ -26,9 +27,9 @@ import static starbounddata.packets.Packet.readVLQString;
 import static starbounddata.packets.Packet.writeStringVLQ;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING PROBABLE FLOAT
  */
-public class DamageRequest {
+public class DamageRequest extends SbData<DamageRequest> {
 
     private HitType hitType;
     private DamageType damageType;
@@ -52,7 +53,7 @@ public class DamageRequest {
     }
 
     public DamageRequest(ByteBuf in) {
-        readDamageRequest(in);
+        read(in);
     }
 
     public DamageRequest(DamageRequest damageRequest) {
@@ -63,16 +64,6 @@ public class DamageRequest {
         this.sourceEntityId = damageRequest.getSourceEntityId().copy();
         this.damageSourceKind = damageRequest.getDamageSourceKind();
         this.statusEffects = damageRequest.getStatusEffects().copy();
-    }
-
-    public void readDamageRequest(ByteBuf in){
-        this.hitType = HitType.values()[in.readUnsignedByte()];
-        this.damageType = DamageType.values()[in.readUnsignedByte()];
-        this.damage = in.readFloat();
-        this.knockbackMomentum.readVec2F(in);
-        this.sourceEntityId.readEntityId(in);
-        this.damageSourceKind = readVLQString(in);
-        this.statusEffects.readEphemeralStatusEffects(in);
     }
 
     public HitType getHitType() {
@@ -131,21 +122,26 @@ public class DamageRequest {
         this.statusEffects = statusEffects;
     }
 
-    public DamageRequest copy(){
-        return new DamageRequest(this);
+    @Override
+    public void read(ByteBuf in) {
+        this.hitType = HitType.values()[in.readUnsignedByte()];
+        this.damageType = DamageType.values()[in.readUnsignedByte()];
+        this.damage = in.readFloat();
+        this.knockbackMomentum.read(in);
+        this.sourceEntityId.read(in);
+        this.damageSourceKind = readVLQString(in);
+        this.statusEffects.read(in);
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this TileDamage to
-     */
-    public void writeDamageRequest(ByteBuf out) {
+    @Override
+    public void write(ByteBuf out) {
         out.writeByte(hitType.ordinal());
         out.writeByte(damageType.ordinal());
         out.writeFloat(damage);
-        this.knockbackMomentum.writeVec2F(out);
-        this.sourceEntityId.writeEntityId(out);
+        this.knockbackMomentum.write(out);
+        this.sourceEntityId.write(out);
         writeStringVLQ(out, damageSourceKind);
-        this.statusEffects.writeEphemeralStatusEffects(out);
+        this.statusEffects.write(out);
     }
 
     @Override

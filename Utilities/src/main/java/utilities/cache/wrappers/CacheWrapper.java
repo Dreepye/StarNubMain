@@ -153,7 +153,7 @@ public abstract class CacheWrapper<E1> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will add a utilities.cache item to the utilities.cache. Cache that is added must represent a TimeCache
+     * Uses: This will add a utilities.cache items to the utilities.cache. Cache that is added must represent a TimeCache
      * class.
      * <p/>
      *
@@ -184,7 +184,7 @@ public abstract class CacheWrapper<E1> {
     }
 
     /**
-     * Uses: This will replace a utilities.cache object if the key exist, and if not it will add the item to cache
+     * Uses: This will replace a utilities.cache object if the key exist, and if not it will add the items to cache
      * <p/>
      *
      * @param key           E1 representing a contactable key

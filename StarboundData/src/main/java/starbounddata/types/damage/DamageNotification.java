@@ -20,18 +20,19 @@ package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.entity.EntityId;
+import starbounddata.types.SbData;
 import starbounddata.types.vectors.Vec2F;
 
 import static starbounddata.packets.Packet.readVLQString;
 import static starbounddata.packets.Packet.writeStringVLQ;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING PROBABLE FLOAT POINT
  */
-public class DamageNotification {
+public class DamageNotification extends SbData<DamageNotification> {
 
-    private EntityId sourceEntityId;
-    private EntityId targetEntityId;
+    private EntityId sourceEntityId = new EntityId();
+    private EntityId targetEntityId = new EntityId();
     private Vec2F position = new Vec2F();
     private float damage;
     private String damageSourceKind;
@@ -52,7 +53,7 @@ public class DamageNotification {
     }
 
     public DamageNotification(ByteBuf in) {
-        readDamageNotification(in);
+        super(in);
     }
 
     public DamageNotification(DamageNotification damageNotification) {
@@ -63,16 +64,6 @@ public class DamageNotification {
         this.damageSourceKind = damageNotification.getDamageSourceKind();
         this.targetMaterialKind = damageNotification.getTargetMaterialKind();
         this.killed = damageNotification.isKilled();
-    }
-
-    public void readDamageNotification(ByteBuf in){
-        this.sourceEntityId.readEntityId(in);
-        this.targetEntityId.readEntityId(in);
-        this.position.readVec2F(in);
-        this.damage = in.readFloat();
-        this.damageSourceKind = readVLQString(in);
-        this.targetMaterialKind = readVLQString(in);
-        this.killed = in.readBoolean();
     }
 
     public EntityId getSourceEntityId() {
@@ -131,17 +122,22 @@ public class DamageNotification {
         this.killed = killed;
     }
 
-    public DamageNotification copy(){
-        return new DamageNotification(this);
+    @Override
+    public void read(ByteBuf in) {
+        this.sourceEntityId.read(in);
+        this.targetEntityId.read(in);
+        this.position.read(in);
+        this.damage = in.readFloat();
+        this.damageSourceKind = readVLQString(in);
+        this.targetMaterialKind = readVLQString(in);
+        this.killed = in.readBoolean();
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this TileDamage to
-     */
-    public void writeDamageNotification(ByteBuf out) {
-        sourceEntityId.writeEntityId(out);
-        targetEntityId.writeEntityId(out);
-        position.writeVec2F(out);
+    @Override
+    public void write(ByteBuf out) {
+        sourceEntityId.write(out);
+        targetEntityId.write(out);
+        position.write(out);
         out.writeFloat(damage);
         writeStringVLQ(out, damageSourceKind);
         writeStringVLQ(out, targetMaterialKind);

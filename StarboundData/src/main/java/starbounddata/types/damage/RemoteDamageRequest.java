@@ -20,11 +20,12 @@ package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.entity.EntityId;
+import starbounddata.types.SbData;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING PROBABLE FLOAT POINT
  */
-public class RemoteDamageRequest {
+public class RemoteDamageRequest extends SbData<RemoteDamageRequest> {
 
     private EntityId causingEntityId = new EntityId();
     private EntityId targetEntityId = new EntityId();
@@ -40,19 +41,13 @@ public class RemoteDamageRequest {
     }
 
     public RemoteDamageRequest(ByteBuf in) {
-        readRemoteDamageRequest(in);
+        super(in);
     }
 
     public RemoteDamageRequest(RemoteDamageRequest remoteDamageRequest) {
         this.causingEntityId = remoteDamageRequest.getCausingEntityId().copy();
         this.targetEntityId = remoteDamageRequest.getTargetEntityId().copy();
         this.damageRequest = remoteDamageRequest.getDamageRequest().copy();
-    }
-
-    public void readRemoteDamageRequest(ByteBuf in) {
-        this.causingEntityId.readEntityId(in);
-        this.targetEntityId.readEntityId(in);
-        this.damageRequest.readDamageRequest(in);
     }
 
     public EntityId getCausingEntityId() {
@@ -79,14 +74,18 @@ public class RemoteDamageRequest {
         this.damageRequest = damageRequest;
     }
 
-    public void writeRemoteDamageRequest(ByteBuf out){
-        this.causingEntityId.writeEntityId(out);
-        this.targetEntityId.writeEntityId(out);
-        this.damageRequest.writeDamageRequest(out);
+    @Override
+    public void read(ByteBuf in) {
+        this.causingEntityId.read(in);
+        this.targetEntityId.read(in);
+        this.damageRequest.read(in);
     }
 
-    public RemoteDamageRequest copy(){
-        return new RemoteDamageRequest(this);
+    @Override
+    public void write(ByteBuf out){
+        this.causingEntityId.write(out);
+        this.targetEntityId.write(out);
+        this.damageRequest.write(out);
     }
 
     @Override

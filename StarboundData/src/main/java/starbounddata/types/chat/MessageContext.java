@@ -19,9 +19,12 @@
 package starbounddata.types.chat;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.packets.Packet;
+import starbounddata.types.SbData;
 
-public class MessageContext {
+import static starbounddata.packets.Packet.readVLQString;
+import static starbounddata.packets.Packet.writeStringVLQ;
+
+public class MessageContext extends SbData<MessageContext> {
 
     private Mode MODE;
     private String CHANNEL_NAME;
@@ -35,8 +38,12 @@ public class MessageContext {
     }
 
     public MessageContext(ByteBuf in) {
-        this.MODE = Mode.values()[in.readUnsignedByte()];
-        this.CHANNEL_NAME = Packet.readVLQString(in);
+        super(in);
+    }
+
+    public MessageContext(MessageContext messageContext) {
+        this.MODE = messageContext.getMODE();
+        this.CHANNEL_NAME = messageContext.getCHANNEL_NAME();
     }
 
     public Mode getMODE() {
@@ -55,22 +62,16 @@ public class MessageContext {
         this.CHANNEL_NAME = CHANNEL_NAME;
     }
 
-    public void readMessageContext(ByteBuf in) {
+    @Override
+    public void read(ByteBuf in) {
         this.MODE = Mode.values()[in.readUnsignedByte()];
-        this.CHANNEL_NAME = Packet.readVLQString(in);
+        this.CHANNEL_NAME = readVLQString(in);
     }
 
-    public void readMessageContext(Mode mode, String channelName) {
-        this.MODE = mode;
-        this.CHANNEL_NAME = channelName;
-    }
-
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2I to
-     */
-    public void writeMessageContext(ByteBuf out) {
+    @Override
+    public void write(ByteBuf out) {
         out.writeByte(MODE.ordinal());
-        Packet.writeStringVLQ(out, CHANNEL_NAME);
+        writeStringVLQ(out, CHANNEL_NAME);
     }
 
     @Override

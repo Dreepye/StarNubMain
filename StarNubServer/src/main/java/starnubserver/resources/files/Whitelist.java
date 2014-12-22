@@ -64,7 +64,7 @@ public class Whitelist extends StarNubYamlWrapper {
      * This method will add a value to your whitelist
      *
      * @param value the Object that you would like to add to your list or set
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean addToWhitelist(Object value) throws IOException, CollectionDoesNotExistException {
@@ -75,7 +75,7 @@ public class Whitelist extends StarNubYamlWrapper {
      * This method will remove a value to your  whitelist
      *
      * @param value the Object that you would like to remove to your list or set
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromWhitelist(Object value) throws IOException {
@@ -86,7 +86,7 @@ public class Whitelist extends StarNubYamlWrapper {
      * This method will check to see if your whitelist specific value
      *
      * @param value Object to check the list or set for
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean whitelistContains(Object value) throws IOException, NullPointerException {

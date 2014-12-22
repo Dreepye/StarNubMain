@@ -19,13 +19,14 @@
 package starbounddata.types.ship;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 
 import java.util.HashSet;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class ShipUpgrades {
+public class ShipUpgrades extends SbData<ShipUpgrades> {
 
     private int shipLevel;
     private int fuelLevel;
@@ -34,20 +35,20 @@ public class ShipUpgrades {
     public ShipUpgrades() {
     }
 
-    public ShipUpgrades(ShipUpgrades shipUpgrades) {
-        this.shipLevel = shipUpgrades.getShipLevel();
-        this.fuelLevel = shipUpgrades.getFuelLevel();
-        this.capabilities = shipUpgrades.getCapabilities().copy();
-    }
-
     public ShipUpgrades(byte shipLevel, byte fuelLevel, HashSet<String> capabilities) {
         this.shipLevel = shipLevel;
         this.fuelLevel = fuelLevel;
         this.capabilities.addAll(capabilities);
     }
 
+    public ShipUpgrades(ShipUpgrades shipUpgrades) {
+        this.shipLevel = shipUpgrades.getShipLevel();
+        this.fuelLevel = shipUpgrades.getFuelLevel();
+        this.capabilities = shipUpgrades.getCapabilities().copy();
+    }
+
     public ShipUpgrades(ByteBuf in) {
-        readShipUpgrades(in);
+        super(in);
     }
 
     public int getShipLevel() {
@@ -70,21 +71,18 @@ public class ShipUpgrades {
         return capabilities;
     }
 
-    public void readShipUpgrades(ByteBuf in) {
+    @Override
+    public void read(ByteBuf in) {
         this.shipLevel = in.readInt();
         this.fuelLevel = in.readInt();
-        this.capabilities.readCapabilities(in);
-
+        this.capabilities.read(in);
     }
 
-    public void writeShipUpgrades(ByteBuf out){
+    @Override
+    public void write(ByteBuf out){
         out.writeInt(shipLevel);
         out.writeInt(fuelLevel);
-        capabilities.writeCapabilities(out);
-    }
-
-    public ShipUpgrades copy(){
-        return new ShipUpgrades(this);
+        capabilities.write(out);
     }
 
     @Override

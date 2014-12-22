@@ -55,7 +55,7 @@ public enum Packets {
     TILELIQUIDUPDATE("", Packet.Direction.NOT_USED),
     TILEDAMAGEUPDATE("", Packet.Direction.NOT_USED),
     TILEMODIFICATIONFAILURE("", Packet.Direction.NOT_USED),
-    GIVEITEM("", Packet.Direction.NOT_USED),
+    GIVEITEM("GiveItemPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - PROB ONLY CLIENT
     SWAPINCONTAINERRESULT("", Packet.Direction.NOT_USED),
     ENVIRONMENTUPDATE("", Packet.Direction.NOT_USED),
     ENTITYINTERACTRESULT("", Packet.Direction.NOT_USED),
@@ -81,8 +81,8 @@ public enum Packets {
     ENTITYUPDATE("", Packet.Direction.NOT_USED),
     ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
     HITREQUEST("HitRequestPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
-    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues
-    DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG
+    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE FLOAT
+    DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Data Issues PROBABLE FLOAT
     CALLSCRIPTEDENTITY("", Packet.Direction.NOT_USED),
     UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED),
     HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL);

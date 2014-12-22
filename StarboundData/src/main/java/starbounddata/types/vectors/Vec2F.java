@@ -19,6 +19,7 @@
 package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 
 /**
  * Represents a 2 dimensional floating point vector of (x, y)
@@ -28,7 +29,7 @@ import io.netty.buffer.ByteBuf;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Vec2F {
+public class Vec2F extends SbData<Vec2F>{
 
     private float x;
     private float y;
@@ -42,17 +43,12 @@ public class Vec2F {
     }
 
     public Vec2F(ByteBuf in) {
-        readVec2F(in);
+        super(in);
     }
 
     public Vec2F(Vec2F vec2F) {
         this.x = vec2F.getX();
         this.y = vec2F.getY();
-    }
-
-    public void readVec2F(ByteBuf in){
-        this.x = in.readFloat();
-        this.y = in.readFloat();
     }
 
     public float getX() {
@@ -71,16 +67,16 @@ public class Vec2F {
         this.y = y;
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2F to
-     */
-    public void writeVec2F(ByteBuf out) {
-        out.writeFloat(this.x);
-        out.writeFloat(this.y);
+    @Override
+    public void read(ByteBuf in){
+        this.x = in.readFloat();
+        this.y = in.readFloat();
     }
 
-    public Vec2F copy(){
-        return new Vec2F(this);
+    @Override
+    public void write(ByteBuf out) {
+        out.writeFloat(this.x);
+        out.writeFloat(this.y);
     }
 
     @Override

@@ -67,7 +67,7 @@ public class Operators extends StarNubYamlWrapper {
      * This method will add a value to your operators
      *
      * @param value the Object representing a UUID that you would like to add to your list or set
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean addToOperators(Object value) throws IOException, CollectionDoesNotExistException {
@@ -81,7 +81,7 @@ public class Operators extends StarNubYamlWrapper {
      * This method will remove a value to your operators
      *
      * @param value the Object that you would like to remove to your list or set
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean removeFromOperators(Object value) throws IOException {
@@ -95,7 +95,7 @@ public class Operators extends StarNubYamlWrapper {
      * This method will check to see if a  your operators has a specific value
      *
      * @param value Object to check the list or set for
-     * @return boolean if the item was added to the list or set
+     * @return boolean if the items was added to the list or set
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean operatorsContains(Object value) throws IOException, NullPointerException {

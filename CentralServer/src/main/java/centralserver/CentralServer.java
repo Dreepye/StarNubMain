@@ -19,7 +19,6 @@
 package centralserver;
 
 
-import starnubdata.network.StarNubMessageServerInitializer;
 import utilities.connectivity.server.TCPServer;
 
 public final class CentralServer {
@@ -39,7 +38,7 @@ public final class CentralServer {
         try {
 //            SelfSignedCertificate ssc = new SelfSignedCertificate();
 //            SslContext sslCtx = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
-            tcpServer.start(666, new StarNubMessageServerInitializer());
+//            tcpServer.start(666, new StarNubDataServerInitializer());
         } catch (Exception e){
             e.printStackTrace();
         }

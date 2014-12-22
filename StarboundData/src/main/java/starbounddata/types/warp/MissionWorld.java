@@ -19,6 +19,7 @@
 package starbounddata.types.warp;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ import static starbounddata.packets.Packet.*;
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class MissionWorld {
+public class MissionWorld extends SbData<MissionWorld> {
 
     private String name;
     private UUID uuid;
@@ -41,20 +42,12 @@ public class MissionWorld {
     }
 
     public MissionWorld(ByteBuf in) {
-        readMissionWorld(in);
+        super(in);
     }
 
     public MissionWorld(MissionWorld missionWorld) {
         this.name = missionWorld.getName();
         this.uuid = missionWorld.getUuid();
-    }
-
-    public void readMissionWorld(ByteBuf in){
-        this.name = readVLQString(in);
-        boolean hasUUID = in.readBoolean();
-        if (hasUUID) {
-            this.uuid = readUUID(in);
-        }
     }
 
     public String getName() {
@@ -73,10 +66,17 @@ public class MissionWorld {
         this.uuid = uuid;
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2F to
-     */
-    public void writeMissionWorld(ByteBuf out) {
+    @Override
+    public void read(ByteBuf in){
+        this.name = readVLQString(in);
+        boolean hasUUID = in.readBoolean();
+        if (hasUUID) {
+            this.uuid = readUUID(in);
+        }
+    }
+
+    @Override
+    public void write(ByteBuf out) {
         writeStringVLQ(out, name);
         if(uuid == null){
             out.writeBoolean(false);
@@ -84,10 +84,6 @@ public class MissionWorld {
             out.writeBoolean(true);
             writeUUID(out, uuid);
         }
-    }
-
-    public MissionWorld copy(){
-        return new MissionWorld(this);
     }
 
     @Override

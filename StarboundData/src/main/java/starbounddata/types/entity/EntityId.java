@@ -19,11 +19,12 @@
 package starbounddata.types.entity;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class EntityId {
+public class EntityId extends SbData<EntityId>{
 
     private long entityId;
 
@@ -35,15 +36,11 @@ public class EntityId {
     }
 
     public EntityId(ByteBuf in) {
-        readEntityId(in);
+        super(in);
     }
 
     public EntityId(EntityId entityId) {
         this.entityId = entityId.getEntityId();
-    }
-
-    public void readEntityId(ByteBuf in) {
-        this.entityId = in.readInt();
     }
 
     public long getEntityId() {
@@ -54,12 +51,14 @@ public class EntityId {
         this.entityId = entityId;
     }
 
-    public void writeEntityId(ByteBuf out){
-        out.writeInt((int) entityId);
+    @Override
+    public void read(ByteBuf in) {
+        this.entityId = in.readInt();
     }
 
-    public EntityId copy (){
-        return new EntityId(this);
+    @Override
+    public void write(ByteBuf out){
+        out.writeInt((int) entityId);
     }
 
     @Override

@@ -110,7 +110,7 @@ public class DamageNotificationPacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         ByteBufferUtilities.print(in);
-        this.remoteDamageNotification.readRemoteDamageNotification(in);
+        this.remoteDamageNotification.read(in);
     }
 
     /**
@@ -123,7 +123,7 @@ public class DamageNotificationPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.remoteDamageNotification.writeRemoteDamageNotification(out);
+        this.remoteDamageNotification.write(out);
     }
 
     @Override

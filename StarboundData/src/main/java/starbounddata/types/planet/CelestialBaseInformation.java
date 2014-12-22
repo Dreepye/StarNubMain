@@ -19,18 +19,23 @@
 package starbounddata.types.planet;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 import starbounddata.types.vectors.Vec2I;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class CelestialBaseInformation {
+public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
 
     private int planetOrbitalLevels;
     private int satelliteOrbitalLevels;
     private int chunkSize;
     private Vec2I xYCoordinate = new Vec2I();
     private Vec2I  zCoordinateRange = new Vec2I();
+
+    public CelestialBaseInformation() {
+        super();
+    }
 
     public CelestialBaseInformation(int planetOrbitalLevels, int satelliteOrbitalLevels, int chunkSize, Vec2I xYCoordinate, Vec2I zCoordinateRange) {
         this.planetOrbitalLevels = planetOrbitalLevels;
@@ -42,7 +47,7 @@ public class CelestialBaseInformation {
 
 
     public CelestialBaseInformation(ByteBuf in) {
-        readCelestialBaseInformation(in);
+        super(in);
     }
 
     public CelestialBaseInformation(CelestialBaseInformation celestialBaseInformation) {
@@ -51,15 +56,6 @@ public class CelestialBaseInformation {
         this.chunkSize = celestialBaseInformation.getChunkSize();
         this.xYCoordinate = celestialBaseInformation.xYCoordinate.copy();
         this.zCoordinateRange = celestialBaseInformation.zCoordinateRange.copy();
-    }
-
-
-    public void readCelestialBaseInformation(ByteBuf in) {
-        this.planetOrbitalLevels = in.readInt();
-        this.satelliteOrbitalLevels = in.readInt();
-        this.chunkSize = in.readInt();
-        this.xYCoordinate.readVec2I(in);
-        this.zCoordinateRange.readVec2I(in);
     }
 
     public int getPlanetOrbitalLevels() {
@@ -102,19 +98,22 @@ public class CelestialBaseInformation {
         this.zCoordinateRange = zCoordinateRange;
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2I to
-     */
-    public void writeCelestialBaseInformation(ByteBuf out) {
+    @Override
+    public void read(ByteBuf in) {
+        this.planetOrbitalLevels = in.readInt();
+        this.satelliteOrbitalLevels = in.readInt();
+        this.chunkSize = in.readInt();
+        this.xYCoordinate.read(in);
+        this.zCoordinateRange.read(in);
+    }
+
+    @Override
+    public void write(ByteBuf out) {
         out.writeInt(planetOrbitalLevels);
         out.writeInt(satelliteOrbitalLevels);
         out.writeInt(chunkSize);
-        this.xYCoordinate.writeVec2I(out);
-        this.zCoordinateRange.writeVec2I(out);
-    }
-
-    public CelestialBaseInformation copy(){
-        return new CelestialBaseInformation(this);
+        this.xYCoordinate.write(out);
+        this.zCoordinateRange.write(out);
     }
 
     @Override

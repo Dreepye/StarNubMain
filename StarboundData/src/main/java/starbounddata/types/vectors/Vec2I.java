@@ -19,6 +19,7 @@
 package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 
 /**
  * Represents a 2 dimensional integer vector of (x, y)
@@ -28,7 +29,7 @@ import io.netty.buffer.ByteBuf;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Vec2I {
+public class Vec2I extends SbData<Vec2I>{
 
     private int x;
     private int y;
@@ -42,7 +43,7 @@ public class Vec2I {
     }
 
     public Vec2I(ByteBuf in) {
-        readVec2I(in);
+        super(in);
     }
 
     public Vec2I(Vec2I vec2I) {
@@ -58,12 +59,6 @@ public class Vec2I {
     public Vec2I(Vec2F vec2F) {
         this.x = Math.round(vec2F.getX());
         this.y = Math.round(vec2F.getY());
-    }
-
-
-    public void readVec2I(ByteBuf in) {
-        this.x = in.readInt();
-        this.y = in.readInt();
     }
 
     public int getX() {
@@ -82,16 +77,16 @@ public class Vec2I {
         this.y = y;
     }
 
-    /**
-     * @param out ByteBuf out representing a {@link io.netty.buffer.ByteBuf} to write this Vec2I to
-     */
-    public void writeVec2I(ByteBuf out) {
-        out.writeInt(this.x);
-        out.writeInt(this.y);
+    @Override
+    public void read(ByteBuf in) {
+        this.x = in.readInt();
+        this.y = in.readInt();
     }
 
-    public Vec2I copy(){
-        return new Vec2I(this);
+    @Override
+    public void write(ByteBuf out) {
+        out.writeInt(this.x);
+        out.writeInt(this.y);
     }
 
     @Override

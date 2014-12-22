@@ -188,7 +188,7 @@ public class ClientConnectPacket extends Packet {
         this.playerName = readVLQString(in);
         this.playerSpecies = readVLQString(in);
         this.shipData = readVLQArray(in);
-        this.shipUpgrades.readShipUpgrades(in);
+        this.shipUpgrades.read(in);
         this.account = readVLQString(in);
     }
 
@@ -212,7 +212,7 @@ public class ClientConnectPacket extends Packet {
         writeStringVLQ(out, this.playerName);
         writeStringVLQ(out, this.playerSpecies);
         writeVLQArray(out, this.shipData);
-        this.shipUpgrades.writeShipUpgrades(out);
+        this.shipUpgrades.write(out);
         writeStringVLQ(out, this.account);
     }
 
@@ -223,8 +223,8 @@ public class ClientConnectPacket extends Packet {
                 ", playerUuid=" + playerUuid +
                 ", playerName='" + playerName + '\'' +
                 ", playerSpecies='" + playerSpecies + '\'' +
-//                ", shipData=" + Arrays.toString(shipData) + //TO LARGE TO PRINT IN THIS FORM
-//                ", shipUpgrades=" + shipUpgrades +  //TO LARGE TO PRINT IN THIS FORM
+                ", shipData=To Large To Display" + // Arrays.toString(shipData) +
+                ", shipUpgrades=To Large To Display=" + // shipUpgrades +
                 ", account='" + account + '\'' +
                 "} " + super.toString();
     }

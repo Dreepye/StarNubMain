@@ -20,11 +20,12 @@ package starbounddata.types.hit;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.entity.EntityId;
+import starbounddata.types.SbData;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
+ * Starbound 1.0 Compliant (Versions 622)
  */
-public class RemoteHitRequest {
+public class RemoteHitRequest extends SbData<RemoteHitRequest> {
 
     private EntityId causingEntityId = new EntityId();
     private EntityId targetEntityId =  new EntityId();
@@ -38,17 +39,12 @@ public class RemoteHitRequest {
     }
 
     public RemoteHitRequest(ByteBuf in) {
-        readRemoteHitRequest(in);
+        super(in);
     }
 
     public RemoteHitRequest(RemoteHitRequest remoteHitRequest) {
         this.causingEntityId = remoteHitRequest.getCausingEntityId().copy();
         this.targetEntityId = remoteHitRequest.getTargetEntityId().copy();
-    }
-
-    public void readRemoteHitRequest(ByteBuf in) {
-        this.causingEntityId.readEntityId(in);
-        this.targetEntityId.readEntityId(in);
     }
 
     public EntityId getCausingEntityId() {
@@ -67,13 +63,16 @@ public class RemoteHitRequest {
         this.targetEntityId = targetEntityId;
     }
 
-    public void writeRemoteHitRequest(ByteBuf out){
-        this.causingEntityId.writeEntityId(out);
-        this.targetEntityId.writeEntityId(out);
+    @Override
+    public void read(ByteBuf in) {
+        this.causingEntityId.read(in);
+        this.targetEntityId.read(in);
     }
 
-    public RemoteHitRequest copy(){
-        return new RemoteHitRequest(this);
+    @Override
+    public void write(ByteBuf out) {
+        this.causingEntityId.write(out);
+        this.targetEntityId.write(out);
     }
 
     @Override
