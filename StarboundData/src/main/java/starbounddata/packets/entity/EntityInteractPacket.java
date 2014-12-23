@@ -133,7 +133,7 @@ public class EntityInteractPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        ByteBufferUtilities.print(in);
+        ByteBufferUtilities.print(in, true);
         this.sourceEntityId.read(in);
         this.position.read(in);
         this.targetEntityId.read(in);

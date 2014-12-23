@@ -98,7 +98,7 @@ public class ItemDescriptor extends SbData<ItemDescriptor>{
         this.name = readVLQString(in);
         this.count = readUnsignedFromBufferNoObject(in);
         try {
-            this.parameters.readFromByteBuffer(in);
+            this.parameters.read(in);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,7 +112,7 @@ public class ItemDescriptor extends SbData<ItemDescriptor>{
     public void write(ByteBuf out){
         writeStringVLQ(out, this.name);
         out.writeBytes(writeVLQNoObject(this.count));
-        this.parameters.writeToByteBuffer(out);
+        this.parameters.write(out);
         boolean hasParametersShae256 =  parametersSha256 != null;
         if(hasParametersShae256){
             out.writeBytes(parametersSha256);

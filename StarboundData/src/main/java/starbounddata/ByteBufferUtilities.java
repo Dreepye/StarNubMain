@@ -31,7 +31,15 @@ import java.util.UUID;
 public class ByteBufferUtilities {
 
     public static void print(ByteBuf in){
-        System.err.println(Arrays.toString(in.array()));
+        print(in, false);
+    }
+
+    public static void print(ByteBuf in, boolean stringDump){
+        byte[] bytes = in.array();
+        System.err.println(Arrays.toString(bytes));
+        if (stringDump) {
+            System.err.println(new String(bytes, Charset.forName("UTF-8")));
+        }
     }
 
     public static void search(ByteBuf in, String string){

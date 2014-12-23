@@ -109,7 +109,7 @@ public class GiveItemPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        ByteBufferUtilities.print(in);
+        ByteBufferUtilities.print(in, true);
         this.itemDescriptor.read(in);
     }
 

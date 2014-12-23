@@ -109,7 +109,7 @@ public class DamageRequestPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        ByteBufferUtilities.print(in);
+        ByteBufferUtilities.print(in, true);
         this.remoteDamageRequest.read(in);
     }
 

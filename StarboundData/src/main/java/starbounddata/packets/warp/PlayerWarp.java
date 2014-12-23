@@ -117,7 +117,7 @@ public class PlayerWarp extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        ByteBufferUtilities.print(in);
+        ByteBufferUtilities.print(in, true);
         this.warpType = WarpType.values()[in.readUnsignedByte()];
         this.warpId =  WarpId.values()[in.readUnsignedByte()];
             switch (warpId){
