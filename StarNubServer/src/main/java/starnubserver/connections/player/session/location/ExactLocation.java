@@ -16,17 +16,34 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.variants;
+package starnubserver.connections.player.session.location;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum VariantType {
-    NIL,
-    FLOAT,
-    BOOLEAN,
-    INTEGER,
-    STRING,
-    LIST,
-    MAP
+import starbounddata.types.vectors.Vec2I;
+
+public class ExactLocation extends Location {
+
+    private Vec2I coordinate;
+
+    public ExactLocation() {
+    }
+
+    public ExactLocation(String universe, String sector, String solarSystem, Vec2I coordinate) {
+        super(universe, sector, solarSystem);
+        this.coordinate = coordinate;
+    }
+
+    public Vec2I getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(Vec2I coordinate) {
+        this.coordinate = coordinate;
+    }
+
+    @Override
+    public String toString() {
+        return "PlanetLocation{" +
+                "coordinate=" + coordinate +
+                "} " + super.toString();
+    }
 }

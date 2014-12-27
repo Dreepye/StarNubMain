@@ -16,17 +16,38 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.variants;
+package starnubserver.connections.player.session.location;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum VariantType {
-    NIL,
-    FLOAT,
-    BOOLEAN,
-    INTEGER,
-    STRING,
-    LIST,
-    MAP
+import java.util.UUID;
+
+public class ShipsLocation extends Location {
+
+    private UUID uuid;
+
+    public ShipsLocation() {
+    }
+
+    public ShipsLocation(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public ShipsLocation(String universe, String sector, String solarSystem, UUID uuid) {
+        super(universe, sector, solarSystem);
+        this.uuid = uuid;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String toString() {
+        return "ShipsLocation{" +
+                "uuid=" + uuid +
+                "} " + super.toString();
+    }
 }

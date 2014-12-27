@@ -19,32 +19,31 @@
 package starbounddata.types.entity;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 import starbounddata.types.variants.VLQ;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) //UNK CURRENTLY //DEBUG
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ *
+ * This is sometimes used over strait EntityId which uses just an Integer
  */
-public class EntityIdVLQ {
+public class EntityVLQId extends SbData<EntityVLQId> {
 
     private long entityId;
 
-    public EntityIdVLQ() {
+    public EntityVLQId() {
     }
 
-    public EntityIdVLQ(long entityId) {
+    public EntityVLQId(long entityId) {
         this.entityId = entityId;
     }
 
-    public EntityIdVLQ(ByteBuf in) {
-        readEntityId(in);
+    public EntityVLQId(ByteBuf in) {
+        read(in);
     }
 
-    public EntityIdVLQ(EntityIdVLQ entityId) {
+    public EntityVLQId(EntityVLQId entityId) {
         this.entityId = entityId.getEntityId();
-    }
-
-    public void readEntityId(ByteBuf in) {
-        this.entityId = VLQ.readSignedFromBufferNoObject(in);
     }
 
     public long getEntityId() {
@@ -55,12 +54,14 @@ public class EntityIdVLQ {
         this.entityId = entityId;
     }
 
-    public void writeEntityId(ByteBuf out){
-        out.writeBytes(VLQ.writeSignedVLQNoObject(entityId));
+    @Override
+    public void read(ByteBuf in) {
+        this.entityId = VLQ.readSignedFromBufferNoObject(in);
     }
 
-    public EntityIdVLQ copy (){
-        return new EntityIdVLQ(this);
+    @Override
+    public void write(ByteBuf out){
+        out.writeBytes(VLQ.writeSignedVLQNoObject(entityId));
     }
 
     @Override

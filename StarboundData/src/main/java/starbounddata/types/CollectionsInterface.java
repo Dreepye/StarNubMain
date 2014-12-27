@@ -16,17 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.variants;
+package starbounddata.types;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum VariantType {
-    NIL,
-    FLOAT,
-    BOOLEAN,
-    INTEGER,
-    STRING,
-    LIST,
-    MAP
+import io.netty.buffer.ByteBuf;
+
+public interface CollectionsInterface<T> {
+
+    public abstract void read(ByteBuf in);
+    public abstract void write(ByteBuf out);
+    public abstract T copy();
 }

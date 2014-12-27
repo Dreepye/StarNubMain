@@ -42,7 +42,7 @@ public enum Packets {
     CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
-    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG
+    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Locations, Types
     FLYSHIP("", Packet.Direction.NOT_USED),
     CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CELESTIALREQUEST("", Packet.Direction.NOT_USED),
@@ -78,7 +78,7 @@ public enum Packets {
     CLEARCONTAINER("", Packet.Direction.NOT_USED),
     WORLDCLIENTSTATEUPDATE("", Packet.Direction.NOT_USED),
     ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues
-    ENTITYUPDATE("", Packet.Direction.NOT_USED),
+    ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG COMPLETE
     ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
     HITREQUEST("HitRequestPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
     DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE FLOAT

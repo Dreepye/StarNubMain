@@ -21,7 +21,6 @@ package starnubserver.resources.files;
 import starnubserver.resources.ResourceManager;
 import starnubserver.resources.StarNubYamlWrapper;
 import utilities.exceptions.CollectionDoesNotExistException;
-import utilities.file.yaml.YAMLWrapper;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -74,7 +73,7 @@ public class Operators extends StarNubYamlWrapper {
         if (value instanceof UUID){
             value = value.toString();
         }
-        return super.addToCollection(value, "uuids");
+        return super.addToCollection(value, false, false, "uuids");
     }
 
     /**

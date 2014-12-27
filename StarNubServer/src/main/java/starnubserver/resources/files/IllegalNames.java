@@ -69,7 +69,7 @@ public class IllegalNames extends StarNubYamlWrapper {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean addToIllegalNames(Object value) throws IOException, CollectionDoesNotExistException {
-        return super.addToCollection(value, "names");
+        return super.addToCollection(value, false, false, "names");
     }
 
     /**

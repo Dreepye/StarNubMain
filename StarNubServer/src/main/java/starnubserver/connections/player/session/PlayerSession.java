@@ -43,6 +43,8 @@ import starnubserver.connections.player.character.PlayerCharacter;
 import starnubserver.connections.player.generic.Ban;
 import starnubserver.connections.player.generic.StaffEntry;
 import starnubserver.connections.player.groups.Group;
+import starnubserver.connections.player.session.location.ExactLocation;
+import starnubserver.connections.player.session.location.ShipsLocation;
 import starnubserver.database.tables.Characters;
 import starnubserver.database.tables.PlayerSessionLog;
 import starnubserver.events.events.DisconnectEvent;
@@ -111,8 +113,11 @@ public class PlayerSession {
     private volatile String gameName;
     private volatile String nickName;
     private volatile String cleanNickName;
-    private volatile boolean isOp;
+    private volatile boolean op;
     private volatile boolean afk;
+    private volatile boolean idle;
+    private volatile ExactLocation location;
+    private volatile ShipsLocation ship;
 
     private final Connection CONNECTION;
 
@@ -146,9 +151,9 @@ public class PlayerSession {
         CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP, false);
         characterIP.logCharacterIp();
         try {
-            this.isOp = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
+            this.op = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
         } catch (Exception e) {
-            this.isOp = false;
+            this.op = false;
         }
         loadPermissions();
         PlayerSessionLog.getInstance().create(this);
@@ -215,16 +220,16 @@ public class PlayerSession {
     }
 
     public boolean isOp() {
-        return isOp;
+        return op;
     }
 
     public void makeOp() throws IOException, CollectionDoesNotExistException {
-        this.isOp = true;
+        this.op = true;
         StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().addToOperators(playerCharacter.getUuid());
     }
 
     public void removeOp() throws IOException {
-        this.isOp = false;
+        this.op = false;
         StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().removeFromOperators(playerCharacter.getUuid());
     }
 
@@ -526,7 +531,7 @@ public class PlayerSession {
     }
 
     public boolean hasBasePermission(String basePermission) {
-        return isOp || PERMISSIONS.containsKey("*") || PERMISSIONS.containsKey(basePermission);
+        return op || PERMISSIONS.containsKey("*") || PERMISSIONS.containsKey(basePermission);
     }
 
     private boolean hasSubPermission(String basePermission, String subPermission, boolean checkWildCards){
@@ -567,7 +572,7 @@ public class PlayerSession {
     }
 
     public boolean hasPermission(String permission, boolean checkWildCards) {
-        if (isOp && checkWildCards){
+        if (op && checkWildCards){
             return true;
         } else {
             String[] permissions = permission.split("\\.", 3);
@@ -603,7 +608,7 @@ public class PlayerSession {
      * @return boolean if the account has the permission
      */
     public boolean hasPermission(String basePermission, String subPermission, String fullPermission, boolean checkWildCards) {
-        return isOp && checkWildCards || hasFullPermission(basePermission, subPermission, fullPermission, checkWildCards);
+        return op && checkWildCards || hasFullPermission(basePermission, subPermission, fullPermission, checkWildCards);
     }
 
     public String getSpecificPermission(String basePermission, String subPermission) {
@@ -629,7 +634,7 @@ public class PlayerSession {
     }
 
     public int getSpecificPermissionInteger(String basePermission, String subPermission) {
-        if (isOp){
+        if (op){
             return -10000;
         }
         String permissionVariable = getSpecificPermission(basePermission, subPermission);
@@ -665,7 +670,7 @@ public class PlayerSession {
                 ", gameName='" + gameName + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", cleanNickName='" + cleanNickName + '\'' +
-                ", isOp=" + isOp +
+                ", op=" + op +
                 ", afk=" + afk +
                 ", CONNECTION_TYPE=" + CONNECTION_TYPE +
                 ", CONNECTION=" + CONNECTION +

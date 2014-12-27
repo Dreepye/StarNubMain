@@ -68,7 +68,7 @@ public class Whitelist extends StarNubYamlWrapper {
      * @throws java.io.IOException throws an exception if an issue happens with the YAML or File - Only if DUMP_ON_MODIFICATION is turned on
      */
     public boolean addToWhitelist(Object value) throws IOException, CollectionDoesNotExistException {
-        return super.addToCollection(value, "uuid_ip");
+        return super.addToCollection(value, false, false, "uuid_ip");
     }
 
     /**

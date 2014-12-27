@@ -93,6 +93,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new ConnectionResponseHandler(CONNECTIONS));
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
+        // LOCATION TRACKING HANDLERS
+
         /* Permission Related */
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler());
         packetDebug();
@@ -121,6 +123,14 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
                 System.out.println(eventData);
             }
         });
+
+        /* Debugging ALL, Complex Data Type*/
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityUpdatePacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
         //// KEEP TEMPORARY ////
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {

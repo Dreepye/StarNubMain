@@ -19,23 +19,20 @@
 package starbounddata.types.variants;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.types.CollectInterface;
+import starbounddata.types.CollectionsInterface;
 
 import java.util.ArrayList;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class VariantList extends ArrayList<Variant> implements CollectInterface<VariantList>{
+public class VariantList extends ArrayList<Variant> implements CollectionsInterface<VariantList> {
 
     public VariantList() {
         super();
     }
 
-    /**
-     * @param in ByteBuf data to be read into the Vec2I Array. 100 is set as a cap for data to prevent attacks against the starnubserver. This is still a sizable area
-     */
-    public VariantList(ByteBuf in) throws ArrayIndexOutOfBoundsException {
+    public VariantList(ByteBuf in) {
         read(in);
     }
 
@@ -57,7 +54,9 @@ public class VariantList extends ArrayList<Variant> implements CollectInterface<
 
     @Override
     public void write(ByteBuf out) {
-        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
+        long size = (long) this.size();
+        byte[] bytes = VLQ.writeVLQNoObject(size);
+        out.writeBytes(bytes);
         for (Variant variant : this) {
             variant.write(out);
         }

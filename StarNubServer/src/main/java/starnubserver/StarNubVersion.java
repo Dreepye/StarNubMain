@@ -39,6 +39,8 @@ public class StarNubVersion {
     private final String PHASE;
     private final double VERSION;
     private final String PHASE_VERSION;
+    private final String AUTHOR;
+    private final List<String> CONTRIBUTORS;
     private final List<Integer> STARBOUND_VERSION;
     private final List<String> LANGUAGES;
     private final double SIZE_MBS;
@@ -57,6 +59,8 @@ public class StarNubVersion {
         PHASE = (String) starnubVersionYaml.getValue("phase");
         VERSION = (double) starnubVersionYaml.getValue("version");
         PHASE_VERSION = PHASE + "-" + Double.toString(VERSION);
+        AUTHOR = (String) starnubVersionYaml.getValue("author");
+        CONTRIBUTORS = (List<String>) starnubVersionYaml.getValue("contributors");
         STARBOUND_VERSION = (List<Integer>) starnubVersionYaml.getValue("starbound_versions");
         LANGUAGES = (List<String>) starnubVersionYaml.getValue("languages");
         SIZE_MBS = (double) starnubVersionYaml.getValue("size");
@@ -110,11 +114,14 @@ public class StarNubVersion {
     public String versionBanner() {
         return "\n"
                 + "=======================================================\n"
-                + "                StarNub " + PHASE                   + "\n"
-                + "                Version " + VERSION                 + "\n"
+                + "             StarNub " + PHASE                   + "\n"
+                + "             Version " + VERSION                 + "\n"
+                + "             Author: " + AUTHOR                   + "\n"
+                + "             Contributors: " + CONTRIBUTORS       + "\n"
                 + ""                                                   + "\n"
-                + "                Starbound Versions: " + STARBOUND_VERSION  + "\n"
-                + "                www.StarNub.org "                   + "\n"
+                + "             www.StarNub.org "                   + "\n"
+                + ""                                                   + "\n"
+                + "             Compatible Starbound Versions: " + STARBOUND_VERSION  + "\n"
                 + "=======================================================\n";
     }
 

@@ -16,14 +16,40 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types;
+package starnubserver.connections.player.session.location;
 
-import io.netty.buffer.ByteBuf;
+import starbounddata.types.vectors.Vec2I;
 
-public interface CollectInterface<T> {
+import java.util.UUID;
 
-    public abstract void read(ByteBuf in);
-    public abstract void write(ByteBuf out);
-    public abstract T copy();
+public class ShipLocation extends ExactLocation {
 
+    private UUID uuid;
+
+    public ShipLocation() {
+    }
+
+    public ShipLocation(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public ShipLocation(String universe, String sector, String solarSystem, Vec2I coordinate, UUID uuid) {
+        super(universe, sector, solarSystem, coordinate);
+        this.uuid = uuid;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String toString() {
+        return "ShipLocation{" +
+                "uuid=" + uuid +
+                "} " + super.toString();
+    }
 }

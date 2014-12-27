@@ -20,53 +20,47 @@ package starbounddata.types.entity;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
+import starbounddata.types.variants.VLQ;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- *
- * This is sometimes used over strait EntityVLQId which uses a variant length quantity
- */
-public class EntityId extends SbData<EntityId>{
+import static starbounddata.packets.Packet.readVLQString;
+import static starbounddata.packets.Packet.writeStringVLQ;
 
-    private long entityId;
+public class Delta extends SbData<Delta> {
 
-    public EntityId() {
-    }
+    private long lengthTemp;
+    private String unknown;
+    private float unknownFloat1;
 
-    public EntityId(long entityId) {
-        this.entityId = entityId;
-    }
+    private byte[] temp;
 
-    public EntityId(ByteBuf in) {
-        super(in);
-    }
+    private String unknown2;
+    private float unkownFloat2;
 
-    public EntityId(EntityId entityId) {
-        this.entityId = entityId.getEntityId();
-    }
-
-    public long getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(long entityId) {
-        this.entityId = entityId;
+    public Delta() {
     }
 
     @Override
     public void read(ByteBuf in) {
-        this.entityId = in.readInt();
+        lengthTemp = VLQ.readUnsignedFromBufferNoObject(in);
+        unknown = readVLQString(in);
+        unknownFloat1 = in.readFloat();
+        temp = in.readBytes(in.readableBytes()).array();
     }
 
     @Override
-    public void write(ByteBuf out){
-        out.writeInt((int) entityId);
+    public void write(ByteBuf out) {
+        byte[] bytes = VLQ.writeVLQNoObject(lengthTemp);
+        out.writeBytes(bytes);
+        writeStringVLQ(out, unknown);
+        out.writeFloat(unknownFloat1);
+        out.writeBytes(temp);
     }
 
     @Override
     public String toString() {
-        return "EntityId{" +
-                "entityId=" + entityId +
-                '}';
+        return "Delta{" +
+                "unknown='" + unknown + '\'' +
+                ", unknownFloat1=" + unknownFloat1 +
+                "} " + super.toString();
     }
 }

@@ -88,12 +88,8 @@ public class Variant extends SbData<Variant>{
             case STRING:
                 value = readVLQString(in);
                 break;
-            case LIST://Variant List TODO is a list of variants // Size
-
-                Variant[] array = new Variant[(int) readUnsignedFromBufferNoObject(in)];
-                for (int i = 0; i < array.length; i++)
-//                    array[i] = this.readFromByteBuffer(in);
-                    value = array;
+            case LIST:
+                 value = new VariantList(in);
                 break;
             case MAP://VARIANT MAP TODO
                 Map<String, Variant> dict = new HashMap<String, Variant>();

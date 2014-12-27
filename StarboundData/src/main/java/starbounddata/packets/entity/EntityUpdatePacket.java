@@ -23,12 +23,11 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
 import starbounddata.types.entity.EntityVLQId;
-import starbounddata.types.entity.EntityType;
 
 import java.util.Arrays;
 
 /**
- * Represents the EntityCreate and methods to generate a packet data for StarNub and Plugins
+ * Represents the EntityUpdate and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
@@ -39,11 +38,10 @@ import java.util.Arrays;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityCreatePacket extends Packet {
+public class EntityUpdatePacket extends Packet {
 
-    private EntityType entityType;
-    private byte[] storeData;
     private EntityVLQId entityId = new EntityVLQId();
+    private byte[] delta;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -55,8 +53,8 @@ public class EntityCreatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityCreatePacket(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYCREATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public EntityUpdatePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.ENTITYUPDATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -69,11 +67,10 @@ public class EntityCreatePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param
      */
-    public EntityCreatePacket(ChannelHandlerContext DESTINATION_CTX, EntityType entityType, byte[] storeData, EntityVLQId entityId) {
-        super(Packets.ENTITYCREATE.getDirection(), Packets.ENTITYCREATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityType = entityType;
-        this.storeData = storeData;
+    public EntityUpdatePacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, byte[] delta){
+        super(Packets.ENTITYUPDATE.getDirection(), Packets.ENTITYUPDATE.getPacketId(), null, DESTINATION_CTX);
         this.entityId = entityId;
+        this.delta = delta;
     }
 
     /**
@@ -81,29 +78,12 @@ public class EntityCreatePacket extends Packet {
      * <p>
      * Uses: This will construct a new packet from a packet
      *
-     * @param packet DamageRequestPacket representing the packet to construct from
+     * @param packet EntityUpdatePacket representing the packet to construct from
      */
-    public EntityCreatePacket(EntityCreatePacket packet) {
+    public EntityUpdatePacket(EntityUpdatePacket packet) {
         super(packet);
-        this.entityType = packet.getEntityType();
-        this.storeData = packet.getStoreData().clone();
         this.entityId = packet.getEntityId();
-    }
-
-    public EntityType getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
-
-    public byte[] getStoreData() {
-        return storeData;
-    }
-
-    public void setStoreData(byte[] storeData) {
-        this.storeData = storeData;
+        this.delta = packet.getDelta().clone();
     }
 
     public EntityVLQId getEntityId() {
@@ -114,15 +94,23 @@ public class EntityCreatePacket extends Packet {
         this.entityId = entityId;
     }
 
+    public byte[] getDelta() {
+        return delta;
+    }
+
+    public void setDelta(byte[] delta) {
+        this.delta = delta;
+    }
+
     /**
      * This will provide a new object while copying all of the internal data as well into this
      * new Object
      *
-     * @return DamageRequestPacket the new copied object
+     * @return EntityUpdatePacket the new copied object
      */
     @Override
-    public EntityCreatePacket copy() {
-        return new EntityCreatePacket(this);
+    public EntityUpdatePacket copy() {
+        return new EntityUpdatePacket(this);
     }
 
     /**
@@ -133,10 +121,9 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-//        ByteBufferUtilities.print(in);
-        this.entityType =  EntityType.values()[in.readUnsignedByte()];
-        this.storeData = readVLQArray(in);
+//        ByteBufferUtilities.print(in, true);
         this.entityId.read(in);
+        this.delta = readVLQArray(in);
     }
 
     /**
@@ -149,19 +136,15 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeByte(entityType.ordinal());
-        out.writeBytes(storeData);
         this.entityId.write(out);
+        out.writeBytes(delta);
     }
 
     @Override
     public String toString() {
-        return "EntityCreatePacket{" +
-                "entityType=" + entityType +
-                ", storeData=" + Arrays.toString(storeData) +
-                ", entityId=" + entityId +
+        return "EntityUpdatePacket{" +
+                "entityId=" + entityId +
+                ", delta=" + Arrays.toString(delta) +
                 "} " + super.toString();
     }
-
-
 }
