@@ -57,7 +57,7 @@ public class SatelliteParameters extends HashMap<Integer, CelestialParameters> i
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (Entry<Integer, CelestialParameters> entry : this.entrySet()){
             Integer key = entry.getKey();//DEBUG

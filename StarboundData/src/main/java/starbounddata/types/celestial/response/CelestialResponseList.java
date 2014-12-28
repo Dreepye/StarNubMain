@@ -57,7 +57,7 @@ public class CelestialResponseList extends ArrayList<CelestialResponse> implemen
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (CelestialResponse celestialResponse : this) {
             celestialResponse.write(out);

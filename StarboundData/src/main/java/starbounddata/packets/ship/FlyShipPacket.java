@@ -16,29 +16,29 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.packets.hit;
+package starbounddata.packets.ship;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.hit.RemoteHitRequest;
+import starbounddata.types.celestial.general.CelestialCoordinate;
 
 /**
  * Represents the HitRequest and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
- * Packet Direction: Client -> Server
+ * Packet Direction: Client -> Server//DEBUG
  * <p>
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class HitRequestPacket extends Packet {
+public class FlyShipPacket extends Packet {
 
-    private RemoteHitRequest remoteHitRequest = new RemoteHitRequest();
+    private CelestialCoordinate celestialCoordinate = new CelestialCoordinate();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -50,8 +50,8 @@ public class HitRequestPacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public HitRequestPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.HITREQUEST.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public FlyShipPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.FLYSHIP.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -62,11 +62,11 @@ public class HitRequestPacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param remoteHitRequest int representing the Starbounds protocol version
+     * @param celestialCoordinate int representing the Starbounds protocol version
      */
-    public HitRequestPacket(ChannelHandlerContext DESTINATION_CTX, RemoteHitRequest remoteHitRequest) {
-        super(Packets.HITREQUEST.getDirection(), Packets.HITREQUEST.getPacketId(), null, DESTINATION_CTX);
-        this.remoteHitRequest = remoteHitRequest;
+    public FlyShipPacket(ChannelHandlerContext DESTINATION_CTX, CelestialCoordinate celestialCoordinate) {
+        super(Packets.FLYSHIP.getDirection(), Packets.FLYSHIP.getPacketId(), null, DESTINATION_CTX);
+        this.celestialCoordinate = celestialCoordinate;
     }
 
     /**
@@ -76,17 +76,17 @@ public class HitRequestPacket extends Packet {
      *
      * @param packet DamageRequestPacket representing the packet to construct from
      */
-    public HitRequestPacket(HitRequestPacket packet) {
+    public FlyShipPacket(FlyShipPacket packet) {
         super(packet);
-        this.remoteHitRequest = packet.getRemoteHitRequest().copy();
+        this.celestialCoordinate = packet.getCelestialCoordinate().copy();
     }
 
-    public RemoteHitRequest getRemoteHitRequest() {
-        return remoteHitRequest;
+    public CelestialCoordinate getCelestialCoordinate() {
+        return celestialCoordinate;
     }
 
-    public void setRemoteHitRequest(RemoteHitRequest remoteHitRequest) {
-        this.remoteHitRequest = remoteHitRequest;
+    public void setCelestialCoordinate(CelestialCoordinate celestialCoordinate) {
+        this.celestialCoordinate = celestialCoordinate;
     }
 
     /**
@@ -96,8 +96,8 @@ public class HitRequestPacket extends Packet {
      * @return DamageRequestPacket the new copied object
      */
     @Override
-    public HitRequestPacket copy() {
-        return new HitRequestPacket(this);
+    public FlyShipPacket copy() {
+        return new FlyShipPacket(this);
     }
 
     /**
@@ -108,7 +108,7 @@ public class HitRequestPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.remoteHitRequest.read(in);
+        this.celestialCoordinate.read(in);
     }
 
     /**
@@ -121,13 +121,13 @@ public class HitRequestPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.remoteHitRequest.write(out);
+        this.celestialCoordinate.write(out);
     }
 
     @Override
     public String toString() {
-        return "HitRequestPacket{" +
-                "remoteHitRequest=" + remoteHitRequest +
+        return "FlyShipPacket{" +
+                "celestialCoordinate=" + celestialCoordinate +
                 "} " + super.toString();
     }
 }

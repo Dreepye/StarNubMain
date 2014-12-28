@@ -21,13 +21,12 @@ package starnubserver.resources.connections;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
-import starbounddata.packets.celestial.CelestialRequestPacket;
-import starbounddata.packets.celestial.CelestialResponsePacket;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
-import starbounddata.packets.hit.HitRequestPacket;
-import starbounddata.packets.tile.DamageTileGroupPacket;
+import starbounddata.packets.dungeon.UpdateTileProtectionPacket;
+import starbounddata.packets.ship.FlyShipPacket;
 import starbounddata.packets.warp.PlayerWarp;
+import starbounddata.packets.world.WorldStartPacket;
 import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
 import starnubserver.StarNub;
@@ -97,65 +96,104 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
         // LOCATION TRACKING HANDLERS
 
-        /* Permission Related */
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new DamageTileGroupHandler());
+        /* Permission Related */ // ??
         packetDebug();
     }
 
     private void packetDebug() {
         //// KEEP TEMPORARY ////
-        /*Debugging WorldID and Data*/
+
+        /*  Misc no purpose */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /*  Misc no purpose */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /* Debugging WorldID and Data */
         new PacketEventSubscription("StarNub", Priority.CRITICAL, PlayerWarp.class, new PacketEventHandler() {
             @Override
             public void onEvent(Packet eventData) {
                 System.out.println(eventData);
             }
         });
-        /*Debugging Direction*/
+
+        /* Debugging Direction and Ids */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, FlyShipPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+         /* Debugging Direction and Ids */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, UpdateTileProtectionPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /* Debugging Direction */
 //         new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractPacket.class, new PacketEventHandler() {
 //            @Override
 //            public void onEvent(Packet eventData) {
 //                System.out.println(eventData);
 //            }
 //        });
-        /*Debugging Direction */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, HitRequestPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
 
-        /* Debugging ALL, Complex Data Type*/
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, CelestialRequestPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
+        /*Debugging Direction and PVP */
 
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, CelestialResponsePacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
-
-        //// KEEP TEMPORARY ////
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageRequestPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
+//
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageRequestPacket.class, new PacketEventHandler() {
 //            @Override
 //            public void onEvent(Packet eventData) {
 //                System.out.println(eventData);
 //            }
 //        });
 
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageTileGroupPacket.class, new PacketEventHandler() {
+        /* Debugging ALL, Complex Data Type*/
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, CelestialResponsePacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
+
+
+
+        //// KEEP TEMPORARY ////
+
+        /*  Misc no purpose */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, WorldStartPacket.class, new PacketEventHandler() {
             @Override
             public void onEvent(Packet eventData) {
                 System.out.println(eventData);
             }
         });
 
+
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageNotificationPacket.class, new PacketEventHandler() {
 //            @Override
@@ -176,34 +214,8 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 //                System.out.println(eventData);
 //            }
 //        });
-            new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
 
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
 
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
-
-//        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "Player_Connected", new StarNubEventHandler() {
-//            @Override
-//            public void onEvent(StarNubEvent eventData) {
-//                PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
-//                new StarNubTask("StarNub", "Test", 10, TimeUnit.SECONDS, playerSession::stopPlayerWorld);
-//            }
-//        });
 
     }
 

@@ -59,7 +59,7 @@ public class SystemObjects extends HashMap<Vec3I, Planets> implements SbDataInte
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (Entry<Vec3I, Planets> entry : this.entrySet()){
             Vec3I key = entry.getKey();

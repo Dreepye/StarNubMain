@@ -56,7 +56,7 @@ public class Capabilities extends HashSet<String> implements SbDataInterface<Cap
 
     @Override
     public  void write(ByteBuf out){
-        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
+        out.writeBytes(VLQ.writeUnsignedVLQNoObject((long) this.size()));
         for (String string : this) {
             Packet.writeStringVLQ(out, string);
         }

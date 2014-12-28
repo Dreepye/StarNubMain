@@ -57,7 +57,7 @@ public class CelestialConstellationList extends ArrayList<CelestialConstellation
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (CelestialConstellation celestialConstellation : this) {
             celestialConstellation.write(out);

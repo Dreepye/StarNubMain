@@ -24,7 +24,7 @@ package starbounddata.types.variants;
 public enum VariantType {
     UNUSED, //REMOVE - TEMP - SB DOCUMENTS ARE OFF - http://doc.playstarbound.com/classStar_1_1Variant.html
     NIL,
-    FLOAT,
+    DOUBLE,
     BOOLEAN,
     INTEGER,
     STRING,

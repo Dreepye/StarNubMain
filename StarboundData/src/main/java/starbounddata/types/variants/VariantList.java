@@ -55,7 +55,7 @@ public class VariantList extends ArrayList<Variant> implements SbDataInterface<V
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (Variant variant : this) {
             variant.write(out);

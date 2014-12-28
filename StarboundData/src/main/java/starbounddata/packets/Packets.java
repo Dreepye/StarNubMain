@@ -35,19 +35,19 @@ public enum Packets {
     PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     SERVERDISCONNECT("ServerDisconnectPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    HANDSHAKECHALLENGE("", Packet.Direction.NOT_USED),
+    HANDSHAKECHALLENGE("HandshakeChallengePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CHATRECEIVE("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CELESTIALRESPONSE("CelestialResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),//DEBUG
+    CELESTIALRESPONSE("CelestialResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), //DEBUG - ALL DATA, TWO BYE ANOMALY and UNDOCUMENTED WORLD VISITABLE PTR
     CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
-    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Locations, Types
-    FLYSHIP("", Packet.Direction.NOT_USED),
+    HANDSHAKERESPONSE("HandshakeResponsePacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - LocationsIds - Remaining - UNIQUE_WORLD & CELESTIAL_WORLD
+    FLYSHIP("FlyShipPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Direction and warping to planets that do not exist
     CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CELESTIALREQUEST("CelestialRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    CLIENTCONTEXTUPDATE("ClientContextUpdatePacket.class", Packet.Direction.BIDIRECTIONAL),//DEBUG - All data needs debugged
-    WORLDSTART("", Packet.Direction.NOT_USED),
+    CLIENTCONTEXTUPDATE("ClientContextUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - All data needs debugged
+    WORLDSTART("WorldStartPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
     WORLDSTOP("WorldStopPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CENTRALSTRUCTUREUPDATE("", Packet.Direction.NOT_USED),
     TILEARRAYUPDATE("", Packet.Direction.NOT_USED),
@@ -59,7 +59,7 @@ public enum Packets {
     SWAPINCONTAINERRESULT("", Packet.Direction.NOT_USED),
     ENVIRONMENTUPDATE("", Packet.Direction.NOT_USED),
     ENTITYINTERACTRESULT("", Packet.Direction.NOT_USED),
-    UPDATETILEPROTECTION("", Packet.Direction.NOT_USED),
+    UPDATETILEPROTECTION("UpdateTileProtectionPacket.class", Packet.Direction.BIDIRECTIONAL),//DEBUG DIRECTION AND DATA
     MODIFYTILELIST("", Packet.Direction.NOT_USED),
     DAMAGETILEGROUP("DamageTileGroupPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     COLLECTLIQUID("", Packet.Direction.NOT_USED),
@@ -68,7 +68,7 @@ public enum Packets {
     ENTITYINTERACT("EntityInteractPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
     CONNECTWIRE("", Packet.Direction.NOT_USED),
     DISCONNECTALLWIRES("", Packet.Direction.NOT_USED),
-    OPENCONTAINER("", Packet.Direction.NOT_USED),
+    OPENCONTAINER("OpenContainerPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLOSECONTAINER("", Packet.Direction.NOT_USED),
     SWAPINCONTAINER("", Packet.Direction.NOT_USED),
     ITEMAPPLYINCONTAINER("", Packet.Direction.NOT_USED),
@@ -80,9 +80,9 @@ public enum Packets {
     ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues
     ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG Delta and direction
     ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
-    HITREQUEST("HitRequestPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
-    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE FLOAT
-    DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Data Issues PROBABLE FLOAT
+    HITREQUEST("HitRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE DOUBLE
+    DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Data Issues PROBABLE DOUBLE
     CALLSCRIPTEDENTITY("", Packet.Direction.NOT_USED),
     UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED),
     HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL);

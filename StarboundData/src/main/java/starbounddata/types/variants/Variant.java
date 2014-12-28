@@ -48,7 +48,7 @@ public class Variant extends SbData<Variant>{
         if (value == null){
             this.variantType = VariantType.NIL;
         } else if (value instanceof Float) {
-            this.variantType = VariantType.FLOAT;
+            this.variantType = VariantType.DOUBLE;
         } else if (value instanceof Boolean) {
             this.variantType = VariantType.BOOLEAN;
         } else if (value instanceof Integer) {
@@ -108,7 +108,7 @@ public class Variant extends SbData<Variant>{
                 value = null;
                 break;
             }
-            case FLOAT: {
+            case DOUBLE: {
                 value = in.readDouble();
                 break;
             }
@@ -143,8 +143,8 @@ public class Variant extends SbData<Variant>{
             case NIL: {
                 break;
             }
-            case FLOAT: {
-                out.writeDouble((Float) value);
+            case DOUBLE: {
+                out.writeDouble((Double) value);
                 break;
             }
             case BOOLEAN: {
@@ -152,7 +152,8 @@ public class Variant extends SbData<Variant>{
                 break;
             }
             case INTEGER: {
-                out.writeInt((Integer) value);
+                byte[] bytes = VLQ.writeUnsignedVLQNoObject((Long) value);
+                out.writeBytes(bytes);
                 break;
             }
             case STRING: {

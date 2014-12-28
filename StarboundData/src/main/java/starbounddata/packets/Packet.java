@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static starbounddata.types.variants.VLQ.writeVLQNoObject;
+import static starbounddata.types.variants.VLQ.writeUnsignedVLQNoObject;
 
 /**
  * Represents a basic packet that all packets should inherit.
@@ -351,7 +351,7 @@ public abstract class Packet {
      * @param bytes bytes[] value to be written to the buffer
      */
     public static void writeVLQArray(ByteBuf out, byte[] bytes) {
-        out.writeBytes(writeVLQNoObject(bytes.length));
+        out.writeBytes(writeUnsignedVLQNoObject(bytes.length));
         out.writeBytes(bytes);
     }
 

@@ -23,7 +23,7 @@ import starbounddata.types.entity.EntityId;
 import starbounddata.types.SbData;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING PROBABLE FLOAT POINT
+ * Starbound 1.0 Compliant (Versions 622, Update 1) //DEBUG NOT WORKING PROBABLE DOUBLE POINT
  */
 public class RemoteDamageNotification extends SbData<RemoteDamageNotification> {
 

@@ -182,7 +182,7 @@ public class VLQ {
         } else {
             result = value << 1;
         }
-        return writeVLQNoObject(result);
+        return writeUnsignedVLQNoObject(result);
     }
 
     /**
@@ -196,7 +196,7 @@ public class VLQ {
      * @param value long the size of the bites that will precede this VLQ
      * @return byte[] which is the actual VLQ field
      */
-    public static byte[] writeVLQNoObject(long value) {
+    public static byte[] writeUnsignedVLQNoObject(long value) {
         int numRelevantBits = 64 - Long.numberOfLeadingZeros(value);
         int numBytes = (numRelevantBits + 6) / 7;
         if (numBytes == 0)

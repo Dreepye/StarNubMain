@@ -16,18 +16,22 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.packets.hit;
+package starbounddata.packets.connection;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.hit.RemoteHitRequest;
+
+import java.util.Arrays;
+
 
 /**
- * Represents the HitRequest and methods to generate a packet data for StarNub and Plugins
+ * Represents the ClientConnectPacket and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
+ * This packet is sent when a starnubclient is initially requesting a connection to the starnubserver after it received
+ * the {@link starbounddata.packets.server.ProtocolVersionPacket}
  * <p>
  * Packet Direction: Client -> Server
  * <p>
@@ -36,9 +40,9 @@ import starbounddata.types.hit.RemoteHitRequest;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class HitRequestPacket extends Packet {
+public class HandshakeResponsePacket extends Packet {
 
-    private RemoteHitRequest remoteHitRequest = new RemoteHitRequest();
+    private byte[] passwordHash;
 
     /**
      * Recommended: For connections StarNub usage.
@@ -50,8 +54,8 @@ public class HitRequestPacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public HitRequestPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.HITREQUEST.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public HandshakeResponsePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.HANDSHAKERESPONSE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -62,11 +66,10 @@ public class HitRequestPacket extends Packet {
      * <p>
      *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param remoteHitRequest int representing the Starbounds protocol version
      */
-    public HitRequestPacket(ChannelHandlerContext DESTINATION_CTX, RemoteHitRequest remoteHitRequest) {
-        super(Packets.HITREQUEST.getDirection(), Packets.HITREQUEST.getPacketId(), null, DESTINATION_CTX);
-        this.remoteHitRequest = remoteHitRequest;
+    public HandshakeResponsePacket(ChannelHandlerContext DESTINATION_CTX, byte[] passwordHash) {
+        super(Packets.HANDSHAKERESPONSE.getDirection(), Packets.HANDSHAKERESPONSE.getPacketId(), null, DESTINATION_CTX);
+        this.passwordHash = passwordHash;
     }
 
     /**
@@ -74,33 +77,36 @@ public class HitRequestPacket extends Packet {
      * <p>
      * Uses: This will construct a new packet from a packet
      *
-     * @param packet DamageRequestPacket representing the packet to construct from
+     * @param packet ClientConnectPacket representing the packet to construct from
      */
-    public HitRequestPacket(HitRequestPacket packet) {
+    public HandshakeResponsePacket(HandshakeResponsePacket packet) {
         super(packet);
-        this.remoteHitRequest = packet.getRemoteHitRequest().copy();
+        this.passwordHash = packet.getPasswordHash();
     }
 
-    public RemoteHitRequest getRemoteHitRequest() {
-        return remoteHitRequest;
+    public byte[] getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setRemoteHitRequest(RemoteHitRequest remoteHitRequest) {
-        this.remoteHitRequest = remoteHitRequest;
+    public void setPasswordHash(byte[] passwordHash) {
+        this.passwordHash = passwordHash;
     }
+
 
     /**
      * This will provide a new object while copying all of the internal data as well into this
      * new Object
      *
-     * @return DamageRequestPacket the new copied object
+     * @return ClientConnectPacket the new copied object
      */
     @Override
-    public HitRequestPacket copy() {
-        return new HitRequestPacket(this);
+    public HandshakeResponsePacket copy() {
+        return new HandshakeResponsePacket(this);
     }
 
     /**
+     * Recommended: For connections StarNub usage.
+     * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
      *
@@ -108,7 +114,7 @@ public class HitRequestPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.remoteHitRequest.read(in);
+        this.passwordHash = readVLQArray(in);
     }
 
     /**
@@ -121,13 +127,13 @@ public class HitRequestPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.remoteHitRequest.write(out);
+        writeVLQArray(out, this.passwordHash);
     }
 
     @Override
     public String toString() {
-        return "HitRequestPacket{" +
-                "remoteHitRequest=" + remoteHitRequest +
+        return "HandshakeResponsePacket{" +
+                "passwordHash=" + Arrays.toString(passwordHash) +
                 "} " + super.toString();
     }
 }

@@ -57,7 +57,7 @@ public class CelestialRequestList extends ArrayList<CelestialRequest> implements
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (CelestialRequest celestialRequest : this) {
             celestialRequest.write(out);

@@ -60,7 +60,7 @@ public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implem
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (Entry<Vec3I, CelestialParameters> entry : this.entrySet()){
             Vec3I key = entry.getKey();

@@ -69,7 +69,7 @@ public class ByteBufferUtilities {
         byte[] searchable = in.array();
         int searchableBytesSize = searchable.length;
         int searchBytesSize = byteArray.length;
-        byte[] vlqByteArray = VLQ.writeVLQNoObject(searchBytesSize);
+        byte[] vlqByteArray = VLQ.writeUnsignedVLQNoObject(searchBytesSize);
         int vlqLength = vlqByteArray.length;
         System.err.println("Searchable Bytes Size: " + searchableBytesSize + ". Search Bytes Size: " + searchBytesSize);
         System.err.println("VLQ Byte Pattern: " + Arrays.toString(vlqByteArray) + ". VLQ Length: " + vlqLength +  ". VLQ Value: " + searchBytesSize);

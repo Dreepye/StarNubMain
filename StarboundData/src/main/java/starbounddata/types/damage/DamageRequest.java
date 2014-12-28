@@ -27,7 +27,7 @@ import static starbounddata.packets.Packet.readVLQString;
 import static starbounddata.packets.Packet.writeStringVLQ;
 
 /**
- * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING PROBABLE FLOAT
+ * Starbound 1.0 Compliant (Versions 622, Update 1) // DEBUG NOT WORKING PROBABLE DOUBLE
  */
 public class DamageRequest extends SbData<DamageRequest> {
 

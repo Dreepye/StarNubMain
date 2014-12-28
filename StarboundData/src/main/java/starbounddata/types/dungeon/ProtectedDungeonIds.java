@@ -16,45 +16,37 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.variants;
+package starbounddata.types.dungeon;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbDataInterface;
+import starbounddata.types.variants.VLQ;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
-import static starbounddata.packets.Packet.readVLQString;
-import static starbounddata.packets.Packet.writeStringVLQ;
+public class ProtectedDungeonIds extends HashSet<DungeonId> implements SbDataInterface<ProtectedDungeonIds> {
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public class VariantMap extends HashMap<String, Variant> implements SbDataInterface<VariantMap> {
-
-    public VariantMap() {
+    public ProtectedDungeonIds() {
         super();
     }
 
-    public VariantMap(ByteBuf in) {
+    public ProtectedDungeonIds(ByteBuf in) {
         read(in);
     }
 
-    public VariantMap(VariantMap variantMap) {
-        for (Entry<String, Variant> entry : variantMap.entrySet()){
-            String key = entry.getKey();
-            Variant variant = entry.getValue();
-            Variant variantCopy = variant.copy();
-            this.put(key, variantCopy);
+    public ProtectedDungeonIds(ProtectedDungeonIds protectedDungeonIds) {
+        for (DungeonId dungeonId : protectedDungeonIds) {
+            DungeonId dungeonIdCopy = dungeonId.copy();
+            this.add(dungeonIdCopy);
         }
     }
 
     @Override
     public void read(ByteBuf in) {
-        long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
-        for (int i = 0; i < mapLength; i++) {
-            String key = readVLQString(in);
-            Variant variant = new Variant(in);
-            this.put(key, variant);
+        long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
+        for (int i = 0; i < arrayLength; i++) {
+            DungeonId dungeonId = new DungeonId(in);
+            this.add(dungeonId);
         }
     }
 
@@ -63,22 +55,19 @@ public class VariantMap extends HashMap<String, Variant> implements SbDataInterf
         long size = (long) this.size();
         byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
-        for (Entry<String, Variant> entry : this.entrySet()){
-            String key = entry.getKey();
-            writeStringVLQ(out, key);
-            Variant variant = entry.getValue();
-            variant.write(out);
+        for (DungeonId dungeonId : this) {
+            dungeonId.write(out);
         }
         this.clear();
     }
 
     @Override
-    public VariantMap copy() {
-        return new VariantMap(this);
+    public ProtectedDungeonIds copy() {
+        return new ProtectedDungeonIds(this);
     }
 
     @Override
     public String toString() {
-        return "VariantMap{} " + super.toString();
+        return "ProtectedDungeonIds{} " + super.toString();
     }
 }

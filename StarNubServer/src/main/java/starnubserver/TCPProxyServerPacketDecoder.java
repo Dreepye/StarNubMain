@@ -195,30 +195,35 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         IPCacheWrapper lastActiveCache = StarNub.getConnections().getINTERNAL_IP_WATCHLIST();
         IntegerCache cache = (IntegerCache) lastActiveCache.getCache(connectingIp);
         int randomInt = RandomNumber.randInt(3000, 6000); //DEBUG - AFTER X ATTACKS CONNECTIONS ARE NOT BEING EXCEPTED
+        boolean clientSuccess = false;
+        String failReason = null;
         if (cache != null) {
             int cachedTimer = cache.getInteger();
             boolean isPastTime = cache.isPastDesignatedTimeRefreshTimeNowIfPast(cachedTimer);
             System.out.println(cachedTimer);
             if(!isPastTime){
                 cache.setInteger(cachedTimer + randomInt);
-                ctx.close();
-//                ctx.channel().unsafe().closeForcibly();
-//                ctx.executor().shutdownGracefully();
-//                ctx.channel().eventLoop().shutdownGracefully();
-                new StarNubEvent("StarNub_Socket_Connection_Failed_DOS_Detected", ctx);
-                return;
+                failReason = "StarNub_Socket_Connection_Failed_Client_DOS_Detected";
             } else {
                 cache.setInteger(randomInt);
-                openServerConnection(ctx);
+                clientSuccess = openServerConnection(ctx);
             }
         } else {
             lastActiveCache.addCache(connectingIp, new IntegerCache(randomInt));
-            openServerConnection(ctx);
+            clientSuccess = openServerConnection(ctx);
         }
-        new StarNubEvent("StarNub_Socket_Connection_Success_Client", ctx);
+        if (clientSuccess) {
+            new StarNubEvent("StarNub_Socket_Connection_Success_Client", ctx);
+        } else {
+            ctx.close();
+            if (failReason == null || failReason.isEmpty()){
+                failReason = "StarNub_Socket_Connection_Failure_Client_Server_Connection_Failed";
+            }
+            new StarNubEvent(failReason, ctx);
+        }
     }
 
-    private void openServerConnection(ChannelHandlerContext ctx){
+    private boolean openServerConnection(ChannelHandlerContext ctx){
         new StarNubEvent("StarNub_Socket_Connection_Attempt_Server", ctx);
         Bootstrap starNubMainOutboundSocket = new Bootstrap();
         starNubMainOutboundSocket
@@ -234,14 +239,20 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                 .handler(new TCPProxyServerPacketDecoder(Packet.Direction.TO_STARBOUND_SERVER, ctx));
         ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port")));
         destinationCTX = f.channel().pipeline().firstContext();
-        new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
-        StarNubProxyConnection.ConnectionProcessingType connectionProcessingType = null;
-        if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")){
-            connectionProcessingType = StarNubProxyConnection.ConnectionProcessingType.PLAYER;
+        if (destinationCTX != null) {
+            new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
+            StarNubProxyConnection.ConnectionProcessingType connectionProcessingType = null;
+            if ((boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding")) {
+                connectionProcessingType = StarNubProxyConnection.ConnectionProcessingType.PLAYER;
+            } else {
+                connectionProcessingType = StarNubProxyConnection.ConnectionProcessingType.PLAYER_NO_DECODING;
+            }
+            starNubProxyConnection = new StarNubProxyConnection(connectionProcessingType, ctx, destinationCTX);
+            return true;
         } else {
-            connectionProcessingType = StarNubProxyConnection.ConnectionProcessingType.PLAYER_NO_DECODING;
+            new StarNubEvent("StarNub_Socket_Connection_Failure_Cannot_Connect_Starbound", ctx);
+            return false;
         }
-        starNubProxyConnection = new StarNubProxyConnection(connectionProcessingType, ctx, destinationCTX);
     }
 
     /**

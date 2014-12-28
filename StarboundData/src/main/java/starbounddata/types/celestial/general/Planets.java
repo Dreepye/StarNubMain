@@ -57,7 +57,7 @@ public class Planets extends HashMap<Integer, CelestialPlanet> implements SbData
     @Override
     public void write(ByteBuf out) {
         long size = (long) this.size();
-        byte[] bytes = VLQ.writeVLQNoObject(size);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(size);
         out.writeBytes(bytes);
         for (Entry<Integer, CelestialPlanet> entry : this.entrySet()){
             Integer key = entry.getKey();//DEBUG

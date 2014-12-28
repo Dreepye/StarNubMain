@@ -99,7 +99,7 @@ public class CelestialParameters extends SbData<CelestialParameters> {
     @Override
     public void write(ByteBuf out) {
         this.coordinate.write(out);
-        byte[] bytes = VLQ.writeVLQNoObject(seed);
+        byte[] bytes = VLQ.writeUnsignedVLQNoObject(seed);
         out.writeBytes(bytes);
         writeStringVLQ(out, name);
         this.parameters.write(out);

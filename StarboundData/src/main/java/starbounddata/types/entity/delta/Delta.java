@@ -73,7 +73,7 @@
 //
 //    @Override
 //    public void write(ByteBuf out) {
-//        byte[] bytes = VLQ.writeVLQNoObject(lengthTemp);
+//        byte[] bytes = VLQ.writeUnsignedVLQNoObject(lengthTemp);
 //        out.writeBytes(bytes);
 //        writeStringVLQ(out, unknown);
 //        out.writeFloat(unknownFloat1);

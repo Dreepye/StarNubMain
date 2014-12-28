@@ -132,7 +132,7 @@ public class Vec2IArray extends ArrayList<Vec2I> implements SbDataInterface<Vec2
 
     @Override
     public void write(ByteBuf out) {
-        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
+        out.writeBytes(VLQ.writeUnsignedVLQNoObject((long) this.size()));
         for (Vec2I vec2I : this) {
             vec2I.write(out);
         }

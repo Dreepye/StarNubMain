@@ -58,7 +58,7 @@ public class EphemeralStatusEffects extends ArrayList<EphemeralStatusEffect> imp
 
     @Override
     public void write(ByteBuf out) {
-        out.writeBytes(VLQ.writeVLQNoObject((long) this.size()));
+        out.writeBytes(VLQ.writeUnsignedVLQNoObject((long) this.size()));
         for (EphemeralStatusEffect ephemeralStatusEffect : this) {
             ephemeralStatusEffect.write(out);
         }

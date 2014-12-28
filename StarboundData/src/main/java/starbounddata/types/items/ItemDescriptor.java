@@ -20,15 +20,13 @@ package starbounddata.types.items;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
+import starbounddata.types.variants.VLQ;
 import starbounddata.types.variants.Variant;
 
 import java.util.Arrays;
 
-import static starbounddata.packets.Packet.readVLQArray;
-import static starbounddata.packets.Packet.readVLQString;
-import static starbounddata.packets.Packet.writeStringVLQ;
-import static starbounddata.types.variants.VLQ.readUnsignedFromBufferNoObject;
-import static starbounddata.types.variants.VLQ.writeVLQNoObject;
+import static starbounddata.packets.Packet.*;
+import static starbounddata.types.variants.VLQ.writeUnsignedVLQNoObject;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
@@ -96,22 +94,22 @@ public class ItemDescriptor extends SbData<ItemDescriptor>{
     @Override
     public void read(ByteBuf in) {
         this.name = readVLQString(in);
-        this.count = readUnsignedFromBufferNoObject(in);
+        this.count = VLQ.readUnsignedFromBufferNoObject(in);
         try {
             this.parameters.read(in);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        boolean hasParametersSha256 = in.readBoolean();
-        if(hasParametersSha256){
+        if (in.readableBytes() > 0) {
             this.parametersSha256 = readVLQArray(in);
         }
+
     }
 
     @Override
     public void write(ByteBuf out){
         writeStringVLQ(out, this.name);
-        out.writeBytes(writeVLQNoObject(this.count));
+        out.writeBytes(writeUnsignedVLQNoObject(this.count));
         this.parameters.write(out);
         boolean hasParametersShae256 =  parametersSha256 != null;
         if(hasParametersShae256){
