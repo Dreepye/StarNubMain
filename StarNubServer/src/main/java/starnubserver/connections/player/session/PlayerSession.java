@@ -115,7 +115,7 @@ public class PlayerSession {
     private volatile String cleanNickName;
     private volatile boolean op;
     private volatile boolean afk;
-    private volatile boolean idle;
+    private volatile long idleTime;
     private volatile ExactLocation location;
     private volatile ShipsLocation ship;
 
@@ -150,6 +150,7 @@ public class PlayerSession {
         this.cleanNickName = playerCharacter.getCleanName();
         CharacterIP characterIP = new CharacterIP(playerCharacter, playerIP, false);
         characterIP.logCharacterIp();
+        this.idleTime = 0L;
         try {
             this.op = StarNub.getConnections().getCONNECTED_PLAYERS().getOPERATORS().collectionContains("uuids");
         } catch (Exception e) {

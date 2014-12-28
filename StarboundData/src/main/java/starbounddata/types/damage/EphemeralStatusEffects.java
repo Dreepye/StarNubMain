@@ -19,7 +19,7 @@
 package starbounddata.types.damage;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.types.CollectionsInterface;
+import starbounddata.types.SbDataInterface;
 import starbounddata.types.variants.VLQ;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class EphemeralStatusEffects extends ArrayList<EphemeralStatusEffect> implements CollectionsInterface<EphemeralStatusEffects> {
+public class EphemeralStatusEffects extends ArrayList<EphemeralStatusEffect> implements SbDataInterface<EphemeralStatusEffects> {
 
     public EphemeralStatusEffects() {
         super();

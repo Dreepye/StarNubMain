@@ -176,7 +176,7 @@ public class DamageTileGroupPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.tilePositions.remove(out);
+        this.tilePositions.write(out);
         out.writeByte(this.layer.ordinal());
         this.sourcePosition.write(out);
         this.tileDamage.write(out);

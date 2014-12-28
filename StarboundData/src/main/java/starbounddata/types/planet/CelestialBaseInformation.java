@@ -27,8 +27,7 @@ import starbounddata.types.vectors.Vec2I;
  */
 public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
 
-    private int planetOrbitalLevels;
-    private int satelliteOrbitalLevels;
+    private OrbitalLevels orbitalLevels;
     private int chunkSize;
     private Vec2I xYCoordinate = new Vec2I();
     private Vec2I  zCoordinateRange = new Vec2I();
@@ -37,9 +36,8 @@ public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
         super();
     }
 
-    public CelestialBaseInformation(int planetOrbitalLevels, int satelliteOrbitalLevels, int chunkSize, Vec2I xYCoordinate, Vec2I zCoordinateRange) {
-        this.planetOrbitalLevels = planetOrbitalLevels;
-        this.satelliteOrbitalLevels = satelliteOrbitalLevels;
+    public CelestialBaseInformation(OrbitalLevels orbitalLevels, int chunkSize, Vec2I xYCoordinate, Vec2I zCoordinateRange) {
+        this.orbitalLevels = orbitalLevels;
         this.chunkSize = chunkSize;
         this.xYCoordinate = xYCoordinate;
         this.zCoordinateRange = zCoordinateRange;
@@ -51,27 +49,18 @@ public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
     }
 
     public CelestialBaseInformation(CelestialBaseInformation celestialBaseInformation) {
-        this.planetOrbitalLevels = celestialBaseInformation.getPlanetOrbitalLevels();
-        this.satelliteOrbitalLevels = celestialBaseInformation.getSatelliteOrbitalLevels();
+        this.orbitalLevels = celestialBaseInformation.getOrbitalLevels();
         this.chunkSize = celestialBaseInformation.getChunkSize();
         this.xYCoordinate = celestialBaseInformation.xYCoordinate.copy();
         this.zCoordinateRange = celestialBaseInformation.zCoordinateRange.copy();
     }
 
-    public int getPlanetOrbitalLevels() {
-        return planetOrbitalLevels;
+    public OrbitalLevels getOrbitalLevels() {
+        return orbitalLevels;
     }
 
-    public void setPlanetOrbitalLevels(int planetOrbitalLevels) {
-        this.planetOrbitalLevels = planetOrbitalLevels;
-    }
-
-    public int getSatelliteOrbitalLevels() {
-        return satelliteOrbitalLevels;
-    }
-
-    public void setSatelliteOrbitalLevels(int satelliteOrbitalLevels) {
-        this.satelliteOrbitalLevels = satelliteOrbitalLevels;
+    public void setOrbitalLevels(OrbitalLevels orbitalLevels) {
+        this.orbitalLevels = orbitalLevels;
     }
 
     public int getChunkSize() {
@@ -100,8 +89,7 @@ public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
 
     @Override
     public void read(ByteBuf in) {
-        this.planetOrbitalLevels = in.readInt();
-        this.satelliteOrbitalLevels = in.readInt();
+        this.orbitalLevels.read(in);
         this.chunkSize = in.readInt();
         this.xYCoordinate.read(in);
         this.zCoordinateRange.read(in);
@@ -109,8 +97,7 @@ public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
 
     @Override
     public void write(ByteBuf out) {
-        out.writeInt(planetOrbitalLevels);
-        out.writeInt(satelliteOrbitalLevels);
+        this.orbitalLevels.write(out);
         out.writeInt(chunkSize);
         this.xYCoordinate.write(out);
         this.zCoordinateRange.write(out);
@@ -119,12 +106,10 @@ public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
     @Override
     public String toString() {
         return "CelestialBaseInformation{" +
-                "planetOrbitalLevels=" + planetOrbitalLevels +
-                ", satelliteOrbitalLevels=" + satelliteOrbitalLevels +
+                "orbitalLevels=" + orbitalLevels +
                 ", chunkSize=" + chunkSize +
                 ", xYCoordinate=" + xYCoordinate +
                 ", zCoordinateRange=" + zCoordinateRange +
-                '}';
+                "} " + super.toString();
     }
-
 }

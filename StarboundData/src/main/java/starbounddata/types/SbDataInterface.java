@@ -20,29 +20,9 @@ package starbounddata.types;
 
 import io.netty.buffer.ByteBuf;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-public abstract class SbData<T> implements SbDataInterface<T> {
-
-    public SbData() {
-    }
-
-    public SbData(ByteBuf in){
-        read(in);
-    }
+public interface SbDataInterface<T> {
 
     public abstract void read(ByteBuf in);
     public abstract void write(ByteBuf out);
-
-    public T copy(){
-        Class<? extends SbData> clazz = this.getClass();
-        try {
-            Constructor constructor = clazz.getConstructor(clazz);
-            return (T) constructor.newInstance(this);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            e.printStackTrace(); /* THIS SHOULD NEVER HAPPEN */
-        }
-        return null;
-    }
+    public abstract T copy();
 }

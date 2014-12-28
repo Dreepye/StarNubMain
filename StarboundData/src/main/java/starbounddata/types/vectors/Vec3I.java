@@ -16,51 +16,70 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.entity;
+package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.types.SbData;
-import starbounddata.types.variants.VLQ;
 
-import static starbounddata.packets.Packet.readVLQString;
-import static starbounddata.packets.Packet.writeStringVLQ;
+public class Vec3I extends Vec2I {
 
-public class Delta extends SbData<Delta> {
+    private int z;
 
-    private long lengthTemp;
-    private String unknown;
-    private float unknownFloat1;
+    public Vec3I() {
+    }
 
-    private byte[] temp;
+    public Vec3I(int x, int y, int z) {
+        super(x, y);
+        this.z = z;
+    }
 
-    private String unknown2;
-    private float unkownFloat2;
+    public Vec3I(ByteBuf in) {
+        super(in);
+    }
 
-    public Delta() {
+    public Vec3I(Vec3I vec3I) {
+        setX(vec3I.getX());
+        setY(vec3I.getY());
+        this.z = vec3I.getZ();
+
+    }
+
+    public Vec3I(float x, float y, float z){
+        setX(Math.round(x));
+        setY(Math.round(y));
+        this.z = Math.round(z);
+    }
+
+//    public Vec3I(Vec3F vec3F) {
+//        setX(Math.round(vec3F.getX()));
+//        setY(Math.round(vec3F.getY()));
+//        this.z =  Math.round(vec3f.getZ()));
+//    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
     }
 
     @Override
     public void read(ByteBuf in) {
-        lengthTemp = VLQ.readUnsignedFromBufferNoObject(in);
-        unknown = readVLQString(in);
-        unknownFloat1 = in.readFloat();
-        temp = in.readBytes(in.readableBytes()).array();
+        super.read(in);
+        this.z = in.readInt();
     }
 
     @Override
     public void write(ByteBuf out) {
-        byte[] bytes = VLQ.writeVLQNoObject(lengthTemp);
-        out.writeBytes(bytes);
-        writeStringVLQ(out, unknown);
-        out.writeFloat(unknownFloat1);
-        out.writeBytes(temp);
+        super.write(out);
+        out.writeInt(this.z);
     }
 
     @Override
     public String toString() {
-        return "Delta{" +
-                "unknown='" + unknown + '\'' +
-                ", unknownFloat1=" + unknownFloat1 +
+        return "Vec3I{" +
+                "z=" + z +
                 "} " + super.toString();
     }
+
 }

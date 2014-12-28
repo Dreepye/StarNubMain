@@ -21,6 +21,8 @@ package starnubserver.resources.connections;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
+import starbounddata.packets.celestial.CelestialRequestPacket;
+import starbounddata.packets.celestial.CelestialResponsePacket;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
 import starbounddata.packets.hit.HitRequestPacket;
@@ -125,12 +127,19 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         });
 
         /* Debugging ALL, Complex Data Type*/
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityUpdatePacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, CelestialRequestPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, CelestialResponsePacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
 
         //// KEEP TEMPORARY ////
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {

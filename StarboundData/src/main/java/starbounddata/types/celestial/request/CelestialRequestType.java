@@ -16,13 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types;
+package starbounddata.types.celestial.request;
 
-import io.netty.buffer.ByteBuf;
-
-public interface CollectionsInterface<T> {
-
-    public abstract void read(ByteBuf in);
-    public abstract void write(ByteBuf out);
-    public abstract T copy();
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
+public enum  CelestialRequestType {
+    UNUSED,
+    VEC2I,
+    VEC3I
 }

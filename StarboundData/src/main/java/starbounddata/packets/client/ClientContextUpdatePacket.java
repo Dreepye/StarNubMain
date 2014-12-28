@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.packets.entity;
+package starbounddata.packets.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,9 +39,9 @@ import java.util.Arrays;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityUpdatePacket extends Packet {
+public class ClientContextUpdatePacket extends Packet {
 
-    private EntityVLQId entityId = new EntityVLQId();
+//    private EntityVLQId entityId = new EntityVLQId();
     private byte[] delta;
 
     /**
@@ -54,8 +54,8 @@ public class EntityUpdatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityUpdatePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYUPDATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public ClientContextUpdatePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CLIENTCONTEXTUPDATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -68,9 +68,9 @@ public class EntityUpdatePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param
      */
-    public EntityUpdatePacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, byte[] delta){
-        super(Packets.ENTITYUPDATE.getDirection(), Packets.ENTITYUPDATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityId = entityId;
+    public ClientContextUpdatePacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, byte[] delta){
+        super(Packets.CLIENTCONTEXTUPDATE.getDirection(), Packets.CLIENTCONTEXTUPDATE.getPacketId(), null, DESTINATION_CTX);
+//        this.entityId = entityId;
         this.delta = delta;
     }
 
@@ -81,19 +81,19 @@ public class EntityUpdatePacket extends Packet {
      *
      * @param packet EntityUpdatePacket representing the packet to construct from
      */
-    public EntityUpdatePacket(EntityUpdatePacket packet) {
+    public ClientContextUpdatePacket(ClientContextUpdatePacket packet) {
         super(packet);
-        this.entityId = packet.getEntityId();
+//        this.entityId = packet.getEntityId();
         this.delta = packet.getDelta().clone();
     }
 
-    public EntityVLQId getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(EntityVLQId entityId) {
-        this.entityId = entityId;
-    }
+//    public EntityVLQId getEntityId() {
+//        return entityId;
+//    }
+//
+//    public void setEntityId(EntityVLQId entityId) {
+//        this.entityId = entityId;
+//    }
 
     public byte[] getDelta() {
         return delta;
@@ -110,8 +110,8 @@ public class EntityUpdatePacket extends Packet {
      * @return EntityUpdatePacket the new copied object
      */
     @Override
-    public EntityUpdatePacket copy() {
-        return new EntityUpdatePacket(this);
+    public ClientContextUpdatePacket copy() {
+        return new ClientContextUpdatePacket(this);
     }
 
     /**
@@ -134,7 +134,7 @@ public class EntityUpdatePacket extends Packet {
 //            VLQ.readUnsignedFromBufferNoObject(duplicate);
 //            System.out.println(VLQ.readUnsignedFromBufferNoObject(duplicate));
 //        }
-        this.entityId.read(in);
+//        this.entityId.read(in);
         this.delta = in.readBytes(in.readableBytes()).array();
     }
 
@@ -148,15 +148,14 @@ public class EntityUpdatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.entityId.write(out);
+//        this.entityId.write(out);
         out.writeBytes(delta);
     }
 
     @Override
     public String toString() {
-        return "EntityUpdatePacket{" +
-                "entityId=" + entityId +
-                ", delta=" + Arrays.toString(delta) +
+        return "ClientContextUpdatePacket{" +
+                "delta=" + Arrays.toString(delta) +
                 "} " + super.toString();
     }
 }

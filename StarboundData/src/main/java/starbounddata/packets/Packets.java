@@ -38,15 +38,15 @@ public enum Packets {
     HANDSHAKECHALLENGE("", Packet.Direction.NOT_USED),
     CHATRECEIVE("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CELESTIALRESPONSE("", Packet.Direction.NOT_USED),
+    CELESTIALRESPONSE("CelestialResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),//DEBUG
     CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("", Packet.Direction.NOT_USED),
     PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Locations, Types
     FLYSHIP("", Packet.Direction.NOT_USED),
     CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    CELESTIALREQUEST("", Packet.Direction.NOT_USED),
-    CLIENTCONTEXTUPDATE("", Packet.Direction.NOT_USED),
+    CELESTIALREQUEST("CelestialRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    CLIENTCONTEXTUPDATE("ClientContextUpdatePacket.class", Packet.Direction.BIDIRECTIONAL),//DEBUG - All data needs debugged
     WORLDSTART("", Packet.Direction.NOT_USED),
     WORLDSTOP("WorldStopPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CENTRALSTRUCTUREUPDATE("", Packet.Direction.NOT_USED),
@@ -78,7 +78,7 @@ public enum Packets {
     CLEARCONTAINER("", Packet.Direction.NOT_USED),
     WORLDCLIENTSTATEUPDATE("", Packet.Direction.NOT_USED),
     ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues
-    ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG COMPLETE
+    ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG Delta and direction
     ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
     HITREQUEST("HitRequestPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
     DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE FLOAT

@@ -16,45 +16,40 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.variants;
+package starbounddata.types.celestial.general;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbDataInterface;
+import starbounddata.types.variants.VLQ;
 
-import java.util.HashMap;
-
-import static starbounddata.packets.Packet.readVLQString;
-import static starbounddata.packets.Packet.writeStringVLQ;
+import java.util.ArrayList;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class VariantMap extends HashMap<String, Variant> implements SbDataInterface<VariantMap> {
+public class CelestialConstellationList extends ArrayList<CelestialConstellation> implements SbDataInterface<CelestialConstellationList> {
 
-    public VariantMap() {
+    public CelestialConstellationList() {
         super();
     }
 
-    public VariantMap(ByteBuf in) {
+    public CelestialConstellationList(ByteBuf in) {
         read(in);
     }
 
-    public VariantMap(VariantMap variantMap) {
-        for (Entry<String, Variant> entry : variantMap.entrySet()){
-            String key = entry.getKey();
-            Variant variant = entry.getValue();
-            Variant variantCopy = variant.copy();
-            this.put(key, variantCopy);
+    public CelestialConstellationList(CelestialConstellationList celestialConstellationsList) {
+        for (CelestialConstellation celestialConstellation : celestialConstellationsList){
+            CelestialConstellation celestialConstellationCopy = celestialConstellation.copy();
+            this.add(celestialConstellationCopy);
         }
     }
 
     @Override
-    public void read(ByteBuf in) {
-        long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
-        for (int i = 0; i < mapLength; i++) {
-            String key = readVLQString(in);
-            Variant variant = new Variant(in);
-            this.put(key, variant);
+    public void read(ByteBuf in){
+        long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
+        for (int i = 0; i < arrayLength; i++) {
+            CelestialConstellation celestialConstellation = new CelestialConstellation(in);
+            this.add(celestialConstellation);
         }
     }
 
@@ -63,22 +58,19 @@ public class VariantMap extends HashMap<String, Variant> implements SbDataInterf
         long size = (long) this.size();
         byte[] bytes = VLQ.writeVLQNoObject(size);
         out.writeBytes(bytes);
-        for (Entry<String, Variant> entry : this.entrySet()){
-            String key = entry.getKey();
-            writeStringVLQ(out, key);
-            Variant variant = entry.getValue();
-            variant.write(out);
+        for (CelestialConstellation celestialConstellation : this) {
+            celestialConstellation.write(out);
         }
         this.clear();
     }
 
     @Override
-    public VariantMap copy() {
-        return new VariantMap(this);
+    public CelestialConstellationList copy(){
+        return new CelestialConstellationList(this);
     }
 
     @Override
     public String toString() {
-        return "VariantMap{} " + super.toString();
+        return "CelestialRequestList{} " + super.toString();
     }
 }

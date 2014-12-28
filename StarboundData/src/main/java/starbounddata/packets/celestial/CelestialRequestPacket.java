@@ -16,33 +16,29 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.packets.entity;
+package starbounddata.packets.celestial;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.entity.EntityVLQId;
-
-import java.util.Arrays;
+import starbounddata.types.celestial.request.CelestialRequestList;
 
 /**
  * Represents the EntityUpdate and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
- * Packet Direction: Client -> Server//DEBUG UNKNOWN
+ * Packet Direction: Client -> Server
  * <p>
- * Starbound 1.0 Compliant (Versions 622, Update 1)  //DEBUG - NOT COMPLIANT - NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityUpdatePacket extends Packet {
+public class CelestialRequestPacket extends Packet {
 
-    private EntityVLQId entityId = new EntityVLQId();
-    private byte[] delta;
+    private CelestialRequestList celestialRequestList = new CelestialRequestList();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -54,8 +50,8 @@ public class EntityUpdatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityUpdatePacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYUPDATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public CelestialRequestPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CELESTIALREQUEST.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -68,10 +64,9 @@ public class EntityUpdatePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param
      */
-    public EntityUpdatePacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, byte[] delta){
-        super(Packets.ENTITYUPDATE.getDirection(), Packets.ENTITYUPDATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityId = entityId;
-        this.delta = delta;
+    public CelestialRequestPacket(ChannelHandlerContext DESTINATION_CTX, CelestialRequestList celestialRequestList){
+        super(Packets.CELESTIALREQUEST.getDirection(), Packets.CELESTIALREQUEST.getPacketId(), null, DESTINATION_CTX);
+        this.celestialRequestList = celestialRequestList;
     }
 
     /**
@@ -79,39 +74,30 @@ public class EntityUpdatePacket extends Packet {
      * <p>
      * Uses: This will construct a new packet from a packet
      *
-     * @param packet EntityUpdatePacket representing the packet to construct from
+     * @param packet CelestialRequestPacket representing the packet to construct from
      */
-    public EntityUpdatePacket(EntityUpdatePacket packet) {
+    public CelestialRequestPacket(CelestialRequestPacket packet) {
         super(packet);
-        this.entityId = packet.getEntityId();
-        this.delta = packet.getDelta().clone();
+        this.celestialRequestList = packet.getCelestialRequestList().copy();
     }
 
-    public EntityVLQId getEntityId() {
-        return entityId;
+    public CelestialRequestList getCelestialRequestList() {
+        return celestialRequestList;
     }
 
-    public void setEntityId(EntityVLQId entityId) {
-        this.entityId = entityId;
-    }
-
-    public byte[] getDelta() {
-        return delta;
-    }
-
-    public void setDelta(byte[] delta) {
-        this.delta = delta;
+    public void setCelestialRequestList(CelestialRequestList celestialRequestList) {
+        this.celestialRequestList = celestialRequestList;
     }
 
     /**
      * This will provide a new object while copying all of the internal data as well into this
      * new Object
      *
-     * @return EntityUpdatePacket the new copied object
+     * @return CelestialRequestPacket the new copied object
      */
     @Override
-    public EntityUpdatePacket copy() {
-        return new EntityUpdatePacket(this);
+    public CelestialRequestPacket copy() {
+        return new CelestialRequestPacket(this);
     }
 
     /**
@@ -122,20 +108,8 @@ public class EntityUpdatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        ByteBufferUtilities.print(in, true);
-//        ByteBuf duplicate = in.duplicate();
-//        VLQ.readUnsignedFromBufferNoObject(duplicate);
-//        VLQ.readUnsignedFromBufferNoObject(duplicate);
-//        long longnum = VLQ.readUnsignedFromBufferNoObject(duplicate);
-//        System.out.println(longnum);
-//        if (longnum  == 8){
-//            VLQ.readUnsignedFromBufferNoObject(duplicate);
-//            System.out.println(VLQ.readUnsignedFromBufferNoObject(duplicate));
-//            VLQ.readUnsignedFromBufferNoObject(duplicate);
-//            System.out.println(VLQ.readUnsignedFromBufferNoObject(duplicate));
-//        }
-        this.entityId.read(in);
-        this.delta = in.readBytes(in.readableBytes()).array();
+//        ByteBufferUtilities.print(in, true);
+        this.celestialRequestList.read(in);
     }
 
     /**
@@ -148,15 +122,13 @@ public class EntityUpdatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        this.entityId.write(out);
-        out.writeBytes(delta);
+        this.celestialRequestList.write(out);
     }
 
     @Override
     public String toString() {
-        return "EntityUpdatePacket{" +
-                "entityId=" + entityId +
-                ", delta=" + Arrays.toString(delta) +
+        return "CelestialRequestPacket{" +
+                "celestialList=" + celestialRequestList +
                 "} " + super.toString();
     }
 }

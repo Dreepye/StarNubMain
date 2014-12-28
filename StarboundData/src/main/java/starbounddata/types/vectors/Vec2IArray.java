@@ -19,7 +19,7 @@
 package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.types.CollectionsInterface;
+import starbounddata.types.SbDataInterface;
 import starbounddata.types.variants.VLQ;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.HashSet;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Vec2IArray extends ArrayList<Vec2I> implements CollectionsInterface<Vec2IArray> {
+public class Vec2IArray extends ArrayList<Vec2I> implements SbDataInterface<Vec2IArray> {
 
     private final static int ARRAY_SIZE_LIMIT = 50;
     private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_SIZE_LIMIT);

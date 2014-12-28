@@ -20,7 +20,7 @@ package starbounddata.types.ship;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.packets.Packet;
-import starbounddata.types.CollectionsInterface;
+import starbounddata.types.SbDataInterface;
 import starbounddata.types.variants.VLQ;
 
 import java.util.HashSet;
@@ -28,7 +28,7 @@ import java.util.HashSet;
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class Capabilities extends HashSet<String> implements CollectionsInterface<Capabilities> {
+public class Capabilities extends HashSet<String> implements SbDataInterface<Capabilities> {
 
     public Capabilities() {
     }

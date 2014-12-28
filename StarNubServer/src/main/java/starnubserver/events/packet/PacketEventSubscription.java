@@ -84,7 +84,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
         String packetClassString = EVENT_KEY.toString();
         String subString = packetClassString.substring(packetClassString.lastIndexOf(".") + 1) + ".class";
         Packets packet = Packets.fromString(subString);
-        boolean packetEventUsed = packet.getDirection() != Packet.Direction.NOT_USED;
+        boolean packetEventUsed = packet != null &&  packet.getDirection() != Packet.Direction.NOT_USED;
         if (decoding && packetEventUsed) {
             PacketEventRouter.getInstance().registerEventSubscription(EVENT_KEY, this);
             new StarNubEvent("StarNub_Packet_Subscription_Registered", this);

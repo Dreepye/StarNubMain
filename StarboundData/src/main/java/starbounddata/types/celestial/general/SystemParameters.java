@@ -16,33 +16,40 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types;
+package starbounddata.types.celestial.general;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbDataInterface;
+import starbounddata.types.vectors.Vec3I;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
-public abstract class SbData<T> implements SbDataInterface<T> {
+public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implements SbDataInterface{
 
-    public SbData() {
+    public SystemParameters() {
+        super();
     }
 
-    public SbData(ByteBuf in){
+    public SystemParameters(ByteBuf in) {
         read(in);
     }
 
-    public abstract void read(ByteBuf in);
-    public abstract void write(ByteBuf out);
+    public SystemParameters(SystemParameters systemParameters) {
 
-    public T copy(){
-        Class<? extends SbData> clazz = this.getClass();
-        try {
-            Constructor constructor = clazz.getConstructor(clazz);
-            return (T) constructor.newInstance(this);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            e.printStackTrace(); /* THIS SHOULD NEVER HAPPEN */
-        }
-        return null;
+    }
+
+    @Override
+    public void read(ByteBuf in) {
+
+    }
+
+    @Override
+    public void write(ByteBuf out) {
+
+    }
+
+    @Override
+    public SystemParameters copy() {
+        return new SystemParameters(this);
     }
 }

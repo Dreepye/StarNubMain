@@ -19,14 +19,14 @@
 package starbounddata.types.variants;
 
 import io.netty.buffer.ByteBuf;
-import starbounddata.types.CollectionsInterface;
+import starbounddata.types.SbDataInterface;
 
 import java.util.ArrayList;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
-public class VariantList extends ArrayList<Variant> implements CollectionsInterface<VariantList> {
+public class VariantList extends ArrayList<Variant> implements SbDataInterface<VariantList> {
 
     public VariantList() {
         super();
