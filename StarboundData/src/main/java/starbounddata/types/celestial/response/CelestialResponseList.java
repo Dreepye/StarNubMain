@@ -48,7 +48,8 @@ public class CelestialResponseList extends ArrayList<CelestialResponse> implemen
     public void read(ByteBuf in){
         long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < arrayLength; i++) {
-            CelestialResponse celestialResponse = new CelestialResponse(in);
+            CelestialResponse celestialResponse = new CelestialResponse();
+            celestialResponse.read(in);
             this.add(celestialResponse);
         }
     }

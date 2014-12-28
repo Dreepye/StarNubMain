@@ -36,6 +36,12 @@ public class CelestialRequest extends SbData<CelestialRequest> {
 
     public CelestialRequest() {
     }
+
+    public CelestialRequest(CelestialRequestType celestialRequestType, VecI vec2or3) {
+        this.celestialRequestType = celestialRequestType;
+        this.vec2or3 = vec2or3;
+    }
+
     public CelestialRequest(ByteBuf in) {
         super(in);
     }
@@ -70,11 +76,15 @@ public class CelestialRequest extends SbData<CelestialRequest> {
         this.celestialRequestType = CelestialRequestType.values()[in.readUnsignedByte()];
         switch (celestialRequestType){
             case VEC2I: {
-                vec2or3 = new Vec2I(in);
+                Vec2I vec2I = new Vec2I();
+                vec2I.read(in);
+                vec2or3 = vec2I;
                 break;
             }
             case VEC3I: {
-                vec2or3 = new Vec3I(in);
+                Vec3I vec3I = new Vec3I();
+                vec3I.read(in);
+                vec2or3 = vec3I;
                 break;
             }
         }

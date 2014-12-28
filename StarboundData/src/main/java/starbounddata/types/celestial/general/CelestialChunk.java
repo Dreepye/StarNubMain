@@ -22,17 +22,17 @@ import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
 import starbounddata.types.vectors.Vec2I;
 
-public class CelestialChunk extends SbData<CelestialChunk> {
+public class CelestialChunk extends SbData<CelestialChunk> implements Celestial<CelestialChunk> {
 
     private Vec2I chunkIndex = new Vec2I();
-    private CelestialConstellationList constellations = new CelestialConstellationList();
+    private CelestialConstellations constellations = new CelestialConstellations();
     private SystemParameters systemParameters = new SystemParameters();
     private SystemObjects systemObjects = new SystemObjects();
 
     public CelestialChunk() {
     }
 
-    public CelestialChunk(Vec2I chunkIndex, CelestialConstellationList constellations, SystemParameters systemParameters, SystemObjects systemObjects) {
+    public CelestialChunk(Vec2I chunkIndex, CelestialConstellations constellations, SystemParameters systemParameters, SystemObjects systemObjects) {
         this.chunkIndex = chunkIndex;
         this.constellations = constellations;
         this.systemParameters = systemParameters;
@@ -58,11 +58,11 @@ public class CelestialChunk extends SbData<CelestialChunk> {
         this.chunkIndex = chunkIndex;
     }
 
-    public CelestialConstellationList getConstellations() {
+    public CelestialConstellations getConstellations() {
         return constellations;
     }
 
-    public void setConstellations(CelestialConstellationList constellations) {
+    public void setConstellations(CelestialConstellations constellations) {
         this.constellations = constellations;
     }
 
@@ -84,12 +84,18 @@ public class CelestialChunk extends SbData<CelestialChunk> {
 
     @Override
     public void read(ByteBuf in) {
-
+        this.chunkIndex.read(in);
+        this.constellations.read(in);
+        this.systemParameters.read(in);
+        this.systemObjects.read(in);
     }
 
     @Override
     public void write(ByteBuf out) {
-
+        this.chunkIndex.write(out);
+        this.constellations.write(out);
+        this.systemParameters.write(out);
+        this.systemObjects.write(out);
     }
 
     @Override

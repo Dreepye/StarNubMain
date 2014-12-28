@@ -49,8 +49,10 @@ public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implem
     public void read(ByteBuf in) {
         long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < mapLength; i++) {
-            Vec3I key = new Vec3I(in);
-            CelestialParameters celestialParameters = new CelestialParameters(in);
+            Vec3I key = new Vec3I();
+            key.read(in);
+            CelestialParameters celestialParameters = new CelestialParameters();
+            celestialParameters.read(in);
             this.put(key, celestialParameters);
         }
     }

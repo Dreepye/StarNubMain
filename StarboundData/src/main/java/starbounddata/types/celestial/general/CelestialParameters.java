@@ -32,7 +32,7 @@ public class CelestialParameters extends SbData<CelestialParameters> {
     private long seed;
     private String name;
     private Variant parameters = new Variant();
-//    VisitableWorldParametersConstPtr m_visitableParameters //DEBUG
+//    VisitableWorldParametersConstPtr m_visitableParameters //DEBUG - This is where this is broken
 
     public CelestialParameters() {
     }
@@ -90,7 +90,8 @@ public class CelestialParameters extends SbData<CelestialParameters> {
     @Override
     public void read(ByteBuf in) {
         this.coordinate.read(in);
-        this.seed = VLQ.readUnsignedFromBufferNoObject(in);//DEBUG
+        in.skipBytes(2);//DEBUG Unknown # of bytes - not in SB documents
+        this.seed = in.readLong();
         this.name = readVLQString(in);
         this.parameters.read(in);
     }

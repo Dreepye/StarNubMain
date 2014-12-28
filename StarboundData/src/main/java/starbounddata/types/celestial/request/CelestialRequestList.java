@@ -48,7 +48,8 @@ public class CelestialRequestList extends ArrayList<CelestialRequest> implements
     public void read(ByteBuf in){
         long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < arrayLength; i++) {
-            CelestialRequest celestialRequest = new CelestialRequest(in);
+            CelestialRequest celestialRequest = new CelestialRequest();
+            celestialRequest.read(in);
             this.add(celestialRequest);
         }
     }

@@ -23,26 +23,23 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.entity.EntityVLQId;
-
-import java.util.Arrays;
+import starbounddata.types.celestial.response.CelestialResponseList;
 
 /**
  * Represents the EntityUpdate and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
- * Packet Direction: Server -> Client//DEBUG UNKNOWN
+ * Packet Direction: Server -> Client
  * <p>
- * Starbound 1.0 Compliant (Versions 622, Update 1)  //DEBUG - NOT COMPLIANT - NOT WORKING
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
 public class CelestialResponsePacket extends Packet {
 
-//    private EntityVLQId entityId = new EntityVLQId();
-    private byte[] delta;
+    private CelestialResponseList celestialResponseList = new CelestialResponseList();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -68,10 +65,9 @@ public class CelestialResponsePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param
      */
-    public CelestialResponsePacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, byte[] delta){
+    public CelestialResponsePacket(ChannelHandlerContext DESTINATION_CTX, CelestialResponseList celestialResponseList){
         super(Packets.CELESTIALRESPONSE.getDirection(), Packets.CELESTIALRESPONSE.getPacketId(), null, DESTINATION_CTX);
-//        this.entityId = entityId;
-        this.delta = delta;
+        this.celestialResponseList = celestialResponseList;
     }
 
     /**
@@ -79,35 +75,26 @@ public class CelestialResponsePacket extends Packet {
      * <p>
      * Uses: This will construct a new packet from a packet
      *
-     * @param packet EntityUpdatePacket representing the packet to construct from
+     * @param packet CelestialRequestPacket representing the packet to construct from
      */
     public CelestialResponsePacket(CelestialResponsePacket packet) {
         super(packet);
-//        this.entityId = packet.getEntityId();
-        this.delta = packet.getDelta().clone();
+        this.celestialResponseList = packet.getCelestialResponseList().copy();
     }
 
-//    public EntityVLQId getEntityId() {
-//        return entityId;
-//    }
-//
-//    public void setEntityId(EntityVLQId entityId) {
-//        this.entityId = entityId;
-//    }
-
-    public byte[] getDelta() {
-        return delta;
+    public CelestialResponseList getCelestialResponseList() {
+        return celestialResponseList;
     }
 
-    public void setDelta(byte[] delta) {
-        this.delta = delta;
+    public void setCelestialResponseList(CelestialResponseList celestialResponseList) {
+        this.celestialResponseList = celestialResponseList;
     }
 
     /**
      * This will provide a new object while copying all of the internal data as well into this
      * new Object
      *
-     * @return EntityUpdatePacket the new copied object
+     * @return CelestialRequestPacket the new copied object
      */
     @Override
     public CelestialResponsePacket copy() {
@@ -123,19 +110,7 @@ public class CelestialResponsePacket extends Packet {
     @Override
     public void read(ByteBuf in) {
         ByteBufferUtilities.print(in, true);
-//        ByteBuf duplicate = in.duplicate();
-//        VLQ.readUnsignedFromBufferNoObject(duplicate);
-//        VLQ.readUnsignedFromBufferNoObject(duplicate);
-//        long longnum = VLQ.readUnsignedFromBufferNoObject(duplicate);
-//        System.out.println(longnum);
-//        if (longnum  == 8){
-//            VLQ.readUnsignedFromBufferNoObject(duplicate);
-//            System.out.println(VLQ.readUnsignedFromBufferNoObject(duplicate));
-//            VLQ.readUnsignedFromBufferNoObject(duplicate);
-//            System.out.println(VLQ.readUnsignedFromBufferNoObject(duplicate));
-//        }
-//        this.entityId.read(in);
-        this.delta = in.readBytes(in.readableBytes()).array();
+        this.celestialResponseList.read(in);
     }
 
     /**
@@ -148,14 +123,13 @@ public class CelestialResponsePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-//        this.entityId.write(out);
-        out.writeBytes(delta);
+        this.celestialResponseList.write(out);
     }
 
     @Override
     public String toString() {
         return "CelestialResponsePacket{" +
-                "delta=" + Arrays.toString(delta) +
+                "celestialResponseList=" + celestialResponseList +
                 "} " + super.toString();
     }
 }

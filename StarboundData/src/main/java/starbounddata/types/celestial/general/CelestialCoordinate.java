@@ -20,20 +20,19 @@ package starbounddata.types.celestial.general;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
-import starbounddata.types.planet.OrbitalLevels;
 import starbounddata.types.vectors.Vec3I;
 
 public class CelestialCoordinate extends SbData<CelestialCoordinate>{
 
     private Vec3I location = new Vec3I();
-    private OrbitalLevels orbitalLevels = new OrbitalLevels();
+    private OrbitNumbers orbitNumbers = new OrbitNumbers();
 
     public CelestialCoordinate() {
     }
 
-    public CelestialCoordinate(Vec3I location, OrbitalLevels orbitalLevels) {
+    public CelestialCoordinate(Vec3I location, OrbitNumbers orbitNumbers) {
         this.location = location;
-        this.orbitalLevels = orbitalLevels;
+        this.orbitNumbers = orbitNumbers;
     }
 
     public CelestialCoordinate(ByteBuf in) {
@@ -42,7 +41,7 @@ public class CelestialCoordinate extends SbData<CelestialCoordinate>{
 
     public CelestialCoordinate(CelestialCoordinate celestialCoordinate) {
         this.location = celestialCoordinate.getLocation().copy();
-        this.orbitalLevels = celestialCoordinate.getOrbitalLevels().copy();
+        this.orbitNumbers = celestialCoordinate.getOrbitNumbers().copy();
     }
 
     public Vec3I getLocation() {
@@ -53,24 +52,24 @@ public class CelestialCoordinate extends SbData<CelestialCoordinate>{
         this.location = location;
     }
 
-    public OrbitalLevels getOrbitalLevels() {
-        return orbitalLevels;
+    public OrbitNumbers getOrbitNumbers() {
+        return orbitNumbers;
     }
 
-    public void setOrbitalLevels(OrbitalLevels orbitalLevels) {
-        this.orbitalLevels = orbitalLevels;
+    public void setOrbitNumbers(OrbitNumbers orbitNumbers) {
+        this.orbitNumbers = orbitNumbers;
     }
 
     @Override
     public void read(ByteBuf in) {
         this.location.read(in);
-        this.orbitalLevels.read(in);
+        this.orbitNumbers.read(in);
     }
 
     @Override
     public void write(ByteBuf out) {
         this.location.write(out);
-        this.orbitalLevels.write(out);
+        this.orbitNumbers.write(out);
 
     }
 
@@ -78,7 +77,7 @@ public class CelestialCoordinate extends SbData<CelestialCoordinate>{
     public String toString() {
         return "CelestialCoordinate{" +
                 "location=" + location +
-                ", orbitalLevels=" + orbitalLevels +
+                ", orbitNumbers=" + orbitNumbers +
                 "} " + super.toString();
     }
 }

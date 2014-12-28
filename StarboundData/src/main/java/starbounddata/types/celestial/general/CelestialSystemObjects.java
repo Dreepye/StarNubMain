@@ -22,7 +22,7 @@ import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
 import starbounddata.types.vectors.Vec3I;
 
-public class CelestialSystemObjects extends SbData<CelestialSystemObjects>{
+public class CelestialSystemObjects extends SbData<CelestialSystemObjects> implements Celestial<CelestialSystemObjects>{
 
     private Vec3I systemLocation = new Vec3I();
     private Planets planets = new Planets();

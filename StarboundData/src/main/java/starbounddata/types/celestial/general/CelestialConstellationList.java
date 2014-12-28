@@ -48,7 +48,8 @@ public class CelestialConstellationList extends ArrayList<CelestialConstellation
     public void read(ByteBuf in){
         long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < arrayLength; i++) {
-            CelestialConstellation celestialConstellation = new CelestialConstellation(in);
+            CelestialConstellation  celestialConstellation = new CelestialConstellation();
+            celestialConstellation.read(in);
             this.add(celestialConstellation);
         }
     }

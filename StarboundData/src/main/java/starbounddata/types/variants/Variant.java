@@ -109,7 +109,7 @@ public class Variant extends SbData<Variant>{
                 break;
             }
             case FLOAT: {
-                value = in.readFloat();
+                value = in.readDouble();
                 break;
             }
             case BOOLEAN: {
@@ -144,7 +144,7 @@ public class Variant extends SbData<Variant>{
                 break;
             }
             case FLOAT: {
-                out.writeFloat((Float) value);
+                out.writeDouble((Float) value);
                 break;
             }
             case BOOLEAN: {

@@ -21,38 +21,36 @@ package starbounddata.types.celestial.general;
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbDataInterface;
 import starbounddata.types.variants.VLQ;
-import starbounddata.types.vectors.Vec3I;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class SystemObjects extends HashMap<Vec3I, Planets> implements SbDataInterface<SystemObjects> {
+/**
+ * Starbound 1.0 Compliant (Versions 622, Update 1)
+ */
+public class CelestialConstellations extends ArrayList<CelestialConstellationList> implements SbDataInterface<CelestialConstellations> {
 
-    public SystemObjects() {
+    public CelestialConstellations() {
         super();
     }
 
-    public SystemObjects(ByteBuf in) {
+    public CelestialConstellations(ByteBuf in) {
         read(in);
     }
 
-    public SystemObjects(SystemObjects systemObjects) {
-        for (Entry<Vec3I, Planets> entry : systemObjects.entrySet()){
-            Vec3I key = entry.getKey();
-            Vec3I keyCopy = key.copy();
-            Planets planets = entry.getValue();
-            Planets planetsCopy = planets.copy();
-            this.put(keyCopy, planetsCopy);
+    public CelestialConstellations(CelestialConstellations celestialConstellations) {
+        for (CelestialConstellationList celestialConstellationList : celestialConstellations){
+            CelestialConstellationList celestialConstellationListCopy = celestialConstellationList.copy();
+            this.add(celestialConstellationListCopy);
         }
     }
 
     @Override
-    public void read(ByteBuf in) {
-        long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
-        for (int i = 0; i < mapLength; i++) {
-            Vec3I key = new Vec3I(in);
-            Planets planets = new Planets();
-            planets.read(in);
-            this.put(key, planets);
+    public void read(ByteBuf in){
+        long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
+        for (int i = 0; i < arrayLength; i++) {
+            CelestialConstellationList  celestialConstellationList = new CelestialConstellationList();
+            celestialConstellationList.read(in);
+            this.add(celestialConstellationList);
         }
     }
 
@@ -61,22 +59,19 @@ public class SystemObjects extends HashMap<Vec3I, Planets> implements SbDataInte
         long size = (long) this.size();
         byte[] bytes = VLQ.writeVLQNoObject(size);
         out.writeBytes(bytes);
-        for (Entry<Vec3I, Planets> entry : this.entrySet()){
-            Vec3I key = entry.getKey();
-            key.write(out);
-            Planets planets = entry.getValue();
-            planets.write(out);
+        for (CelestialConstellationList celestialConstellationList : this) {
+            celestialConstellationList.write(out);
         }
         this.clear();
     }
 
     @Override
-    public SystemObjects copy() {
-        return new SystemObjects(this);
+    public CelestialConstellations copy(){
+        return new CelestialConstellations(this);
     }
 
     @Override
     public String toString() {
-        return "SystemObjects{} " + super.toString();
+        return "CelestialConstellations{} " + super.toString();
     }
 }

@@ -48,7 +48,8 @@ public class Planets extends HashMap<Integer, CelestialPlanet> implements SbData
         long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < mapLength; i++) {
             Integer key = in.readInt();//DEBUG
-            CelestialPlanet celestialPlanet = new CelestialPlanet(in);
+            CelestialPlanet celestialPlanet = new CelestialPlanet();
+            celestialPlanet.read(in);
             this.put(key, celestialPlanet);
         }
     }

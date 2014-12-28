@@ -48,7 +48,8 @@ public class SatelliteParameters extends HashMap<Integer, CelestialParameters> i
         long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < mapLength; i++) {
             Integer key = in.readInt();//DEBUG
-            CelestialParameters celestialParameters = new CelestialParameters(in);
+            CelestialParameters celestialParameters = new CelestialParameters();
+            celestialParameters.read(in);
             this.put(key, celestialParameters);
         }
     }

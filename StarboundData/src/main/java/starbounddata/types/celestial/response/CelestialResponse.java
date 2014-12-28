@@ -20,47 +20,66 @@ package starbounddata.types.celestial.response;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
-import starbounddata.types.vectors.Vec2I;
+import starbounddata.types.celestial.general.Celestial;
+import starbounddata.types.celestial.general.CelestialChunk;
+import starbounddata.types.celestial.general.CelestialSystemObjects;
 
 public class CelestialResponse extends SbData<CelestialResponse>{
 
     private CelestialResponseType celestialRequestType;
-    private Vec2I vec2or3;
+    private Celestial celestial;
 
     public CelestialResponse() {
     }
+
+    public CelestialResponse(CelestialResponseType celestialRequestType, Celestial celestial) {
+        this.celestialRequestType = celestialRequestType;
+        this.celestial = celestial;
+    }
+
     public CelestialResponse(ByteBuf in) {
         super(in);
     }
 
-//    public CelestialResponse(Vec2I vec2or3) {
-//        if (vec2or3 instanceof Vec3I){
-//            celestialRequestType = CelestialRequestType.VEC3I;
-//        } else {
-//            celestialRequestType = CelestialRequestType.VEC2I;
-//        }
-//        this.vec2or3 = vec2or3.copy();
-//    }
-
-
+    public CelestialResponse(Celestial celestial) {
+        if (celestial instanceof CelestialChunk){
+            celestialRequestType = CelestialResponseType.CELESTIAL_CHUNK;
+        } else if (celestial instanceof CelestialSystemObjects){
+            celestialRequestType = CelestialResponseType.CELESTIAL_SYSTEM_OBJECTS;
+        }
+        this.celestial = (Celestial) celestial.copy();
+    }
 
     @Override
     public void read(ByteBuf in) {
         this.celestialRequestType = CelestialResponseType.values()[in.readUnsignedByte()];
-
+        switch (celestialRequestType){
+            case CELESTIAL_CHUNK: {
+                CelestialChunk celestialChunk = new CelestialChunk();
+                celestialChunk.read(in);
+                this.celestial = celestialChunk;
+                break;
+            }
+            case CELESTIAL_SYSTEM_OBJECTS: {
+                CelestialSystemObjects celestialSystemObjects = new CelestialSystemObjects();
+                celestialSystemObjects.read(in);
+                this.celestial = celestialSystemObjects;
+                break;
+            }
+        }
     }
 
     @Override
     public void write(ByteBuf out) {
         out.writeByte(celestialRequestType.ordinal());
-
+        this.celestial.write(out);
     }
 
     @Override
     public String toString() {
-        return "CelestialRequest{" +
+        return "CelestialResponse{" +
                 "celestialRequestType=" + celestialRequestType +
-                ", vec2or3=" + vec2or3 +
+                ", celestial=" + celestial +
                 "} " + super.toString();
     }
 }

@@ -70,6 +70,6 @@ public class VariantList extends ArrayList<Variant> implements SbDataInterface<V
 
     @Override
     public String toString() {
-        return "EphemeralStatusEffects{} " + super.toString();
+        return "VariantList{} " + super.toString();
     }
 }

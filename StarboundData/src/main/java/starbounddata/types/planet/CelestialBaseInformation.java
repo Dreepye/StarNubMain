@@ -27,7 +27,7 @@ import starbounddata.types.vectors.Vec2I;
  */
 public class CelestialBaseInformation extends SbData<CelestialBaseInformation> {
 
-    private OrbitalLevels orbitalLevels;
+    private OrbitalLevels orbitalLevels = new OrbitalLevels();
     private int chunkSize;
     private Vec2I xYCoordinate = new Vec2I();
     private Vec2I  zCoordinateRange = new Vec2I();
