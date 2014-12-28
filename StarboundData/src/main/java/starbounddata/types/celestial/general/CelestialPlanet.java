@@ -18,7 +18,64 @@
 
 package starbounddata.types.celestial.general;
 
-public class CelestialPlanet {
-    CelestialParameters 	planetParameters
-    HashMap< int, CelestialParameters > 	satelliteParameters
+import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
+
+public class CelestialPlanet extends SbData<CelestialPlanet> {
+
+    private CelestialParameters planetParameters = new CelestialParameters();
+    private SatelliteParameters satelliteParameters = new SatelliteParameters();
+
+    public CelestialPlanet() {
+    }
+
+    public CelestialPlanet(CelestialParameters planetParameters, SatelliteParameters satelliteParameters) {
+        this.planetParameters = planetParameters;
+        this.satelliteParameters = satelliteParameters;
+    }
+
+    public CelestialPlanet(ByteBuf in) {
+        super(in);
+    }
+
+    public CelestialPlanet(CelestialPlanet celestialPlanet) {
+        this.planetParameters = celestialPlanet.getPlanetParameters().copy();
+        this.satelliteParameters = celestialPlanet.getSatelliteParameters().copy();
+    }
+
+    public CelestialParameters getPlanetParameters() {
+        return planetParameters;
+    }
+
+    public void setPlanetParameters(CelestialParameters planetParameters) {
+        this.planetParameters = planetParameters;
+    }
+
+    public SatelliteParameters getSatelliteParameters() {
+        return satelliteParameters;
+    }
+
+    public void setSatelliteParameters(SatelliteParameters satelliteParameters) {
+        this.satelliteParameters = satelliteParameters;
+    }
+
+    @Override
+    public void read(ByteBuf in) {
+        this.planetParameters.read(in);
+        this.satelliteParameters.read(in);
+    }
+
+    @Override
+    public void write(ByteBuf out) {
+        this.planetParameters.write(out);
+        this.satelliteParameters.write(out);
+    }
+
+    @Override
+    public String toString() {
+        return "CelestialPlanet{" +
+                "planetParameters=" + planetParameters +
+                ", satelliteParameters=" + satelliteParameters +
+                "} " + super.toString();
+    }
 }

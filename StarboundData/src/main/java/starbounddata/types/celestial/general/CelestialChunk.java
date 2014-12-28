@@ -18,19 +18,87 @@
 
 package starbounddata.types.celestial.general;
 
+import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 import starbounddata.types.vectors.Vec2I;
 
-import java.util.List;
+public class CelestialChunk extends SbData<CelestialChunk> {
 
-public class CelestialChunk {
+    private Vec2I chunkIndex = new Vec2I();
+    private CelestialConstellationList constellations = new CelestialConstellationList();
+    private SystemParameters systemParameters = new SystemParameters();
+    private SystemObjects systemObjects = new SystemObjects();
 
-    private Vec2I chunkIndex;
-    private CelestialConstellationList constellations;
+    public CelestialChunk() {
+    }
 
+    public CelestialChunk(Vec2I chunkIndex, CelestialConstellationList constellations, SystemParameters systemParameters, SystemObjects systemObjects) {
+        this.chunkIndex = chunkIndex;
+        this.constellations = constellations;
+        this.systemParameters = systemParameters;
+        this.systemObjects = systemObjects;
+    }
 
+    public CelestialChunk(ByteBuf in) {
+        super(in);
+    }
 
-    HashMap< Vec3I, CelestialParameters > 	systemParameters
-    HashMap< Vec3I, HashMap< int,
-            CelestialPlanet > > 	systemObjects
+    public CelestialChunk(CelestialChunk celestialChunk) {
+        this.chunkIndex = celestialChunk.getChunkIndex().copy();
+        this.constellations = celestialChunk.getConstellations().copy();
+        this.systemParameters = celestialChunk.getSystemParameters().copy();
+        this.systemObjects = celestialChunk.getSystemObjects().copy();
+    }
 
+    public Vec2I getChunkIndex() {
+        return chunkIndex;
+    }
+
+    public void setChunkIndex(Vec2I chunkIndex) {
+        this.chunkIndex = chunkIndex;
+    }
+
+    public CelestialConstellationList getConstellations() {
+        return constellations;
+    }
+
+    public void setConstellations(CelestialConstellationList constellations) {
+        this.constellations = constellations;
+    }
+
+    public SystemParameters getSystemParameters() {
+        return systemParameters;
+    }
+
+    public void setSystemParameters(SystemParameters systemParameters) {
+        this.systemParameters = systemParameters;
+    }
+
+    public SystemObjects getSystemObjects() {
+        return systemObjects;
+    }
+
+    public void setSystemObjects(SystemObjects systemObjects) {
+        this.systemObjects = systemObjects;
+    }
+
+    @Override
+    public void read(ByteBuf in) {
+
+    }
+
+    @Override
+    public void write(ByteBuf out) {
+
+    }
+
+    @Override
+    public String toString() {
+        return "CelestialChunk{" +
+                "chunkIndex=" + chunkIndex +
+                ", constellations=" + constellations +
+                ", systemParameters=" + systemParameters +
+                ", systemObjects=" + systemObjects +
+                "} " + super.toString();
+    }
 }

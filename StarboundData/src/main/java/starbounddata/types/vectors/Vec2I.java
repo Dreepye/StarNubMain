@@ -29,7 +29,7 @@ import starbounddata.types.SbData;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class Vec2I extends SbData<Vec2I>{
+public class Vec2I extends SbData<Vec2I> implements VecI<VecI>{
 
     private int x;
     private int y;

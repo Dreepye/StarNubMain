@@ -113,5 +113,4 @@ public class CelestialParameters extends SbData<CelestialParameters> {
                 ", parameters=" + parameters +
                 '}';
     }
-
 }

@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;
 import starbounddata.types.vectors.Vec2I;
 import starbounddata.types.vectors.Vec3I;
+import starbounddata.types.vectors.VecI;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)
@@ -31,7 +32,7 @@ import starbounddata.types.vectors.Vec3I;
 public class CelestialRequest extends SbData<CelestialRequest> {
 
     private CelestialRequestType celestialRequestType;
-    private Vec2I vec2or3;
+    private VecI vec2or3;
 
     public CelestialRequest() {
     }
@@ -39,13 +40,13 @@ public class CelestialRequest extends SbData<CelestialRequest> {
         super(in);
     }
 
-    public CelestialRequest(Vec2I vec2or3) {
+    public CelestialRequest(VecI vec2or3) {
         if (vec2or3 instanceof Vec3I){
             celestialRequestType = CelestialRequestType.VEC3I;
         } else {
             celestialRequestType = CelestialRequestType.VEC2I;
         }
-        this.vec2or3 = vec2or3.copy();
+        this.vec2or3 = (VecI) this.vec2or3.copy();
     }
 
     public CelestialRequestType getCelestialRequestType() {
@@ -56,11 +57,11 @@ public class CelestialRequest extends SbData<CelestialRequest> {
         this.celestialRequestType = celestialRequestType;
     }
 
-    public Vec2I getVec2or3() {
+    public VecI getVec2or3() {
         return vec2or3;
     }
 
-    public void setVec2or3(Vec2I vec2or3) {
+    public void setVec2or3(VecI vec2or3) {
         this.vec2or3 = vec2or3;
     }
 

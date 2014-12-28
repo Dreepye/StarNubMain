@@ -21,27 +21,25 @@ package starbounddata.types.celestial.general;
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbDataInterface;
 import starbounddata.types.variants.VLQ;
-import starbounddata.types.vectors.Vec3I;
 
 import java.util.HashMap;
 
-public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implements SbDataInterface<SystemParameters> {
+public class SatelliteParameters extends HashMap<Integer, CelestialParameters> implements SbDataInterface<SatelliteParameters> {
 
-    public SystemParameters() {
+    public SatelliteParameters() {
         super();
     }
 
-    public SystemParameters(ByteBuf in) {
+    public SatelliteParameters(ByteBuf in) {
         read(in);
     }
 
-    public SystemParameters(SystemParameters systemParameters) {
-        for (Entry<Vec3I, CelestialParameters> entry : systemParameters.entrySet()){
-            Vec3I key = entry.getKey();
-            Vec3I keyCopy = key.copy();
+    public SatelliteParameters(SatelliteParameters satelliteParameters) {
+        for (Entry<Integer, CelestialParameters> entry : satelliteParameters.entrySet()){
+            Integer key = entry.getKey();
             CelestialParameters celestialParameters = entry.getValue();
             CelestialParameters celestialParametersCopy = celestialParameters.copy();
-            this.put(keyCopy, celestialParametersCopy);
+            this.put(key, celestialParametersCopy);
         }
     }
 
@@ -49,7 +47,7 @@ public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implem
     public void read(ByteBuf in) {
         long mapLength = VLQ.readUnsignedFromBufferNoObject(in);
         for (int i = 0; i < mapLength; i++) {
-            Vec3I key = new Vec3I(in);
+            Integer key = in.readInt();//DEBUG
             CelestialParameters celestialParameters = new CelestialParameters(in);
             this.put(key, celestialParameters);
         }
@@ -60,9 +58,9 @@ public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implem
         long size = (long) this.size();
         byte[] bytes = VLQ.writeVLQNoObject(size);
         out.writeBytes(bytes);
-        for (Entry<Vec3I, CelestialParameters> entry : this.entrySet()){
-            Vec3I key = entry.getKey();
-            key.write(out);
+        for (Entry<Integer, CelestialParameters> entry : this.entrySet()){
+            Integer key = entry.getKey();//DEBUG
+            out.writeInt(key);
             CelestialParameters celestialParameters = entry.getValue();
             celestialParameters.write(out);
         }
@@ -70,12 +68,12 @@ public class SystemParameters extends HashMap<Vec3I, CelestialParameters> implem
     }
 
     @Override
-    public SystemParameters copy() {
-        return new SystemParameters(this);
+    public SatelliteParameters copy() {
+        return new SatelliteParameters(this);
     }
 
     @Override
     public String toString() {
-        return "SystemParameters{} " + super.toString();
+        return "SatelliteParameters{} " + super.toString();
     }
 }

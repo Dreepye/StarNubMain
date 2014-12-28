@@ -19,16 +19,20 @@
 package starbounddata.types.vectors;
 
 import io.netty.buffer.ByteBuf;
+import starbounddata.types.SbData;
 
-public class Vec3I extends Vec2I {
+public class Vec3I extends SbData<Vec3I> implements VecI<Vec3I> {
 
+    private int x;
+    private int y;
     private int z;
 
     public Vec3I() {
     }
 
     public Vec3I(int x, int y, int z) {
-        super(x, y);
+        this.x = x;
+        this.y = y;
         this.z = z;
     }
 
@@ -37,23 +41,33 @@ public class Vec3I extends Vec2I {
     }
 
     public Vec3I(Vec3I vec3I) {
-        setX(vec3I.getX());
-        setY(vec3I.getY());
+        this.x = vec3I.getX();
+        this.y = vec3I.getY();
         this.z = vec3I.getZ();
-
     }
 
     public Vec3I(float x, float y, float z){
-        setX(Math.round(x));
-        setY(Math.round(y));
+        this.x = Math.round(x);
+        this.y = Math.round(y);
         this.z = Math.round(z);
+
     }
 
-//    public Vec3I(Vec3F vec3F) {
-//        setX(Math.round(vec3F.getX()));
-//        setY(Math.round(vec3F.getY()));
-//        this.z =  Math.round(vec3f.getZ()));
-//    }
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 
     public int getZ() {
         return z;
@@ -65,21 +79,24 @@ public class Vec3I extends Vec2I {
 
     @Override
     public void read(ByteBuf in) {
-        super.read(in);
+        this.x = in.readInt();
+        this.y = in.readInt();
         this.z = in.readInt();
     }
 
     @Override
     public void write(ByteBuf out) {
-        super.write(out);
+        out.writeInt(this.x);
+        out.writeInt(this.y);
         out.writeInt(this.z);
     }
 
     @Override
     public String toString() {
         return "Vec3I{" +
-                "z=" + z +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
                 "} " + super.toString();
     }
-
 }

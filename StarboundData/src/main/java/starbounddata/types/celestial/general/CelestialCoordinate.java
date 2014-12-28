@@ -26,7 +26,7 @@ import starbounddata.types.vectors.Vec3I;
 public class CelestialCoordinate extends SbData<CelestialCoordinate>{
 
     private Vec3I location = new Vec3I();
-    private OrbitalLevels orbitalLevels;
+    private OrbitalLevels orbitalLevels = new OrbitalLevels();
 
     public CelestialCoordinate() {
     }
@@ -38,6 +38,11 @@ public class CelestialCoordinate extends SbData<CelestialCoordinate>{
 
     public CelestialCoordinate(ByteBuf in) {
         super(in);
+    }
+
+    public CelestialCoordinate(CelestialCoordinate celestialCoordinate) {
+        this.location = celestialCoordinate.getLocation().copy();
+        this.orbitalLevels = celestialCoordinate.getOrbitalLevels().copy();
     }
 
     public Vec3I getLocation() {
