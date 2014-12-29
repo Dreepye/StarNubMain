@@ -37,11 +37,16 @@ import java.util.HashSet;
  */
 public class Vec2IArray extends ArrayList<Vec2I> implements SbDataInterface<Vec2IArray> {
 
-    private final static int ARRAY_SIZE_LIMIT = 50;
-    private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(ARRAY_SIZE_LIMIT);
+    private int arraySizeLimit = 50;
+    private final ArrayList<Vec2I> VEC2I_POOL = buildVec2ICache(arraySizeLimit);
 
     public Vec2IArray() {
         super();
+    }
+
+    public Vec2IArray(int arraySizeLimit) {
+        super();
+        this.arraySizeLimit = arraySizeLimit;
     }
 
     /**
@@ -120,7 +125,7 @@ public class Vec2IArray extends ArrayList<Vec2I> implements SbDataInterface<Vec2
     @Override
     public void read(ByteBuf in){
         long arrayLength = VLQ.readUnsignedFromBufferNoObject(in);
-        if (arrayLength > ARRAY_SIZE_LIMIT) {
+        if (arrayLength > arraySizeLimit) {
             throw new ArrayIndexOutOfBoundsException();
         }
         for (int i = 0; i < arrayLength; i++) {

@@ -49,33 +49,33 @@ public enum Packets {
     CLIENTCONTEXTUPDATE("ClientContextUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - All data needs debugged
     WORLDSTART("WorldStartPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
     WORLDSTOP("WorldStopPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CENTRALSTRUCTUREUPDATE("", Packet.Direction.NOT_USED),
+    CENTRALSTRUCTUREUPDATE("CentralStructureUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     TILEARRAYUPDATE("", Packet.Direction.NOT_USED),
     TILEUPDATE("", Packet.Direction.NOT_USED),
-    TILELIQUIDUPDATE("", Packet.Direction.NOT_USED),
+    TILELIQUIDUPDATE("TileLiquidUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - STARBOUND DOCUMENTS NOT CORRECT
     TILEDAMAGEUPDATE("", Packet.Direction.NOT_USED),
     TILEMODIFICATIONFAILURE("", Packet.Direction.NOT_USED),
     GIVEITEM("GiveItemPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - PROB ONLY CLIENT
-    SWAPINCONTAINERRESULT("", Packet.Direction.NOT_USED),
+    SWAPINCONTAINERRESULT("", Packet.Direction.NOT_USED), //Item Descriptor issues
     ENVIRONMENTUPDATE("", Packet.Direction.NOT_USED),
     ENTITYINTERACTRESULT("", Packet.Direction.NOT_USED),
     UPDATETILEPROTECTION("UpdateTileProtectionPacket.class", Packet.Direction.BIDIRECTIONAL),//DEBUG DIRECTION AND DATA
     MODIFYTILELIST("", Packet.Direction.NOT_USED),
     DAMAGETILEGROUP("DamageTileGroupPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    COLLECTLIQUID("", Packet.Direction.NOT_USED),
-    REQUESTDROP("", Packet.Direction.NOT_USED),
-    SPAWNENTITY("", Packet.Direction.NOT_USED),
+    COLLECTLIQUID("CollectLiquidPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    REQUESTDROP("RequestDropPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    SPAWNENTITY("SpawnEntityPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION AND DATA
     ENTITYINTERACT("EntityInteractPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG DIRECTION
-    CONNECTWIRE("", Packet.Direction.NOT_USED),
-    DISCONNECTALLWIRES("", Packet.Direction.NOT_USED),
+    CONNECTWIRE("ConnectWirePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Direction and Data
+    DISCONNECTALLWIRES("DisconnectAllWiresPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Direction and Data
     OPENCONTAINER("OpenContainerPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    CLOSECONTAINER("", Packet.Direction.NOT_USED),
-    SWAPINCONTAINER("", Packet.Direction.NOT_USED),
-    ITEMAPPLYINCONTAINER("", Packet.Direction.NOT_USED),
-    STARTCRAFTINGINCONTAINER("", Packet.Direction.NOT_USED),
-    STOPCRAFTINGINCONTAINER("", Packet.Direction.NOT_USED),
-    BURNCONTAINER("", Packet.Direction.NOT_USED),
-    CLEARCONTAINER("", Packet.Direction.NOT_USED),
+    CLOSECONTAINER("CloseContainerPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    SWAPINCONTAINER("", Packet.Direction.NOT_USED), //Item Descriptor issues
+    ITEMAPPLYINCONTAINER("", Packet.Direction.NOT_USED), //Item Descriptor issues
+    STARTCRAFTINGINCONTAINER("StartCraftingInContainerPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    STOPCRAFTINGINCONTAINER("StopCraftingInContainerPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Direction and Data
+    BURNCONTAINER("BurnContainerPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Direction and Data
+    CLEARCONTAINER("ClearContainerPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     WORLDCLIENTSTATEUPDATE("", Packet.Direction.NOT_USED),
     ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues
     ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG Delta and direction

@@ -23,10 +23,15 @@ import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
+import starbounddata.packets.container.BurnContainerPacket;
+import starbounddata.packets.container.StopCraftingInContainerPacket;
 import starbounddata.packets.dungeon.UpdateTileProtectionPacket;
+import starbounddata.packets.liquid.CollectLiquidPacket;
+import starbounddata.packets.misc.GiveItemPacket;
 import starbounddata.packets.ship.FlyShipPacket;
 import starbounddata.packets.warp.PlayerWarp;
-import starbounddata.packets.world.WorldStartPacket;
+import starbounddata.packets.wires.ConnectWirePacket;
+import starbounddata.packets.wires.DisconnectAllWiresPacket;
 import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
 import starnubserver.StarNub;
@@ -127,6 +132,59 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
             }
         });
 
+        /* Debugging Data, Direction and Usage */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectWirePacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /* Debugging Data, Direction and Usage */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, DisconnectAllWiresPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /* Debugging Data, Direction and Usage */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, BurnContainerPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /* Debugging Data, Direction and Usage */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, StopCraftingInContainerPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+            }
+        });
+
+        /* Debugging Data, Direction and Usage */
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, CollectLiquidPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                System.out.println(eventData);
+                CollectLiquidPacket coll = (CollectLiquidPacket) eventData;
+                coll.setLiquidId((byte) 10);
+                System.out.println(eventData);
+            }
+        });
+
+//        /* Debugging Data, Direction and Usage */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, TileLiquidUpdatePacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
+
+
+
         /* Debugging Direction and Ids */
         new PacketEventSubscription("StarNub", Priority.CRITICAL, FlyShipPacket.class, new PacketEventHandler() {
             @Override
@@ -142,6 +200,18 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
                 System.out.println(eventData);
             }
         });
+
+
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {
+            @Override
+            public void onEvent(Packet eventData) {
+                GiveItemPacket give = (GiveItemPacket) eventData;
+                give.getItemDescriptor().setName("liquidnitrogen");
+                System.out.println(eventData);
+            }
+        });
+
+
 
         /* Debugging Direction */
 //         new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractPacket.class, new PacketEventHandler() {
@@ -179,13 +249,18 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 
         //// KEEP TEMPORARY ////
 
-        /*  Misc no purpose */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, WorldStartPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
+
+
+
+
+
+        /*  Broke as well */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, WorldStartPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {

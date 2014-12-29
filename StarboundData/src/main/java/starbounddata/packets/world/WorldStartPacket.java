@@ -34,7 +34,7 @@ import java.util.Arrays;
  * <p>
  * Notes: This packet cannot be edited freely or sent to a client out of stream
  * <p>
- * Packet Direction: Server -> Client
+ * Packet Direction: Server -> Client //DEBUG ALL PACKET PARTS
  * <p>
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  *
@@ -196,7 +196,7 @@ public class WorldStartPacket extends Packet {
         this.skyData = readVLQArray(in);
         this.weatherData = readVLQArray(in);
         this.playerStart.read(in);
-        this.protectedDungeonIds.read(in);
+//        this.protectedDungeonIds.read(in); // DEBUG
         this.worldProperties.read(in);
         this.clientId = in.readInt();
         this.localInterpolationMode = in.readBoolean();
@@ -216,7 +216,7 @@ public class WorldStartPacket extends Packet {
         writeVLQArray(out, this.skyData);
         writeVLQArray(out, this.weatherData);
         this.playerStart.write(out);
-        this.protectedDungeonIds.write(out);
+//        this.protectedDungeonIds.write(out);
         this.worldProperties.write(out);
         out.writeInt(this.clientId);
         out.writeBoolean(this.localInterpolationMode);

@@ -10,7 +10,7 @@ EDEN SPACE FAST USASE
 //planet who
 //EPOLL - linux
 //Check for buffer type
-
+//Disconnect from ship if player logs off
 //Payer session permination time update
 
 ///////// THIS IS FOR ESSENTIALS PLUGIN ////////////////
