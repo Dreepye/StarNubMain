@@ -19,7 +19,7 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
     private static final PacketEventRouter INSTANCE = new PacketEventRouter();
 
     /**
-     * This is instantiated to build out the Packets enum at start up
+     * This is instantiated to build out the Packets enum at startUDPServer up
      */
     private static final Packets PACKETS_INSTANCE = Packets.PROTOCOLVERSION;
 

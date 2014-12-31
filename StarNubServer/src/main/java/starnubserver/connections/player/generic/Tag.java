@@ -21,6 +21,7 @@ package starnubserver.connections.player.generic;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import starbounddata.types.color.Colors;
 import starbounddata.types.color.GameColors;
 import starnubserver.database.tables.Tags;
 
@@ -77,10 +78,10 @@ public class Tag {
     public Tag(String name, String color, String type, String leftBracket, String rightBracket, String bracketColor, boolean createEntry) {
         this.name = name;
         this.type = type;
-        this.color = GameColors.Colors.validate(color, true, true);
+        this.color = Colors.validate(color);
         this.leftBracket = leftBracket;
         this.rightBracket = rightBracket;
-        this.bracketColor = GameColors.Colors.validate(bracketColor, true, true);
+        this.bracketColor = Colors.validate(bracketColor);
         setTagCache(createEntry);
     }
 

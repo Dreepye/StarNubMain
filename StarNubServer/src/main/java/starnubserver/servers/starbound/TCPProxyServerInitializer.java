@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnubserver;
+package starnubserver.servers.starbound;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -32,8 +32,16 @@ import starbounddata.packets.Packet;
  */
 class TCPProxyServerInitializer extends ChannelInitializer<SocketChannel> {
 
+    private final String starboundAddress;
+    private final int starboundPort;
+
+    public TCPProxyServerInitializer(String starboundAddress, int starboundPort) {
+        this.starboundAddress = starboundAddress;
+        this.starboundPort = starboundPort;
+    }
+
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addFirst(new TCPProxyServerPacketDecoder(Packet.Direction.TO_STARBOUND_CLIENT));
+        ch.pipeline().addFirst(new TCPProxyServerPacketDecoder(starboundAddress, starboundPort, Packet.Direction.TO_STARBOUND_CLIENT));
     }
 }

@@ -595,11 +595,11 @@ public class PlayerSession {
      * <P>
      * Example: {plugname}.{subpermission}.{command}
      *          starnub.server.shutdown
-     *          starnub.server.start
+     *          starnub.server.startUDPServer
      *          starnub.server.*
      *          starnub.*
      * <br>
-     * The first line would give me shutdown. The second line would be start. The third line give me anything under
+     * The first line would give me shutdown. The second line would be startUDPServer. The third line give me anything under
      * starnub.server, The fourth line gives me all PERMISSIONS for the starnub related commands that fall under starnub. .
      *
      * <p>

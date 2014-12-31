@@ -56,7 +56,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register else you must invoke .submitRegistration();
+     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register else you must getResults .submitRegistration();
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key

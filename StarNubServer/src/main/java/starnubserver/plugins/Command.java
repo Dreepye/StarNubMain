@@ -53,7 +53,7 @@ public abstract class Command extends CommandPackage{
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This method is required when a plugin is making a command they will make a command class that extends Command and
-      * this method is what StarNub will invoke when running a command for a user.
+      * this method is what StarNub will getResults when running a command for a user.
      *
      * @param playerSession     PlayerSession for the person who used the command
      *                          the Connected Player records use  variableName  = StarNub.getServer().getConnectedPlayers().get(senderClientID);

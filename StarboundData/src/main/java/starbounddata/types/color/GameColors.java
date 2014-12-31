@@ -37,7 +37,7 @@ public final class GameColors {
     private volatile String defaultChatColor;
     private volatile String defaultServerNameColor;
     private volatile String defaultServerChatColor;
-    private final String STARBOUND_CHAT_DEFAULT = Colors.validate("#FFFF00", true, true);
+    private final String STARBOUND_CHAT_DEFAULT = Colors.validate("#FFFF00");
 
     /**
      * Must be private to ensure integrity of the singleton pattern
@@ -75,10 +75,10 @@ public final class GameColors {
      * <p>
      */
     public void setColors(String defaultNameColor, String defaultChatColor, String defaultServerNameColor, String defaultServerChatColor, String bracketColor) {
-        this.defaultNameColor = Colors.validate(defaultNameColor, true, true);
-        this.defaultChatColor = Colors.validate(defaultChatColor, true, true);
-        this.defaultServerNameColor = Colors.validate(defaultServerNameColor, true, true);
-        this.defaultServerChatColor = Colors.validate(defaultServerChatColor, true, true);
+        this.defaultNameColor = Colors.validate(defaultNameColor);
+        this.defaultChatColor = Colors.validate(defaultChatColor);
+        this.defaultServerNameColor = Colors.validate(defaultServerNameColor);
+        this.defaultServerChatColor = Colors.validate(defaultServerChatColor);
     }
 
     @Override

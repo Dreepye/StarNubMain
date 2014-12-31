@@ -27,9 +27,14 @@ import java.net.SocketTimeoutException;
 public abstract class StarboundStatus {
 
     public final StarboundManager STARBOUND_MANAGEMENT;
+    private long startTime = 0L;
 
     public StarboundStatus(StarboundManager STARBOUND_MANAGEMENT) {
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 
     /**
@@ -135,6 +140,7 @@ public abstract class StarboundStatus {
                     if (STARBOUND_MANAGEMENT.getServerVersion() == 0) {
                         STARBOUND_MANAGEMENT.setServerVersion(version);
                     }
+                    startTime = System.currentTimeMillis();
                     return true;
                 }
             } catch (IOException e) {
@@ -152,6 +158,7 @@ public abstract class StarboundStatus {
                 unresponsiveCount++;
             }
         }
+        startTime = 0L;
         return false;
     }
 }

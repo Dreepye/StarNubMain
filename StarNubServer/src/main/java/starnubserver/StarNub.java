@@ -25,6 +25,9 @@ import starnubserver.plugins.PluginManager;
 import starnubserver.resources.ResourceManager;
 import starnubserver.resources.files.Configuration;
 import starnubserver.resources.files.GroupsManagement;
+import starnubserver.servers.starbound.StarboundServer;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the StarNubs core.
@@ -41,6 +44,7 @@ import starnubserver.resources.files.GroupsManagement;
 
 public final class StarNub {
 
+    private static final long STARNUB_START_TIME = System.currentTimeMillis();
     private static final ResourceManager RESOURCE_MANAGER = ResourceManager.getInstance();
     private static final Configuration CONFIGURATION = Configuration.getInstance();
     private static final MultiOutputLogger LOGGER = MultiOutputLogger.getInstance();
@@ -71,7 +75,6 @@ public final class StarNub {
         return VERSION_INSTANCE;
     }
 
-
     public static StarboundServer getStarboundServer() {
         return STARBOUND_SERVER;
     }
@@ -85,15 +88,22 @@ public final class StarNub {
 //        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID); //NETTY.IO MEMORY DEBUGGING
         Thread.currentThread().setName("StarNub - Main");
 
+        StarboundServer.getInstance().startServers();
 
-
-        StarboundServer.getInstance().start();
-        new StarNubEvent("StarNub_Startup_Complete", DateTime.now().getMillis());
         GroupsManagement.getInstance().groupSetup();
+
         PluginManager pluginManager = PluginManager.getInstance();
+
         pluginManager.loadAllPlugins(false, true);
 
-//        new StarNubTask("StarNub", "StarNub - Up Time Notification", true, 30, 30, TimeUnit.SECONDS, new StarNubEvent("StarNub_Up_Time", StarNub::tempTime));
+        setUptimeTask();
+
+        new StarNubEvent("StarNub_Startup_Complete", System.currentTimeMillis() - STARNUB_START_TIME);
+}
+
+    private static void setUptimeTask(){
+        new StarNubTask("StarNub", "StarNub - Uptime", true, 30, 30, TimeUnit.SECONDS, () -> new StarNubEvent("StarNub_Uptime",  DateTime.now().getMillis() - STARNUB_START_TIME));
+        new StarNubTask("StarNub", "Starbound - Uptime", true, 30, 30, TimeUnit.SECONDS, () -> new StarNubEvent("Starbound_Uptime", StarboundServer.getInstance().getUptime()));
     }
 }
 

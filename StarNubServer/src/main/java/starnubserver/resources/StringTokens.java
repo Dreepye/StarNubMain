@@ -20,7 +20,6 @@ package starnubserver.resources;
 
 import starnubserver.resources.tokens.StringToken;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,24 +44,25 @@ public class StringTokens extends ConcurrentHashMap<String, StringToken>{
         return instance;
     }
 
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method will replace shortcuts with the hex color tag
+     * Uses: This method will search for any string tokens {}, {players} and replace it with an object from the executed method
      * <p>
      *
      * @param string String representing the whole entire message to be scanned for color shortcuts
-     * @return String repsenting the whole entire message with the shortcut colors replaced with hex colors for game display
+     * @return String repenting the whole entire message with the shortcut colors replaced with hex colors for game display
      */
     public static String replaceTokens(String string) {
-        Pattern p = Pattern.compile("\\{.\\}");
+        Pattern p = Pattern.compile("\\{.*?\\}");
         Matcher m = p.matcher(string);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String shortcut = m.group().toLowerCase();
-            Method method = StringTokens.getInstance().get(shortcut);
-            method.invoke()
-            m.appendReplacement(sb, replacement);
+            StringToken stringToken = StringTokens.getInstance().get(shortcut);
+            Object results = stringToken.getResults();
+            m.appendReplacement(sb, results.toString());
         }
         return m.appendTail(sb).toString();
     }

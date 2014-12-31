@@ -255,6 +255,18 @@ public class StarboundManager extends StarboundServerExe {
         return status.isResponsive(ipAddress, port, queryAttempts);
     }
 
+    public long getStartTime(){
+        return status.getStartTime();
+    }
+
+    public long getUptime(){
+        if (status.getStartTime() == 0){
+            return 0;
+        } else {
+            return System.currentTimeMillis() - status.getStartTime();
+        }
+    }
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>

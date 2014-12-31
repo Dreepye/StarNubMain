@@ -16,9 +16,8 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starnubserver;
+package starnubserver.servers.starbound;
 
-import starnubdata.generic.DisconnectReason;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -28,6 +27,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.ReplayingDecoder;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
+import starnubdata.generic.DisconnectReason;
+import starnubserver.StarNub;
 import starnubserver.cache.wrappers.IPCacheWrapper;
 import starnubserver.connections.player.StarNubProxyConnection;
 import starnubserver.connections.player.session.PlayerSession;
@@ -67,6 +68,9 @@ import static utilities.compression.Zlib.decompress;
  */
 class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketDecoder.DecoderState> {
 
+    private final String starboundAddress;
+    private final int starboundPort;
+
     private ChannelHandlerContext destinationCTX;
     private final Packet.Direction CONNECTION_SIDE;
     private final HashMap<Byte, Packet> PACKET_POOL = new HashMap<>();
@@ -79,13 +83,17 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
 
     private StarNubProxyConnection starNubProxyConnection;
 
-    public TCPProxyServerPacketDecoder(Packet.Direction connectionSide) {
+    public TCPProxyServerPacketDecoder(String starboundAddress, int starboundPort, Packet.Direction connectionSide) {
         super(DecoderState.READ_PACKET_ID );
+        this.starboundAddress = starboundAddress;
+        this.starboundPort = starboundPort;
         this.CONNECTION_SIDE = connectionSide;
     }
 
     private TCPProxyServerPacketDecoder(Packet.Direction connectionSide, ChannelHandlerContext clientCTX) {
         super(DecoderState.READ_PACKET_ID );
+        this.starboundAddress = null;
+        this.starboundPort = 0;
         this.CONNECTION_SIDE = connectionSide;
         this.destinationCTX = clientCTX;
     }
@@ -194,7 +202,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         InetAddress connectingIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress();
         IPCacheWrapper lastActiveCache = StarNub.getConnections().getINTERNAL_IP_WATCHLIST();
         IntegerCache cache = (IntegerCache) lastActiveCache.getCache(connectingIp);
-        int randomInt = RandomNumber.randInt(3000, 6000); //DEBUG - AFTER X ATTACKS CONNECTIONS ARE NOT BEING EXCEPTED
+        int randomInt = RandomNumber.randInt(3000, 6000);
         boolean clientSuccess = false;
         String failReason = null;
         if (cache != null) {
@@ -229,15 +237,10 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
         starNubMainOutboundSocket
                 .group(ctx.channel().eventLoop())
                 .channel(ctx.channel().getClass())
-//                .option(ChannelOption.TCP_NODELAY, TCPProxyServer.isTcpNoDelay())
-                .option(ChannelOption.ALLOCATOR, TCPProxyServer.getSocketBuffer())
-//                .option(ChannelOption.SO_RCVBUF, TCPProxyServer.getRecvBuffer())
-//                .option(ChannelOption.SO_SNDBUF, TCPProxyServer.getSendBuffer())
-//                .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, TCPProxyServer.getWriteHighWaterMark())
-//                .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, TCPProxyServer.getWriteLowWaterMark())
-//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
+                .option(ChannelOption.TCP_NODELAY, StarboundServer.getInstance().getTcpProxyServer().isNoDelay())
+                .option(ChannelOption.ALLOCATOR, StarboundServer.getInstance().getTcpProxyServer().getSocketBuffer())
                 .handler(new TCPProxyServerPacketDecoder(Packet.Direction.TO_STARBOUND_SERVER, ctx));
-        ChannelFuture f = starNubMainOutboundSocket.connect("127.0.0.1", (int) (StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port")));
+        ChannelFuture f = starNubMainOutboundSocket.connect(starboundAddress, starboundPort);
         destinationCTX = f.channel().pipeline().firstContext();
         if (destinationCTX != null) {
             new StarNubEvent("StarNub_Socket_Connection_Success_Server", ctx);
@@ -316,7 +319,6 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             playerSession.disconnectReason(DisconnectReason.DECODER_CLOSED);
             return;
         }
-
         ProxyConnection proxyConnection = StarNub.getConnections().getPROXY_CONNECTION().get(ctx);
         if (proxyConnection != null) {
             proxyConnection.disconnect();

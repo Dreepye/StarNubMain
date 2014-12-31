@@ -18,22 +18,62 @@
 
 package starnubserver.resources.tokens;
 
+import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.StringTokens;
-
-import java.lang.reflect.Method;
 
 public abstract class StringToken {
 
     private final String NAME;
     private final String TOKEN;
     private final String DESCRIPTION;
-    private final Method METHOD;
 
-
-
-    public void registerToken(){
-        StringTokens.put
+    public StringToken(String NAME, String TOKEN, String DESCRIPTION){
+        this.NAME = NAME;
+        this.TOKEN = tokenFormat(TOKEN);
+        this.DESCRIPTION = DESCRIPTION;
+        registerToken();
     }
 
-    public abstract Object invoke(Object obj, Object... args);
+    public String getNAME() {
+        return NAME;
+    }
+
+    public String getTOKEN() {
+        return TOKEN;
+    }
+
+    public String getDESCRIPTION() {
+        return DESCRIPTION;
+    }
+
+    public void registerToken(){
+        StringTokens.getInstance().put(TOKEN, this);
+        new StarNubEvent("String_Token_Registered", this);
+    }
+
+    public void unregisterToken(){
+        StringTokens.getInstance().remove(TOKEN);
+        new StarNubEvent("String_Token_Unregistered", this);
+    }
+
+    private String tokenFormat(String string){
+        if (!string.startsWith("{")){
+            string = "{" + string;
+        }
+        if (!string.endsWith("}")){
+            string = string + "}";
+        }
+        return string.toLowerCase();
+    }
+
+    public abstract Object getResults();
+
+    @Override
+    public String toString() {
+        return "StringToken{" +
+                "NAME='" + NAME + '\'' +
+                ", TOKEN='" + TOKEN + '\'' +
+                ", DESCRIPTION='" + DESCRIPTION + '\'' +
+                '}';
+    }
 }

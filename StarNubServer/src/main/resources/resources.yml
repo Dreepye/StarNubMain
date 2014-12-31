@@ -58,6 +58,7 @@ default_configuration: {
 file: ['starnub_configuration.yml', 'StarNub/'],
   map: {
      "starnub_settings": {
+       "use_linux_epoll": true,
        "starnub_port": 21025,
        "starbound_port": 21024,
        "whitelisted": false,

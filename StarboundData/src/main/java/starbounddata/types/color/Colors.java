@@ -197,7 +197,7 @@ public enum Colors {
         for (Colors c : Colors.values()){
             String cHexValue = c.getHexValue().toLowerCase();
             String cShortcut = c.getShortcut().toLowerCase();
-            quickShortcut.put(cShortcut, cHexValue);
+            quickShortcut.put("{" + cShortcut + "}", cHexValue);
         }
         return quickShortcut;
     }
@@ -229,11 +229,13 @@ public enum Colors {
      * <p>
      *
      * @param string String representing the string to be validated
-     * @param format boolean do you want to have it formatted for in game color display
      * @return String valid color string, will return null if color does not exist
      */
-    public static String validate(String string, boolean format, boolean returnHex) {
+    public static String validate(String string) {
         string = string.toLowerCase();
+        if (string.equals("default")){
+            return GameColors.getInstance().getDefaultChatColor();
+        }
         int index = 0;
         if (string.contains("#")){
             index = string.indexOf("#") + 1;
