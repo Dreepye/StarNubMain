@@ -16,13 +16,24 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.celestial.response;
+package starnubserver.resources.tokens;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum CelestialResponseType {
-    UNUSED, /* Index: 0 - This is an unused place holder */
-    CELESTIAL_CHUNK,
-    CELESTIAL_SYSTEM_OBJECTS
+import starnubserver.resources.StringTokens;
+
+import java.lang.reflect.Method;
+
+public abstract class StringToken {
+
+    private final String NAME;
+    private final String TOKEN;
+    private final String DESCRIPTION;
+    private final Method METHOD;
+
+
+
+    public void registerToken(){
+        StringTokens.put
+    }
+
+    public abstract Object invoke(Object obj, Object... args);
 }

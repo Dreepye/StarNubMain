@@ -26,8 +26,7 @@ import starbounddata.packets.connection.ConnectResponsePacket;
 import starbounddata.packets.container.BurnContainerPacket;
 import starbounddata.packets.container.StopCraftingInContainerPacket;
 import starbounddata.packets.dungeon.UpdateTileProtectionPacket;
-import starbounddata.packets.liquid.CollectLiquidPacket;
-import starbounddata.packets.misc.GiveItemPacket;
+import starbounddata.packets.entity.CallScriptedEntityPacket;
 import starbounddata.packets.ship.FlyShipPacket;
 import starbounddata.packets.warp.PlayerWarp;
 import starbounddata.packets.wires.ConnectWirePacket;
@@ -165,15 +164,19 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         });
 
         /* Debugging Data, Direction and Usage */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, CollectLiquidPacket.class, new PacketEventHandler() {
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, CallScriptedEntityPacket.class, new PacketEventHandler() {
             @Override
             public void onEvent(Packet eventData) {
                 System.out.println(eventData);
-                CollectLiquidPacket coll = (CollectLiquidPacket) eventData;
-                coll.setLiquidId((byte) 10);
-                System.out.println(eventData);
             }
         });
+
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractResultPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 //        /* Debugging Data, Direction and Usage */
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, TileLiquidUpdatePacket.class, new PacketEventHandler() {
@@ -202,18 +205,16 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         });
 
 
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                GiveItemPacket give = (GiveItemPacket) eventData;
-                give.getItemDescriptor().setName("liquidnitrogen");
-                System.out.println(eventData);
-            }
-        });
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 
 
-        /* Debugging Direction */
+//        /* Debugging Direction */
 //         new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractPacket.class, new PacketEventHandler() {
 //            @Override
 //            public void onEvent(Packet eventData) {
@@ -277,12 +278,20 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
 //            }
 //        });
 
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityDestroyPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
+
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityCreatePacket.class, new PacketEventHandler() {
 //            @Override
 //            public void onEvent(Packet eventData) {
 //                System.out.println(eventData);
 //            }
 //        });
+
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, DamageRequestPacket.class, new PacketEventHandler() {
 //            @Override
 //            public void onEvent(Packet eventData) {

@@ -148,11 +148,11 @@ public class VLQ {
      * <p>
      *
      * @param in ByteBuf representing the bytes to be read for a reason length from a vlq
-     * @return int representing the reason length
+     * @return long representing the reason length
      */
     public static long readUnsignedFromBufferNoObject(ByteBuf in) {
-        int vlqLength = 0;
-        int payloadLength = 0;
+        long vlqLength = 0;
+        long payloadLength = 0;
         while (vlqLength <= 10) {
             int tmpByte = in.readByte();
             payloadLength = (payloadLength << 7) | (tmpByte & 0x7f);

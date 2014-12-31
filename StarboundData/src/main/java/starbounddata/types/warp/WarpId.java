@@ -22,7 +22,7 @@ package starbounddata.types.warp;
  * Starbound 1.0 Compliant (Versions 622, Update 1)
  */
 public enum WarpId {
-    UNUSED,
+    UNUSED, /* Index: 0 - This is an unused place holder */
     UNIQUE_WORLD,
     CELESTIAL_WORLD,
     CLIENT_SHIP_WORLD,

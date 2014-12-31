@@ -22,8 +22,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.tiles.TileDamage;
-import starbounddata.types.tiles.TileLayer;
+import starbounddata.types.tile.TileDamage;
+import starbounddata.types.tile.TileLayer;
 import starbounddata.types.vectors.Vec2F;
 import starbounddata.types.vectors.Vec2IArray;
 

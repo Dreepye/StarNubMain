@@ -61,7 +61,8 @@ public class EntityVLQId extends SbData<EntityVLQId> {
 
     @Override
     public void write(ByteBuf out){
-        out.writeBytes(VLQ.writeSignedVLQNoObject(entityId));
+        byte[] bytes = VLQ.writeSignedVLQNoObject(entityId);
+        out.writeBytes(bytes);
     }
 
     @Override

@@ -16,7 +16,7 @@
 * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package starbounddata.types.tiles;
+package starbounddata.types.tile;
 
 import io.netty.buffer.ByteBuf;
 import starbounddata.types.SbData;

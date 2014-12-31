@@ -43,22 +43,22 @@ public enum Packets {
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     HANDSHAKERESPONSE("HandshakeResponsePacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - LocationsIds - Remaining - UNIQUE_WORLD & CELESTIAL_WORLD
-    FLYSHIP("FlyShipPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Direction and warping to planets that do not exist
+    FLYSHIP("FlyShipPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Direction and test warping to planets that do not exist
     CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CELESTIALREQUEST("CelestialRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLIENTCONTEXTUPDATE("ClientContextUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - All data needs debugged
     WORLDSTART("WorldStartPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
     WORLDSTOP("WorldStopPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
     CENTRALSTRUCTUREUPDATE("CentralStructureUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    TILEARRAYUPDATE("", Packet.Direction.NOT_USED),
-    TILEUPDATE("", Packet.Direction.NOT_USED),
+    TILEARRAYUPDATE("", Packet.Direction.NOT_USED), // NetTile - Will be done once documents are corrected - STARBOUND DOCUMENTS NOT CORRECT
+    TILEUPDATE("", Packet.Direction.NOT_USED), // NetTile - Will be done once documents are corrected - STARBOUND DOCUMENTS NOT CORRECT
     TILELIQUIDUPDATE("TileLiquidUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - STARBOUND DOCUMENTS NOT CORRECT
     TILEDAMAGEUPDATE("", Packet.Direction.NOT_USED),
     TILEMODIFICATIONFAILURE("", Packet.Direction.NOT_USED),
-    GIVEITEM("GiveItemPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - PROB ONLY CLIENT
+    GIVEITEM("GiveItemPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - item descriptor
     SWAPINCONTAINERRESULT("", Packet.Direction.NOT_USED), //Item Descriptor issues
     ENVIRONMENTUPDATE("", Packet.Direction.NOT_USED),
-    ENTITYINTERACTRESULT("", Packet.Direction.NOT_USED),
+    ENTITYINTERACTRESULT("EntityInteractResultPacket.class", Packet.Direction.TO_STARBOUND_CLIENT), //DEBUG - STARBOUND DOCUMENTS NOT CORRECT
     UPDATETILEPROTECTION("UpdateTileProtectionPacket.class", Packet.Direction.BIDIRECTIONAL),//DEBUG DIRECTION AND DATA
     MODIFYTILELIST("", Packet.Direction.NOT_USED),
     DAMAGETILEGROUP("DamageTileGroupPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
@@ -77,13 +77,13 @@ public enum Packets {
     BURNCONTAINER("BurnContainerPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Direction and Data
     CLEARCONTAINER("ClearContainerPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     WORLDCLIENTSTATEUPDATE("", Packet.Direction.NOT_USED),
-    ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues
+    ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues // BROKEN BECAUSE SOME ARE NOT BYTE ARRAYS
     ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG Delta and direction
     ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
     HITREQUEST("HitRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE DOUBLE
     DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Data Issues PROBABLE DOUBLE
-    CALLSCRIPTEDENTITY("", Packet.Direction.NOT_USED),
+    CALLSCRIPTEDENTITY("CallScriptedEntityPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
     UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED),
     HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL);
 
@@ -140,7 +140,7 @@ public enum Packets {
         }
         HashMap<Packets, Class> packetCacheToSet = new HashMap<>();
         for (Packets packet : Packets.values()) {
-            if (!packet.classString.isEmpty() && !(packet.classString.length() < 4) && packet.direction != Packet.Direction.NOT_USED) {
+            if (!packet.classString.isEmpty() && !(packet.classString.length() < 6) && packet.direction != Packet.Direction.NOT_USED) {
                 String packetName = packet.classString.substring(0, packet.classString.lastIndexOf("."));
                 Class packetPath = packetPaths.get(packetName);
                 packetCacheToSet.put(packet, packetPath);

@@ -56,9 +56,9 @@ public class ConnectionResponseHandler extends PacketEventHandler {
                 connectResponsePacket.setRejectionReason(rejectionCache.getPACKET_MESSAGE());
             } else {
                 CONNECTIONS.getCONNECTED_PLAYERS().put(playerSession.getCONNECTION().getCLIENT_CTX(), playerSession);
-                final RejectionCache finalRejectionCache = rejectionCache;
-                StarNubTaskManager.getInstance().execute(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache));
             }
+            final RejectionCache finalRejectionCache = rejectionCache;
+            StarNubTaskManager.getInstance().execute(() -> postProcessing(playerSession, (int) connectResponsePacket.getClientId(), finalRejectionCache));
         }
     }
 

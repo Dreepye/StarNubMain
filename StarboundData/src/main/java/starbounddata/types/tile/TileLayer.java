@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.tiles;
+package starbounddata.types.tile;
 
 /**
  * Starbound 1.0 Compliant (Versions 622, Update 1)

@@ -19,7 +19,7 @@
 package starbounddata.types.liquid;
 
 public enum LiquidType {
-    UNUSED, //NO SUCH LIQUID
+    UNUSED, /* Index: 0 - This is an unused place holder */
     WATER,
     LAVA,
     POISON,
@@ -27,8 +27,8 @@ public enum LiquidType {
     OIL,
     HEALING_WATER,
     COCONUT_MILK,
-    NOT_IN_GAME_CORE_LAVA, //NOT IN GAME
+    CORE_LAVA, /* Cannot be used directly - May not be in-game */
     COFFEE,
-    NOT_IN_GAME_LIQUID_NITROGEN, //NOT IN GAME
+    LIQUID_NITROGEN, /* Cannot be used directly - May not be in-game */
     ERCHIUS
 }

@@ -23,26 +23,26 @@ import io.netty.channel.ChannelHandlerContext;
 import starbounddata.ByteBufferUtilities;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.entity.EntityType;
 import starbounddata.types.entity.EntityVLQId;
+import starbounddata.types.variants.VariantList;
 
 /**
- * Represents the EntityCreate and methods to generate a packet data for StarNub and Plugins
+ * Represents the EntityUpdate and methods to generate a packet data for StarNub and Plugins
  * <p>
  * Notes: This packet can be edited freely. Please be cognisant of what values you change and how they will be interpreted by the starnubclient.
  * <p>
- * Packet Direction: Bidirectional
+ * Packet Direction: Client -> Server//DEBUG UNKNOWN
  * <p>
  * Starbound 1.0 Compliant (Versions 622, Update 1)  //DEBUG - NOT COMPLIANT - NOT WORKING
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class EntityCreatePacket extends Packet {
+public class CallScriptedEntityPacket extends Packet {
 
-    private EntityType entityType;
-    private byte[] storeData;
     private EntityVLQId entityId = new EntityVLQId();
+    private String function;
+    private VariantList args = new VariantList();
 
     /**
      * Recommended: For connections StarNub usage.
@@ -54,8 +54,8 @@ public class EntityCreatePacket extends Packet {
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
-    public EntityCreatePacket(Packet.Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
-        super(DIRECTION, Packets.ENTITYCREATE.getPacketId(), SENDER_CTX, DESTINATION_CTX);
+    public CallScriptedEntityPacket(Direction DIRECTION, ChannelHandlerContext SENDER_CTX, ChannelHandlerContext DESTINATION_CTX) {
+        super(DIRECTION, Packets.CALLSCRIPTEDENTITY.getPacketId(), SENDER_CTX, DESTINATION_CTX);
     }
 
     /**
@@ -68,11 +68,11 @@ public class EntityCreatePacket extends Packet {
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param
      */
-    public EntityCreatePacket(ChannelHandlerContext DESTINATION_CTX, EntityType entityType, byte[] storeData, EntityVLQId entityId) {
-        super(Packets.ENTITYCREATE.getDirection(), Packets.ENTITYCREATE.getPacketId(), null, DESTINATION_CTX);
-        this.entityType = entityType;
-        this.storeData = storeData;
+    public CallScriptedEntityPacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, String function, VariantList args){
+        super(Packets.CALLSCRIPTEDENTITY.getDirection(), Packets.CALLSCRIPTEDENTITY.getPacketId(), null, DESTINATION_CTX);
         this.entityId = entityId;
+        this.function = function;
+        this.args = args;
     }
 
     /**
@@ -80,29 +80,13 @@ public class EntityCreatePacket extends Packet {
      * <p>
      * Uses: This will construct a new packet from a packet
      *
-     * @param packet DamageRequestPacket representing the packet to construct from
+     * @param packet EntityUpdatePacket representing the packet to construct from
      */
-    public EntityCreatePacket(EntityCreatePacket packet) {
+    public CallScriptedEntityPacket(CallScriptedEntityPacket packet) {
         super(packet);
-        this.entityType = packet.getEntityType();
-        this.storeData = packet.getStoreData().clone();
         this.entityId = packet.getEntityId();
-    }
-
-    public EntityType getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
-
-    public byte[] getStoreData() {
-        return storeData;
-    }
-
-    public void setStoreData(byte[] storeData) {
-        this.storeData = storeData;
+        this.function = packet.getFunction();
+        this.args = packet.getArgs().copy();
     }
 
     public EntityVLQId getEntityId() {
@@ -113,15 +97,31 @@ public class EntityCreatePacket extends Packet {
         this.entityId = entityId;
     }
 
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    public VariantList getArgs() {
+        return args;
+    }
+
+    public void setArgs(VariantList args) {
+        this.args = args;
+    }
+
     /**
      * This will provide a new object while copying all of the internal data as well into this
      * new Object
      *
-     * @return DamageRequestPacket the new copied object
+     * @return EntityUpdatePacket the new copied object
      */
     @Override
-    public EntityCreatePacket copy() {
-        return new EntityCreatePacket(this);
+    public CallScriptedEntityPacket copy() {
+        return new CallScriptedEntityPacket(this);
     }
 
     /**
@@ -132,11 +132,10 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        ByteBufferUtilities.print(in);
-        System.out.println(in.readableBytes());
-        this.entityType =  EntityType.values()[in.readUnsignedByte()];
-        this.storeData = readVLQArray(in);
+        ByteBufferUtilities.print(in, true);
         this.entityId.read(in);
+        this.function = readVLQString(in);
+        this.args.read(in);
     }
 
     /**
@@ -149,20 +148,17 @@ public class EntityCreatePacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeByte(entityType.ordinal());
-        writeVLQArray(out, storeData);
         this.entityId.write(out);
-        System.err.println(out.readableBytes());
+        writeStringVLQ(out, function);
+        this.args.write(out);
     }
 
     @Override
     public String toString() {
-        return "EntityCreatePacket{" +
-                "entityType=" + entityType +
-//                ", storeData=" + Arrays.toString(storeData) +
-                ", entityId=" + entityId +
+        return "CallScriptedEntityPacket{" +
+                "entityId=" + entityId +
+                ", function='" + function + '\'' +
+                ", args=" + args +
                 "} " + super.toString();
     }
-
-
 }

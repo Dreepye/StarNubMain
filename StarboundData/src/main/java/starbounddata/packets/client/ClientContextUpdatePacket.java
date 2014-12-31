@@ -83,15 +83,15 @@ public class ClientContextUpdatePacket extends Packet {
      */
     public ClientContextUpdatePacket(ClientContextUpdatePacket packet) {
         super(packet);
-//        this.entityId = packet.getEntityId();
+//        this.entityId = packet.getAction();
         this.delta = packet.getDelta().clone();
     }
 
-//    public EntityVLQId getEntityId() {
+//    public EntityVLQId getAction() {
 //        return entityId;
 //    }
 //
-//    public void setEntityId(EntityVLQId entityId) {
+//    public void setAction(EntityVLQId entityId) {
 //        this.entityId = entityId;
 //    }
 

@@ -351,7 +351,8 @@ public abstract class Packet {
      * @param bytes bytes[] value to be written to the buffer
      */
     public static void writeVLQArray(ByteBuf out, byte[] bytes) {
-        out.writeBytes(writeUnsignedVLQNoObject(bytes.length));
+        byte[] vlqBytes = writeUnsignedVLQNoObject(bytes.length);
+        out.writeBytes(vlqBytes);
         out.writeBytes(bytes);
     }
 

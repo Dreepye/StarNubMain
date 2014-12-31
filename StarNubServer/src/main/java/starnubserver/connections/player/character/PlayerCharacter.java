@@ -100,7 +100,7 @@ public class PlayerCharacter implements Serializable {
     public PlayerCharacter(String name, UUID uuid, boolean createEntry) {
         this.name = name;
         this.cleanName = StringUtilities.completeClean(name);
-        this.uuid = uuid; //UUID SPOOF CHECK, if UUID is already logged deny
+        this.uuid = uuid; //UUID SPOOF CHECK, if UUID is already logged deny,
         this.lastSeen = DateTime.now();
         if (createEntry){
             CHARACTERS_DB.create(this);

@@ -16,13 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.celestial.response;
+package starbounddata.types.tile.net;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum CelestialResponseType {
-    UNUSED, /* Index: 0 - This is an unused place holder */
-    CELESTIAL_CHUNK,
-    CELESTIAL_SYSTEM_OBJECTS
+public class NetTile {
 }

@@ -22,7 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import starbounddata.packets.Packet;
 import starbounddata.packets.Packets;
-import starbounddata.types.variants.VLQ;
+import starbounddata.types.entity.EntityVLQId;
 
 /**
  * Represents the EntityDestroy and methods to generate a packet data for StarNub and Plugins
@@ -38,7 +38,7 @@ import starbounddata.types.variants.VLQ;
  */
 public class EntityDestroyPacket extends Packet {
 
-    private long entityId;
+    private EntityVLQId entityId = new EntityVLQId();
     private boolean death;
 
     /**
@@ -66,7 +66,7 @@ public class EntityDestroyPacket extends Packet {
      * @param entityId long representing the entity id
      * @param death boolean representing if we should kill the entity
      */
-    public EntityDestroyPacket(ChannelHandlerContext DESTINATION_CTX, long entityId, boolean death) {
+    public EntityDestroyPacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId entityId, boolean death) {
         super(Packets.ENTITYDESTROY.getDirection(), Packets.ENTITYDESTROY.getPacketId(), null, DESTINATION_CTX);
         this.entityId = entityId;
         this.death = death;
@@ -85,11 +85,11 @@ public class EntityDestroyPacket extends Packet {
         this.death = packet.isDeath();
     }
 
-    public long getEntityId() {
+    public EntityVLQId getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(long entityId) {
+    public void setEntityId(EntityVLQId entityId) {
         this.entityId = entityId;
     }
 
@@ -120,7 +120,7 @@ public class EntityDestroyPacket extends Packet {
      */
     @Override
     public void read(ByteBuf in) {
-        this.entityId = VLQ.readSignedFromBufferNoObject(in);
+        this.entityId.read(in);
         this.death = in.readBoolean();
     }
 
@@ -134,7 +134,7 @@ public class EntityDestroyPacket extends Packet {
      */
     @Override
     public void write(ByteBuf out) {
-        out.writeBytes(VLQ.writeSignedVLQNoObject(entityId));
+        this.entityId.write(out);
         out.writeBoolean(death);
     }
 

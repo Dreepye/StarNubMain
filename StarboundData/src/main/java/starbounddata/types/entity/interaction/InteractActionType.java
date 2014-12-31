@@ -16,13 +16,21 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starbounddata.types.celestial.response;
+package starbounddata.types.entity.interaction;
 
-/**
- * Starbound 1.0 Compliant (Versions 622, Update 1)
- */
-public enum CelestialResponseType {
-    UNUSED, /* Index: 0 - This is an unused place holder */
-    CELESTIAL_CHUNK,
-    CELESTIAL_SYSTEM_OBJECTS
+public enum InteractActionType {
+    NONE,
+    OPEN_COCKPIT_INTERFACE,
+    OPEN_CONTAINER,
+    SIT_DOWN,
+    OPEN_CRAFTING_INTERFACE,
+    PLAY_CINEMATIC,
+    OPEN_SONGBOOK_INTERFACE,
+    OPEN_NPC_CRAFTING_INTERFACE,
+    OPEN_NPC_BOUNTY_INTERFACE,
+    OPEN_AI_INTERFACE,
+    OPEN_TELEPORT_DIALOG,
+    OPEN_SHIP_TELEPORTER_DIALOG,
+    SHOW_POPUP,
+    SCRIPT_CONSOLE
 }
