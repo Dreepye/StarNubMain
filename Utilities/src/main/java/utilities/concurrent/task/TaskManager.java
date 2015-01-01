@@ -23,7 +23,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
         super.setMaximumPoolSize(MAX_THREAD_COUNT);
         super.setKeepAliveTime(KEEP_ALIVE, TIME_UNIT);
         Runnable runnable = TaskManager.this::oneTimeTaskPurge;
-        ScheduledTask scheduledTask = new ScheduledTask(this, "Utilities", "Utilities - One Time Task Purger", true, 30, 30, TimeUnit.SECONDS, runnable);
+        new ScheduledTask(this, "Utilities", "Utilities - One Time Task Purger", true, 30, 30, TimeUnit.SECONDS, runnable);
     }
 
     public ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> getTASK_LIST() {

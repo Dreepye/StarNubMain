@@ -79,8 +79,8 @@ public class Unresponsive extends StarboundStatus {
      */
     @Override
     public boolean stop() {
-        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Stopping", STARBOUND_MANAGEMENT);
         STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
+        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Stopping", STARBOUND_MANAGEMENT);
         return true;
     }
 }

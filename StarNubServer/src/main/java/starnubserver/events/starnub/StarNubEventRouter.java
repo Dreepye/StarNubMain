@@ -50,7 +50,7 @@ public class StarNubEventRouter extends EventRouter<String, ObjectEvent, Boolean
             HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
             if (eventSubscriptions != null){
                 for (EventSubscription eventSubscription : eventSubscriptions){
-                    eventSubscription.getEVENT_HANDLER().onEvent(event);
+                    StarNubTaskManager.getInstance().submit(() -> eventSubscription.getEVENT_HANDLER().onEvent(event));
                 }
             }
             if (!eventKey.equals("StarNub_Log_Event") && StarNub.getLogger().isLogEvent()) {

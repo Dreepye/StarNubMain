@@ -92,17 +92,17 @@ public class Stopping extends StarboundStatus {
         STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().destroy();
         ThreadSleep.timerSeconds(2);
         if (isAlive()){
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown_Error_Process", STARBOUND_MANAGEMENT);
             STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().destroyForcibly();
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown_Error_Process", STARBOUND_MANAGEMENT);
             ThreadSleep.timerSeconds(2);
         }
         if (isAlive()){
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown_Fatal_Process", STARBOUND_MANAGEMENT);
             STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown_Fatal_Process", STARBOUND_MANAGEMENT);
             return false;
         } else {
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown", STARBOUND_MANAGEMENT);
             STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown", STARBOUND_MANAGEMENT);
             return true;
         }
     }

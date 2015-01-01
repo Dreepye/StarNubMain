@@ -87,8 +87,8 @@ public class Running extends StarboundStatus {
      */
     @Override
     public boolean stop() {
-        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutting_Down", STARBOUND_MANAGEMENT);
         STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPING());
+        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutting_Down", STARBOUND_MANAGEMENT);
         return STARBOUND_MANAGEMENT.getStatus().stop();
     }
 }

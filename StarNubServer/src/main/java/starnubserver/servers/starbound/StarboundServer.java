@@ -251,7 +251,6 @@ public class StarboundServer extends StarboundManager {
         configureConfiguration(configurationVariables);
     }
 
-
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>

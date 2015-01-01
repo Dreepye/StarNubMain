@@ -158,7 +158,7 @@ public class PlayerSession {
         }
         loadPermissions();
         PlayerSessionLog.getInstance().create(this);
-        new StarNubEvent("Player_Character_New_Session", playerCharacter);
+        new StarNubEvent("Player_New_Session", playerCharacter);
     }
 
     public int getSessionID() {

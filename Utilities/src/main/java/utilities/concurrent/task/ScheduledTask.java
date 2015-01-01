@@ -69,14 +69,17 @@ public class ScheduledTask {
 
     public void scheduleTask(long timeDelay, TimeUnit timeUnit){
         TASK_MANAGER.schedule(RUNNABLE, timeDelay, timeUnit);
+        insertTaskList();
     }
 
     public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit){
         TASK_MANAGER.scheduleAtFixedRate(RUNNABLE, initialDelay, timeDelay, timeUnit);
+        insertTaskList();
     }
 
     public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit){
         TASK_MANAGER.scheduleWithFixedDelay(RUNNABLE, initialDelay, timeDelay, timeUnit);
+        insertTaskList();
     }
 
     /**

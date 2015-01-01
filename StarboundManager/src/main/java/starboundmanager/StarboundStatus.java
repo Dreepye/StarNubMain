@@ -54,11 +54,13 @@ public abstract class StarboundStatus {
      */
     public boolean isAlive(){
         if (STARBOUND_MANAGEMENT != null && STARBOUND_MANAGEMENT.getStarboundProcess() != null) {
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Process_Check", STARBOUND_MANAGEMENT);
             boolean isAlive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
             if (!isAlive) {
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
             } else {
+                STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Running", STARBOUND_MANAGEMENT);
                 return true;
             }
         }
@@ -78,10 +80,13 @@ public abstract class StarboundStatus {
      */
     public boolean isResponsive(String ipAddress, int port, int queryAttempts){
         if (STARBOUND_MANAGEMENT != null && STARBOUND_MANAGEMENT.getStarboundProcess() != null) {
-            boolean isResponsive = responsiveListener(ipAddress, port, 10000, queryAttempts);
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Response_Check", STARBOUND_MANAGEMENT);
+            boolean isResponsive = query(ipAddress, port, 10000, queryAttempts);
             if (!isResponsive) {
+                STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Unresponsive", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
             } else {
+                STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Responsive", STARBOUND_MANAGEMENT);
                 return true;
             }
         }
@@ -112,30 +117,6 @@ public abstract class StarboundStatus {
         ThreadSleep.timerMiliseconds(timeout);
         return query(ipAddress, port, timeout, 48);
     }
-
-
-    /**
-     * Recommended: For connections use.
-     * <p>
-     * Uses: This will attempt to see if the Starbound starnubdata.network is responsive, but depending on the current status may or may not work, queries are attempted
-     * every 10 seconds. Setting the queryAttempts to 12 for example would be 120 seconds worth of tries, which would be 2 minutes
-     *
-     * @param ipAddress String representing the address to TCP Query
-     * @param port int representing the port to query
-     * @param queryAttempts int representing the number of queries to attempt
-     * @return boolean representing if the starnubdata.network is started
-     */
-    protected boolean responsiveListener(String ipAddress, int port, int timeout, int queryAttempts){
-        STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Responsive", STARBOUND_MANAGEMENT);
-        boolean online = query(ipAddress, port, timeout, queryAttempts);
-        if (online){
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Responsive", STARBOUND_MANAGEMENT);
-        } else {
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Unresponsive", STARBOUND_MANAGEMENT);
-        }
-        return online;
-    }
-
 
     /**
      * Recommended: For connections use.
