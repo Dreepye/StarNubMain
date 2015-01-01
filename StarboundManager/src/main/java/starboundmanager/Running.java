@@ -57,17 +57,7 @@ public class Running extends StarboundStatus {
      */
     @Override
     public boolean isAlive() {
-        boolean isAlive = false;
-        try {
-            isAlive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
-        }catch (NullPointerException e){
-            /* Silent Catch */
-        }
-        if (!isAlive){
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
-        }
-        return isAlive;
+        return super.isAlive();
     }
 
     /**
@@ -84,16 +74,7 @@ public class Running extends StarboundStatus {
      */
     @Override
     public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
-        boolean isResponsive = false;
-        try {
-            isResponsive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
-        }catch (NullPointerException e){
-            /* Silent Catch */
-        }
-        if (!isResponsive){
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
-        }
-        return isResponsive;
+        return super.isResponsive(ipAddress, port, queryAttempts);
     }
 
     /**

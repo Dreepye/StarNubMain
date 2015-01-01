@@ -27,14 +27,9 @@ import java.net.SocketTimeoutException;
 public abstract class StarboundStatus {
 
     public final StarboundManager STARBOUND_MANAGEMENT;
-    private long startTime = 0L;
 
     public StarboundStatus(StarboundManager STARBOUND_MANAGEMENT) {
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
-    }
-
-    public long getStartTime() {
-        return startTime;
     }
 
     /**
@@ -46,7 +41,7 @@ public abstract class StarboundStatus {
      * @param port int representing the port to query
      * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
-     * @return boolean representing if the starnubdata.network started
+     * @return boolean representing if the starbound server is started
      */
     public abstract boolean start(String ipAddress, int port, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT);
 
@@ -57,7 +52,18 @@ public abstract class StarboundStatus {
      *
      * @return boolean representing if the Starbound process is alive
      */
-    public abstract boolean isAlive();
+    public boolean isAlive(){
+        if (STARBOUND_MANAGEMENT != null && STARBOUND_MANAGEMENT.getStarboundProcess() != null) {
+            boolean isAlive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
+            if (!isAlive) {
+                STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
+                STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Recommended: For connections use.
@@ -70,7 +76,17 @@ public abstract class StarboundStatus {
      * @param queryAttempts int representing the number of queries to attempt
      * @return boolean representing if the starbound starnubdata.network is responsive
      */
-    public abstract boolean isResponsive(String ipAddress, int port, int queryAttempts);
+    public boolean isResponsive(String ipAddress, int port, int queryAttempts){
+        if (STARBOUND_MANAGEMENT != null && STARBOUND_MANAGEMENT.getStarboundProcess() != null) {
+            boolean isResponsive = responsiveListener(ipAddress, port, 10000, queryAttempts);
+            if (!isResponsive) {
+                STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Recommended: For connections use.
@@ -92,7 +108,9 @@ public abstract class StarboundStatus {
      */
     protected boolean startUpListener(String ipAddress, int port){
         STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Starting_Up", STARBOUND_MANAGEMENT);
-        return query(ipAddress, port, 5, 48);
+        int timeout = 5000;
+        ThreadSleep.timerMiliseconds(timeout);
+        return query(ipAddress, port, timeout, 48);
     }
 
 
@@ -140,25 +158,24 @@ public abstract class StarboundStatus {
                     if (STARBOUND_MANAGEMENT.getServerVersion() == 0) {
                         STARBOUND_MANAGEMENT.setServerVersion(version);
                     }
-                    startTime = System.currentTimeMillis();
+                    STARBOUND_MANAGEMENT.setStartTime(System.currentTimeMillis());
                     return true;
                 }
             } catch (IOException e) {
                 String reason = "Unknown";
                 if (e instanceof ConnectException) {
                     reason = "Connection_Refused";
-                    ThreadSleep.timerMiliseconds(timeout);
                 } else if (e instanceof SocketTimeoutException) {
-                    System.out.println("Socket_Timeout");
+                    /* Do Nothing */
                 } else {
                     e.printStackTrace();
-                    ThreadSleep.timerMiliseconds(timeout);
                 }
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_TCP_Query_Failed_" + reason, unresponsiveCount);
+                ThreadSleep.timerMiliseconds(timeout);
                 unresponsiveCount++;
             }
         }
-        startTime = 0L;
+        STARBOUND_MANAGEMENT.setStartTime(0);
         return false;
     }
 }

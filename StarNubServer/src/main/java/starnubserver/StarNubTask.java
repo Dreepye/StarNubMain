@@ -22,7 +22,6 @@ import starnubserver.events.events.StarNubEvent;
 import utilities.concurrent.task.ScheduledTask;
 import utilities.concurrent.task.TaskManager;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,7 +46,7 @@ public class StarNubTask extends ScheduledTask {
      * @param RUNNABLE Runnable representing the Runnable that extends run() with the code that you want to execute
      */
     public StarNubTask(String OWNER, String NAME, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
-        super(OWNER, NAME, timeDelay, timeUnit, RUNNABLE);
+        super(TASK_MANAGER, OWNER, NAME, timeDelay, timeUnit, RUNNABLE);
     }
 
     /**
@@ -64,7 +63,7 @@ public class StarNubTask extends ScheduledTask {
      * @param RUNNABLE Runnable representing the Runnable that extends run() with the code that you want to execute
      */
     public StarNubTask(String OWNER, String NAME, boolean fixedDelay, long initialDelay, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
-        super(OWNER, NAME, fixedDelay, initialDelay, timeDelay, timeUnit, RUNNABLE);
+        super(TASK_MANAGER, OWNER, NAME, fixedDelay, initialDelay, timeDelay, timeUnit, RUNNABLE);
     }
 
     /**
@@ -77,8 +76,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void scheduleTask(long timeDelay, TimeUnit timeUnit) {
-        super.scheduledFuture = TASK_MANAGER.schedule(super.RUNNABLE, timeDelay, timeUnit);
-        insertTaskList();
+        super.scheduleTask(timeDelay, timeUnit);
         new StarNubEvent("StarNub_Task_Registered_One_Time", this);
     }
 
@@ -93,8 +91,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
-        super.scheduledFuture = TASK_MANAGER.scheduleAtFixedRate(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
-        insertTaskList();
+        super.scheduleRepeatingTask(initialDelay, timeDelay, timeUnit);
         new StarNubEvent("StarNub_Task_Registered_Recurring_No_Delay", this);
     }
 
@@ -109,8 +106,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit) {
-        super.scheduledFuture = TASK_MANAGER.scheduleWithFixedDelay(super.RUNNABLE, initialDelay, timeDelay, timeUnit);
-        insertTaskList();
+        super.scheduleRepeatingFixedDelayTask(initialDelay, timeDelay, timeUnit);
         new StarNubEvent("StarNub_Task_Registered_Recurring_Fixed_Delay", this);
     }
 
@@ -121,33 +117,7 @@ public class StarNubTask extends ScheduledTask {
      */
     @Override
     public void removeTask() {
-        try {
-            TASK_MANAGER.getTASK_LIST().get(super.OWNER).remove(super.NAME).getScheduledFuture().cancel(true);
-            new StarNubEvent("StarNub_Task_Removed", this);
-        }catch (NullPointerException e){
-            /* Silent Catch */
-        }
-    }
-
-    /**
-     * Recommended: For connections use with StarNub.
-     *
-     * Uses: This will insert this task into the task list
-     */
-    private void insertTaskList() {
-        ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
-        if (!taskList.containsKey(super.OWNER)){
-            taskList.put(super.OWNER, new ConcurrentHashMap<>());
-        }
-        ConcurrentHashMap<String, ScheduledTask> stg = taskList.get(super.OWNER);
-        int inc = 0;
-        do {
-            String taskNameOriginal = super.NAME + " - " + inc;
-            if (!stg.containsKey(taskNameOriginal)) {
-                stg.putIfAbsent(taskNameOriginal, this);
-                break;
-            }
-            inc++;
-        } while (true);
+        super.removeTask();
+        new StarNubEvent("StarNub_Task_Removed", this);
     }
 }

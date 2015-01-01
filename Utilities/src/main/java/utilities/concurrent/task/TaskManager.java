@@ -5,7 +5,6 @@ import utilities.concurrent.thread.NamedThreadFactory;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +23,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
         super.setMaximumPoolSize(MAX_THREAD_COUNT);
         super.setKeepAliveTime(KEEP_ALIVE, TIME_UNIT);
         Runnable runnable = TaskManager.this::oneTimeTaskPurge;
-        ScheduledFuture scheduledFuture =  this.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
-        ScheduledTask scheduledTask = new InternalTask("Utilities", "Utilities - One Time Task Purger", runnable,  scheduledFuture);
-        TASK_LIST.put("Utilities", new ConcurrentHashMap<>());
-        TASK_LIST.get("Utilities").put("Utilities - One Time Task Purger", scheduledTask);
+        ScheduledTask scheduledTask = new ScheduledTask(this, "Utilities", "Utilities - One Time Task Purger", true, 30, 30, TimeUnit.SECONDS, runnable);
     }
 
     public ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> getTASK_LIST() {
@@ -97,7 +93,7 @@ public class TaskManager extends ScheduledThreadPoolExecutor{
         for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : scheduledTaskOwner.entrySet()){
             String s = scheduledTaskEntry.getKey().toLowerCase();
             if (s.equalsIgnoreCase(taskOwner)){
-                scheduledTaskOwner.remove(s).removeDeactivate();
+                scheduledTaskOwner.remove(s).getScheduledFuture().cancel(true);
             }
         }
     }

@@ -37,7 +37,7 @@ import java.util.Map;
 public class StarboundConfiguration {
 
     private final StarboundManager STARBOUND_MANAGEMENT;
-    private final String STARBOUND_CONFIGURATION = "storage_unstable/";
+    private final String STARBOUND_CONFIGURATION = "storage_unstable/starbound_server.config";
     private final String STARBOUND_CONFIGURATION_BACKUP;
     private final File STARBOUND_CONFIGURATION_FILE;
     private final File STARBOUND_CONFIGURATION_FILE_BACKUP;
@@ -56,7 +56,11 @@ public class StarboundConfiguration {
         this.STARBOUND_CONFIGURATION_BACKUP = STARBOUND_CONFIGURATION + ".bak";
         this.STARBOUND_CONFIGURATION_FILE = new File(STARBOUND_CONFIGURATION);
         if (!STARBOUND_CONFIGURATION_FILE.exists()){
-            throw new FileNotFoundException();
+            try {
+                generateConfiguration();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         this.STARBOUND_CONFIGURATION_FILE_BACKUP= new File(STARBOUND_CONFIGURATION_BACKUP);
     }
@@ -147,6 +151,7 @@ public class StarboundConfiguration {
         try  (FileWriter fileWrite = new FileWriter(STARBOUND_CONFIGURATION)){
             fileWrite.write(JSONPrettyPrint.toJSONString(jsonObject));
             fileWrite.flush();
+            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Configuring_Starbound_Complete", STARBOUND_CONFIGURATION_BACKUP);
         } catch (IOException e){
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Configuring_Starbound_Failed_Saving", STARBOUND_CONFIGURATION_BACKUP);
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Configuring_Starbound_Restoring_Configuration", STARBOUND_CONFIGURATION_BACKUP);

@@ -172,6 +172,19 @@ public abstract class Packet {
      * Uses: This will send this packet to multiple people
      *
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     */
+    public void routeToGroup(HashSet<ChannelHandlerContext> sendList) {
+        for (ChannelHandlerContext ctx : sendList) {
+            ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise());
+        }
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
      * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
      */
     public void routeToGroup(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
@@ -210,7 +223,7 @@ public abstract class Packet {
      *
      * @return ByteBuf representing the ByteBuf to write to socket
      */
-    private ByteBuf packetToMessageEncoder() {
+    protected ByteBuf packetToMessageEncoder() {
         ByteBuf msgOut = PooledByteBufAllocator.DEFAULT.directBuffer();
         this.write(msgOut);
         int payloadLengthOut = msgOut.readableBytes();

@@ -13,12 +13,7 @@ EDEN SPACE FAST USASE
 //Disconnect from ship if player logs off
 //Payer session permination time update
 
-///////// THIS IS FOR ESSENTIALS PLUGIN ////////////////
-        jsonObject.put("gamePort", ((Map)StarNub.getConfiguration().getConfiguration().get("starnubserver settings")).get("starbound_port"));
-        jsonObject.put("serverName", ((Map)StarNub.getConfiguration().getConfiguration().get("starbounddata.packets.starbounddata.packets.starnubserver info")).get("server_name"));
-        jsonObject.put("maxPlayers", (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit") +
-                (int) ((Map) StarNub.getConfiguration().getConfiguration().get("resources")).get("player_limit_reserved") +
-                2);
+//http://community.playstarbound.com/index.php?resources/wavediver-luthier-instrument-pack.2153/
 //plugin sql db connector
 //Warp packets delay to starbound
 // Remove exception throws as much as possble bad! - Resource usage

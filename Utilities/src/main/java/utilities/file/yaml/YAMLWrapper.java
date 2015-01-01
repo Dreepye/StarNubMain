@@ -531,23 +531,11 @@ public class YAMLWrapper extends YAMLFile {
      */
     @SuppressWarnings("unchecked")
     private Object mapUnwrapper(String... keys) {
-    HashMap<String, Object> tempHashMap = null;
-    int index = 0;
-    int keysLastIndex = keys.length - 1;
-    boolean firstLoop = true;
-        while (index < keysLastIndex) {
-            if (firstLoop) {
-                firstLoop = false;
-                tempHashMap = (HashMap<String, Object>) DATA.get(keys[index]);
-            } else {
-                tempHashMap = (HashMap<String, Object>) tempHashMap.get(keys[index]);
-            }
-            index++;
+        Object tempObject = getDATA();
+        for(String key : keys){
+            tempObject = ((Map<String, Object>) tempObject).get(key);
         }
-        if (tempHashMap != null) {
-            return tempHashMap.get(keys[index]);
-        }
-        return null;
+        return tempObject;
     }
 
     /**

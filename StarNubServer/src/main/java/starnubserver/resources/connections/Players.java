@@ -311,11 +311,36 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         return OPERATORS;
     }
 
+    public HashSet<ChannelHandlerContext> getOnlinePlayersCtxs(){
+        return this.keySet().stream().collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public HashSet<PlayerSession> getOnlinePlayersSessions(){
+        return this.values().stream().collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public HashSet<PlayerCharacter> getOnlinePlayersCharacters(){
+        return  this.values().stream().map(PlayerSession::getPlayerCharacter).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public HashSet<UUID> getOnlinePlayersUuids(){
+        return this.values().stream().map(playerSession -> playerSession.getPlayerCharacter().getUuid()).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public void disconnectAllPlayers(DisconnectReason reason){
+        for (Entry<ChannelHandlerContext, PlayerSession> entry : this.entrySet()){
+            ChannelHandlerContext key = entry.getKey();
+            PlayerSession playerSession = entry.getValue();
+            playerSession.disconnectReason(reason);
+            this.remove(key);
+        }
+    }
+
     /**
      * Recommended: For connections use with StarNub.
      * <p>
      * Uses: This method will go through each online player, and update the database Played time counter as well
-     * as the last seen Date. This ensures that the time is accurate in case of critical crash of the starbounddata.packets.starbounddata.packets.starnubserver tool
+     * as the last seen Date. This ensures that the time is accurate in case of critical crash of the starnubserver tool
      * or improper restart.
      * <p>
      */

@@ -57,9 +57,11 @@ public class Starting extends StarboundStatus {
             }
             boolean running = startUpListener(ipAddress, port);
             if (running) {
+                STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Online", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getRUNNING());
                 return true;
             } else {
+                STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Could_Not_Start", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
                 return false;
             }
@@ -76,17 +78,7 @@ public class Starting extends StarboundStatus {
      */
     @Override
     public boolean isAlive() {
-        boolean isAlive = false;
-        try {
-            isAlive = STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().isAlive();
-        }catch (NullPointerException e){
-            /* Silent Catch */
-        }
-        if (!isAlive){
-            STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
-            STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
-        }
-        return isAlive;
+        return super.isAlive();
     }
 
     /**

@@ -1,5 +1,6 @@
 package utilities.concurrent.task;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -9,28 +10,33 @@ import java.util.concurrent.TimeUnit;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public abstract class ScheduledTask {
+public class ScheduledTask {
+
+    protected final TaskManager TASK_MANAGER;
 
     protected final String OWNER;
     protected final String NAME;
     protected final Runnable RUNNABLE;
     protected ScheduledFuture<?> scheduledFuture;
 
-    public ScheduledTask(String OWNER, String NAME, Runnable RUNNABLE, ScheduledFuture<?> scheduledFuture) {
+    public ScheduledTask(TaskManager TASK_MANAGER, String OWNER, String NAME, Runnable RUNNABLE, ScheduledFuture<?> scheduledFuture) {
+        this.TASK_MANAGER = TASK_MANAGER;
         this.OWNER = OWNER;
         this.NAME = NAME;
         this.RUNNABLE = RUNNABLE;
         this.scheduledFuture = scheduledFuture;
     }
 
-    public ScheduledTask(String OWNER, String NAME, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
+    public ScheduledTask(TaskManager TASK_MANAGER, String OWNER, String NAME, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
+        this.TASK_MANAGER = TASK_MANAGER;
         this.OWNER = OWNER;
         this.NAME = NAME;
         this.RUNNABLE = RUNNABLE;
         scheduleTask(timeDelay, timeUnit);
     }
 
-    public ScheduledTask(String OWNER, String NAME, boolean fixedDelay, long initialDelay, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
+    public ScheduledTask(TaskManager TASK_MANAGER, String OWNER, String NAME, boolean fixedDelay, long initialDelay, long timeDelay, TimeUnit timeUnit, Runnable RUNNABLE) {
+        this.TASK_MANAGER = TASK_MANAGER;
         this.OWNER = OWNER;
         this.NAME = NAME;
         this.RUNNABLE = RUNNABLE;
@@ -61,17 +67,47 @@ public abstract class ScheduledTask {
         this.scheduledFuture = scheduledFuture;
     }
 
-    public abstract void scheduleTask(long timeDelay, TimeUnit timeUnit);
-
-    public abstract void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit);
-
-    public abstract void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit);
-
-    public void removeDeactivate(){
-        scheduledFuture.cancel(true);
-        removeTask();
+    public void scheduleTask(long timeDelay, TimeUnit timeUnit){
+        TASK_MANAGER.schedule(RUNNABLE, timeDelay, timeUnit);
     }
 
-    public abstract void removeTask();
+    public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit){
+        TASK_MANAGER.scheduleAtFixedRate(RUNNABLE, initialDelay, timeDelay, timeUnit);
+    }
 
+    public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit){
+        TASK_MANAGER.scheduleWithFixedDelay(RUNNABLE, initialDelay, timeDelay, timeUnit);
+    }
+
+    /**
+     * Recommended: For connections use with StarNub.
+     *
+     * Uses: This will insert this task into the task list
+     */
+    private void insertTaskList() {
+        ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
+        if (!taskList.containsKey(OWNER)){
+            taskList.put(OWNER, new ConcurrentHashMap<>());
+        }
+        ConcurrentHashMap<String, ScheduledTask> stg = taskList.get(OWNER);
+        int inc = 0;
+        do {
+            String taskNameOriginal = NAME + " - " + inc;
+            if (!stg.containsKey(taskNameOriginal)) {
+                stg.putIfAbsent(taskNameOriginal, this);
+                break;
+            }
+            inc++;
+        } while (true);
+    }
+
+    public void removeTask(){
+        ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
+        ConcurrentHashMap<String, ScheduledTask> ownerTaskMap = taskList.get(OWNER);
+        ownerTaskMap.remove(NAME);
+        if (ownerTaskMap.size() == 0){
+            taskList.remove(OWNER);
+        }
+        scheduledFuture.cancel(true);
+    }
 }

@@ -28,5 +28,6 @@ public enum DisconnectReason {
     CHARACTER_LOG_IN,
     DECODER_CLOSED,
     DECODER_CLOSED_NO_DECODING,
+    RESTARTING,
     OTHER
 }

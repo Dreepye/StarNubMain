@@ -21,13 +21,11 @@ package utilities.cache.wrappers;
 
 
 import utilities.cache.objects.TimeCache;
-import utilities.concurrent.task.InternalTask;
 import utilities.concurrent.task.ScheduledTask;
 import utilities.concurrent.task.TaskManager;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -271,12 +269,9 @@ public abstract class CacheWrapper<E1> {
         if (CACHE_PRUNE_TASK_TIME != 0) {
             Runnable runnable = this::cachePrune;
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-                ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
-                String taskName = String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME);
-                ScheduledTask scheduledTask = new InternalTask(CACHE_OWNER, taskName, runnable,  scheduledFuture);
                 TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
-                taskManager.getTASK_LIST().put(CACHE_OWNER, new ConcurrentHashMap<>());
-                taskManager.getTASK_LIST().get(CACHE_OWNER).put(taskName, scheduledTask);
+                String taskName = String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME);
+                new ScheduledTask(taskManager, "Utilities", taskName, true, 5, 5, TimeUnit.MINUTES, runnable);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }
@@ -301,12 +296,9 @@ public abstract class CacheWrapper<E1> {
         if (CACHE_PURGE_TAKE_TIME != 0) {
             Runnable runnable = this::cachePurge;
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
-                ScheduledFuture scheduledFuture =  SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, 30, 30, TimeUnit.SECONDS);
-                String taskName = String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME);
-                ScheduledTask scheduledTask = new InternalTask(CACHE_OWNER, taskName, runnable,  scheduledFuture);
                 TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
-                taskManager.getTASK_LIST().put(CACHE_OWNER, new ConcurrentHashMap<>());
-                taskManager.getTASK_LIST().get(CACHE_OWNER).put(taskName, scheduledTask);
+                String taskName = String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME);
+                new ScheduledTask(taskManager, "Utilities", taskName, true, 5, 5, TimeUnit.MINUTES, runnable);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }

@@ -21,6 +21,7 @@ package starnubserver.servers.starbound;
 import starboundmanager.StarboundManager;
 import starboundmanager.StarboundStatus;
 import starnubserver.StarNub;
+import starnubserver.StarNubTaskManager;
 import starnubserver.events.starnub.StarNubEventRouter;
 import utilities.file.simplejson.parser.ParseException;
 
@@ -51,13 +52,11 @@ public class StarboundServer extends StarboundManager {
      * This constructor is private - Singleton Pattern
      */
     private StarboundServer() {
-        super(StarNubEventRouter.getInstance());
+        super(StarNubEventRouter.getInstance(), StarNubTaskManager.getInstance());
         String operatingSystem = this.getOPERATING_SYSTEM();
         if (operatingSystem.equals("Linux")){
             this.isLinux = true;
         }
-
-
     }
 
     public static StarboundServer getInstance() {
@@ -136,11 +135,9 @@ public class StarboundServer extends StarboundManager {
     public boolean start() throws IOException, ParseException {
         configurationGenerator();
         configureConfiguration();
-        int starnubPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starnub_port");
-        return start("127.0.0.1", starnubPort, false, false);
+        int starboundPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
+        return start("127.0.0.1", starboundPort, false, false);
     }
-
-
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -170,6 +167,11 @@ public class StarboundServer extends StarboundManager {
         return super.isAlive();
     }
 
+    public boolean isResponsive(int queryAttempts){
+        int starboundPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
+        return isResponsive("127.0.0.1", starboundPort, queryAttempts);
+    }
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
@@ -184,6 +186,11 @@ public class StarboundServer extends StarboundManager {
     @Override
     public boolean isResponsive(String ipAddress, int port, int queryAttempts) {
         return super.isResponsive(ipAddress, port, queryAttempts);
+    }
+
+    public boolean restart(){
+        int starboundPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
+        return restart("127.0.0.1", starboundPort, false, false);
     }
 
     /**

@@ -18,6 +18,7 @@
 
 package starboundmanager;
 
+import utilities.concurrent.task.TaskManager;
 import utilities.events.EventRouter;
 import utilities.events.types.ObjectEvent;
 import utilities.file.simplejson.parser.ParseException;
@@ -47,7 +48,11 @@ public class StarboundManager extends StarboundServerExe {
     protected int serverVersion;
 
     protected final EventRouter EVENT_ROUTER;
+    protected final TaskManager TASK_MANAGER;
     protected final boolean EVENT_MESSAGE;
+
+    private long startTime = 0L;
+    private boolean restarting = false;
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -57,7 +62,7 @@ public class StarboundManager extends StarboundServerExe {
      *
      * @param EVENT_ROUTER EventRouter an event router from the Utilities Library
      */
-    public StarboundManager(EventRouter EVENT_ROUTER) {
+    public StarboundManager(EventRouter EVENT_ROUTER, TaskManager TASK_MANAGER) {
         super();
         this.STOPPED = new Stopped(this);
         this.STARTING = new Starting(this);
@@ -65,6 +70,7 @@ public class StarboundManager extends StarboundServerExe {
         this.UNRESPONSIVE = new Unresponsive(this);
         this.STOPPING = new Stopping(this);
         this.EVENT_ROUTER = EVENT_ROUTER;
+        this.TASK_MANAGER = TASK_MANAGER;
         this.EVENT_MESSAGE = EVENT_ROUTER != null;
         this.status = STOPPED;
     }
@@ -214,6 +220,18 @@ public class StarboundManager extends StarboundServerExe {
         this.serverVersion = serverVersion;
     }
 
+    protected void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public boolean isRestarting() {
+        return restarting;
+    }
+
+    public void setRestarting(boolean restarting) {
+        this.restarting = restarting;
+    }
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
@@ -237,7 +255,7 @@ public class StarboundManager extends StarboundServerExe {
      * @return boolean representing if the Starbound process is alive
      */
     public boolean isAlive(){
-        return status.isAlive();
+        return status.isAlive();// Runnable
     }
 
     /**
@@ -252,18 +270,18 @@ public class StarboundManager extends StarboundServerExe {
      * @return boolean representing if the starbound starnubdata.network is responsive
      */
     public boolean isResponsive(String ipAddress, int port, int queryAttempts){
-        return status.isResponsive(ipAddress, port, queryAttempts);
+        return status.isResponsive(ipAddress, port, queryAttempts);// Runnable
     }
 
     public long getStartTime(){
-        return status.getStartTime();
+        return startTime;
     }
 
     public long getUptime(){
-        if (status.getStartTime() == 0){
+        if (startTime == 0){
             return 0;
         } else {
-            return System.currentTimeMillis() - status.getStartTime();
+            return System.currentTimeMillis() - startTime;
         }
     }
 

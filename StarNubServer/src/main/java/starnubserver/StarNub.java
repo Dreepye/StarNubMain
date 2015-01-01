@@ -49,14 +49,14 @@ public final class StarNub {
     private static final Configuration CONFIGURATION = Configuration.getInstance();
     private static final MultiOutputLogger LOGGER = MultiOutputLogger.getInstance();
     private static final Connections CONNECTIONS = Connections.getInstance();
-    private static final StarNubVersion VERSION_INSTANCE = StarNubVersion.getInstance();
+    private static final StarNubVersion VERSION = StarNubVersion.getInstance();
     private static final PluginManager PLUGIN_MANAGER = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
     private StarNub() {}
 
-    public static Connections getConnections() {
-        return CONNECTIONS;
+    public static long getStarnubStartTime() {
+        return STARNUB_START_TIME;
     }
 
     public static ResourceManager getResourceManager() {
@@ -71,8 +71,16 @@ public final class StarNub {
         return LOGGER;
     }
 
-    public static StarNubVersion getVersionInstance() {
-        return VERSION_INSTANCE;
+    public static Connections getConnections() {
+        return CONNECTIONS;
+    }
+
+    public static StarNubVersion getVersion() {
+        return VERSION;
+    }
+
+    public static PluginManager getPluginManager() {
+        return PLUGIN_MANAGER;
     }
 
     public static StarboundServer getStarboundServer() {
@@ -92,9 +100,7 @@ public final class StarNub {
 
         GroupsManagement.getInstance().groupSetup();
 
-        PluginManager pluginManager = PluginManager.getInstance();
-
-        pluginManager.loadAllPlugins(false, true);
+        PluginManager.getInstance().loadAllPlugins(false, true);
 
         setUptimeTask();
 

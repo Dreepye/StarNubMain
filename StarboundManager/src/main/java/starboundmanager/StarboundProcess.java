@@ -21,6 +21,7 @@ package starboundmanager;
 import utilities.events.types.StringEvent;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -50,8 +51,10 @@ public class StarboundProcess implements Runnable {
      * @throws IOException an exception if we cannot build the process
      */
     StarboundProcess(StarboundManager STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder(STARBOUND_MANAGEMENT.getFilePath());
+        String filePath = STARBOUND_MANAGEMENT.getFilePath();
+        ProcessBuilder processBuilder = new ProcessBuilder(filePath);
         processBuilder.redirectErrorStream(true);
+        processBuilder.directory(new File(filePath.substring(0, filePath.indexOf("/") + 1)));
         this.STREAM_EVENT_MESSAGE = STREAM_EVENT_MESSAGE && STARBOUND_MANAGEMENT.EVENT_ROUTER !=null;
         this.STREAM_CONSOLE_PRINT = STREAM_CONSOLE_PRINT;
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
