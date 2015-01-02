@@ -146,7 +146,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             case READ_PAYLOAD: {
                 if (packet != null) {
                     HashSet<EventSubscription> hashSet = PACKET_EVENT_ROUTER.getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
-                    /* Handle Packet if there is an event handler for it, else do not create objects */
+                    /* Handle Packet if there is an events handler for it, else do not create objects */
                     if (hashSet != null) {
                         in.skipBytes(1 + vlqLength);
                         if (compressed) {

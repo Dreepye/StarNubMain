@@ -1,7 +1,7 @@
 package starnubserver.events.starnub;
 
-import starnubserver.events.events.StarNubEvent;
 import utilities.events.EventHandler;
+import utilities.events.types.ObjectEvent;
 
 /**
  * Represents StarNubs StarNubEventHandler that handles {@link utilities.events.types.Event} the
@@ -10,7 +10,7 @@ import utilities.events.EventHandler;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public abstract class StarNubEventHandler extends EventHandler<StarNubEvent> {
+public abstract class StarNubEventHandler extends EventHandler<ObjectEvent> {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -24,9 +24,9 @@ public abstract class StarNubEventHandler extends EventHandler<StarNubEvent> {
      *                  //Do Stuff, player.disconnect();
      *              }
      *
-     * @param eventData Event representing the event being shared
+     * @param eventData Event representing the events being shared
      */
     @Override
-    public abstract void onEvent(StarNubEvent eventData);
+    public abstract void onEvent(ObjectEvent eventData);
 
 }

@@ -315,13 +315,13 @@ public abstract class CacheWrapper<E1> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
-     * Uses: This will execute the registerEvents() method which will register any event listeners with starnubserver which
-     * will enable auto cache removal based on the event and the implementers event method(s).
+     * Uses: This will execute the registerEvents() method which will register any events listeners with starnubserver which
+     * will enable auto cache removal based on the events and the implementers events method(s).
      * <p/>
      */
     public void startEventListener() {
         if (REGISTER_EVENTS) {
-            /* Subscribe any starnubdata.events router in this method to the event listeners contained within */
+            /* Subscribe any starnubdata.events router in this method to the events listeners contained within */
             registerEvents();
         }
     }

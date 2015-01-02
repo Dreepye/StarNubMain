@@ -37,11 +37,11 @@
 //    /**
 //     * Recommended: For Plugin Developers & Anyone else.
 //     * <p>
-//     * Uses: This will set up an event subscription but it will not be registered, you must invoke submitRegistration
+//     * Uses: This will set up an events subscription but it will not be registered, you must invoke submitRegistration
 //     *
 //     * @param SUBSCRIBER_NAME String representing the subscribers name
 //     * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
-//     * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
+//     * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
 //     */
 //    public StarNubEventSubscription(String SUBSCRIBER_NAME, String EVENT_KEY, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
 //        super(SUBSCRIBER_NAME, EVENT_HANDLER);
@@ -51,12 +51,12 @@
 //    /**
 //     * Recommended: For Plugin Developers & Anyone else.
 //     * <p>
-//     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register
+//     * Uses: This will set up an events subscription and register it if you supplied a true boolean for the value register
 //     *
 //     * @param SUBSCRIBER_NAME String representing the subscribers name
 //     * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
-//     * @param register boolean do you want to auto register this event
-//     * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
+//     * @param register boolean do you want to auto register this events
+//     * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
 //     */
 //    public StarNubEventSubscription(String SUBSCRIBER_NAME, String EVENT_KEY, boolean register, StarNubEventHandler<Event<String>> EVENT_HANDLER) {
 //        super(SUBSCRIBER_NAME, EVENT_HANDLER);

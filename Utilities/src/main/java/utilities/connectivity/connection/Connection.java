@@ -98,7 +98,7 @@ public abstract class Connection {
      * <p>
      * Uses: This will either print to console or send starnubdata.events
      *
-     * @param eventKey String representing the event key or console leading name
+     * @param eventKey String representing the events key or console leading name
      * @param eventData Object representing the data
      */
     @SuppressWarnings("unchecked")

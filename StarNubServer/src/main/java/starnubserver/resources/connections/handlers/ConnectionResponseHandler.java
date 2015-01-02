@@ -122,7 +122,7 @@ public class ConnectionResponseHandler extends PacketEventHandler {
      * Uses: This will handle post processing of this connection
      *
      * @param playerSession Player representing the player being post processed
-     * @param eventKey String representing the event key for the event
+     * @param eventKey String representing the events key for the events
      * @param consoleMessage String representing the console message to print
      */
     private void rejectedProcess(PlayerSession playerSession, String eventKey, String consoleMessage) {

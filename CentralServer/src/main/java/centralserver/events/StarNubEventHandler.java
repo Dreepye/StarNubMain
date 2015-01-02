@@ -44,8 +44,8 @@
 //     *              }
 //     *       - YOU DO NOT HAVE TO RETURN THE EVENT.
 //     *
-//     * @param eventData Event representing the event being shared
-//     * @return Event you are not required to return the event
+//     * @param eventData Event representing the events being shared
+//     * @return Event you are not required to return the events
 //     */
 //    @Override
 //    public abstract void onEvent(Event<String> eventData);

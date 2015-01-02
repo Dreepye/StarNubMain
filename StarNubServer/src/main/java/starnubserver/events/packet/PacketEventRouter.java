@@ -43,7 +43,7 @@ public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Pack
     /**
      * This is not used
      *
-     * @param event T2 event data of some type
+     * @param event T2 events data of some type
      */
     @Override
     public void eventNotifyNullCheck(Packet event) {

@@ -10,6 +10,4 @@ package utilities.events;
 public abstract class EventHandler<T> {
 
     public abstract void onEvent(T eventData);
-
-
 }

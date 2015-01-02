@@ -21,10 +21,10 @@ package starnubserver.cache.wrappers;
         import io.netty.channel.ChannelHandlerContext;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.DisconnectData;
-import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import utilities.events.Priority;
+import utilities.events.types.ObjectEvent;
 
 import java.util.concurrent.TimeUnit;
 
@@ -99,7 +99,7 @@ public class PlayerCtxCacheWrapper extends StarNubCacheWrapper<ChannelHandlerCon
     public void registerEvents() {
         new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Disconnected", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
                 PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
                 removeCacheEvent(playerSession);

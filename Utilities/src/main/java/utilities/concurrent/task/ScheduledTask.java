@@ -1,5 +1,6 @@
 package utilities.concurrent.task;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -68,17 +69,17 @@ public class ScheduledTask {
     }
 
     public void scheduleTask(long timeDelay, TimeUnit timeUnit){
-        TASK_MANAGER.schedule(RUNNABLE, timeDelay, timeUnit);
+        scheduledFuture = TASK_MANAGER.schedule(RUNNABLE, timeDelay, timeUnit);
         insertTaskList();
     }
 
     public void scheduleRepeatingTask(long initialDelay, long timeDelay, TimeUnit timeUnit){
-        TASK_MANAGER.scheduleAtFixedRate(RUNNABLE, initialDelay, timeDelay, timeUnit);
+        scheduledFuture = TASK_MANAGER.scheduleAtFixedRate(RUNNABLE, initialDelay, timeDelay, timeUnit);
         insertTaskList();
     }
 
     public void scheduleRepeatingFixedDelayTask(long initialDelay, long timeDelay, TimeUnit timeUnit){
-        TASK_MANAGER.scheduleWithFixedDelay(RUNNABLE, initialDelay, timeDelay, timeUnit);
+        scheduledFuture = TASK_MANAGER.scheduleWithFixedDelay(RUNNABLE, initialDelay, timeDelay, timeUnit);
         insertTaskList();
     }
 
@@ -107,7 +108,13 @@ public class ScheduledTask {
     public void removeTask(){
         ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
         ConcurrentHashMap<String, ScheduledTask> ownerTaskMap = taskList.get(OWNER);
-        ownerTaskMap.remove(NAME);
+        for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : ownerTaskMap.entrySet()){
+            String key = scheduledTaskEntry.getKey();
+            ScheduledTask scheduledTask = scheduledTaskEntry.getValue();
+            if (scheduledTask.equals(this)){
+                ownerTaskMap.remove(key);
+            }
+        }
         if (ownerTaskMap.size() == 0){
             taskList.remove(OWNER);
         }

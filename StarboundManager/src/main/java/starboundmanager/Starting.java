@@ -41,7 +41,7 @@ public class Starting extends StarboundStatus {
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
-     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
+     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an events router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
      * @return boolean representing if the starnubdata.network started
      */
@@ -59,6 +59,7 @@ public class Starting extends StarboundStatus {
             if (running) {
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getRUNNING());
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Online", STARBOUND_MANAGEMENT);
+                STARBOUND_MANAGEMENT.setStartTime(System.currentTimeMillis());
                 return true;
             } else {
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());

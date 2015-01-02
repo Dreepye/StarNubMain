@@ -58,9 +58,9 @@ public class StarboundManager extends StarboundServerExe {
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
      * Uses: This will construct a StarboundManagement with an EventRouter, if non is provided by using null then
-     * it will ignore not having an event router.
+     * it will ignore not having an events router.
      *
-     * @param EVENT_ROUTER EventRouter an event router from the Utilities Library
+     * @param EVENT_ROUTER EventRouter an events router from the Utilities Library
      */
     public StarboundManager(EventRouter EVENT_ROUTER, TaskManager TASK_MANAGER) {
         super();
@@ -169,7 +169,7 @@ public class StarboundManager extends StarboundServerExe {
      * <p>
      * Uses: This will set the Starbound Server version
      *
-     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
+     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an events router
      * @throws IOException
      */
     protected void setStarboundProcess(boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
@@ -239,7 +239,7 @@ public class StarboundManager extends StarboundServerExe {
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
-     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
+     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an events router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
      * @return boolean representing if the starnubdata.network started
      */
@@ -292,7 +292,7 @@ public class StarboundManager extends StarboundServerExe {
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
-     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
+     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an events router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
      * @return boolean representing if the starnubdata.network STOPPED and started successfully
      */
@@ -348,7 +348,7 @@ public class StarboundManager extends StarboundServerExe {
      * <p>
      * Uses: This will either print to console or send starnubdata.events
      *
-     * @param eventKey String representing the event key or console leading name
+     * @param eventKey String representing the events key or console leading name
      * @param eventData Object representing the data
      */
     @SuppressWarnings("unchecked")

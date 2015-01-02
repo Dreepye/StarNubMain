@@ -39,11 +39,11 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription but it will be automatically registered
+     * Uses: This will set up an events subscription but it will be automatically registered
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
-     * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
+     * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
      */
     @SuppressWarnings("unchecked")
     public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, EventHandler EVENT_HANDLER) {
@@ -57,12 +57,12 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register
+     * Uses: This will set up an events subscription and register it if you supplied a true boolean for the value register
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
-     * @param register boolean do you want to auto register this event
-     * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
+     * @param register boolean do you want to auto register this events
+     * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
      */
     @SuppressWarnings("unchecked")
     public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, EventHandler EVENT_HANDLER) {

@@ -8,6 +8,7 @@ import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import starnubserver.resources.NameBuilder;
 import utilities.events.Priority;
+import utilities.events.types.ObjectEvent;
 import utilities.strings.StringUtilities;
 import utilities.time.DateAndTimes;
 
@@ -166,7 +167,7 @@ public class MultiOutputLogger {
     public void eventListenerRegistration() {
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Event", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logEvent) {
                     case 0: { /* Not Logging */
@@ -191,7 +192,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Debug", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logDebug) {
                     case 0: { /* Not Logging */
@@ -216,7 +217,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Chat", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logChat) {
                     case 0: { /* Not Logging */
@@ -241,7 +242,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Command", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logCommand) {
                     case 0: { /* Not Logging */
@@ -266,7 +267,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Information", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logInformation) {
                     case 0: { /* Not Logging */
@@ -291,7 +292,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Warning", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logWarning) {
                     case 0: { /* Not Logging */
@@ -316,7 +317,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Error", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logError) {
                     case 0: { /* Not Logging */
@@ -342,7 +343,7 @@ public class MultiOutputLogger {
 
         new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Fatal", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 String logString = (String) eventData.getEVENT_DATA();
                 switch (logFatal) {
                     case 0: { /* Not Logging */

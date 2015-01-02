@@ -17,6 +17,6 @@
  */
 
 /**
- * utilities.starnubdata.events is the package containing all of the abstract event classes
+ * utilities.starnubdata.events is the package containing all of the abstract events classes
  */
 package utilities.events;

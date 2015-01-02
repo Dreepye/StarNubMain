@@ -39,11 +39,11 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription ane it will be automatically be registered.
+     * Uses: This will set up an events subscription ane it will be automatically be registered.
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
-     * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
+     * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
      */
     public PacketEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, Class<? extends Packet> EVENT_KEY, PacketEventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
@@ -56,12 +56,12 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an event subscription and register it if you supplied a true boolean for the value register else you must getResults .submitRegistration();
+     * Uses: This will set up an events subscription and register it if you supplied a true boolean for the value register else you must getResults .submitRegistration();
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
-     * @param register boolean do you want to auto register this event
-     * @param EVENT_HANDLER EventHandler representing the event handler that will do some logic you choose to write
+     * @param register boolean do you want to auto register this events
+     * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
      */
     public PacketEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, Class<? extends Packet> EVENT_KEY, boolean register, PacketEventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,

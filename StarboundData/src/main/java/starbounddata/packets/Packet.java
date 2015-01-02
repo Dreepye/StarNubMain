@@ -104,7 +104,7 @@ public abstract class Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: Setting this will cause the packet to stop being routed to event handlers and placed back into the packet pool with out
+     * Uses: Setting this will cause the packet to stop being routed to events handlers and placed back into the packet pool with out
      * being routed to the destination
      */
     public void recycle() {

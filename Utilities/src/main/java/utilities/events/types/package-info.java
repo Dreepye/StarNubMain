@@ -17,6 +17,6 @@
  */
 
 /**
- * utilities.starnubdata.events is the package containing all of the various event types
+ * utilities.starnubdata.events is the package containing all of the various events types
  */
 package utilities.events.types;

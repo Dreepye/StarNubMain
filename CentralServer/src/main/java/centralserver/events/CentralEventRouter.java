@@ -18,7 +18,7 @@
 //
 //package centralserver.starnubdata.events;
 //
-//import starnubdata.events.event.CentralEvent;
+//import starnubdata.events.events.CentralEvent;
 //import starnubdata.messages.StarNubMessage;
 //import starnubserver.StarNub;
 //import starnubserver.StarNubTask;
@@ -71,7 +71,7 @@
 //        int quePercentage = (int) (((double) eventsQue.remainingCapacity() / eventsQue.size()) * 100);
 //        while (quePercentage <= 10) {
 //            if (startNewRunnable()) {
-//                System.out.println("Starting new runnable to handle overloaded event que.");
+//                System.out.println("Starting new runnable to handle overloaded events que.");
 //            }
 //        }
 //        if (quePercentage <= 25) {
@@ -83,7 +83,7 @@
 //                    for (StarNubRunnable starNubRunnable : currentThreads) {
 //                        starNubRunnable.setShuttingDown(true);
 //                        currentThreads.remove(starNubRunnable);
-//                        System.out.println("Shutting down idle event thread.");
+//                        System.out.println("Shutting down idle events thread.");
 //                    }
 //                }
 //            }
@@ -125,22 +125,22 @@
 //        return true;
 //    }
 //
-//    public void eventNotify(Event<String> event){
-//        eventsQue.add(event);
+//    public void eventNotify(Event<String> events){
+//        eventsQue.add(events);
 //    }
 //
 //    @Override
 //    @SuppressWarnings("unchecked")
-//    public void handleEvent(Event<String> event) {
-//            String eventKey = event.getEVENT_KEY();
+//    public void handleEvent(Event<String> events) {
+//            String eventKey = events.getEVENT_KEY();
 //            HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
 //            if (eventSubscriptions != null){
 //                for (EventSubscription eventSubscription : eventSubscriptions){
-//                    eventSubscription.getEVENT_HANDLER().onEvent(event);
+//                    eventSubscription.getEVENT_HANDLER().onEvent(events);
 //                }
 //            }
 //            if (!eventKey.equals("StarNub_Log_Event") && StarNub.getLogger().isLogEvent()) {
-//                StarNub.getLogger().cEvePrint("StarNub", "Key: " + eventKey + ". Event Data Type: " + event.getClass().getSimpleName() + ".class. Event Data: " + event.getEVENT_DATA());
+//                StarNub.getLogger().cEvePrint("StarNub", "Key: " + eventKey + ". Event Data Type: " + events.getClass().getSimpleName() + ".class. Event Data: " + events.getEVENT_DATA());
 //            }
 //    }
 //}

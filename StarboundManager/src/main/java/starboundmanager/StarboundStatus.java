@@ -39,7 +39,7 @@ public abstract class StarboundStatus {
      *
      * @param ipAddress String representing the address to TCP Query
      * @param port int representing the port to query
-     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an event router
+     * @param STREAM_EVENT_MESSAGE boolean representing if you are going to send the Starbound stream through an events router
      * @param STREAM_CONSOLE_PRINT boolean representing if you are going to print out the Starbound stream through the console
      * @return boolean representing if the starbound server is started
      */
@@ -59,6 +59,7 @@ public abstract class StarboundStatus {
             if (!isAlive) {
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Crashed", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());
+                STARBOUND_MANAGEMENT.setStartTime(0);
             } else {
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Running", STARBOUND_MANAGEMENT);
                 return true;
@@ -85,6 +86,7 @@ public abstract class StarboundStatus {
             if (!isResponsive) {
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Unresponsive", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getUNRESPONSIVE());
+                STARBOUND_MANAGEMENT.setStartTime(0);
             } else {
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Responsive", STARBOUND_MANAGEMENT);
                 return true;
@@ -139,7 +141,6 @@ public abstract class StarboundStatus {
                     if (STARBOUND_MANAGEMENT.getServerVersion() == 0) {
                         STARBOUND_MANAGEMENT.setServerVersion(version);
                     }
-                    STARBOUND_MANAGEMENT.setStartTime(System.currentTimeMillis());
                     return true;
                 }
             } catch (IOException e) {
@@ -156,7 +157,6 @@ public abstract class StarboundStatus {
                 unresponsiveCount++;
             }
         }
-        STARBOUND_MANAGEMENT.setStartTime(0);
         return false;
     }
 }

@@ -24,12 +24,12 @@ import starnubserver.StarNubTask;
 import starnubserver.connections.player.session.PlayerSession;
 import starnubserver.events.events.PermissionChange;
 import starnubserver.events.events.PermissionEvent;
-import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventHandler;
 import starnubserver.events.starnub.StarNubEventSubscription;
 import starnubserver.resources.connections.Players;
 import utilities.cache.objects.BooleanCache;
 import utilities.events.Priority;
+import utilities.events.types.ObjectEvent;
 
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
@@ -71,7 +71,7 @@ public class PermissionCacheWrapper extends PlayerCtxCacheWrapper {
     public void playerConnectListener(){
         new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Connected", new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
                 addPermissionCache(playerSession);
             }
@@ -81,7 +81,7 @@ public class PermissionCacheWrapper extends PlayerCtxCacheWrapper {
     private void permissionModificationListener(){
         new StarNubEventSubscription("StarNub", Priority.HIGH, "Permission_Modification_" + PERMISSION, new StarNubEventHandler() {
             @Override
-            public void onEvent(StarNubEvent eventData) {
+            public void onEvent(ObjectEvent eventData) {
                 PermissionEvent permissionEvent = (PermissionEvent) eventData;
                 PermissionChange permissionChange = (PermissionChange) permissionEvent.getEVENT_DATA();
                 PlayerSession playerSession = permissionChange.getPLAYER_SESSION();

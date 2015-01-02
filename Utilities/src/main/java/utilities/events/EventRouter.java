@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  *
- * @param <T1> Representing the event key
- * @param <T2> Representing the event data
+ * @param <T1> Representing the events key
+ * @param <T2> Representing the events data
  * @param <T3> Representing the return type of the eventNotify() method
  */
 public abstract class EventRouter<T1, T2, T3> {
@@ -31,8 +31,8 @@ public abstract class EventRouter<T1, T2, T3> {
     /**
      * Provides a means for registering an {@link utilities.events.EventSubscription}
      *
-     * @param eventKey T1 representing the event key
-     * @param eventSubscription EventSubscription representing some event subscription
+     * @param eventKey T1 representing the events key
+     * @param eventSubscription EventSubscription representing some events subscription
      */
     @SuppressWarnings("unchecked")
     public void registerEventSubscription(T1 eventKey, EventSubscription eventSubscription){
@@ -52,7 +52,7 @@ public abstract class EventRouter<T1, T2, T3> {
     /**
      * Provides a means for removing an {@link utilities.events.EventSubscription} based on the subscribers name
      *
-     * @param subscriberName String representing the event subscriber
+     * @param subscriberName String representing the events subscriber
      */
     public void removeEventSubscription(String subscriberName) {
         for (T1 eventKey : EVENT_SUBSCRIPTION_MAP.keySet()) {
@@ -69,7 +69,7 @@ public abstract class EventRouter<T1, T2, T3> {
     /**
      * Provides a means for removing an {@link utilities.events.EventSubscription} based on the EventSubscription
      *
-     * @param eventSubscription EventSubscription representing the event subscriber
+     * @param eventSubscription EventSubscription representing the events subscriber
      */
     public void removeEventSubscription(EventSubscription eventSubscription){
         for (T1 eventKey : EVENT_SUBSCRIPTION_MAP.keySet()) {
@@ -84,23 +84,23 @@ public abstract class EventRouter<T1, T2, T3> {
     }
 
     /**
-     * This method must be extended and enhanced to handle event notification of specific data types which may vary
+     * This method must be extended and enhanced to handle events notification of specific data types which may vary
      *
-     * @param event T2 event data of some type
+     * @param event T2 events data of some type
      */
     public abstract void eventNotify(T2 event);
 
     /**
      * This method can be used to check if the Executors are null or now before submitting a task
      *
-     * @param event T2 event data of some type
+     * @param event T2 events data of some type
      */
     public abstract void eventNotifyNullCheck(T2 event);
 
     /**
      * This method must be extended and enhanced to handle starnubdata.events of specific data types which may vary
      *
-     * @param event T2 event data of some type
+     * @param event T2 events data of some type
      */
     public abstract void handleEvent(T2 event);
 

@@ -45,8 +45,8 @@ public class StarboundProcess implements Runnable {
      * <p>
      * Uses: This will build a new Starbound Process
      *
-     * @param STARBOUND_MANAGEMENT StarboundManagement representing the reference so that we can use the event router
-     * @param STREAM_EVENT_MESSAGE boolean representing if we print event starnubdata.messages to the event handler from the Starbound_Server.exe output stream
+     * @param STARBOUND_MANAGEMENT StarboundManagement representing the reference so that we can use the events router
+     * @param STREAM_EVENT_MESSAGE boolean representing if we print events starnubdata.messages to the events handler from the Starbound_Server.exe output stream
      * @param STREAM_CONSOLE_PRINT boolean representing if we should print console starnubdata.messages from the Starbound_Server.exe output stream
      * @throws IOException an exception if we cannot build the process
      */
