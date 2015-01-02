@@ -19,6 +19,7 @@
 package starnubserver.resources;
 
 import starnubserver.resources.tokens.StringToken;
+import starnubserver.resources.tokens.player.PlayerCount;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -37,13 +38,16 @@ public class StringTokens extends ConcurrentHashMap<String, StringToken>{
     private StringTokens() {
     }
 
+    public void registerInternalTokens(){
+        new PlayerCount();
+    }
+
     /**
      * This returns this Singleton - Singleton Pattern
      */
     public static StringTokens getInstance() {
         return instance;
     }
-
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -61,7 +65,12 @@ public class StringTokens extends ConcurrentHashMap<String, StringToken>{
         while (m.find()) {
             String shortcut = m.group().toLowerCase();
             StringToken stringToken = StringTokens.getInstance().get(shortcut);
-            Object results = stringToken.getResults();
+            Object results;
+            if (stringToken == null){
+                results =  "**TOKEN ERROR**";
+            } else {
+                results = stringToken.getResults();
+            }
             m.appendReplacement(sb, results.toString());
         }
         return m.appendTail(sb).toString();

@@ -25,7 +25,7 @@ import starnubserver.plugins.generic.CommandInfo;
 import starnubserver.plugins.generic.PluginDetails;
 import starnubserver.plugins.resources.PluginRunnables;
 import starnubserver.plugins.resources.YAMLFiles;
-import starnubserver.resources.files.PluginConfiguration;
+import starnubserver.plugins.resources.PluginConfiguration;
 
 import java.io.File;
 import java.io.IOException;

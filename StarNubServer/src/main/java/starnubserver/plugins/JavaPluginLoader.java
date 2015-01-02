@@ -26,7 +26,7 @@ import starnubserver.plugins.resources.PluginYAMLWrapper;
 import starnubserver.plugins.resources.StarNubRunnable;
 import starnubserver.plugins.resources.YAMLFiles;
 import starnubserver.resources.StarNubYamlWrapper;
-import starnubserver.resources.files.PluginConfiguration;
+import starnubserver.plugins.resources.PluginConfiguration;
 import utilities.dircectories.DirectoryCheckCreate;
 import utilities.file.utility.FileSizeMeasure;
 import utilities.file.utility.GetFileSize;

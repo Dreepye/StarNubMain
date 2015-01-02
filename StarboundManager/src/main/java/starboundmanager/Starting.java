@@ -60,6 +60,7 @@ public class Starting extends StarboundStatus {
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getRUNNING());
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Online", STARBOUND_MANAGEMENT);
                 STARBOUND_MANAGEMENT.setStartTime(System.currentTimeMillis());
+                STARBOUND_MANAGEMENT.setRestarting(false);
                 return true;
             } else {
                 STARBOUND_MANAGEMENT.setStatus(STARBOUND_MANAGEMENT.getSTOPPED());

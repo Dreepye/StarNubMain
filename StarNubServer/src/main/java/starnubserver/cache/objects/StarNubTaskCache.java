@@ -16,32 +16,20 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package starnubserver.resources.files;
+package starnubserver.cache.objects;
 
-import starnubserver.resources.StarNubYamlWrapper;
-import utilities.file.yaml.YAMLWrapper;
+import starnubserver.StarNubTask;
+import utilities.cache.objects.TimeCache;
 
-import java.io.InputStream;
+public class StarNubTaskCache extends TimeCache {
 
-/**
- * Represents StarNubs Configuration instance extending YAMLWrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class PluginConfiguration extends StarNubYamlWrapper {
+    private final StarNubTask STARNUB_TASK;
 
-    public PluginConfiguration(String pluginName, InputStream defaultPath) {
-        super(
-                pluginName,
-                pluginName.toLowerCase() + "_configuration.yml",
-                defaultPath,
-                "StarNub/Plugins/" + pluginName,
-                false,
-                true,
-                true,
-                true,
-                true
-        );
+    public StarNubTaskCache(StarNubTask STARNUB_TASK) {
+        this.STARNUB_TASK = STARNUB_TASK;
+    }
+
+    public StarNubTask getSTARNUB_TASK() {
+        return STARNUB_TASK;
     }
 }

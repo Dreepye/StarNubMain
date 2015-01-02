@@ -227,11 +227,17 @@ public class YAMLWrapper extends YAMLFile {
             if (!(objectToVerify instanceof Boolean)) {
                 if (objectToVerify instanceof String) {
                     return ((String) objectToVerify).toLowerCase().contains("yes") || !((String) objectToVerify).toLowerCase().contains("no") && Boolean.parseBoolean(objectToVerify.toString());
+                } else {
+                    return defaultObject;
                 }
             }
         } else if (defaultObject instanceof Float) {
             if (!(objectToVerify instanceof Float)) {
-                return Float.parseFloat(objectToVerify.toString());
+                try {
+                    return Float.parseFloat(objectToVerify.toString());
+                } catch (NumberFormatException e) {
+                    return defaultObject;
+                }
             }
         } else if (defaultObject instanceof Integer) {
             if (!(objectToVerify instanceof Integer)) {

@@ -23,6 +23,7 @@ import starnubserver.events.events.StarNubEvent;
 import starnubserver.logger.MultiOutputLogger;
 import starnubserver.plugins.PluginManager;
 import starnubserver.resources.ResourceManager;
+import starnubserver.resources.StringTokens;
 import starnubserver.resources.files.Configuration;
 import starnubserver.resources.files.GroupsManagement;
 import starnubserver.servers.starbound.StarboundServer;
@@ -103,6 +104,8 @@ public final class StarNub {
         PluginManager.getInstance().loadAllPlugins(false, true);
 
         setUptimeTask();
+
+        StringTokens.getInstance().registerInternalTokens();
 
         new StarNubEvent("StarNub_Startup_Complete", System.currentTimeMillis() - STARNUB_START_TIME);
 }

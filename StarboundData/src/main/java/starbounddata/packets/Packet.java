@@ -203,11 +203,24 @@ public abstract class Packet {
      * Uses: This will send this packet to multiple people
      *
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     */
+    public void routeToGroupNoFlush(HashSet<ChannelHandlerContext> sendList) {
+        for (ChannelHandlerContext ctx : sendList) {
+            ctx.write(packetToMessageEncoder(), ctx.voidPromise());
+        }
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
      * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
      */
     public void routeToGroupNoFlush(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
         if (ignoredList != null) {
-            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise()));
+            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.write(packetToMessageEncoder(), ctx.voidPromise()));
         } else {
             for (ChannelHandlerContext ctx : sendList) {
                 ctx.write(packetToMessageEncoder(), ctx.voidPromise());
