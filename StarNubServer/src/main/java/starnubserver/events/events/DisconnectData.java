@@ -38,4 +38,12 @@ public class DisconnectData {
     public DisconnectReason getDISCONNECT_REASON() {
         return DISCONNECT_REASON;
     }
+
+    @Override
+    public String toString() {
+        return "DisconnectData{" +
+                "PLAYER_SESSION=" + PLAYER_SESSION +
+                ", DISCONNECT_REASON=" + DISCONNECT_REASON +
+                '}';
+    }
 }

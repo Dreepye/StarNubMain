@@ -19,11 +19,13 @@
 package starnubserver.connections.player;
 
 import io.netty.channel.ChannelHandlerContext;
+import starnubdata.generic.DisconnectReason;
 import starnubserver.StarNub;
+import starnubserver.connections.player.session.PlayerSession;
+import starnubserver.events.events.DisconnectEvent;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.events.starnub.StarNubEventRouter;
 import utilities.connectivity.connection.ProxyConnection;
-import utilities.events.types.StringEvent;
 
 import java.io.IOException;
 
@@ -65,9 +67,9 @@ public class StarNubProxyConnection extends ProxyConnection {
         return CONNECTION_TYPE;
     }
 
-    public boolean disconnectReason(String reason) {
+    public boolean disconnectReason(PlayerSession playerSession, DisconnectReason reason) {
         boolean isConnectedCheck = super.disconnect();
-        new StringEvent("Player_Disconnect_" + reason, this);
+        new DisconnectEvent(playerSession, reason);
         return isConnectedCheck;
     }
 

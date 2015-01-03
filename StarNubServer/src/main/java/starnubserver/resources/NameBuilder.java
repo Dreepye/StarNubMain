@@ -18,8 +18,9 @@
 
 package starnubserver.resources;
 
-import starbounddata.types.color.GameColors;
 import starbounddata.packets.Packet;
+import starbounddata.types.color.GameColors;
+import starnubserver.StarNub;
 import starnubserver.connections.player.account.Settings;
 import starnubserver.connections.player.session.PlayerSession;
 
@@ -162,7 +163,6 @@ public class NameBuilder {
         if (nameToBuild instanceof Packet){
             nameToBuild = PlayerSession.getPlayerSession((Packet) nameToBuild);
         }
-
         if (nameToBuild instanceof PlayerSession) {
             PlayerSession playerSession = (PlayerSession) nameToBuild;
             if (console) {
@@ -172,12 +172,14 @@ public class NameBuilder {
             }
         } else if (nameToBuild instanceof String){
             String string = (String) nameToBuild;
-            if (string.equalsIgnoreCase("starboundmanager")){
+            if (string.equalsIgnoreCase("starbound")){
                 nameString = "Starbound";
-            } else if (string.equalsIgnoreCase("starnubserver")){
+            } else if (string.equalsIgnoreCase("starnub")){
                 nameString = "StarNub";
 //            } else if (StarNub.getPluginManager().hasPlugin(string)) {
 //                nameString = StarNub.getPluginManager().getPluginPackageClassNameString(string).getPLUGIN_NAME();
+            } else if (string.equalsIgnoreCase("servername")) {
+                StarNub.getConfiguration().getNestedValue("starnub_info", "server_name");
             } else {
                 nameString = string;
             }

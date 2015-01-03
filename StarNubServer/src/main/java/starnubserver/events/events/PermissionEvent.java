@@ -26,4 +26,9 @@ public class PermissionEvent extends StarNubEvent {
     public PermissionEvent(String EVENT_KEY, PlayerSession PLAYER_SESSION, Modification MODIFICATION) {
         super("Permission_Modification_" + EVENT_KEY, new PermissionChange(PLAYER_SESSION, MODIFICATION, EVENT_KEY));
     }
+
+    @Override
+    public String toString() {
+        return "PermissionEvent{} " + super.toString();
+    }
 }

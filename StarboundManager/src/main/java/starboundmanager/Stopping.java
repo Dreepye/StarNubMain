@@ -90,7 +90,6 @@ public class Stopping extends StarboundStatus {
     @Override
     public boolean stop() {
         STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().destroy();
-        ThreadSleep.timerSeconds(2);
         if (isAlive()){
             STARBOUND_MANAGEMENT.getStarboundProcess().getProcess().destroyForcibly();
             STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Shutdown_Error_Process", STARBOUND_MANAGEMENT);

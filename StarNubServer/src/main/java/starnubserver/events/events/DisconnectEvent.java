@@ -26,4 +26,9 @@ public class DisconnectEvent extends StarNubEvent{
     public DisconnectEvent(PlayerSession PLAYER_SESSION, DisconnectReason DISCONNECT_REASON) {
         super("Player_Disconnected", new DisconnectData(PLAYER_SESSION, DISCONNECT_REASON));
     }
+
+    @Override
+    public String toString() {
+        return "DisconnectEvent{} " + super.toString();
+    }
 }

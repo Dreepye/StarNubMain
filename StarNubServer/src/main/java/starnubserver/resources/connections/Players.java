@@ -23,10 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
 import starbounddata.packets.connection.ConnectResponsePacket;
+import starbounddata.packets.connection.ServerDisconnectPacket;
 import starbounddata.packets.container.BurnContainerPacket;
 import starbounddata.packets.container.StopCraftingInContainerPacket;
 import starbounddata.packets.dungeon.UpdateTileProtectionPacket;
-import starbounddata.packets.entity.CallScriptedEntityPacket;
 import starbounddata.packets.ship.FlyShipPacket;
 import starbounddata.packets.warp.PlayerWarp;
 import starbounddata.packets.wires.ConnectWirePacket;
@@ -43,6 +43,7 @@ import starnubserver.events.packet.PacketEventHandler;
 import starnubserver.events.packet.PacketEventSubscription;
 import starnubserver.resources.connections.handlers.ClientConnectHandler;
 import starnubserver.resources.connections.handlers.ConnectionResponseHandler;
+import starnubserver.resources.connections.handlers.ServerDisconnectHandler;
 import starnubserver.resources.files.Operators;
 import utilities.connectivity.ConnectionType;
 import utilities.events.Priority;
@@ -97,7 +98,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         /* Connection Related */
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, new ClientConnectHandler(CONNECTIONS, concurrencyLevel));
         new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, new ConnectionResponseHandler(CONNECTIONS));
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
+        new PacketEventSubscription("StarNub", Priority.CRITICAL, ServerDisconnectPacket.class, new ServerDisconnectHandler(CONNECTIONS));
         // LOCATION TRACKING HANDLERS
 
         /* Permission Related */ // ??
@@ -164,12 +165,12 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         });
 
         /* Debugging Data, Direction and Usage */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, CallScriptedEntityPacket.class, new PacketEventHandler() {
-            @Override
-            public void onEvent(Packet eventData) {
-                System.out.println(eventData);
-            }
-        });
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, CallScriptedEntityPacket.class, new PacketEventHandler() {
+//            @Override
+//            public void onEvent(Packet eventData) {
+//                System.out.println(eventData);
+//            }
+//        });
 
 //        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractResultPacket.class, new PacketEventHandler() {
 //            @Override

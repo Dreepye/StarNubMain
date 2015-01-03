@@ -44,4 +44,13 @@ public class PermissionChange {
     public String getPERMISSION() {
         return PERMISSION;
     }
+
+    @Override
+    public String toString() {
+        return "PermissionChange{" +
+                "PLAYER_SESSION=" + PLAYER_SESSION +
+                ", MODIFICATION=" + MODIFICATION +
+                ", PERMISSION='" + PERMISSION + '\'' +
+                '}';
+    }
 }

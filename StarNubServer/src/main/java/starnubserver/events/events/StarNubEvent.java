@@ -27,4 +27,9 @@ public class StarNubEvent extends ObjectEvent{
         super(EVENT_KEY, EVENT_DATA);
         StarNubEventRouter.getInstance().eventNotify(this);
     }
+
+    @Override
+    public String toString() {
+        return "StarNubEvent{} " + super.toString();
+    }
 }

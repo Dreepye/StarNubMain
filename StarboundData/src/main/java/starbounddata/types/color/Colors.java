@@ -221,7 +221,7 @@ public enum Colors {
         }
         return quickShortcut;
     }
-
+//PLAIN COLOR
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
@@ -233,33 +233,36 @@ public enum Colors {
      */
     public static String validate(String string) {
         string = string.toLowerCase();
-        if (string.equals("default")){
+        if (string.startsWith("{") && string.endsWith("}")){
+            return "^#"+ QUICK_SHORTCUT_HEX.get(string) + ";";
+        } else if (string.equals("default")){
             return GameColors.getInstance().getDefaultChatColor();
-        }
-        int index = 0;
-        if (string.contains("#")){
-            index = string.indexOf("#") + 1;
-        } else if (string.contains("^")){
-            index = string.indexOf("^") + 1;
-        }
-        String substring = "";
-        if (string.contains(";")) {
-            substring = string.substring(index, string.lastIndexOf(";"));
         } else {
-            substring = string.substring(index);
-        }
-        int stringLength = substring.length();
-        if ((stringLength == 3 || stringLength == 6) && string.matches(".*\\d.*")) {
-            if (QUICK_HEX_COLOR.containsKey(substring)) {
-                return format(substring, true);
-            } else {
-                return GameColors.getInstance().getDefaultChatColor();
+            int index = 0;
+            if (string.contains("#")) {
+                index = string.indexOf("#") + 1;
+            } else if (string.contains("^")) {
+                index = string.indexOf("^") + 1;
             }
-        } else {
-            if (QUICK_COLOR_HEX.containsKey(substring)){
-                return format(substring, false);
+            String substring = "";
+            if (string.contains(";")) {
+                substring = string.substring(index, string.lastIndexOf(";"));
             } else {
-                return GameColors.getInstance().getDefaultChatColor();
+                substring = string.substring(index);
+            }
+            int stringLength = substring.length();
+            if ((stringLength == 3 || stringLength == 6) && string.matches(".*\\d.*")) {
+                if (QUICK_HEX_COLOR.containsKey(substring)) {
+                    return format(substring, true);
+                } else {
+                    return GameColors.getInstance().getDefaultChatColor();
+                }
+            } else {
+                if (QUICK_COLOR_HEX.containsKey(substring)) {
+                    return format(substring, false);
+                } else {
+                    return GameColors.getInstance().getDefaultChatColor();
+                }
             }
         }
     }
@@ -382,7 +385,7 @@ public enum Colors {
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String shortcut = m.group().toLowerCase();
-            String replacement = QUICK_SHORTCUT_HEX.get(shortcut);
+            String replacement = "^#"+ QUICK_SHORTCUT_HEX.get(shortcut) + ";";
             m.appendReplacement(sb, replacement);
         }
         return m.appendTail(sb).toString();
@@ -405,9 +408,6 @@ public enum Colors {
         }
         return GameColors.getInstance().getDefaultChatColor();
     }
-
-
-
 
     /**
      * Recommended: For Plugin Developers & Anyone else.

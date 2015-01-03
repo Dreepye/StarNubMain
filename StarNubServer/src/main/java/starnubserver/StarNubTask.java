@@ -120,4 +120,9 @@ public class StarNubTask extends ScheduledTask {
         super.removeTask();
         new StarNubEvent("StarNub_Task_Removed", this);
     }
+
+    @Override
+    public String toString() {
+        return "StarNubTask{} " + super.toString();
+    }
 }

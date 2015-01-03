@@ -30,4 +30,11 @@ public class StarNubEventTwo extends StarNubEvent{
     public Object getEVENT_DATA_2() {
         return EVENT_DATA_2;
     }
+
+    @Override
+    public String toString() {
+        return "StarNubEventTwo{" +
+                "EVENT_DATA_2=" + EVENT_DATA_2 +
+                "} " + super.toString();
+    }
 }

@@ -33,16 +33,16 @@ import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class AutoTaskCancel extends PlayerCtxCacheWrapper {
+public class PlayerAutoCancelTask extends PlayerCtxCacheWrapper {
 
     private PlayerCtxCacheWrapper PLAYER_CTX_CACHE;
 
     /**
      * Time specific constructor. RECOMMENDED.
      *
-     * @param CACHE_OWNER           String representing the owner of this utilities.cache, should be set to the plugins exact name
+     * @param CACHE_OWNER String representing the owner of this utilities.cache, should be set to the plugins exact name
      */
-    public AutoTaskCancel(String CACHE_OWNER, String typeName) {
+    public PlayerAutoCancelTask(String CACHE_OWNER, String typeName) {
         super(CACHE_OWNER, CACHE_OWNER + " Auto Task Cancel - " + typeName, true, TimeUnit.MINUTES, 5, 5);
         PLAYER_CTX_CACHE = new PlayerCtxCacheWrapper(getCACHE_OWNER(), getCACHE_NAME(), false, TimeUnit.MINUTES, 5, 5);
     }
@@ -51,7 +51,7 @@ public class AutoTaskCancel extends PlayerCtxCacheWrapper {
         this.addCache(channelHandlerContext, new StarNubTaskCache(starNubTask));
     }
 
-    public boolean recentlyCancled(ChannelHandlerContext channelHandlerContext){
+    public boolean recentlyCanceled(ChannelHandlerContext channelHandlerContext){
         return PLAYER_CTX_CACHE.removeCache(channelHandlerContext) != null;
     }
 

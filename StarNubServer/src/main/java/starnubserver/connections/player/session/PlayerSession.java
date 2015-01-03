@@ -612,6 +612,31 @@ public class PlayerSession {
         return op && checkWildCards || hasFullPermission(basePermission, subPermission, fullPermission, checkWildCards);
     }
 
+    /**
+     * This represents a higher level method for StarNubs API.
+     * <p>
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will return if a player has a permission. It will check OP and Wildcards first then for partial or full permission.
+     * <P>
+     * Example: {plugname}.{subpermission}.{command}
+     *          starnub.server.shutdown
+     *          starnub.server.startUDPServer
+     *          starnub.server.*
+     *          starnub.*
+     * <br>
+     * The first line would give me shutdown. The second line would be startUDPServer. The third line give me anything under
+     * starnub.server, The fourth line gives me all PERMISSIONS for the starnub related commands that fall under starnub. .
+     *
+     * <p>
+     * @param basePermission String representing the plugin command name to check
+     * @param subPermission String representing the plugins command specific sub permission
+     * @return boolean if the account has the permission
+     */
+    public boolean hasPermission(String basePermission, String subPermission, boolean checkWildCards) {
+        return op && checkWildCards || hasSubPermission(basePermission, subPermission, checkWildCards);
+    }
+
     public String getSpecificPermission(String basePermission, String subPermission) {
         ConcurrentHashMap<String, ArrayList<String>> concurrentHashMap = PERMISSIONS.get(basePermission);
         if (concurrentHashMap == null){

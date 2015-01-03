@@ -120,4 +120,16 @@ public class ScheduledTask {
         }
         scheduledFuture.cancel(true);
     }
+
+    @Override
+    public String toString() {
+        return "ScheduledTask{" +
+                "TASK_MANAGER=" + TASK_MANAGER +
+                ", OWNER='" + OWNER + '\'' +
+                ", NAME='" + NAME + '\'' +
+                ", RUNNABLE=" + RUNNABLE +
+                ", scheduledFuture_Delay=" + scheduledFuture.getDelay(TimeUnit.SECONDS) +
+                ", scheduledFuture=" + scheduledFuture +
+                '}';
+    }
 }
