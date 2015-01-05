@@ -26,7 +26,7 @@ package utilities.cache.objects;
  */
 public class StringCache extends TimeCache {
 
-    private volatile String string;
+    protected volatile String string;
 
     public StringCache(String string) {
         this.string = string;

@@ -35,10 +35,10 @@ import static starbounddata.types.variants.VLQ.writeUnsignedVLQNoObject;
  * <p>
  * Notes:
  * - Packet ID is a single Byte
- * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the starnubclient and starnubserver side of the socket, this is used to write starnubdata.network data to the session
+ * - {@link io.netty.channel.ChannelHandlerContext} are the decoders on both the starnubclient and starnubserver side of the socket, this is used to write starnubdata data to the session
  * - recycle represents if this packet should be recycled when handled by StarNub
  * <p>
- *
+ * @see <a href="http://netty.it">http://netty.io</a>
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
@@ -51,12 +51,12 @@ public abstract class Packet {
     private boolean recycle = false;
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
-     * Uses: This constructor is used in construction of packets to be cached on each side of the players connection (Client, Server) sides of the proxy
-     *
-     * @param DIRECTION       Direction representing the direction the packet flows to
-     * @param PACKET_ID       byte representing the Starbound packet id for this type of packet
+     * Uses: This is used to pre-construct packets for a specific side of a connection
+     * <p>
+     * @param DIRECTION       Direction representing the direction the packet is heading
+     * @param PACKET_ID byte representing the packet id for this packet type
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
@@ -68,11 +68,42 @@ public abstract class Packet {
     }
 
     /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This is used to construct a packet for a specific destination
+     * <p>
+     * @param DIRECTION       Direction representing the direction the packet is heading
+     * @param PACKET_ID byte representing the packet id for this packet type
+     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
+     */
+    public Packet(Direction DIRECTION, byte PACKET_ID, ChannelHandlerContext DESTINATION_CTX) {
+        this.DIRECTION = DIRECTION;
+        this.PACKET_ID = PACKET_ID;
+        this.SENDER_CTX = null;
+        this.DESTINATION_CTX = DESTINATION_CTX;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
+     * <p>
+     * @param DIRECTION       Direction representing the direction the packet is heading
+     * @param PACKET_ID byte representing the packet id for this packet type
+     */
+    public Packet(Direction DIRECTION, byte PACKET_ID) {
+        this.DIRECTION = DIRECTION;
+        this.PACKET_ID = PACKET_ID;
+        this.SENDER_CTX = null;
+        this.DESTINATION_CTX = null;
+    }
+
+    /**
      * Recommended: For internal StarNub use with copying
      * <p>
      * Uses: This will construct a new packet from a packet
-
-     * @param packet Packet representing the packet to construct from
+     *
+     * @param packet Packet representing the packet to construct the new packetfrom
      */
     public Packet(Packet packet) {
         this.DIRECTION = packet.getDIRECTION();
@@ -112,7 +143,7 @@ public abstract class Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This is used for StarNub to reset the packets routing
      */
@@ -129,7 +160,7 @@ public abstract class Packet {
     public abstract Packet copy();
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
@@ -139,7 +170,7 @@ public abstract class Packet {
     public abstract void read(ByteBuf in);
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>
@@ -229,7 +260,7 @@ public abstract class Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>

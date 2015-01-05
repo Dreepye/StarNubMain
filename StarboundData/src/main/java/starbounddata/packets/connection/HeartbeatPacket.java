@@ -42,12 +42,11 @@ public class HeartbeatPacket extends Packet {
     private long currentStep;
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This is used to pre-construct packets for a specific side of a connection
      * <p>
-     *
-     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param DIRECTION       Direction representing the direction the packet is heading
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
@@ -56,17 +55,27 @@ public class HeartbeatPacket extends Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
-     * router this packet
+     * Uses: This is used to construct a packet for a specific destination
      * <p>
-     *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      * @param currentStep     long representing the current step
      */
     public HeartbeatPacket(ChannelHandlerContext DESTINATION_CTX, long currentStep) {
-        super(Packets.HEARTBEAT.getDirection(), Packets.HEARTBEAT.getPacketId(), null, DESTINATION_CTX);
+        super(Packets.HEARTBEAT.getDirection(), Packets.HEARTBEAT.getPacketId(), DESTINATION_CTX);
+        this.currentStep = currentStep;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
+     * <p>
+     * @param currentStep
+     */
+    public HeartbeatPacket(long currentStep) {
+        super(Packets.HEARTBEAT.getDirection(), Packets.HEARTBEAT.getPacketId());
         this.currentStep = currentStep;
     }
 

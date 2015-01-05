@@ -176,10 +176,8 @@ public class NameBuilder {
                 nameString = "Starbound";
             } else if (string.equalsIgnoreCase("starnub")){
                 nameString = "StarNub";
-//            } else if (StarNub.getPluginManager().hasPlugin(string)) {
-//                nameString = StarNub.getPluginManager().getPluginPackageClassNameString(string).getPLUGIN_NAME();
             } else if (string.equalsIgnoreCase("servername")) {
-                StarNub.getConfiguration().getNestedValue("starnub_info", "server_name");
+                nameString = (String) StarNub.getConfiguration().getNestedValue("starnub_info", "server_name");
             } else {
                 nameString = string;
             }

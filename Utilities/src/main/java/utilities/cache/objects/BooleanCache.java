@@ -26,7 +26,7 @@ package utilities.cache.objects;
  */
 public class BooleanCache extends TimeCache {
 
-    private volatile boolean bool;
+    protected volatile boolean bool;
 
     public BooleanCache(boolean bool) {
         this.bool = bool;

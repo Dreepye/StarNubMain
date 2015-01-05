@@ -20,7 +20,7 @@ package utilities.cache.objects;
 
 public class IntegerCache extends TimeCache {
 
-    private int integer;
+    protected int integer;
 
     public IntegerCache(int integer) {
         this.integer = integer;

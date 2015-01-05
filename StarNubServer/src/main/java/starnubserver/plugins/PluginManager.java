@@ -24,6 +24,7 @@ import starnubserver.events.events.StarNubEvent;
 import starnubserver.plugins.exceptions.*;
 import starnubserver.plugins.generic.CommandInfo;
 import starnubserver.resources.StarNubYamlWrapper;
+import utilities.file.yaml.YAMLWrapper;
 import utilities.strings.StringUtilities;
 
 import java.io.File;
@@ -34,6 +35,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -196,7 +199,23 @@ public class PluginManager {
 
     public HashMap<String, String> loadAllPlugins(boolean upgrade, boolean enable)  {
         HashMap<String, String> pluginSuccess = new HashMap<>();
-        for (String unloadedPluginName : UNLOADED_PLUGINS.keySet()) {
+        for (Map.Entry<String, UnloadedPlugin> entrySet : UNLOADED_PLUGINS.entrySet()) {
+            String unloadedPluginName = entrySet.getKey();
+            UnloadedPlugin unloadedPlugin = entrySet.getValue();
+            YAMLWrapper plugin_yml = unloadedPlugin.getPLUGIN_PLUGIN_YML();
+            List<String> loadFirst = (List<String>) plugin_yml.getNestedValue("details", "load_first");
+            for (String string : loadFirst){
+                if (UNLOADED_PLUGINS.containsKey(string)){
+                    String specificPlugin = null;
+                    try {
+                        specificPlugin = loadSpecificPlugin(string, false, enable);
+                    } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | PluginAlreadyLoaded | InvocationTargetException | ClassNotFoundException | IOException | PluginDependencyLoadFailed | PluginDirectoryCreationFailed | PluginDependencyNotFound | CommandYamlLoadFailed | CommandClassLoadFail e) {
+                        e.printStackTrace();
+                        pluginSuccess.put(unloadedPluginName, e.getMessage());
+                    }
+                    pluginSuccess.put(unloadedPluginName, specificPlugin);
+                }
+            }
             String specificPlugin = null;
             try {
                 specificPlugin = loadSpecificPlugin(unloadedPluginName, upgrade, enable);
@@ -239,7 +258,6 @@ public class PluginManager {
             return "Not all plugins were successfully unloaded." + loadedPlugins;
         }
     }
-
 
     public String unloadSpecificPlugin(String pluginName) {
         Plugin plugin = LOADED_PLUGINS.remove(pluginName);

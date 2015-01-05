@@ -29,7 +29,7 @@ public class TimeCache {
     /**
      * Represents the time the object was cached on the local machine.
      */
-    private volatile long cacheTime;
+    protected volatile long cacheTime;
 
     /**
      * No Args constructor will the set cacheTime to the current system time.

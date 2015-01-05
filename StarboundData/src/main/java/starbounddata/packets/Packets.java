@@ -125,7 +125,7 @@ public enum Packets {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will scan the class path starbounddata.packets and this enum and match class paths with packet types
      * to be pre loaded for incoming connections

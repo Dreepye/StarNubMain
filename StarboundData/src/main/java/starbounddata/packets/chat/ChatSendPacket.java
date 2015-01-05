@@ -43,12 +43,11 @@ public class ChatSendPacket extends Packet {
     private ChatSendMode chatSendMode;
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This is used to pre-construct packets for a specific side of a connection
      * <p>
-     *
-     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param DIRECTION       Direction representing the direction the packet is heading
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
@@ -59,19 +58,32 @@ public class ChatSendPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
-     * router this packet
+     * Uses: This is used to construct a packet for a specific destination
      * <p>
-     *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param chatSendMode         ChatSentMode representing the chanel to be sent on
-     * @param message         String representing the message
+     * @param chatSendMode
+     * @param message
      */
     public ChatSendPacket(ChannelHandlerContext DESTINATION_CTX, ChatSendMode chatSendMode, String message) {
-        super(Packets.CHATSEND.getDirection(), Packets.CHATSEND.getPacketId(), null, DESTINATION_CTX);
-        this.chatSendMode = chatSendMode;
+        super(Packets.CHATSEND.getDirection(), Packets.CHATSEND.getPacketId(), DESTINATION_CTX);
         this.message = message;
+        this.chatSendMode = chatSendMode;
     }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
+     * <p>
+     * @param chatSendMode
+     * @param message
+     */
+    public ChatSendPacket(ChatSendMode chatSendMode, String message) {
+        super(Packets.CHATSEND.getDirection(), Packets.CHATSEND.getPacketId());
+        this.message = message;
+        this.chatSendMode = chatSendMode;
+    }
+
 
     /**
      * Recommended: For internal StarNub use with copying
@@ -82,8 +94,8 @@ public class ChatSendPacket extends Packet {
      */
     public ChatSendPacket(ChatSendPacket packet) {
         super(packet);
-        this.chatSendMode = packet.getChatSendMode();
         this.message = packet.getMessage();
+        this.chatSendMode = packet.getChatSendMode();
     }
 
     public String getMessage() {
@@ -114,7 +126,7 @@ public class ChatSendPacket extends Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will read in a {@link io.netty.buffer.ByteBuf} into this packets fields
      * <p>
@@ -128,7 +140,7 @@ public class ChatSendPacket extends Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>

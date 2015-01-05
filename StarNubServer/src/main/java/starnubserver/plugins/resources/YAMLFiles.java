@@ -47,7 +47,7 @@ public class YAMLFiles {
     }
 
     public PluginYAMLWrapper getPluginYamlWrapper(String filename){
-        return YAML_FILES.get(filename.toLowerCase());
+        return YAML_FILES.get(filename);
     }
 
     public File getSpecificFile(String filename){
@@ -60,7 +60,7 @@ public class YAMLFiles {
 
     public void addPluginYamlWrappersBulk(HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet){
         for (PluginYAMLWrapper pluginYAMLWrapper : pluginYAMLWrapperHashSet){
-            YAML_FILES.put(pluginYAMLWrapper.getFILE_NAME(), pluginYAMLWrapper);
+            YAML_FILES.put(pluginYAMLWrapper.getFILE_NAME().toLowerCase(), pluginYAMLWrapper);
         }
     }
 

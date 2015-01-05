@@ -149,6 +149,30 @@ public class StringUtilities {
         return s.replaceAll("(?i)(.{2})(\\1)+", "$1$1");
     }
 
+    public static String exactWordReplacement(String stringToSearch, String wordToSearch, String replacement){
+        int indexOfWord;
+        boolean replaced = false;
+        while ((indexOfWord = stringToSearch.toLowerCase().indexOf(wordToSearch.toLowerCase())) > 0) {
+            String replacementWord = "";
+            int wLen = wordToSearch.length();
+            if(!replaced) {
+                if (!replacement.isEmpty()) {
+                    if (replacement.length() == 1) {
+                        for (int i = 0; i < wLen; i++) {
+                            replacementWord = replacementWord + replacement;
+                        }
+                    } else {
+                        replacementWord = replacement;
+                    }
+                    replaced = true;
+                }
+            }
+            stringToSearch = stringToSearch.replaceAll(stringToSearch.substring(indexOfWord, indexOfWord + wLen), replacementWord);
+        }
+        return stringToSearch;
+    }
+
+
     /**
      *
      * This will search for words and replace them if they match within a certain percentage
@@ -215,6 +239,26 @@ public class StringUtilities {
      */
     private static boolean patternMatcher(Pattern pattern, String s){
         return pattern.matcher(s).find();
+    }
+
+    /**
+     * This will check the percentage of capital letters
+     *
+     * @param message String message to check
+     * @return double percentage of capital letters
+     */
+    public static String stringCapitalizationCheckAndChange(String message, double percentage){
+        int count = 0;
+        for (int idx = 0; idx < message.length(); idx++) {
+            if (Character.isUpperCase(message.charAt(idx))) {
+                count++;
+            }
+        }
+        double calculationAlike = percentageCalculation(count, message.length());
+        if (calculationAlike > percentage){
+            message = message.toLowerCase();
+        }
+        return message;
     }
 
     /**

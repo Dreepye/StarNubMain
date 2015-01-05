@@ -42,12 +42,11 @@ public class GiveItemPacket extends Packet {
     private ItemDescriptor itemDescriptor = new ItemDescriptor();
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This is used to pre-construct packets for a specific side of a connection
      * <p>
-     *
-     * @param DIRECTION       Direction representing the direction the packet flows to
+     * @param DIRECTION       Direction representing the direction the packet is heading
      * @param SENDER_CTX      ChannelHandlerContext which represents the sender of this packets context (Context can be written to)
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
      */
@@ -56,17 +55,27 @@ public class GiveItemPacket extends Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This method will be used to send a packet to the client with the server version. You only need the destination in order t
-     * router this packet
+     * Uses: This is used to construct a packet for a specific destination
      * <p>
-     *
      * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param itemDescriptor int representing the Starbounds protocol version
+     * @param itemDescriptor
      */
     public GiveItemPacket(ChannelHandlerContext DESTINATION_CTX, ItemDescriptor itemDescriptor) {
-        super(Packets.GIVEITEM.getDirection(), Packets.GIVEITEM.getPacketId(), null, DESTINATION_CTX);
+        super(Packets.GIVEITEM.getDirection(), Packets.GIVEITEM.getPacketId(), DESTINATION_CTX);
+        this.itemDescriptor = itemDescriptor;
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
+     * <p>
+     * @param itemDescriptor
+     */
+    public GiveItemPacket(ItemDescriptor itemDescriptor) {
+        super(Packets.GIVEITEM.getDirection(), Packets.GIVEITEM.getPacketId());
         this.itemDescriptor = itemDescriptor;
     }
 
@@ -114,7 +123,7 @@ public class GiveItemPacket extends Packet {
     }
 
     /**
-     * Recommended: For connections StarNub usage.
+     * Recommended: For internal use with StarNub Player Sessions
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      * <p>

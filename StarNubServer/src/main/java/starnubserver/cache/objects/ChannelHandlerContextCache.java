@@ -30,9 +30,9 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class ChannelHandlerContextCache extends TimeCache {
 
-    private volatile ChannelHandlerContext ctx;
+    protected volatile ChannelHandlerContext ctx;
 
-    public ChannelHandlerContextCache(io.netty.channel.ChannelHandlerContext ctx) {
+    public ChannelHandlerContextCache(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
 

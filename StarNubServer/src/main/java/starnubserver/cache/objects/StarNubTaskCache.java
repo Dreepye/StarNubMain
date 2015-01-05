@@ -23,7 +23,7 @@ import utilities.cache.objects.TimeCache;
 
 public class StarNubTaskCache extends TimeCache {
 
-    private final StarNubTask STARNUB_TASK;
+    protected final StarNubTask STARNUB_TASK;
 
     public StarNubTaskCache(StarNubTask STARNUB_TASK) {
         this.STARNUB_TASK = STARNUB_TASK;

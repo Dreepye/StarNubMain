@@ -29,7 +29,7 @@ import io.netty.channel.Channel;
  */
 public class ChannelCache extends TimeCache {
 
-    private volatile Channel channel;
+    protected volatile Channel channel;
 
     public ChannelCache(Channel channel) {
         this.channel = channel;
