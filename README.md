@@ -76,7 +76,12 @@ Features:
 		-Process Stream Manager
 	- Process crash checking
 	- Server Responsiveness
-	
+
+###Tokens
+	- Color Tokens I.E Blue {b} Can be used anywhere but must use Colors.Validate("token"); or Colors.shortcutReplacement(stringcotainingtokens);
+	- Custom Tokens I.E {player-count} would return player count if using StringTokens.replaceTokens(stringcotainingtokens);
+		- Can add new tokens by extending StringToken.class 
+
 ###Starbound Data (Emulated) API
 	- Packets
 	- Data Types
