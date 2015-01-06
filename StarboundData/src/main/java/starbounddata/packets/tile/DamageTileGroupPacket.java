@@ -62,25 +62,6 @@ public class DamageTileGroupPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param tilePositions Vac2IArray representing the riles to be damaged
-     * @param layer TileLayer representing the tile layer
-     * @param sourcePosition VeC2F representing the source position
-     * @param tileDamage TileDamage representing tile damage
-     */
-    public DamageTileGroupPacket(ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, TileLayer layer, Vec2F sourcePosition, TileDamage tileDamage) {
-        super(Packets.DAMAGETILEGROUP.getDirection(), Packets.DAMAGETILEGROUP.getPacketId(), DESTINATION_CTX);
-        this.tilePositions = tilePositions;
-        this.layer = layer;
-        this.sourcePosition = sourcePosition;
-        this.tileDamage = tileDamage;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param tilePositions

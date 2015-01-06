@@ -43,20 +43,6 @@ public class PlayerWarp extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param warpType WarpType representing the warpType enumeration
-     */
-    public PlayerWarp(ChannelHandlerContext DESTINATION_CTX, WarpType warpType){
-        super(Packets.PLAYERWARP.getDirection(),Packets.PLAYERWARP.getPacketId(), DESTINATION_CTX);
-        this.warpType = warpType;
-        //TODO
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param warpType

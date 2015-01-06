@@ -59,25 +59,6 @@ public class ConnectWirePacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param outputObjectLocation
-     * @param outputConnectorLocation
-     * @param inputObjectLocation
-     * @param inputConnectorLocation
-     */
-    public ConnectWirePacket(ChannelHandlerContext DESTINATION_CTX, Vec2I outputObjectLocation, Vec2I outputConnectorLocation, Vec2I inputObjectLocation, Vec2I inputConnectorLocation) {
-        super(Packets.CONNECTWIRE.getDirection(), Packets.CONNECTWIRE.getPacketId(), DESTINATION_CTX);
-        this.outputObjectLocation = outputObjectLocation;
-        this.outputConnectorLocation = outputConnectorLocation;
-        this.inputObjectLocation = inputObjectLocation;
-        this.inputConnectorLocation = inputConnectorLocation;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param outputObjectLocation

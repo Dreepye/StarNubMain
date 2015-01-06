@@ -68,33 +68,6 @@ public class WorldStartPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param templateData
-     * @param skyData
-     * @param weatherData
-     * @param playerStart
-     * @param protectedDungeonIds
-     * @param worldProperties
-     * @param clientId
-     * @param localInterpolationMode
-     */
-    public WorldStartPacket(ChannelHandlerContext DESTINATION_CTX, Variant templateData, byte[] skyData, byte[] weatherData, Vec2F playerStart, ProtectedDungeonIds protectedDungeonIds, Variant worldProperties, int clientId, boolean localInterpolationMode) {
-        super(Packets.WORLDSTART.getDirection(), Packets.WORLDSTART.getPacketId(), DESTINATION_CTX);
-        this.templateData = templateData;
-        this.skyData = skyData;
-        this.weatherData = weatherData;
-        this.playerStart = playerStart;
-        this.protectedDungeonIds = protectedDungeonIds;
-        this.worldProperties = worldProperties;
-        this.clientId = clientId;
-        this.localInterpolationMode = localInterpolationMode;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param templateData

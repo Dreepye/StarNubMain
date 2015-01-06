@@ -57,19 +57,6 @@ public class GiveItemPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param itemDescriptor
-     */
-    public GiveItemPacket(ChannelHandlerContext DESTINATION_CTX, ItemDescriptor itemDescriptor) {
-        super(Packets.GIVEITEM.getDirection(), Packets.GIVEITEM.getPacketId(), DESTINATION_CTX);
-        this.itemDescriptor = itemDescriptor;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param itemDescriptor

@@ -55,19 +55,6 @@ public class UniverseTimeUpdatePacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param universeTime    long representing the Starbound universe time
-     */
-    public UniverseTimeUpdatePacket(ChannelHandlerContext DESTINATION_CTX, long universeTime) {
-        super(Packets.UNIVERSETIMEUPDATE.getDirection(), Packets.UNIVERSETIMEUPDATE.getPacketId(), DESTINATION_CTX);
-        this.universeTime = universeTime;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param universeTime

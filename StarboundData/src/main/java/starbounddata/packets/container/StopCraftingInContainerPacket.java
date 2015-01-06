@@ -57,19 +57,6 @@ public class StopCraftingInContainerPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param containerId
-     */
-    public StopCraftingInContainerPacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId containerId) {
-        super(Packets.STOPCRAFTINGINCONTAINER.getDirection(), Packets.STOPCRAFTINGINCONTAINER.getPacketId(), DESTINATION_CTX);
-        this.containerId = containerId;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param containerId

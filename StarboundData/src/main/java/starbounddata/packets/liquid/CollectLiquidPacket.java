@@ -57,20 +57,6 @@ public class CollectLiquidPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to) the destination of this packets context (Context can be written to)
-     * @param tilePositions Vac2IArray representing the riles to be damaged
-     */
-    public CollectLiquidPacket(ChannelHandlerContext DESTINATION_CTX, Vec2IArray tilePositions, byte liquidId) {
-        super(Packets.COLLECTLIQUID.getDirection(), Packets.COLLECTLIQUID.getPacketId(), DESTINATION_CTX);
-        this.tilePositions = tilePositions;
-        this.liquidId = liquidId;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param tilePositions

@@ -56,19 +56,6 @@ public class CelestialRequestPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param celestialRequestList
-     */
-    public CelestialRequestPacket(ChannelHandlerContext DESTINATION_CTX, CelestialRequestList celestialRequestList){
-        super(Packets.CELESTIALREQUEST.getDirection(), Packets.CELESTIALREQUEST.getPacketId(), DESTINATION_CTX);
-        this.celestialRequestList = celestialRequestList;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param celestialRequestList

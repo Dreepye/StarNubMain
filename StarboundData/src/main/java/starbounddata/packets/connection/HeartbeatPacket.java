@@ -57,19 +57,6 @@ public class HeartbeatPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param currentStep     long representing the current step
-     */
-    public HeartbeatPacket(ChannelHandlerContext DESTINATION_CTX, long currentStep) {
-        super(Packets.HEARTBEAT.getDirection(), Packets.HEARTBEAT.getPacketId(), DESTINATION_CTX);
-        this.currentStep = currentStep;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param currentStep

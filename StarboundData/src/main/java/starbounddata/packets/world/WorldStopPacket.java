@@ -55,19 +55,6 @@ public class WorldStopPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param reason
-     */
-    public WorldStopPacket(ChannelHandlerContext DESTINATION_CTX, String reason) {
-        super(Packets.WORLDSTOP.getDirection(), Packets.WORLDSTOP.getPacketId(), DESTINATION_CTX);
-        this.reason = reason;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param reason

@@ -1,6 +1,8 @@
 package starnubserver.logger;
 
 import org.joda.time.DateTime;
+import starbounddata.types.chat.ChatSendMode;
+import starbounddata.types.chat.Mode;
 import starnubserver.StarNub;
 import starnubserver.StarNubTask;
 import starnubserver.events.events.StarNubEvent;
@@ -786,37 +788,50 @@ public class MultiOutputLogger {
      * @param message     String message to be sent to the starbounddata.packets.starbounddata.packets.starnubserver
      * @param destination String where the message is going
      */
-    public void cChatPrint(Object sender, String message, Object destination) {
+    public void cChatPrint(Object sender, Object destination, Object type, String message) {
         boolean charName = (boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "log_original_character_name_with_nick_name");
+        String typeString = "Unknown";
+        if (type instanceof Mode){
+            Mode typeMode = (Mode) type;
+            switch (typeMode){
+                case BROADCAST:{
+                    typeString = "Broadcast";
+                    break;
+                }
+                case WHISPER:{
+                    typeString = "Whisper";
+                    break;
+                }
+                case CHANNEL:{
+                    typeString = "Channel";
+                    break;
+                }
+                case COMMAND_RESULT:{
+                    typeString = "Command Result";
+                    break;
+                }
+            }
+        } else if (type instanceof ChatSendMode) {
+            ChatSendMode chatSendMode = (ChatSendMode) type;
+            switch (chatSendMode) {
+                case BROADCAST: {
+                    typeString = "Broadcast";
+                    break;
+                }
+                case LOCAL: {
+                    typeString = "Local";
+                    break;
+                }
+                case PARTY: {
+                    typeString = "Party";
+                    break;
+                }
+            }
+        }
         new StarNubEvent("StarNub_Log_Chat",
-                stringBuilder(
-                        "StarNub",
-                        " Chat",
-                        "[" + NAME_BUILDER.cUnknownNameBuilder(sender, true, charName) + " -> " +
-                                NAME_BUILDER.cUnknownNameBuilder(destination, true, charName) + "]: "
-                                + StringUtilities.removeColors(message)));
-    }
-
-    /**
-     * This represents a higher level method for StarNubs API.
-     * <p>
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will print a "Chat" console message with a current time stamp and append it into
-     * StarNub/Server Logs/{date stamp}.log. If the Server owner turn this type of logging off, they
-     * will not see any of these starnubdata.messages.
-     * <p>
-     *
-     * @param senderReceiver String which represents the message sender and receiver of the message
-     * @param message        String message to be sent to the starbounddata.packets.starbounddata.packets.starnubserver
-     */
-    public void cWhisperPrint(String senderReceiver, String message) {
-        new StarNubEvent("StarNub_Log_Chat",
-                stringBuilder(
-                        "StarNub",
-                        " Chat",
-                        "[" + senderReceiver + "]: "
-                                + StringUtilities.removeColors(message)));
+                "[StarNub Chat - " + typeString + "]" +
+                "[" + NAME_BUILDER.cUnknownNameBuilder(sender, true, charName) + " -> " + NAME_BUILDER.cUnknownNameBuilder(destination, true, charName) + "]: "
+                                + StringUtilities.removeColors(message));
     }
 
     /**

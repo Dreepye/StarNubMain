@@ -56,18 +56,6 @@ public class ClientDisconnectRequestPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     */
-    public ClientDisconnectRequestPacket(ChannelHandlerContext DESTINATION_CTX) {
-        super(Packets.CLIENTDISCONNECTREQUEST.getDirection(), Packets.CLIENTDISCONNECTREQUEST.getPacketId(), DESTINATION_CTX);
-        emptyByte = 1;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      */

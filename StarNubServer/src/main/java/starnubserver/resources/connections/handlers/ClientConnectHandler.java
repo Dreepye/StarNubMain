@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import starbounddata.packets.Packet;
 import starbounddata.packets.connection.ClientConnectPacket;
-import starbounddata.types.chat.Mode;
 import starboundmanager.Starting;
 import starnubdata.generic.DisconnectReason;
 import starnubserver.Connections;
@@ -70,7 +69,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                 TimeCache timeCache = null;
                 timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
                 if (timeCache != null) {
-                    playerSession.sendChatMessage("StarNub", Mode.BROADCAST, "You were disconnected to make room for a player" +
+                    playerSession.broadcastMessageToClient("StarNub", "You were disconnected to make room for a player" +
                             " who has a Reserved Server Slot.");
                 }
             }

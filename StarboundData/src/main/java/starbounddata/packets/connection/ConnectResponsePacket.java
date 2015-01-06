@@ -64,25 +64,6 @@ public class ConnectResponsePacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param success
-     * @param clientId
-     * @param rejectionReason
-     * @param celestialBaseInformation
-     */
-    public ConnectResponsePacket(ChannelHandlerContext DESTINATION_CTX, boolean success, int clientId, String rejectionReason, CelestialBaseInformation celestialBaseInformation) {
-        super(Packets.CLIENTCONNECT.getDirection(), Packets.CLIENTCONNECT.getPacketId(), DESTINATION_CTX);
-        this.success = success;
-        this.clientId = clientId;
-        this.rejectionReason = rejectionReason;
-        this.celestialBaseInformation = celestialBaseInformation;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param success

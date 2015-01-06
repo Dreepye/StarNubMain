@@ -60,19 +60,6 @@ public class UpdateTileProtectionPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param bytes
-     */
-    public UpdateTileProtectionPacket(ChannelHandlerContext DESTINATION_CTX, byte[] bytes) {
-        super(Packets.UPDATETILEPROTECTION.getDirection(), Packets.UPDATETILEPROTECTION.getPacketId(), DESTINATION_CTX);
-        this.bytes = bytes;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param bytes

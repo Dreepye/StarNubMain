@@ -61,27 +61,6 @@ public class ChatReceivePacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param mode
-     * @param channelName
-     * @param clientId
-     * @param fromName
-     * @param message
-     */
-    public ChatReceivePacket(ChannelHandlerContext DESTINATION_CTX, Mode mode, String channelName, long clientId, String fromName, String message) {
-        super(Packets.CHATRECEIVE.getDirection(), Packets.CHATRECEIVE.getPacketId(), DESTINATION_CTX);
-        this.messageContext.setMODE(mode);
-        this.messageContext.setCHANNEL_NAME(channelName);
-        this.clientId = (int) clientId;
-        this.fromName = fromName;
-        this.message = message;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param mode

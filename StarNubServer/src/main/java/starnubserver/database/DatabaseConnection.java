@@ -38,8 +38,7 @@ public class DatabaseConnection {
     private static final DatabaseConnection instance = new DatabaseConnection();
 
     private ConnectionSource starnubConnection;
-    private ConnectionSource commonMySQLConnection;
-    private ConnectionSource commonMySQLiteConnection;
+    private ConnectionSource commonsConnection;
 
     /**
      * This constructor is private - Singleton Pattern
@@ -54,7 +53,21 @@ public class DatabaseConnection {
             }
         } else if (databaseType.equals("mysql")) {
             try {
-                starnubConnection = getStarNubMySQLConnection();
+                starnubConnection = getStarNubMySQLConnection("starnub");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        String databaseType2 = (((String) (StarNub.getConfiguration().getNestedValue("databases", "common", "type"))).toLowerCase());
+        if (databaseType2.equals("sqlite")) {
+            try {
+                commonsConnection = getNewPluginSQLLiteConnection("StarNub");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (databaseType2.equals("mysql")) {
+            try {
+                commonsConnection = getStarNubMySQLConnection("common");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -73,11 +86,8 @@ public class DatabaseConnection {
         return starnubConnection;
     }
 
-    public ConnectionSource getCommonMySQLiteConnection() throws SQLException {
-        if (commonMySQLiteConnection == null){
-            commonMySQLiteConnection = getNewPluginSQLLiteConnection("CommonDatabase");
-        }
-        return commonMySQLiteConnection;
+    public ConnectionSource getCommonConnection() {
+        return commonsConnection;
     }
 
     public ConnectionSource getNewPluginSQLLiteConnection(String name) throws SQLException {
@@ -89,39 +99,16 @@ public class DatabaseConnection {
         return new JdbcPooledConnectionSource(connectionString);
     }
 
-    public ConnectionSource getCommonPluginMySQLConnection() throws SQLException {
-        boolean canCommon = ((String) (StarNub.getConfiguration().getNestedValue("databases", "common", "type"))).equalsIgnoreCase("mysql");
-        if (canCommon) {
-            if (commonMySQLConnection == null) {
-                String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("databases", "common", "mysql_user")));
-                String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("databases", "common", "mysql_pass")));
-                String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("databases", "common", "mysql_url")));
-                commonMySQLConnection = getNewMySQLConnection(databaseUrl, databaseUsername, databasePassword);
-            } else {
-                return commonMySQLConnection;
-            }
-        }
-        return null;
-    }
-
-    private ConnectionSource getStarNubMySQLConnection() throws SQLException {
-            String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("databases", "starnub", "mysql_user")));
-            String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("databases", "starnub", "mysql_pass")));
-            String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("databases", "starnub", "mysql_url")));
+    private ConnectionSource getStarNubMySQLConnection(String type) throws SQLException {
+            String databaseUsername = ((String) (StarNub.getConfiguration().getNestedValue("databases", type, "mysql_user")));
+            String databasePassword = ((String) (StarNub.getConfiguration().getNestedValue("databases", type, "mysql_pass")));
+            String databaseUrl = ((String) (StarNub.getConfiguration().getNestedValue("databases", type, "mysql_url")));
             return getNewMySQLConnection(databaseUrl, databaseUsername, databasePassword);
     }
 
     public ConnectionSource getNewMySQLConnection(String url, String user, String password) throws SQLException {
         String connectionString = "jdbc:mysql://" + url;
         return new JdbcPooledConnectionSource(connectionString, user, password);
-    }
-
-    public boolean isCommonMySQL(){
-        return commonMySQLConnection !=null;
-    }
-
-    public boolean isCommonSQLite(){
-        return commonMySQLiteConnection !=null;
     }
 
     @Override

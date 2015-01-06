@@ -68,29 +68,6 @@ public class ClientConnectPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param assetDigest
-     * @param playerUuid
-     * @param playerName
-     * @param playerSpecies
-     * @param shipData
-     * @param account
-     */
-    public ClientConnectPacket(ChannelHandlerContext DESTINATION_CTX, byte[] assetDigest, UUID playerUuid, String playerName, String playerSpecies, byte[] shipData, String account) {
-        super(Packets.CLIENTCONNECT.getDirection(), Packets.CLIENTCONNECT.getPacketId(), DESTINATION_CTX);
-        this.assetDigest = assetDigest;
-        this.playerUuid = playerUuid;
-        this.playerName = playerName;
-        this.playerSpecies = playerSpecies;
-        this.shipData = shipData;
-        this.account = account;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param assetDigest

@@ -26,6 +26,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents DataAndTimes instance. This will provide formatting support and time calculations
  *
@@ -50,6 +53,36 @@ public class DateAndTimes {
      */
     public static DateAndTimes getInstance() {
         return instance;
+    }
+
+    public static DateTime parseFutureTime(String argument) {
+        Pattern p = Pattern.compile("\\d+\\D+");
+        Matcher m = p.matcher(argument);
+        int years = 0;
+        int months = 0;
+        int weeks = 0;
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+        while (m.find()) {
+            String group = m.group();
+            String intString = group.replaceFirst("\\D+", "");
+            int i = Integer.parseInt(intString);
+            if (argument.contains("y")) {
+                years = i;
+            } else if (argument.contains("m")) {
+                months = i;
+            } else if (argument.contains("w")) {
+                weeks = i;
+            } else if (argument.contains("d")) {
+                days = i;
+            } else if (argument.contains("h")) {
+                hours = i;
+            } else if (argument.contains("min")) {
+                minutes = i;
+            }
+        }
+        return getFutureDateTime(years, months, weeks, days, hours, minutes);
     }
 
     /**
@@ -325,14 +358,27 @@ public class DateAndTimes {
 
     /**
      *
+     * @param weeks
+     * @param days
+     * @param hours
+     * @param minutes
+     * @return
+     */
+    public static DateTime getFutureDateTime(int weeks, int days, int hours, int minutes){
+        return new DateTime().plusWeeks(weeks).plusDays(days).plusHours(hours).plusMinutes(minutes);
+    }
+
+
+    /**
+     *
      * @param months
      * @param days
      * @param hours
      * @param minutes
      * @return
      */
-    public static DateTime getFutureDateTime(int months, int days, int hours, int minutes){
-        return new DateTime().plusMonths(months).plusDays(days).plusHours(hours).plusMinutes(minutes);
+    public static DateTime getFutureDateTime(int months, int weeks, int days, int hours, int minutes){
+        return new DateTime().plusMonths(months).plusWeeks(weeks).plusDays(days).plusHours(hours).plusMinutes(minutes);
     }
 
     /**
@@ -344,8 +390,8 @@ public class DateAndTimes {
      * @param minutes
      * @return
      */
-    public static DateTime getFutureDateTime(int years, int months, int days, int hours, int minutes){
-        return new DateTime().plusYears(years).plusMonths(months).plusDays(days).plusHours(hours).plusMinutes(minutes);
+    public static DateTime getFutureDateTime(int years, int months, int weeks, int days, int hours, int minutes){
+        return new DateTime().plusYears(years).plusMonths(months).plusWeeks(weeks).plusDays(days).plusHours(hours).plusMinutes(minutes);
     }
 
 }

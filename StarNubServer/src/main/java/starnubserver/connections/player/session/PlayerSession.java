@@ -21,6 +21,7 @@ package starnubserver.connections.player.session;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -31,8 +32,10 @@ import starbounddata.packets.connection.ClientDisconnectRequestPacket;
 import starbounddata.packets.connection.ServerDisconnectPacket;
 import starbounddata.types.chat.ChatSendMode;
 import starbounddata.types.chat.Mode;
+import starbounddata.types.color.GameColors;
 import starnubdata.generic.BanType;
 import starnubdata.generic.DisconnectReason;
+import starnubserver.Connections;
 import starnubserver.StarNub;
 import starnubserver.connections.player.StarNubConnection;
 import starnubserver.connections.player.StarNubProxyConnection;
@@ -383,24 +386,312 @@ public class PlayerSession {
     //TODO Get game tags
     //TODO Get console tags
 
-    public void sendChatMessage(Object sender, Mode mode, String message) {
-        ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
-        if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
-            String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
-            ChatReceivePacket chatReceivePacket = new ChatReceivePacket(CLIENT_CTX, mode, "Server", 1, nameOfSender, message);
+    public void broadcastMessageToClient(Object sender, String message){
+        sendClientMessage(sender, this, Mode.BROADCAST, null, message);
+    }
+
+//    public void channelMessageToClient(String message){}
+
+    public void whisperMessageToClient(PlayerSession sender, PlayerSession receiver, String message){
+        String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
+        String nameOfReceiver = NAME_BUILDER.msgUnknownNameBuilder(receiver, true, false);
+        String defaultNameColor = GameColors.getInstance().getDefaultNameColor();
+        String newName = nameOfSender + defaultNameColor + " -> " + nameOfReceiver + defaultNameColor;
+        sendClientMessage(sender, this, Mode.WHISPER, newName, message);
+        sendClientMessage(sender, receiver, Mode.WHISPER, newName, message);
+    }
+
+    public void commandMessageToClient(Object sender, String message){
+        sendClientMessage(sender, this, Mode.COMMAND_RESULT, null, message);
+    }
+
+    private static void sendClientMessage(Object sender, PlayerSession playerSession, Mode mode, String senderName, String message){
+        if(senderName == null){
+            senderName = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
+        }
+        ConnectionType connectionType = playerSession.getCONNECTION_TYPE();
+        ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
+        if (connectionType == ConnectionType.PROXY_IN_GAME) {
             chatReceivePacket.routeToDestinationNoFlush();
-            StarNub.getLogger().cChatPrint("StarNub", message, chatReceivePacket);
-        } else if (CONNECTION_TYPE == ConnectionType.REMOTE) {
-            //TODO - REMOTE
+        } else if (connectionType == ConnectionType.REMOTE) {
+            sendRemote(playerSession, chatReceivePacket);
+        }
+        StarNub.getLogger().cChatPrint(sender, playerSession, mode, message);
+    }
+
+
+    public static void chatBroadcastToClientsAll(Object sender, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.BROADCAST, allPlayers, null);
+    }
+
+    public static void chatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+        broadcastToClients(sender, message, Mode.BROADCAST, sendList, null);
+    }
+
+    public static void chatBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.BROADCAST, allPlayers, ignoredList);
+    }
+
+    public static void chatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        broadcastToClients(sender, message, Mode.BROADCAST, sendList, ignoredList);
+    }
+
+//    public static void channelBroadcastToClientsAll(String message){}
+//    public static void channelBroadcastToClientsGroup(HashSet<PlayerSession> sendList, String message){}
+//    public static void channelBroadcastToClientsAll(HashSet<PlayerSession> ignoredList, String message){}
+//    public static void channelBroadcastToClientsGroup(HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){}
+
+    public static void whisperBroadcastToClientsAll(Object sender, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.WHISPER, allPlayers, null);
+    }
+
+    public static void whisperBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+        broadcastToClients(sender, message, Mode.WHISPER, sendList, null);
+    }
+
+    public static void whisperBroadcastToClientsAll(Object sender,  HashSet<PlayerSession> ignoredList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.WHISPER, allPlayers, ignoredList);
+    }
+
+    public static void whisperBroadcastToClientsGroup(Object sender,  HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        broadcastToClients(sender, message, Mode.WHISPER, sendList, ignoredList);
+    }
+
+    public static void commandBroadcastToClientsAll(Object sender, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, allPlayers, null);
+    }
+
+    public static void commandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, sendList, null);
+    }
+
+    public static void commandBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, allPlayers, ignoredList);
+    }
+
+    public static void commandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, sendList, ignoredList);
+    }
+
+    private static void broadcastToClients(Object sender, String message, Mode mode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
+        String senderName = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
+        StarNub.getLogger().cChatPrint(sender, sendList.toString(), mode, message);
+        ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
+        routeToGroupNoFlush(chatReceivePacket, sendList, ignoredList);
+    }
+
+    public void broadcastMessageToServer(Object sender, String message){
+        sendServerMessage(sender, this, ChatSendMode.BROADCAST, message);
+    }
+
+    public void localMessageToServer(Object sender, String message){
+        sendServerMessage(sender, this, ChatSendMode.LOCAL, message);
+    }
+
+    public void partyMessageToServer(Object sender, String message){
+        sendServerMessage(sender, this, ChatSendMode.PARTY, message);
+    }
+
+    private static void sendServerMessage(Object sender, PlayerSession playerSession, ChatSendMode chatSendMode, String message){
+        ConnectionType connectionType = playerSession.CONNECTION_TYPE;
+        if (connectionType == ConnectionType.PROXY_IN_GAME) {
+            ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
+            routePacketToServer(playerSession, chatSendPacket);
+            String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
+            StarNub.getLogger().cChatPrint(playerSession, "Server (Sender: " + senderString + ")", chatSendMode, message);
         }
     }
 
-    public void sendServerChatMessage(ChatSendMode chatSendMode, String message) {
-        ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
-        if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
-            ChatSendPacket chatSendPacket = new ChatSendPacket(SERVER_CTX, chatSendMode, message);
-            chatSendPacket.routeToDestinationNoFlush();
+    public static void chatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, allPlayers, null);
+    }
+
+    public static void chatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, sendList, null);
+    }
+
+    public static void chatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, allPlayers, ignoredList);
+    }
+
+    public static void chatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, sendList, ignoredList);
+    }
+
+    public static void localBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, allPlayers, null);
+    }
+
+    public static void localBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, sendList, null);
+    }
+
+    public static void localBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, allPlayers, ignoredList);
+    }
+
+    public static void localBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, sendList, ignoredList);
+    }
+
+    public static void partyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, allPlayers, null);
+    }
+
+    public static void partyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, sendList, null);
+    }
+
+    public static void partyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
+        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, allPlayers, ignoredList);
+    }
+
+    public static void partyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, sendList, ignoredList);
+    }
+
+    private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
+        String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
+        StarNub.getLogger().cChatPrint(sendList.toString(), "Server (Sender: " + senderString + ")", chatSendMode, message);
+        ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
+        routeToGroupNoFlush(chatSendPacket, sendList, ignoredList);
+    }
+
+    public void routePacketToPlayer(Packet packet){
+        routePacketToPlayer(this, packet);
+    }
+
+    public void routePacketToPlayerNoFlush(Packet packet){
+        routePacketToPlayerNoFlush(this, packet);
+    }
+
+    public void routePacketToServer(Packet packet){
+        routePacketToServer(this, packet);
+    }
+
+    public void routePacketToServerNoFlush(Packet packet){
+        routePacketToServerNoFlush(this, packet);
+    }
+
+    private static void routePacketToPlayer(PlayerSession playerSession, Packet packet) {
+        ConnectionType connectionType = playerSession.CONNECTION_TYPE;
+        if (connectionType == ConnectionType.PROXY_IN_GAME) {
+            ChannelHandlerContext clientCtx = playerSession.getCONNECTION().getCLIENT_CTX();
+            packet.routeToDestination(clientCtx);
+        } else if (connectionType == ConnectionType.REMOTE) {
+            sendRemote(playerSession, packet);
         }
+    }
+
+    private static void routePacketToPlayerNoFlush(PlayerSession playerSession, Packet packet) {
+        ConnectionType connectionType = playerSession.CONNECTION_TYPE;
+        if (connectionType == ConnectionType.PROXY_IN_GAME) {
+            ChannelHandlerContext clientCtx = playerSession.getCONNECTION().getCLIENT_CTX();
+            packet.routeToDestinationNoFlush(clientCtx);
+        } else if (connectionType == ConnectionType.REMOTE) {
+            sendRemote(playerSession, packet);
+        }
+    }
+
+    private static void routePacketToServer(PlayerSession playerSession, Packet packet) {
+        ConnectionType connectionType = playerSession.CONNECTION_TYPE;
+        if (connectionType == ConnectionType.PROXY_IN_GAME) {
+            Connection connection = playerSession.getCONNECTION();
+            ChannelHandlerContext serverCtx = ((StarNubProxyConnection) connection).getSERVER_CTX();
+            packet.routeToDestination(serverCtx);
+        }
+    }
+
+    private static void routePacketToServerNoFlush(PlayerSession playerSession, Packet packet) {
+        ConnectionType connectionType = playerSession.CONNECTION_TYPE;
+        if (connectionType == ConnectionType.PROXY_IN_GAME) {
+            Connection connection = playerSession.getCONNECTION();
+            ChannelHandlerContext serverCtx = ((StarNubProxyConnection) connection).getSERVER_CTX();
+            packet.routeToDestinationNoFlush(serverCtx);
+        }
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: Try to use NO FLUSH as this causes extra system calls. This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     */
+    public static void routeToGroup(Packet packet, HashSet<PlayerSession> sendList) {
+        sendGroup(packet, sendList, null, true);
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: Try to use NO FLUSH as this causes extra system calls. This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
+     */
+    public static void routeToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
+        sendGroup(packet, sendList, ignoredList, true);
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
+     *
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     */
+    public static void routeToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList) {
+        sendGroup(packet, sendList, null, false);
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
+     *
+     * @param packet      Packet representing the packet to be routed
+     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
+     */
+    public static void routeToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
+        sendGroup(packet, sendList, ignoredList, false);
+    }
+
+    private static void sendGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, boolean flush){
+        ByteBuf byteBufPacket = packet.packetToMessageEncoder();
+        if (ignoredList != null) {
+            sendList.removeAll(ignoredList);
+        }
+        for (PlayerSession playerSession : sendList) {
+            ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
+            ConnectionType connectionType = playerSession.getCONNECTION_TYPE();
+            if (connectionType == ConnectionType.PROXY_IN_GAME) {
+                if (flush) {
+                    ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
+                } else {
+                    ctx.write(byteBufPacket, ctx.voidPromise());
+                }
+            } else if (connectionType == ConnectionType.REMOTE) {
+                sendRemote(playerSession, packet);
+            }
+        }
+    }
+
+    private static void sendRemote(PlayerSession packet, Packet ctx){
+        //REQUIRES STARNUB PROTOCOL - Needs to strip colors on REMOTE clients
     }
 
     public void removeConnection() {
@@ -431,14 +722,13 @@ public class PlayerSession {
         /* Each type of connection*/
         setEndTimeUtc();
         playerCharacter.updatePlayedTimeLastSeen();
-
         /* In-game connections only */
         if (CONNECTION_TYPE == ConnectionType.PROXY_IN_GAME) {
-            ChannelHandlerContext CLIENT_CTX = CONNECTION.getCLIENT_CTX();
-            ChannelHandlerContext SERVER_CTX = ((StarNubProxyConnection) CONNECTION).getSERVER_CTX();
             if (reason != DisconnectReason.QUIT) {
-                new ClientDisconnectRequestPacket(SERVER_CTX);
-                new ServerDisconnectPacket(CLIENT_CTX, "");
+                ClientDisconnectRequestPacket clientDisconnectRequestPacket = new ClientDisconnectRequestPacket();
+                ServerDisconnectPacket serverDisconnectPacket = new ServerDisconnectPacket("");
+                routePacketToServer(this, clientDisconnectRequestPacket);
+                routePacketToPlayer(this, serverDisconnectPacket);
             }
         }
     }

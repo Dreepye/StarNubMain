@@ -59,20 +59,6 @@ public class TileLiquidUpdatePacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param tilePosition Vac2IArray representing the riles to be damaged
-     */
-    public TileLiquidUpdatePacket(ChannelHandlerContext DESTINATION_CTX, Vec2I tilePosition, LiquidNetUpdate liquidNetUpdate) {
-        super(Packets.TILELIQUIDUPDATE.getDirection(), Packets.TILELIQUIDUPDATE.getPacketId(), DESTINATION_CTX);
-        this.tilePosition = tilePosition;
-        this.liquidNetUpdate = liquidNetUpdate;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param tilePosition

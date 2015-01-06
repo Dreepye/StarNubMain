@@ -56,19 +56,6 @@ public class CentralStructureUpdatePacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param structureData
-     */
-    public CentralStructureUpdatePacket(ChannelHandlerContext DESTINATION_CTX, Variant structureData) {
-        super(Packets.CENTRALSTRUCTUREUPDATE.getDirection(), Packets.CENTRALSTRUCTUREUPDATE.getPacketId(), DESTINATION_CTX);
-        this.structureData = structureData;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param structureData

@@ -60,19 +60,6 @@ public class RequestDropPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param dropEntityId
-     */
-    public RequestDropPacket(ChannelHandlerContext DESTINATION_CTX, EntityVLQId dropEntityId) {
-        super(Packets.REQUESTDROP.getDirection(), Packets.REQUESTDROP.getPacketId(), DESTINATION_CTX);
-        this.dropEntityId = dropEntityId;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param dropEntityId

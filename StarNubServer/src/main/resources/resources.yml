@@ -78,7 +78,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
             "mysql_pass": "ZXstarnub+-*/"
          },
          "common": {
-            "type": "mysql",
+            "type": "sqlite",
             "mysql_url": "192.168.254.250:3306/StarNubTestCommon",
             "mysql_user": "StarNubTest",
             "mysql_pass": "ZXstarnub+-*/"

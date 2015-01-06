@@ -61,23 +61,6 @@ public class EntityInteractPacket extends Packet {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     * @param sourceEntityId
-     * @param position
-     * @param targetEntityId
-     */
-    public EntityInteractPacket(ChannelHandlerContext DESTINATION_CTX, EntityId sourceEntityId, Vec2F position , EntityId targetEntityId) {
-        super(Packets.ENTITYINTERACT.getDirection(), Packets.ENTITYINTERACT.getPacketId(), DESTINATION_CTX);
-        this.sourceEntityId = sourceEntityId;
-        this.position = position;
-        this.targetEntityId = targetEntityId;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
      * Uses: This is used to construct a packet for with no destination. This CAN ONLY be routed by using (routeToGroup, routeToGroupNoFlush) methods
      * <p>
      * @param sourceEntityId

@@ -19,7 +19,6 @@
 package starnubserver.resources.connections.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
-import starbounddata.types.chat.Mode;
 import starbounddata.packets.Packet;
 import starbounddata.packets.tile.DamageTileGroupPacket;
 import starnubserver.cache.wrappers.PermissionCacheWrapper;
@@ -48,7 +47,7 @@ public class DamageTileGroupHandler extends PacketEventHandler {
             PlayerSession playerSession = PlayerSession.getPlayerSession(damageTileGroupPacket);
             damageTileGroupPacket.recycle();
             if (cache.isPastDesignatedTimeRefreshTimeNowIfPast(5000)) {
-                playerSession.sendChatMessage("StarNub", Mode.BROADCAST, "You do not have permission to break tile. Permission required: \"starnub.tile.break\".");
+                playerSession.broadcastMessageToClient("StarNub", "You do not have permission to break tile. Permission required: \"starnub.tile.break\".");
             }
         }
     }

@@ -25,7 +25,6 @@ import starbounddata.types.variants.VLQ;
 import utilities.compression.Zlib;
 
 import java.nio.charset.Charset;
-import java.util.HashSet;
 import java.util.UUID;
 
 import static starbounddata.types.variants.VLQ.writeUnsignedVLQNoObject;
@@ -64,22 +63,6 @@ public abstract class Packet {
         this.DIRECTION = DIRECTION;
         this.PACKET_ID = PACKET_ID;
         this.SENDER_CTX = SENDER_CTX;
-        this.DESTINATION_CTX = DESTINATION_CTX;
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This is used to construct a packet for a specific destination
-     * <p>
-     * @param DIRECTION       Direction representing the direction the packet is heading
-     * @param PACKET_ID byte representing the packet id for this packet type
-     * @param DESTINATION_CTX ChannelHandlerContext which represents the destination of this packets context (Context can be written to)
-     */
-    public Packet(Direction DIRECTION, byte PACKET_ID, ChannelHandlerContext DESTINATION_CTX) {
-        this.DIRECTION = DIRECTION;
-        this.PACKET_ID = PACKET_ID;
-        this.SENDER_CTX = null;
         this.DESTINATION_CTX = DESTINATION_CTX;
     }
 
@@ -184,8 +167,8 @@ public abstract class Packet {
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      */
-    public void routeToDestination() {
-        DESTINATION_CTX.writeAndFlush(packetToMessageEncoder(), DESTINATION_CTX.voidPromise());
+    public void routeToDestination(ChannelHandlerContext ctx) {
+        ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise());
     }
 
     /**
@@ -193,70 +176,26 @@ public abstract class Packet {
      * <p>
      * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
      */
+    public void routeToDestinationNoFlush(ChannelHandlerContext ctx) {
+        ctx.write(packetToMessageEncoder(), ctx.voidPromise());
+    }
+
+    /**
+     * Recommended: For internal use with StarNub Player Sessions
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     */
+    public void routeToDestination() {
+        DESTINATION_CTX.writeAndFlush(packetToMessageEncoder(), DESTINATION_CTX.voidPromise());
+    }
+
+    /**
+     * Recommended: For internal use with StarNub Player Sessions
+     * <p>
+     * Uses: This method will write to a {@link io.netty.buffer.ByteBuf} using this packets fields
+     */
     public void routeToDestinationNoFlush() {
         DESTINATION_CTX.write(packetToMessageEncoder(), DESTINATION_CTX.voidPromise());
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will send this packet to multiple people
-     *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     */
-    public void routeToGroup(HashSet<ChannelHandlerContext> sendList) {
-        for (ChannelHandlerContext ctx : sendList) {
-            ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise());
-        }
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will send this packet to multiple people
-     *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
-     */
-    public void routeToGroup(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
-        if (ignoredList != null) {
-            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise()));
-        } else {
-            for (ChannelHandlerContext ctx : sendList) {
-                ctx.writeAndFlush(packetToMessageEncoder(), ctx.voidPromise());
-            }
-        }
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will send this packet to multiple people
-     *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     */
-    public void routeToGroupNoFlush(HashSet<ChannelHandlerContext> sendList) {
-        for (ChannelHandlerContext ctx : sendList) {
-            ctx.write(packetToMessageEncoder(), ctx.voidPromise());
-        }
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will send this packet to multiple people
-     *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
-     */
-    public void routeToGroupNoFlush(HashSet<ChannelHandlerContext> sendList, HashSet<ChannelHandlerContext> ignoredList) {
-        if (ignoredList != null) {
-            sendList.stream().filter(ctx -> !ignoredList.contains(ctx)).forEach(ctx -> ctx.write(packetToMessageEncoder(), ctx.voidPromise()));
-        } else {
-            for (ChannelHandlerContext ctx : sendList) {
-                ctx.write(packetToMessageEncoder(), ctx.voidPromise());
-            }
-        }
     }
 
     /**
@@ -267,7 +206,7 @@ public abstract class Packet {
      *
      * @return ByteBuf representing the ByteBuf to write to socket
      */
-    protected ByteBuf packetToMessageEncoder() {
+    public ByteBuf packetToMessageEncoder() {
         ByteBuf msgOut = PooledByteBufAllocator.DEFAULT.directBuffer();
         this.write(msgOut);
         int payloadLengthOut = msgOut.readableBytes();
@@ -296,7 +235,7 @@ public abstract class Packet {
      * @param out   ByteBuf in which is to be read
      * @param value long representing the VLQ value to be written out
      */
-    public static void writeSVLQPacketEncoder(ByteBuf out, long value) {
+    protected static void writeSVLQPacketEncoder(ByteBuf out, long value) {
         if (value < 0) {
             value = ((-(value + 1)) << 1) | 1;
         } else {
