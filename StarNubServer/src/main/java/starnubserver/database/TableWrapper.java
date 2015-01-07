@@ -7,6 +7,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.joda.time.DateTime;
 import starnubserver.StarNub;
 import starnubserver.logger.MultiOutputLogger;
 
@@ -282,6 +283,39 @@ public abstract class TableWrapper<T1, T2> {
                     .query();
         } catch (SQLException e) {
             StarNub.getLogger().cFatPrint("StarNub", ExceptionUtils.getMessage(e));
+        }
+        return null;
+    }
+
+    public List<T1> getAllFromDateRangeToNow(String columnName, DateTime dateTime){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .between(columnName, dateTime, DateTime.now())
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<T1> getAllByDateRanges(String columnName, DateTime dateTime1, DateTime dateTime2){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .between(columnName, dateTime1, dateTime2)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<T1> getAllBetweenRange(String columnName, Object object1, Object object2){
+        try {
+            return getTableDao().queryBuilder().where()
+                    .between(columnName, object1, object2)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }

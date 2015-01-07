@@ -47,7 +47,7 @@ public class DamageTileGroupHandler extends PacketEventHandler {
             PlayerSession playerSession = PlayerSession.getPlayerSession(damageTileGroupPacket);
             damageTileGroupPacket.recycle();
             if (cache.isPastDesignatedTimeRefreshTimeNowIfPast(5000)) {
-                playerSession.broadcastMessageToClient("StarNub", "You do not have permission to break tile. Permission required: \"starnub.tile.break\".");
+                playerSession.sendBroadcastMessageToClient("StarNub", "You do not have permission to break tile. Permission required: \"starnub.tile.break\".");
             }
         }
     }

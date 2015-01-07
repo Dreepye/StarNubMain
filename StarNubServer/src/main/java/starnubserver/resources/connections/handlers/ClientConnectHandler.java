@@ -69,7 +69,7 @@ public class ClientConnectHandler extends PacketEventHandler {
                 TimeCache timeCache = null;
                 timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
                 if (timeCache != null) {
-                    playerSession.broadcastMessageToClient("StarNub", "You were disconnected to make room for a player" +
+                    playerSession.sendBroadcastMessageToClient("StarNub", "You were disconnected to make room for a player" +
                             " who has a Reserved Server Slot.");
                 }
             }

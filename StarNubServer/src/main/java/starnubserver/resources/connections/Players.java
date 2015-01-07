@@ -406,9 +406,13 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
                     return null;
                 }
             } else {
-                try {
-                    return playerByStarboundClientID(Integer.parseInt(identifierString));
-                } catch (Exception e) {
+                if (identifierString.length() < 4){
+                    try {
+                        return playerByStarboundClientID(Integer.parseInt(identifierString));
+                    } catch (Exception e) {
+                        return playerByName(identifierString);
+                    }
+                } else {
                     return playerByName(identifierString);
                 }
             }
@@ -439,7 +443,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      * @param s String representing the StarNub Id
      * @return boolean if is a starnubserver id or not
      */
-    private boolean isStarNubId(String s){
+    public static boolean isStarNubId(String s){
         if (!s.endsWith("s") && !s.endsWith("S")) {
             return false;
         }

@@ -53,6 +53,7 @@ import starnubserver.database.tables.PlayerSessionLog;
 import starnubserver.events.events.DisconnectEvent;
 import starnubserver.events.events.StarNubEvent;
 import starnubserver.resources.NameBuilder;
+import starnubserver.resources.connections.Players;
 import starnubserver.resources.files.GroupsManagement;
 import utilities.connectivity.ConnectionType;
 import utilities.connectivity.connection.Connection;
@@ -168,9 +169,6 @@ public class PlayerSession {
         return sessionID;
     }
 
-    public static PlayerSession getSession(Object playerIdentifier){
-        return StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(playerIdentifier);
-    }
 
     public String getSessionIpString() {
         return sessionIpString;
@@ -386,13 +384,13 @@ public class PlayerSession {
     //TODO Get game tags
     //TODO Get console tags
 
-    public void broadcastMessageToClient(Object sender, String message){
+    public void sendBroadcastMessageToClient(Object sender, String message){
         sendClientMessage(sender, this, Mode.BROADCAST, null, message);
     }
 
 //    public void channelMessageToClient(String message){}
 
-    public void whisperMessageToClient(PlayerSession sender, PlayerSession receiver, String message){
+    public void sendWhisperMessageToClient(PlayerSession sender, PlayerSession receiver, String message){
         String nameOfSender = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
         String nameOfReceiver = NAME_BUILDER.msgUnknownNameBuilder(receiver, true, false);
         String defaultNameColor = GameColors.getInstance().getDefaultNameColor();
@@ -401,7 +399,7 @@ public class PlayerSession {
         sendClientMessage(sender, receiver, Mode.WHISPER, newName, message);
     }
 
-    public void commandMessageToClient(Object sender, String message){
+    public void sendCommandMessageToClient(Object sender, String message){
         sendClientMessage(sender, this, Mode.COMMAND_RESULT, null, message);
     }
 
@@ -420,21 +418,21 @@ public class PlayerSession {
     }
 
 
-    public static void chatBroadcastToClientsAll(Object sender, String message){
+    public static void sendChatBroadcastToClientsAll(Object sender, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastToClients(sender, message, Mode.BROADCAST, allPlayers, null);
     }
 
-    public static void chatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendChatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
         broadcastToClients(sender, message, Mode.BROADCAST, sendList, null);
     }
 
-    public static void chatBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendChatBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastToClients(sender, message, Mode.BROADCAST, allPlayers, ignoredList);
     }
 
-    public static void chatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendChatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         broadcastToClients(sender, message, Mode.BROADCAST, sendList, ignoredList);
     }
 
@@ -443,39 +441,39 @@ public class PlayerSession {
 //    public static void channelBroadcastToClientsAll(HashSet<PlayerSession> ignoredList, String message){}
 //    public static void channelBroadcastToClientsGroup(HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){}
 
-    public static void whisperBroadcastToClientsAll(Object sender, String message){
+    public static void sendWhisperBroadcastToClientsAll(Object sender, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastToClients(sender, message, Mode.WHISPER, allPlayers, null);
     }
 
-    public static void whisperBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendWhisperBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
         broadcastToClients(sender, message, Mode.WHISPER, sendList, null);
     }
 
-    public static void whisperBroadcastToClientsAll(Object sender,  HashSet<PlayerSession> ignoredList, String message){
+    public static void sendWhisperBroadcastToClientsAll(Object sender,  HashSet<PlayerSession> ignoredList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastToClients(sender, message, Mode.WHISPER, allPlayers, ignoredList);
     }
 
-    public static void whisperBroadcastToClientsGroup(Object sender,  HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendWhisperBroadcastToClientsGroup(Object sender,  HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         broadcastToClients(sender, message, Mode.WHISPER, sendList, ignoredList);
     }
 
-    public static void commandBroadcastToClientsAll(Object sender, String message){
+    public static void sendCommandBroadcastToClientsAll(Object sender, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastToClients(sender, message, Mode.COMMAND_RESULT, allPlayers, null);
     }
 
-    public static void commandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendCommandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
         broadcastToClients(sender, message, Mode.COMMAND_RESULT, sendList, null);
     }
 
-    public static void commandBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendCommandBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastToClients(sender, message, Mode.COMMAND_RESULT, allPlayers, ignoredList);
     }
 
-    public static void commandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendCommandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         broadcastToClients(sender, message, Mode.COMMAND_RESULT, sendList, ignoredList);
     }
 
@@ -486,15 +484,15 @@ public class PlayerSession {
         routeToGroupNoFlush(chatReceivePacket, sendList, ignoredList);
     }
 
-    public void broadcastMessageToServer(Object sender, String message){
+    public void sendBroadcastMessageToServer(Object sender, String message){
         sendServerMessage(sender, this, ChatSendMode.BROADCAST, message);
     }
 
-    public void localMessageToServer(Object sender, String message){
+    public void sendLocalMessageToServer(Object sender, String message){
         sendServerMessage(sender, this, ChatSendMode.LOCAL, message);
     }
 
-    public void partyMessageToServer(Object sender, String message){
+    public void sendPartyMessageToServer(Object sender, String message){
         sendServerMessage(sender, this, ChatSendMode.PARTY, message);
     }
 
@@ -502,63 +500,63 @@ public class PlayerSession {
         ConnectionType connectionType = playerSession.CONNECTION_TYPE;
         if (connectionType == ConnectionType.PROXY_IN_GAME) {
             ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
-            routePacketToServer(playerSession, chatSendPacket);
+            sendPacketToServer(playerSession, chatSendPacket);
             String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
             StarNub.getLogger().cChatPrint(playerSession, "Server (Sender: " + senderString + ")", chatSendMode, message);
         }
     }
 
-    public static void chatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendChatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, allPlayers, null);
     }
 
-    public static void chatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendChatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
         broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, sendList, null);
     }
 
-    public static void chatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendChatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, allPlayers, ignoredList);
     }
 
-    public static void chatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendChatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, sendList, ignoredList);
     }
 
-    public static void localBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendLocalBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.LOCAL, allPlayers, null);
     }
 
-    public static void localBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
+    public static void sendLocalBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
         broadcastServerMessage(sender, message, ChatSendMode.LOCAL, sendList, null);
     }
 
-    public static void localBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendLocalBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.LOCAL, allPlayers, ignoredList);
     }
 
-    public static void localBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendLocalBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
         broadcastServerMessage(sender, message, ChatSendMode.LOCAL, sendList, ignoredList);
     }
 
-    public static void partyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
+    public static void sendPartyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.PARTY, allPlayers, null);
     }
 
-    public static void partyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
+    public static void sendPartyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
         broadcastServerMessage(sender, message, ChatSendMode.PARTY, sendList, null);
     }
 
-    public static void partyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendPartyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
         HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.PARTY, allPlayers, ignoredList);
     }
 
-    public static void partyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
+    public static void sendPartyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
         broadcastServerMessage(sender, message, ChatSendMode.PARTY, sendList, ignoredList);
     }
 
@@ -569,23 +567,23 @@ public class PlayerSession {
         routeToGroupNoFlush(chatSendPacket, sendList, ignoredList);
     }
 
-    public void routePacketToPlayer(Packet packet){
-        routePacketToPlayer(this, packet);
+    public void sendPacketToPlayer(Packet packet){
+        sendPacketToPlayer(this, packet);
     }
 
-    public void routePacketToPlayerNoFlush(Packet packet){
-        routePacketToPlayerNoFlush(this, packet);
+    public void sendPacketToPlayerNoFlush(Packet packet){
+        sendPacketToPlayerNoFlush(this, packet);
     }
 
-    public void routePacketToServer(Packet packet){
-        routePacketToServer(this, packet);
+    public void sendPacketToServer(Packet packet){
+        sendPacketToServer(this, packet);
     }
 
-    public void routePacketToServerNoFlush(Packet packet){
-        routePacketToServerNoFlush(this, packet);
+    public void sendPacketToServerNoFlush(Packet packet){
+        sendPacketToServerNoFlush(this, packet);
     }
 
-    private static void routePacketToPlayer(PlayerSession playerSession, Packet packet) {
+    private static void sendPacketToPlayer(PlayerSession playerSession, Packet packet) {
         ConnectionType connectionType = playerSession.CONNECTION_TYPE;
         if (connectionType == ConnectionType.PROXY_IN_GAME) {
             ChannelHandlerContext clientCtx = playerSession.getCONNECTION().getCLIENT_CTX();
@@ -595,7 +593,7 @@ public class PlayerSession {
         }
     }
 
-    private static void routePacketToPlayerNoFlush(PlayerSession playerSession, Packet packet) {
+    private static void sendPacketToPlayerNoFlush(PlayerSession playerSession, Packet packet) {
         ConnectionType connectionType = playerSession.CONNECTION_TYPE;
         if (connectionType == ConnectionType.PROXY_IN_GAME) {
             ChannelHandlerContext clientCtx = playerSession.getCONNECTION().getCLIENT_CTX();
@@ -605,7 +603,7 @@ public class PlayerSession {
         }
     }
 
-    private static void routePacketToServer(PlayerSession playerSession, Packet packet) {
+    private static void sendPacketToServer(PlayerSession playerSession, Packet packet) {
         ConnectionType connectionType = playerSession.CONNECTION_TYPE;
         if (connectionType == ConnectionType.PROXY_IN_GAME) {
             Connection connection = playerSession.getCONNECTION();
@@ -614,7 +612,7 @@ public class PlayerSession {
         }
     }
 
-    private static void routePacketToServerNoFlush(PlayerSession playerSession, Packet packet) {
+    private static void sendPacketToServerNoFlush(PlayerSession playerSession, Packet packet) {
         ConnectionType connectionType = playerSession.CONNECTION_TYPE;
         if (connectionType == ConnectionType.PROXY_IN_GAME) {
             Connection connection = playerSession.getCONNECTION();
@@ -727,8 +725,8 @@ public class PlayerSession {
             if (reason != DisconnectReason.QUIT) {
                 ClientDisconnectRequestPacket clientDisconnectRequestPacket = new ClientDisconnectRequestPacket();
                 ServerDisconnectPacket serverDisconnectPacket = new ServerDisconnectPacket("");
-                routePacketToServer(this, clientDisconnectRequestPacket);
-                routePacketToPlayer(this, serverDisconnectPacket);
+                sendPacketToServer(clientDisconnectRequestPacket);
+                sendPacketToPlayer(serverDisconnectPacket);
             }
         }
     }
@@ -968,6 +966,58 @@ public class PlayerSession {
         return StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(packet);
     }
 
+    public static PlayerSession getSession(Object playerIdentifier){
+        return StarNub.getConnections().getCONNECTED_PLAYERS().getOnlinePlayerByAnyIdentifier(playerIdentifier);
+    }
+
+    public static List<PlayerSession> getRecentSessions(DateTime dateTime){
+        return PLAYER_SESSION_LOG_DB.getAllFromDateRangeToNow(END_TIME_COLUMN, dateTime);
+    }
+
+    public static HashSet<PlayerSession> getRecentSessionsByIdentifier(String searchId, DateTime dateTime){
+        List<PlayerSession> allFromDateRangeToNow = PLAYER_SESSION_LOG_DB.getAllFromDateRangeToNow(END_TIME_COLUMN, dateTime);
+        HashSet<PlayerSession> newList = new HashSet<>();
+        if (Players.isStarNubId(searchId)) {
+            int starnubId = Integer.parseInt(searchId.replaceAll("[sS]", ""));
+            for (PlayerSession playerSession : allFromDateRangeToNow){
+                Account account = playerSession.getPlayerCharacter().getAccount();
+                if (account != null && starnubId == account.getStarnubId()){
+                    newList.add(playerSession);
+                }
+            }
+        } else if (StringUtils.countMatches(searchId, "-") >= 4) {
+            UUID uuid = UUID.fromString(searchId);
+            allFromDateRangeToNow.forEach(playerSession -> {
+                UUID characterUuid = playerSession.getPlayerCharacter().getUuid();
+                if (uuid.equals(characterUuid)) {
+                    newList.add(playerSession);
+                }
+            });
+        } else if (StringUtils.countMatches(searchId, ".") == 3) {
+            allFromDateRangeToNow.forEach(playerSession -> {
+                String ipString = playerSession.getSessionIpString();
+                if (ipString.equals(searchId)) {
+                    newList.add(playerSession);
+                }
+            });
+        } else {
+            for (PlayerSession playerSession : allFromDateRangeToNow){
+                PlayerCharacter character = playerSession.getPlayerCharacter();
+                String searchName = searchId.toLowerCase();
+                String cleanName = character.getCleanName().toLowerCase();
+                String characterName = character.getName().toLowerCase();
+                if (cleanName.contains(searchName) || characterName.contains(searchName)) {
+                    newList.add(playerSession);
+                }
+            }
+        }
+        return newList;
+    }
+
+    public static PlayerSession getSpecificSession(int playerSessionId){
+        return PLAYER_SESSION_LOG_DB.getById(playerSessionId);
+    }
+
     /* DB Methods */
 
     public static void retreiveSession(PlayerCharacter playerCharacter){
@@ -993,7 +1043,3 @@ public class PlayerSession {
                 '}';
     }
 }
-
-
-
-
