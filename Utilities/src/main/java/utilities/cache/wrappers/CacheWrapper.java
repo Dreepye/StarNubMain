@@ -260,6 +260,18 @@ public abstract class CacheWrapper<E1> {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p/>
+     * Uses: This will return all of the keys present in this cache wrapper
+     * <p/>
+     *
+     * @return HashSet containing all of the keys
+     */
+    public HashSet<TimeCache> getCacheValueList(){
+        return CACHE_MAP.values().stream().collect(Collectors.toCollection(HashSet::new));
+    }
+
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p/>
      * Uses: This will submit a task to StarNub to at a fixed rate schedule a prune task based on the time supplied.
      * It will remove utilities.cache older then the prune time when the prune triggers.
      * <p/>

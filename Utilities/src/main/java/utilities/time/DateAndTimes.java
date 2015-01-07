@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.util.regex.Matcher;
@@ -83,247 +82,6 @@ public class DateAndTimes {
             }
         }
         return getFutureDateTime(years, months, weeks, days, hours, minutes);
-    }
-
-    /**
-     * Returns a String formatted date, Examples "MMMM dd, yyyy",  "MMMM dd, yyyy '@' HH:mm '- Server Time'", [HH:mm:ss]
-     * <p>
-     * @see <a href="http://www.joda.org/joda-time/key_format.html">Joda Time Formatting</a>
-     * <p>
-     * @param format String representing the format
-     * @return String with the current time formatted
-     */
-    public static String getFormattedTimeNow(String format){
-        return DateTime.now().toString(DateTimeFormat.forPattern(format));
-    }
-
-    /**
-     * Returns a String formatted date, Examples "MMMM dd, yyyy",  "MMMM dd, yyyy '@' HH:mm '- Server Time'", [HH:mm:ss]
-     * <p>
-     * @see <a href="http://www.joda.org/joda-time/key_format.html">Joda Time Formatting</a>
-     * <p>
-     * @param format String representing the format
-     * @param dateTime DateTime representing the time
-     * @return String with the future time
-     */
-    public static String getFormattedDate(String format, DateTime dateTime){
-        DateTimeFormatter fmt = DateTimeFormat.forPattern(format);
-        return fmt.print(dateTime);
-    }
-
-    /**
-     * Returns a period which represents the distance between two times
-     *
-     * @param dateTime1 DateTime representing the first date and time
-     * @param dateTime2 DateTime representing the second date and time
-     * @return Period representing that distance in time
-     */
-    public Period getPeriod(DateTime dateTime1, DateTime dateTime2){
-        return new Period(dateTime1, dateTime2);
-    }
-
-    /**
-     *
-     * This will calculate out and return a String the length of a period in easy to read format: Y
-     *
-     * @param duration
-     * @param yearsSeparatorFormat
-     * @param monthsSeparatorFormat
-     * @param weeksSeparatorFormat
-     * @param daysSeparatorFormat
-     * @param hoursSeparatorFormat
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormattedFromMilliseconds(long duration, String yearsSeparatorFormat, String monthsSeparatorFormat, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        Period period = new Period(duration);
-        if (period.getYears() > 0) {
-            return getPeriodFormat(period, yearsSeparatorFormat, monthsSeparatorFormat, weeksSeparatorFormat, daysSeparatorFormat, hoursSeparatorFormat, minutesSeparatorFormat, secondsSeparatorFormat);
-        } else if (period.getMonths() > 0) {
-            return getPeriodFormat(period, monthsSeparatorFormat, weeksSeparatorFormat, daysSeparatorFormat, hoursSeparatorFormat, minutesSeparatorFormat, secondsSeparatorFormat);
-        } else if (period.getWeeks() > 0) {
-            return getPeriodFormat(period, weeksSeparatorFormat, daysSeparatorFormat, hoursSeparatorFormat, minutesSeparatorFormat, secondsSeparatorFormat);
-        } else if (period.getDays() > 0) {
-            return getPeriodFormat(period, daysSeparatorFormat, hoursSeparatorFormat, minutesSeparatorFormat, secondsSeparatorFormat);
-        } else if (period.getHours() > 0) {
-            return getPeriodFormat(period, hoursSeparatorFormat, minutesSeparatorFormat, secondsSeparatorFormat);
-        } else if (period.getMinutes() > 0) {
-            return getPeriodFormat(period, minutesSeparatorFormat, secondsSeparatorFormat);
-        } else if (period.getSeconds() > 0) {
-            return getPeriodFormat(period, secondsSeparatorFormat);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param period
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
-
-    }
-
-    /**
-     *
-     * @param period
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendMinutes().appendSeparator(minutesSeparatorFormat)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
-    }
-
-    /**
-     *
-     * @param period
-     * @param hoursSeparatorFormat
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendHours().appendSeparator(hoursSeparatorFormat)
-                .appendMinutes().appendSeparator(minutesSeparatorFormat)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
-    }
-
-    /**
-     *
-     * @param period
-     * @param daysSeparatorFormat
-     * @param hoursSeparatorFormat
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendDays().appendSeparator(daysSeparatorFormat)
-                .appendHours().appendSeparator(hoursSeparatorFormat)
-                .appendMinutes().appendSeparator(minutesSeparatorFormat)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
-    }
-
-    /**
-     *
-     * @param period
-     * @param weeksSeparatorFormat
-     * @param daysSeparatorFormat
-     * @param hoursSeparatorFormat
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendWeeks().appendSeparator(weeksSeparatorFormat)
-                .appendDays().appendSeparator(daysSeparatorFormat)
-                .appendHours().appendSeparator(hoursSeparatorFormat)
-                .appendMinutes().appendSeparator(minutesSeparatorFormat)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
-    }
-
-    /**
-     *
-     * @param period
-     * @param monthsSeparatorFormat
-     * @param weeksSeparatorFormat
-     * @param daysSeparatorFormat
-     * @param hoursSeparatorFormat
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String monthsSeparatorFormat, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendMonths().appendSeparator(monthsSeparatorFormat)
-                .appendWeeks().appendSeparator(weeksSeparatorFormat)
-                .appendDays().appendSeparator(daysSeparatorFormat)
-                .appendHours().appendSeparator(hoursSeparatorFormat)
-                .appendMinutes().appendSeparator(minutesSeparatorFormat)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
-    }
-
-    /**
-     *
-     * @param period
-     * @param yearsSeparatorFormat
-     * @param monthsSeparatorFormat
-     * @param weeksSeparatorFormat
-     * @param daysSeparatorFormat
-     * @param hoursSeparatorFormat
-     * @param minutesSeparatorFormat
-     * @param secondsSeparatorFormat
-     * @return
-     */
-    public static String getPeriodFormat(Period period, String yearsSeparatorFormat, String monthsSeparatorFormat, String weeksSeparatorFormat, String daysSeparatorFormat, String hoursSeparatorFormat, String minutesSeparatorFormat, String secondsSeparatorFormat){
-        if (secondsSeparatorFormat == null) {
-            secondsSeparatorFormat = "-";
-        }
-        PeriodFormatter Formatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendYears().appendSeparator(yearsSeparatorFormat)
-                .appendMonths().appendSeparator(monthsSeparatorFormat)
-                .appendWeeks().appendSeparator(weeksSeparatorFormat)
-                .appendDays().appendSeparator(daysSeparatorFormat)
-                .appendHours().appendSeparator(hoursSeparatorFormat)
-                .appendMinutes().appendSeparator(minutesSeparatorFormat)
-                .appendSeconds().appendLiteral(secondsSeparatorFormat)
-                .toFormatter();
-        return Formatter.print(period);
     }
 
     /**
@@ -394,4 +152,124 @@ public class DateAndTimes {
         return new DateTime().plusYears(years).plusMonths(months).plusWeeks(weeks).plusDays(days).plusHours(hours).plusMinutes(minutes);
     }
 
+
+    /**
+     * Returns a String formatted date, Examples "MMMM dd, yyyy",  "MMMM dd, yyyy '@' HH:mm '- Server Time'", [HH:mm:ss]
+     * <p>
+     * @see <a href="http://www.joda.org/joda-time/key_format.html">Joda Time Formatting</a>
+     * <p>
+     * @param format String representing the format
+     * @return String with the current time formatted
+     */
+    public static String getFormattedTimeNow(String format){
+        return DateTime.now().toString(DateTimeFormat.forPattern(format));
+    }
+
+    /**
+     * Returns a String formatted date, Examples "MMMM dd, yyyy",  "MMMM dd, yyyy '@' HH:mm '- Server Time'", [HH:mm:ss]
+     * <p>
+     * @see <a href="http://www.joda.org/joda-time/key_format.html">Joda Time Formatting</a>
+     * <p>
+     * @param format String representing the format
+     * @param dateTime DateTime representing the time
+     * @return String with the future time
+     */
+    public static String getFormattedDate(String format, DateTime dateTime){
+        DateTimeFormatter fmt = DateTimeFormat.forPattern(format);
+        return fmt.print(dateTime);
+    }
+
+    /**
+     * Returns a period which represents the distance between two times
+     *
+     * @param dateTime1 DateTime representing the first date and time
+     * @param dateTime2 DateTime representing the second date and time
+     * @return Period representing that distance in time
+     */
+    public Period getPeriod(DateTime dateTime1, DateTime dateTime2){
+        return new Period(dateTime1, dateTime2);
+    }
+
+    public static String getPeriodFormattedFromMilliseconds(long duration, String[] separators){
+        return getPeriodFormattedFromMilliseconds(duration, false, 0, separators);
+    }
+
+    public static String getPeriodFormattedFromMilliseconds(long duration, boolean capitalized){
+        String[] strings = {"y ", "m ", "w ", "d ", "h ", "m ", "s"};
+        if (capitalized){
+            strings = getCapitalizedStrings("", strings);
+        }
+        return getPeriodFormattedFromMilliseconds(duration, false, 0, strings);
+    }
+
+    public static String getPeriodFormattedFromMilliseconds(long duration, boolean capitalized, String separator){
+        String[] strings = {"y", "m", "w", "d", "h", "m", "s"};
+        if (capitalized){
+            strings = getCapitalizedStrings(separator, strings);
+        }
+        return getPeriodFormattedFromMilliseconds(duration, false, 0, strings);
+    }
+
+    public static String getPeriodFormattedFromMilliseconds(long duration, boolean printZeros, int digitCount, String... separators){
+        Period period = new Period(duration).normalizedStandard();
+        PeriodFormatterBuilder formatterBuilder = new PeriodFormatterBuilder().minimumPrintedDigits(digitCount);
+        if(printZeros){
+            formatterBuilder.printZeroIfSupported();
+        }
+        formatterBuilder
+                .appendYears().appendSeparator(separators[0])
+                .appendMonths().appendSeparator(separators[1])
+                .appendWeeks().appendSeparator(separators[2])
+                .appendDays().appendSeparator(separators[3])
+                .appendHours().appendSeparator(separators[4])
+                .appendMinutes().appendSeparator(separators[5])
+                .appendSeconds().appendLiteral(separators[6]);
+        return formatterBuilder.toFormatter().print(period);
+    }
+
+    public static String getPeriodFormattedFromMillisecondsSuffix(long duration, String... separators){
+        return getPeriodFormattedFromMilliseconds(duration, false, 0, separators);
+    }
+
+    public static String getPeriodFormattedFromMillisecondsSuffix(long duration){
+        String[] strings = {
+                " Year, ", " Years, ",
+                " Month, ", " Months, ",
+                " Week, ", " Weeks, ",
+                " Day, ", " Days, ",
+                " Hour, ", " Hours, ",
+                " Minute, ", " Minutes, ",
+                " Second", " Seconds"};
+        return getPeriodFormattedFromMillisecondsSuffix(duration, false, 0, strings);
+    }
+
+    public static String getPeriodFormattedFromMillisecondsSuffix(long duration, boolean printZeros, int digitCount, String... separators){
+        Period period = new Period(duration).normalizedStandard();
+        PeriodFormatterBuilder formatterBuilder = new PeriodFormatterBuilder().minimumPrintedDigits(digitCount);
+        if(printZeros){
+            formatterBuilder.printZeroIfSupported();
+        }
+        formatterBuilder
+                .appendYears().appendSuffix(separators[0], separators[1])
+                .appendMonths().appendSuffix(separators[2], separators[3])
+                .appendWeeks().appendSuffix(separators[4], separators[5])
+                .appendDays().appendSuffix(separators[6], separators[7])
+                .appendHours().appendSuffix(separators[8], separators[9])
+                .appendMinutes().appendSuffix(separators[10], separators[11])
+                .appendSeconds().appendSuffix(separators[12], separators[13]);
+        return formatterBuilder.toFormatter().print(period);
+    }
+
+
+    private static String[] getCapitalizedStrings(String separator, String ... strings) {
+        int stringsLength = strings.length;
+        String[] stringsUpper = new String[stringsLength];
+        for (int i = 0; i < stringsLength; i++) {
+            String string = strings[i];
+            String sConcat = string + separator;
+            String upperCase = sConcat.toUpperCase();
+            stringsUpper[i] = upperCase;
+        }
+        return stringsUpper;
+    }
 }

@@ -410,7 +410,7 @@ public class PlayerSession {
         ConnectionType connectionType = playerSession.getCONNECTION_TYPE();
         ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
         if (connectionType == ConnectionType.PROXY_IN_GAME) {
-            chatReceivePacket.routeToDestinationNoFlush();
+            sendPacketToPlayerNoFlush(playerSession, chatReceivePacket);
         } else if (connectionType == ConnectionType.REMOTE) {
             sendRemote(playerSession, chatReceivePacket);
         }
@@ -479,9 +479,10 @@ public class PlayerSession {
 
     private static void broadcastToClients(Object sender, String message, Mode mode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
         String senderName = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
-        StarNub.getLogger().cChatPrint(sender, sendList.toString(), mode, message);
+        String sendListFinal = getSentenceNameList(sendList);
+        StarNub.getLogger().cChatPrint(sender, sendListFinal, mode, message);
         ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
-        routeToGroupNoFlush(chatReceivePacket, sendList, ignoredList);
+        sendPacketToGroupNoFlush(chatReceivePacket, sendList, ignoredList);
     }
 
     public void sendBroadcastMessageToServer(Object sender, String message){
@@ -562,9 +563,10 @@ public class PlayerSession {
 
     private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
         String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
-        StarNub.getLogger().cChatPrint(sendList.toString(), "Server (Sender: " + senderString + ")", chatSendMode, message);
+        String sendListFinal = getSentenceNameList(sendList);
+        StarNub.getLogger().cChatPrint(sendListFinal, "Server (Sender: " + senderString + ")", chatSendMode, message);
         ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
-        routeToGroupNoFlush(chatSendPacket, sendList, ignoredList);
+        sendPacketToGroupNoFlush(chatSendPacket, sendList, ignoredList);
     }
 
     public void sendPacketToPlayer(Packet packet){
@@ -628,8 +630,8 @@ public class PlayerSession {
      *
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
      */
-    public static void routeToGroup(Packet packet, HashSet<PlayerSession> sendList) {
-        sendGroup(packet, sendList, null, true);
+    public static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList) {
+        sendPacketToGroup(packet, sendList, null, true);
     }
 
     /**
@@ -640,8 +642,8 @@ public class PlayerSession {
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
      * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
      */
-    public static void routeToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
-        sendGroup(packet, sendList, ignoredList, true);
+    public static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
+        sendPacketToGroup(packet, sendList, ignoredList, true);
     }
 
     /**
@@ -651,8 +653,8 @@ public class PlayerSession {
      *
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
      */
-    public static void routeToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList) {
-        sendGroup(packet, sendList, null, false);
+    public static void sendPacketToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList) {
+        sendPacketToGroup(packet, sendList, null, false);
     }
 
     /**
@@ -664,32 +666,50 @@ public class PlayerSession {
      * @param sendList    HashSet of ChannelHandlerContext to this packet to
      * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
      */
-    public static void routeToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
-        sendGroup(packet, sendList, ignoredList, false);
+    public static void sendPacketToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
+        sendPacketToGroup(packet, sendList, ignoredList, false);
     }
 
-    private static void sendGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, boolean flush){
+    private static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, boolean flush){
         ByteBuf byteBufPacket = packet.packetToMessageEncoder();
+        int refCnt = 0;
+        int ignoreListSize = 0;
         if (ignoredList != null) {
             sendList.removeAll(ignoredList);
         }
-        for (PlayerSession playerSession : sendList) {
-            ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
-            ConnectionType connectionType = playerSession.getCONNECTION_TYPE();
-            if (connectionType == ConnectionType.PROXY_IN_GAME) {
-                if (flush) {
-                    ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
-                } else {
-                    ctx.write(byteBufPacket, ctx.voidPromise());
+        int sendListSize = sendList.size() - 1; /* Keep message this count */
+        ignoreListSize = ignoredList.size(); /* Subtract this count */
+        refCnt = sendListSize - ignoreListSize; /* Message ref count */
+        byteBufPacket.retain(refCnt);
+        if (!sendList.isEmpty()) {
+            for (PlayerSession playerSession : sendList) {
+                ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
+                ConnectionType connectionType = playerSession.getCONNECTION_TYPE();
+                if (connectionType == ConnectionType.PROXY_IN_GAME) {
+                    if (flush) {
+                        ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
+                    } else {
+                        ctx.write(byteBufPacket, ctx.voidPromise());
+                    }
+                } else if (connectionType == ConnectionType.REMOTE) {
+                    sendRemote(playerSession, packet);
                 }
-            } else if (connectionType == ConnectionType.REMOTE) {
-                sendRemote(playerSession, packet);
             }
+            System.out.println(byteBufPacket.refCnt()); // URGENT-FIX Verify Fix
         }
     }
 
     private static void sendRemote(PlayerSession packet, Packet ctx){
         //REQUIRES STARNUB PROTOCOL - Needs to strip colors on REMOTE clients
+    }
+
+    private static String getSentenceNameList(HashSet<PlayerSession> playerSessions){
+        String sendListNames = "";
+        for (PlayerSession playerSession : playerSessions){
+            String cleanName = playerSession.getPlayerCharacter().getCleanName();
+            sendListNames = sendListNames + cleanName + ", ";
+        }
+        return StringUtilities.trimCommaForPeriod(sendListNames);
     }
 
     public void removeConnection() {

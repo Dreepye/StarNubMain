@@ -18,28 +18,22 @@
 
 package starnubserver.cache.objects;
 
+import starnubserver.connections.player.session.PlayerSession;
 import utilities.cache.objects.TimeCache;
-import io.netty.channel.Channel;
 
-/**
- * Represents a Channel Cache. This can be used in any Cache Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class ChannelCache extends TimeCache {
+public class PlayerSessionCache extends TimeCache{
 
-    protected Channel channel;
+    private PlayerSession playerSession;
 
-    public ChannelCache(Channel channel) {
-        this.channel = channel;
+    public PlayerSessionCache(PlayerSession playerSession) {
+        this.playerSession = playerSession;
     }
 
-    public Channel getChannel() {
-        return channel;
+    public PlayerSession getPlayerSession() {
+        return playerSession;
     }
 
-    public void setChannel(Channel channel) {
-        this.channel = channel;
+    public void setPlayerSession(PlayerSession playerSession) {
+        this.playerSession = playerSession;
     }
 }

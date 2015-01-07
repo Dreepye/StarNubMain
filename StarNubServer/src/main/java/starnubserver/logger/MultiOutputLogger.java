@@ -829,6 +829,7 @@ public class MultiOutputLogger {
             }
         }
         new StarNubEvent("StarNub_Log_Chat",
+                timeStamp() +
                 "[StarNub Chat - " + typeString + "]" +
                 "[" + NAME_BUILDER.cUnknownNameBuilder(sender, true, charName) + " -> " + NAME_BUILDER.cUnknownNameBuilder(destination, true, charName) + "]: "
                                 + StringUtilities.removeColors(message));
