@@ -36,7 +36,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>dependency-starnubserver.jars/</classpathPrefix>
-                            <mainClass>starnubserver.StarNub</mainClass>
+                            <mainClass>org.starnub.starnubserver.StarNub</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

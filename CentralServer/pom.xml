@@ -53,7 +53,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>dependency-centralserver.jars/</classpathPrefix>
-                            <mainClass>centralserver.CentralServer</mainClass>
+                            <mainClass>org.starnub.centralserver.CentralServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
