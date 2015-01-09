@@ -68,6 +68,7 @@ public class ResourceManager extends StarNubYamlWrapper{
                 "StarNub",
 //                "Resources",
                 "Plugins",
+                "Commands",
                 "Logs",
                 "Logs/Events_Debug",
                 "Logs/Chat",

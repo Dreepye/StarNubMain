@@ -22,7 +22,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.starnub.starnubserver.database.tables.AccountPermissions;
-import org.starnub.starnubserver.database.tables.AccountPermissions;
 
 import java.io.Serializable;
 import java.util.List;
@@ -43,7 +42,7 @@ public class AccountPermission implements Serializable {
     /* COLUMN NAMES */
     private final static String PERMISSION_ID_COLUMN = "PERMISSION_ID";
     private final static String STARNUB_ID_COLUMN = "STARNUB_ID";
-    private final static String PERMISSION_COLUMN = "PERMISSION_COLUMN";
+    private final static String PERMISSION_COLUMN = "PERMISSION";
 
     @DatabaseField(dataType = DataType.INTEGER, generatedId =true, columnName = PERMISSION_ID_COLUMN)
     private volatile int permissionId;

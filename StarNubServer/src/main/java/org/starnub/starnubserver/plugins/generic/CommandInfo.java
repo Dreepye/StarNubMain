@@ -19,7 +19,6 @@
 package org.starnub.starnubserver.plugins.generic;
 
 import org.starnub.starnubserver.plugins.Command;
-import org.starnub.starnubserver.plugins.Command;
 
 import java.util.HashSet;
 

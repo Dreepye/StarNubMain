@@ -31,7 +31,7 @@ import java.util.HashSet;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public abstract class Command extends CommandPackage{
+public abstract class Command extends CommandPackage {
 
     /**
      * @param PLUGIN_NAME         String representing the plugin that owns this command

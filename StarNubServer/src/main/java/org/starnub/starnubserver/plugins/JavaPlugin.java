@@ -18,15 +18,11 @@
 
 package org.starnub.starnubserver.plugins;
 
-import org.starnub.starnubserver.plugins.generic.PluginDetails;
-import org.starnub.starnubserver.plugins.resources.PluginConfiguration;
-import org.starnub.starnubserver.plugins.resources.PluginRunnables;
-import org.starnub.starnubserver.plugins.resources.YAMLFiles;
 import org.starnub.starnubserver.plugins.generic.CommandInfo;
 import org.starnub.starnubserver.plugins.generic.PluginDetails;
+import org.starnub.starnubserver.plugins.resources.PluginConfiguration;
 import org.starnub.starnubserver.plugins.resources.PluginRunnables;
 import org.starnub.starnubserver.plugins.resources.YAMLFiles;
-import org.starnub.starnubserver.plugins.resources.PluginConfiguration;
 
 import java.io.File;
 

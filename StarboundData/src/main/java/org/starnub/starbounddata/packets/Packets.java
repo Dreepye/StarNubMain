@@ -131,7 +131,7 @@ public enum Packets {
      * to be pre loaded for incoming connections
      */
     public static HashMap<Packets, Class> setPrePacketCache() {
-        Reflections reflections = new Reflections("starbounddata.packets");
+        Reflections reflections = new Reflections("org.starnub.starbounddata.packets");
         Set<Class<? extends Packet>> allClasses = reflections.getSubTypesOf(Packet.class);
         HashMap<String, Class> packetPaths = new HashMap<String, Class>();
         for (Class c : allClasses) {
