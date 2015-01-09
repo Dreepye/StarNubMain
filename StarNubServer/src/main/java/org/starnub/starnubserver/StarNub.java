@@ -19,6 +19,9 @@
 package org.starnub.starnubserver;
 
 import org.joda.time.DateTime;
+import org.python.core.PyObject;
+import org.python.util.PythonInterpreter;
+import org.starnub.starbounddata.types.vectors.Vec2I;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.logger.MultiOutputLogger;
 import org.starnub.starnubserver.plugins.PluginManager;
@@ -108,7 +111,28 @@ public final class StarNub {
         StringTokens.getInstance().registerInternalTokens();
 
         new StarNubEvent("StarNub_Startup_Complete", System.currentTimeMillis() - STARNUB_START_TIME);
-}
+
+        PythonInterpreter interpreter = new PythonInterpreter();
+        interpreter.execfile("StarNub/Plugins/TestPlugin.py");
+//        interpreter.exec("from TestPlugin import Vec2IPlus");
+        PyObject buildingClass = interpreter.get("Vec2IPlus");
+        PyObject buildingObject = buildingClass.__call__();
+        Vec2I vec2I = (Vec2I) buildingObject.__tojava__(Vec2I.class);
+        System.out.println(vec2I.getX());
+        System.out.println(vec2I.getY());
+
+//        PyInstance pyInstance = interpreter.eval(className + "(" + opts + ")");
+//        PyInstance hello = ie.createClass("Hello", "None");
+//        hello.invoke("run");
+
+//        interpreter.exec("from Building import Building");
+//        PyObject pyObject = interpreter.get("test");
+//        pyObject.invoke();
+//        pyObject.invoke("printer");
+//        pyObject.invoke("getX");
+
+
+    }
 
     private static void setUptimeTask(){
         new StarNubTask("StarNub", "StarNub - Uptime", true, 30, 30, TimeUnit.SECONDS, () -> new StarNubEvent("StarNub_Uptime",  DateTime.now().getMillis() - STARNUB_START_TIME));

@@ -68,13 +68,13 @@ public class Account implements Serializable{
     /**
      * Used with DANKS CMS
      */
-    @DatabaseField(dataType = DataType.STRING, columnName = "SALT")
+    @DatabaseField(dataType = DataType.STRING, columnName = SALT_COULMN)
     private volatile String accountSalt;
 
-    @DatabaseField(foreign = true, columnName = "SETTINGS_ID")
+    @DatabaseField(foreign = true, columnName = SETTINGS_ID_COLUMN)
     private volatile Settings accountSettings;
 
-    @DatabaseField(dataType = DataType.DATE_TIME, columnName = "LAST_LOGIN")
+    @DatabaseField(dataType = DataType.DATE_TIME, columnName = LAST_LOGIN_COLUMN)
     private volatile DateTime lastLogin;
 
     private final HashSet<Group> GROUP_ASSIGNMENTS = new HashSet<>();
