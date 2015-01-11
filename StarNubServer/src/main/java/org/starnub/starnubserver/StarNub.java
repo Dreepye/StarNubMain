@@ -19,12 +19,8 @@
 package org.starnub.starnubserver;
 
 import org.joda.time.DateTime;
-import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
-import org.starnub.starbounddata.types.vectors.Vec2I;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.logger.MultiOutputLogger;
-import org.starnub.starnubserver.plugins.PluginManager;
 import org.starnub.starnubserver.resources.ResourceManager;
 import org.starnub.starnubserver.resources.StringTokens;
 import org.starnub.starnubserver.resources.files.Configuration;
@@ -54,7 +50,7 @@ public final class StarNub {
     private static final MultiOutputLogger LOGGER = MultiOutputLogger.getInstance();
     private static final Connections CONNECTIONS = Connections.getInstance();
     private static final StarNubVersion VERSION = StarNubVersion.getInstance();
-    private static final PluginManager PLUGIN_MANAGER = PluginManager.getInstance();
+//    private static final PluginManager PLUGIN_MANAGER = PluginManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
     private StarNub() {}
@@ -82,10 +78,10 @@ public final class StarNub {
     public static StarNubVersion getVersion() {
         return VERSION;
     }
-
-    public static PluginManager getPluginManager() {
-        return PLUGIN_MANAGER;
-    }
+//
+//    public static PluginManager getPluginManager() {
+//        return PLUGIN_MANAGER;
+//    }
 
     public static StarboundServer getStarboundServer() {
         return STARBOUND_SERVER;
@@ -104,7 +100,7 @@ public final class StarNub {
 
         GroupsManagement.getInstance().groupSetup();
 
-        PluginManager.getInstance().loadAllPlugins(false, true);
+//        PluginManager.getInstance().loadAllPlugins(false, true);
 
         setUptimeTask();
 
@@ -112,14 +108,18 @@ public final class StarNub {
 
         new StarNubEvent("StarNub_Startup_Complete", System.currentTimeMillis() - STARNUB_START_TIME);
 
-        PythonInterpreter interpreter = new PythonInterpreter();
-        interpreter.execfile("StarNub/Plugins/TestPlugin.py");
-//        interpreter.exec("from TestPlugin import Vec2IPlus");
-        PyObject buildingClass = interpreter.get("Vec2IPlus");
-        PyObject buildingObject = buildingClass.__call__();
-        Vec2I vec2I = (Vec2I) buildingObject.__tojava__(Vec2I.class);
-        System.out.println(vec2I.getX());
-        System.out.println(vec2I.getY());
+
+
+
+        //PYTHON TODO SET CACHE LOCATION THROUGH THIS
+//        PythonInterpreter interpreter = new PythonInterpreter();
+//        interpreter.execfile("StarNub/Plugins/TestPlugin.py");
+////        interpreter.exec("from TestPlugin import Vec2IPlus");
+//        PyObject buildingClass = interpreter.get("Vec2IPlus");
+//        PyObject buildingObject = buildingClass.__call__();
+//        Vec2I vec2I = (Vec2I) buildingObject.__tojava__(Vec2I.class);
+//        System.out.println(vec2I.getX());
+//        System.out.println(vec2I.getY());
 
 //        PyInstance pyInstance = interpreter.eval(className + "(" + opts + ")");
 //        PyInstance hello = ie.createClass("Hello", "None");

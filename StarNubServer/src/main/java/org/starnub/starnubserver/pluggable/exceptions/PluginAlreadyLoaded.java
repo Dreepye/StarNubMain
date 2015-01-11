@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.plugins.exceptions;
+package org.starnub.starnubserver.pluggable.exceptions;
 
 /**
  * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
@@ -24,11 +24,11 @@ package org.starnub.starnubserver.plugins.exceptions;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public class PluginDependencyLoadFailed extends Exception {
+public class PluginAlreadyLoaded extends Exception {
 
-    public PluginDependencyLoadFailed() {}
+    public PluginAlreadyLoaded() {}
 
-    public PluginDependencyLoadFailed(String message){
+    public PluginAlreadyLoaded(String message){
         super(message);
     }
 }

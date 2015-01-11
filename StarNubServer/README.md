@@ -29,7 +29,7 @@ Base Features:
 		- Configuration self heals data types
 		- Most configuration items can be modified while the starbounddata.packets.starbounddata.packets.starnubserver is running
    - Starbound Configuration:
-		- Auto generate configuration if it does not exist in directory
+		- Auto generate configuration if it does not exist in DIRECTORY
 		*- Auto write configuration variables when changed in StarNub configuration
    - Highly configurable logging to screen and utilities.file
 		- Log rotation every new day and if specified utilities.file size of your choice is met a new utilities.file will be created
@@ -92,7 +92,7 @@ Base Features:
 			- Checks if everyone can use the command or if the player has permissions
 		- Commands are used by /{commandname or alias} {command}
 			- Example /starnubserver online or /sn online - would return whos online
-			- Commands can be mapped to shortcuts using the shortcut.yml in StarNub directory
+			- Commands can be mapped to shortcuts using the shortcut.yml in StarNub DIRECTORY
 				- Example: Config utilities.file would be starnubserver: ['online', 'who'], starboundmanager: ['ban', 'kick']
 					- ^-this would map /starnubserver online or /starnubserver who to /online or /who and /starboundmanager ban and /starboundmanager kick to /ban and /kick
 			- Only one unique command can be mapped, so if both starnubserver and starboundmanager both have 'ban' only one can be shortcut's

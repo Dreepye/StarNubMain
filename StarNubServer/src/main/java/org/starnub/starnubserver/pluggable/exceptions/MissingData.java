@@ -16,13 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.plugins.exceptions;
+package org.starnub.starnubserver.pluggable.exceptions;
 
-public class CommandYamlLoadFailed extends Exception{
+public class MissingData extends Exception {
 
-    public CommandYamlLoadFailed() {}
+    public MissingData() {}
 
-    public CommandYamlLoadFailed(String message){
+    public MissingData(String message){
         super(message);
     }
 }

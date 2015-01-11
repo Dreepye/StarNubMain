@@ -24,7 +24,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.starnub.starnubserver.connections.player.generic.Tag;
 import org.starnub.starnubserver.database.tables.Groups;
 import org.starnub.starnubserver.resources.files.GroupsManagement;
-import org.starnub.utilities.exceptions.CollectionDoesNotExistException;
+import org.starnub.utilities.cache.exceptions.CollectionDoesNotExistException;
 
 import java.io.IOException;
 import java.util.*;

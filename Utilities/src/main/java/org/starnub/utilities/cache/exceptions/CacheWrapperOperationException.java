@@ -16,32 +16,19 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.plugins.resources;
-
-import org.starnub.starnubserver.resources.StarNubYamlWrapper;
-import org.starnub.starnubserver.resources.StarNubYamlWrapper;
-
-import java.io.InputStream;
+package org.starnub.utilities.cache.exceptions;
 
 /**
- * Represents StarNubs Configuration instance extending YAMLWrapper
+ * Represents a CollectionDoesNotExistException, this is used in the Cache Wrapper
  *
  * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
+ * @since 1.0
  */
-public class PluginConfiguration extends StarNubYamlWrapper {
+public class CacheWrapperOperationException extends Exception{
 
-    public PluginConfiguration(String pluginName, InputStream defaultPath) {
-        super(
-                pluginName,
-                pluginName.toLowerCase() + "_configuration.yml",
-                defaultPath,
-                "StarNub/Plugins/" + pluginName,
-                false,
-                true,
-                true,
-                true,
-                true
-        );
+    public CacheWrapperOperationException() {}
+
+    public CacheWrapperOperationException(String message){
+        super(message);
     }
 }

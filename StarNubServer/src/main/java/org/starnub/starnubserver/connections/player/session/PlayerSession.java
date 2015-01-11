@@ -35,29 +35,29 @@ import org.starnub.starbounddata.types.chat.Mode;
 import org.starnub.starbounddata.types.color.GameColors;
 import org.starnub.starnubdata.generic.BanType;
 import org.starnub.starnubdata.generic.DisconnectReason;
-import org.starnub.starnubserver.connections.player.StarNubConnection;
-import org.starnub.starnubserver.connections.player.account.Account;
-import org.starnub.starnubserver.connections.player.generic.StaffEntry;
-import org.starnub.starnubserver.connections.player.session.location.ExactLocation;
-import org.starnub.starnubserver.connections.player.session.location.ShipsLocation;
-import org.starnub.starnubserver.database.tables.PlayerSessionLog;
-import org.starnub.starnubserver.resources.files.GroupsManagement;
 import org.starnub.starnubserver.Connections;
 import org.starnub.starnubserver.StarNub;
+import org.starnub.starnubserver.connections.player.StarNubConnection;
 import org.starnub.starnubserver.connections.player.StarNubProxyConnection;
+import org.starnub.starnubserver.connections.player.account.Account;
 import org.starnub.starnubserver.connections.player.account.AccountPermission;
 import org.starnub.starnubserver.connections.player.character.CharacterIP;
 import org.starnub.starnubserver.connections.player.character.PlayerCharacter;
 import org.starnub.starnubserver.connections.player.generic.Ban;
+import org.starnub.starnubserver.connections.player.generic.StaffEntry;
 import org.starnub.starnubserver.connections.player.groups.Group;
+import org.starnub.starnubserver.connections.player.session.location.ExactLocation;
+import org.starnub.starnubserver.connections.player.session.location.ShipsLocation;
 import org.starnub.starnubserver.database.tables.Characters;
+import org.starnub.starnubserver.database.tables.PlayerSessionLog;
 import org.starnub.starnubserver.events.events.DisconnectEvent;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.resources.NameBuilder;
 import org.starnub.starnubserver.resources.connections.Players;
+import org.starnub.starnubserver.resources.files.GroupsManagement;
+import org.starnub.utilities.cache.exceptions.CollectionDoesNotExistException;
 import org.starnub.utilities.connectivity.ConnectionType;
 import org.starnub.utilities.connectivity.connection.Connection;
-import org.starnub.utilities.exceptions.CollectionDoesNotExistException;
 import org.starnub.utilities.strings.StringUtilities;
 
 import java.io.IOException;
@@ -911,7 +911,7 @@ public class PlayerSession {
      * starnub.server, The fourth line gives me all PERMISSIONS for the starnub related commands that fall under starnub. .
      *
      * <p>
-     * @param basePermission String representing the plugin command name to check
+     * @param basePermission String representing the pluggableOLD command name to check
      * @param subPermission String representing the plugins command specific sub permission
      * @param fullPermission String representing the plugins sub permission specific Command
      * @return boolean if the account has the permission
@@ -937,7 +937,7 @@ public class PlayerSession {
      * starnub.server, The fourth line gives me all PERMISSIONS for the starnub related commands that fall under starnub. .
      *
      * <p>
-     * @param basePermission String representing the plugin command name to check
+     * @param basePermission String representing the pluggableOLD command name to check
      * @param subPermission String representing the plugins command specific sub permission
      * @return boolean if the account has the permission
      */

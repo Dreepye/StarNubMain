@@ -16,19 +16,9 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.utilities.exceptions;
+package org.starnub.starnubserver.pluggable;
 
-/**
- * Represents a CollectionDoesNotExistException, this is used in the Cache Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class CacheWrapperOperationException extends Exception{
-
-    public CacheWrapperOperationException() {}
-
-    public CacheWrapperOperationException(String message){
-        super(message);
-    }
+public enum PluggableType {
+    JAVA,
+    PYTHON
 }

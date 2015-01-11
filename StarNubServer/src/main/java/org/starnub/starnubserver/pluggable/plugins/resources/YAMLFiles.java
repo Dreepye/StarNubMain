@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.plugins.resources;
+package org.starnub.starnubserver.pluggable.plugins.resources;
 
 import java.io.File;
 import java.util.HashSet;
