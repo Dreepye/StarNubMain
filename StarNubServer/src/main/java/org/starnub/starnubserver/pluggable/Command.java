@@ -20,68 +20,19 @@ package org.starnub.starnubserver.pluggable;
 
 import org.starnub.starnubdata.generic.CanUse;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
-import org.starnub.starnubserver.pluggable.exceptions.MissingData;
-import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
 import org.starnub.utilities.file.yaml.YAMLWrapper;
 import org.starnub.utilities.file.yaml.YamlUtilities;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.*;
 
-public abstract class Command<T> extends Pluggable<T> {
+public abstract class Command extends Pluggable {
 
     private String command;
     private HashSet<String> mainArgs;
     private HashSet<String> permissions;
     private HashMap<String, Integer> customSplit;
     private CanUse canUse;
-
-    /**
-     * Creates a new <code>File</code> instance by converting the given
-     * pathname string into an abstract pathname.  If the given string is
-     * the empty string, then the result is the empty abstract pathname.
-     *
-     * @param pathname A pathname string
-     * @throws NullPointerException If the <code>pathname</code> argument is <code>null</code>
-     */
-    public Command(String pathname) throws MissingData, IOException, PluginDirectoryCreationFailed {
-        super(pathname);
-    }
-
-    /**
-     * Creates a new <tt>File</tt> instance by converting the given
-     * <tt>file:</tt> URI into an abstract pathname.
-     * <p>
-     * <p> The exact form of a <tt>file:</tt> URI is system-dependent, hence
-     * the transformation performed by this constructor is also
-     * system-dependent.
-     * <p>
-     * <p> For a given abstract pathname <i>f</i> it is guaranteed that
-     * <p>
-     * <blockquote><tt>
-     * new File(</tt><i>&nbsp;f</i><tt>.{@link #toURI() toURI}()).equals(</tt><i>&nbsp;f</i><tt>.{@link #getAbsoluteFile() getAbsoluteFile}())
-     * </tt></blockquote>
-     * <p>
-     * so long as the original abstract pathname, the URI, and the new abstract
-     * pathname are all created in (possibly different invocations of) the same
-     * Java virtual machine.  This relationship typically does not hold,
-     * however, when a <tt>file:</tt> URI that is created in a virtual machine
-     * on one operating system is converted into an abstract pathname in a
-     * virtual machine on a different operating system.
-     *
-     * @param uri An absolute, hierarchical URI with a scheme equal to
-     *            <tt>"file"</tt>, a non-empty path component, and undefined
-     *            authority, query, and fragment components
-     * @throws NullPointerException     If <tt>uri</tt> is <tt>null</tt>
-     * @throws IllegalArgumentException If the preconditions on the parameter do not hold
-     * @see #toURI()
-     * @see java.net.URI
-     * @since 1.4
-     */
-    public Command(URI uri) throws MissingData, IOException, PluginDirectoryCreationFailed {
-        super(uri);
-    }
 
     public String getCommand() {
         return command;
@@ -104,8 +55,7 @@ public abstract class Command<T> extends Pluggable<T> {
     }
 
     @Override
-    public void loadData(YAMLWrapper pluggableInfo) throws MissingData, IOException, PluginDirectoryCreationFailed {
-        super.loadData(pluggableInfo);
+    public void loadData(YAMLWrapper pluggableInfo){
         this.command = (String) pluggableInfo.getValue("command");
         this.mainArgs = new HashSet<>();
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
@@ -134,7 +84,8 @@ public abstract class Command<T> extends Pluggable<T> {
         LinkedHashMap<String, Object> commandDetailsMap = getCommandDetailsMap();
         pluginDetailDump.put("Pluggable Details", pluggableDetailsMap);
         pluginDetailDump.put("Command Details", commandDetailsMap);
-        YamlUtilities.toFileYamlDump(pluginDetailDump, "StarNub/Commands/Information" + pluggableDetails.getNAME() + "/Information/", "Plugin_Details.yml");
+        String commandDirectory = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING();
+        YamlUtilities.toFileYamlDump(pluginDetailDump, commandDirectory + "Information", pluggableDetails.getNAME()+"_Details.yml");
     }
 
     public LinkedHashMap<String,Object> getCommandDetailsMap() {
@@ -156,4 +107,15 @@ public abstract class Command<T> extends Pluggable<T> {
     }
 
     public abstract void onCommand(PlayerSession playerSession, String command, int argsCount, String[] args);
+
+    @Override
+    public String toString() {
+        return "Command{" +
+                "command='" + command + '\'' +
+                ", mainArgs=" + mainArgs +
+                ", permissions=" + permissions +
+                ", customSplit=" + customSplit +
+                ", canUse=" + canUse +
+                "} " + super.toString();
+    }
 }

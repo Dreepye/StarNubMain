@@ -22,100 +22,85 @@ import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.StarNubTaskManager;
 import org.starnub.starnubserver.events.packet.PacketEventRouter;
 import org.starnub.starnubserver.events.starnub.StarNubEventRouter;
-import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
-import org.starnub.starnubserver.pluggable.plugins.resources.PluginConfiguration;
+import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
+import org.starnub.starnubserver.pluggable.resources.PluginYAMLWrapper;
+import org.starnub.starnubserver.pluggable.resources.YAMLFiles;
 import org.starnub.utilities.dircectories.DirectoryCheckCreate;
+import org.starnub.utilities.file.utility.JarFromDisk;
 import org.starnub.utilities.file.yaml.YAMLWrapper;
 import org.starnub.utilities.file.yaml.YamlUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 
-public abstract class Plugin<T> extends Pluggable<T> {
+public abstract class Plugin extends Pluggable {
 
     protected PluginConfiguration configuration;
-    protected HashSet<Map<String, Object>> dependencies;
+    protected YAMLFiles files;
     protected HashSet<String> additionalPermissions;
     private boolean enabled;
-
-    /**
-     * Creates a new <code>File</code> instance by converting the given
-     * pathname string into an abstract pathname.  If the given string is
-     * the empty string, then the result is the empty abstract pathname.
-     *
-     * @param pathname A pathname string
-     * @throws NullPointerException If the <code>pathname</code> argument is <code>null</code>
-     */
-    public Plugin(String pathname) throws MissingData, IOException, PluginDirectoryCreationFailed {
-        super(pathname);
-    }
-
-    /**
-     * Creates a new <tt>File</tt> instance by converting the given
-     * <tt>file:</tt> URI into an abstract pathname.
-     * <p>
-     * <p> The exact form of a <tt>file:</tt> URI is system-dependent, hence
-     * the transformation performed by this constructor is also
-     * system-dependent.
-     * <p>
-     * <p> For a given abstract pathname <i>f</i> it is guaranteed that
-     * <p>
-     * <blockquote><tt>
-     * new File(</tt><i>&nbsp;f</i><tt>.{@link #toURI() toURI}()).equals(</tt><i>&nbsp;f</i><tt>.{@link #getAbsoluteFile() getAbsoluteFile}())
-     * </tt></blockquote>
-     * <p>
-     * so long as the original abstract pathname, the URI, and the new abstract
-     * pathname are all created in (possibly different invocations of) the same
-     * Java virtual machine.  This relationship typically does not hold,
-     * however, when a <tt>file:</tt> URI that is created in a virtual machine
-     * on one operating system is converted into an abstract pathname in a
-     * virtual machine on a different operating system.
-     *
-     * @param uri An absolute, hierarchical URI with a scheme equal to
-     *            <tt>"file"</tt>, a non-empty path component, and undefined
-     *            authority, query, and fragment components
-     * @throws NullPointerException     If <tt>uri</tt> is <tt>null</tt>
-     * @throws IllegalArgumentException If the preconditions on the parameter do not hold
-     * @see #toURI()
-     * @see java.net.URI
-     * @since 1.4
-     */
-    public Plugin(URI uri) throws MissingData, IOException, PluginDirectoryCreationFailed {
-        super(uri);
-    }
-
-    public HashSet<Map<String, Object>> getDependencies() {
-        return dependencies;
-    }
 
     public boolean isEnabled() {
         return enabled;
     }
 
     @Override
-    public void loadData(YAMLWrapper pluggableInfo) throws MissingData, IOException, PluginDirectoryCreationFailed {
-        super.loadData(pluggableInfo);
+    public void loadData(YAMLWrapper pluggableInfo) throws IOException, PluginDirectoryCreationFailed {
         additionalPermissions = new HashSet<>();
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         additionalPermissionList.addAll(additionalPermissionList);
-        dependencies = new HashSet<>();
-        ArrayList<Map<String, Object>> dependantsList = (ArrayList<Map<String, Object>>) pluggableInfo.getValue("dependencies");
-        dependantsList.addAll(dependantsList);
         boolean hasConfiguration = (boolean) pluggableInfo.getValue("has_configuration");
         if (hasConfiguration) {
-            if(pluginType == PluggableType.JAVA) {
+            if(pluggableFileType == PluggableFileType.JAVA) {
                 try (InputStream defaultPluginConfiguration = StarNub.class.getClassLoader().getResourceAsStream("default_configuration.yml")) {
                     configuration = new PluginConfiguration(pluggableDetails.getNAME(), defaultPluginConfiguration);
                 }
-            } else if (pluginType == PluggableType.PYTHON){
+            } else if (pluggableFileType == PluggableFileType.PYTHON){
                 PythonInterpreter pythonInterpreter = PythonInterpreter.getInstance();
-                pythonInterpreter.loadPythonScript(this);
+                pythonInterpreter.loadPythonScript(pluggableFile);
                 pythonInterpreter.getPyObject("default_configuration", false);
             }
         }
+        if(pluggableFileType == PluggableFileType.JAVA){
+            String pluginDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
+            String absolutePath = pluggableFile.getAbsolutePath();
+            JarFromDisk jarFromDisk = new JarFromDisk(absolutePath);
+            List<JarEntry> otherJarFiles = jarFromDisk.getJarEntries("other_files/", null);
+            List<JarEntry> yamlJarEntries = jarFromDisk.getJarEntries("yaml_files/", null);
+            ArrayList<String> directories = new ArrayList<>();
+            directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+            directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+            createDirectories(pluginDir, pluggableDetails.getNAME(), directories);
+            otherFilesExtractor(pluginDir, jarFromDisk, otherJarFiles);
+        }
+    }
+
+    private void otherFilesExtractor(String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws PluginDirectoryCreationFailed, IOException {
+        for (JarEntry jarEntry : otherJarFiles) {
+            if (!jarEntry.isDirectory()) {
+                jarFromDisk.extractEntry(jarEntry,  PLUGIN_DIR + jarEntry.toString());
+            }
+        }
+    }
+
+    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, URLClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, PluginDirectoryCreationFailed {
+        HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet = new HashSet<>();
+        for (JarEntry jarEntry :yamlJarEntries) {
+            if (!jarEntry.isDirectory()) {
+                String fileName = jarFromDisk.getJarEntryFileName(jarEntry);
+                try (InputStream resourceAsStream = CLASS_LOADER.getResourceAsStream(jarEntry.toString())) {
+                    final PluginYAMLWrapper pluginYAMLWrapper = new PluginYAMLWrapper(PLUGIN_NAME, fileName, resourceAsStream, PLUGIN_DIR + jarEntry.toString());
+                    pluginYAMLWrapperHashSet.add(pluginYAMLWrapper);
+                }
+            }
+        }
+        return new YAMLFiles(pluginYAMLWrapperHashSet);
     }
 
     public void enable(){
@@ -158,11 +143,18 @@ public abstract class Plugin<T> extends Pluggable<T> {
 
     public LinkedHashMap<String, Object> getPluginDetailsMap(){
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("Dependencies", dependencies);
         linkedHashMap.put("Additional Permissions", additionalPermissions);
         return linkedHashMap;
     }
 
     public abstract void onPluginEnable();
     public abstract void onPluginDisable();
+
+    @Override
+    public String toString() {
+        return "Plugin{" +
+                ", additionalPermissions=" + additionalPermissions +
+                ", enabled=" + enabled +
+                "} " + super.toString();
+    }
 }

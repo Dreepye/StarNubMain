@@ -21,6 +21,7 @@ package org.starnub.starnubserver;
 import org.joda.time.DateTime;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.logger.MultiOutputLogger;
+import org.starnub.starnubserver.pluggable.PluggableManager;
 import org.starnub.starnubserver.resources.ResourceManager;
 import org.starnub.starnubserver.resources.StringTokens;
 import org.starnub.starnubserver.resources.files.Configuration;
@@ -50,7 +51,7 @@ public final class StarNub {
     private static final MultiOutputLogger LOGGER = MultiOutputLogger.getInstance();
     private static final Connections CONNECTIONS = Connections.getInstance();
     private static final StarNubVersion VERSION = StarNubVersion.getInstance();
-//    private static final PluginManager PLUGIN_MANAGER = PluginManager.getInstance();
+    private static final PluggableManager PLUGIN_MANAGER = PluggableManager.getInstance();
     private static final StarboundServer STARBOUND_SERVER = StarboundServer.getInstance();
 
     private StarNub() {}
@@ -78,10 +79,10 @@ public final class StarNub {
     public static StarNubVersion getVersion() {
         return VERSION;
     }
-//
-//    public static PluginManager getPluginManager() {
-//        return PLUGIN_MANAGER;
-//    }
+
+    public static PluggableManager getPluginManager() {
+        return PLUGIN_MANAGER;
+    }
 
     public static StarboundServer getStarboundServer() {
         return STARBOUND_SERVER;
@@ -101,6 +102,7 @@ public final class StarNub {
         GroupsManagement.getInstance().groupSetup();
 
 //        PluginManager.getInstance().loadAllPlugins(false, true);
+        PluggableManager.getInstance().loadAllCommands();
 
         setUptimeTask();
 

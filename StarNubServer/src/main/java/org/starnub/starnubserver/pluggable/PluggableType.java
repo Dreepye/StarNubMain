@@ -19,6 +19,6 @@
 package org.starnub.starnubserver.pluggable;
 
 public enum PluggableType {
-    JAVA,
-    PYTHON
+    PLUGIN,
+    COMMAND
 }

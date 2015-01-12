@@ -71,9 +71,9 @@ public class PythonInterpreter {
             while (isInUse()) {
                 ThreadSleep.timerSeconds(1);
             }
+            inUse = true;
+            interpreter.execfile(file);
         }
-        inUse = true;
-        interpreter.execfile(file);
     }
 
     public void loadPythonScript(File file){

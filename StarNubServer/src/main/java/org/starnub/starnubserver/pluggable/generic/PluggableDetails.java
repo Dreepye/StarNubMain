@@ -18,6 +18,8 @@
 
 package org.starnub.starnubserver.pluggable.generic;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class PluggableDetails {
@@ -29,6 +31,7 @@ public class PluggableDetails {
     private final String AUTHOR;
     private final String URL;
     private final String DESCRIPTION;
+    private final HashSet<String> DEPENDENCIES;
 
     /**
      * @param VERSION                double the pluggableOLD version
@@ -37,7 +40,7 @@ public class PluggableDetails {
      * @param URL                    String the url for the plugins page, download, help, etc
      * @param DESCRIPTION            String a short description of the pluggableOLD
      */
-    public PluggableDetails(String NAME, String CLASS, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION) {
+    public PluggableDetails(String NAME, String CLASS, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, ArrayList<String> DEPENDENCIES) {
         this.NAME = NAME;
         this.CLASS = CLASS;
         this.VERSION = VERSION;
@@ -45,6 +48,12 @@ public class PluggableDetails {
         this.AUTHOR = AUTHOR;
         this.URL = URL;
         this.DESCRIPTION = DESCRIPTION;
+        if (DEPENDENCIES != null) {
+            this.DEPENDENCIES = new HashSet<>();
+            this.DEPENDENCIES.addAll(DEPENDENCIES);
+        } else {
+            this.DEPENDENCIES = null;
+        }
     }
 
     public String getNAME() {
@@ -75,6 +84,10 @@ public class PluggableDetails {
         return DESCRIPTION;
     }
 
+    public HashSet<String> getDEPENDENCIES() {
+        return DEPENDENCIES;
+    }
+
     public LinkedHashMap<String, Object> getPluginDetailsMap(){
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("Name", NAME);
@@ -84,6 +97,7 @@ public class PluggableDetails {
         linkedHashMap.put("Author", AUTHOR);
         linkedHashMap.put("URL", URL);
         linkedHashMap.put("Description", DESCRIPTION);
+        linkedHashMap.put("Dependencies", DEPENDENCIES);
         return linkedHashMap;
     }
 
@@ -97,6 +111,7 @@ public class PluggableDetails {
                 ", AUTHOR='" + AUTHOR + '\'' +
                 ", URL='" + URL + '\'' +
                 ", DESCRIPTION='" + DESCRIPTION + '\'' +
+                ", DEPENDENCIES=" + DEPENDENCIES +
                 '}';
     }
 }
