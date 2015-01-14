@@ -71,7 +71,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                ${project.build.directory}/depend
+                                ${project.build.DIRECTORY}/depend
                             </outputDirectory>
                         </configuration>
                     </execution>

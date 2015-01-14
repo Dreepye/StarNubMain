@@ -16,7 +16,19 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package org.starnub.starnubserver.pluggable.exceptions;
+
 /**
- * utilities.exceptions is the package containing Custom Exception Classes
+ * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
+ *
+ * @author Daniel (Underbalanced) (www.StarNub.org)
+ * @since 1.0
  */
-package org.starnub.utilities.exceptions;
+public class PluginDependencyNotFound extends Exception {
+
+    public PluginDependencyNotFound() {}
+
+    public PluginDependencyNotFound(String message){
+        super(message);
+    }
+}

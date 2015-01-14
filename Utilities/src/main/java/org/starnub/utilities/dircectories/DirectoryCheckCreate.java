@@ -90,8 +90,10 @@ public class DirectoryCheckCreate {
         if (!programName.endsWith("/")){
             programName = programName + "/";
         }
-        for (String directoryFromArray : directoryNames) {
-            linkedHashMap.putAll(dirAdd(programName + directoryFromArray));
+        if (directoryNames != null) {
+            for (String directoryFromArray : directoryNames) {
+                linkedHashMap.putAll(dirAdd(programName + directoryFromArray));
+            }
         }
         return linkedHashMap;
     }
@@ -107,8 +109,10 @@ public class DirectoryCheckCreate {
         if (!programName.endsWith("/")){
             programName = programName + "/";
         }
-        for (String directoryFromArray : directoryNames) {
-            linkedHashMap.putAll(dirAdd(programName + directoryFromArray));
+        if (directoryNames != null) {
+            for (String directoryFromArray : directoryNames) {
+                linkedHashMap.putAll(dirAdd(programName + directoryFromArray));
+            }
         }
         return linkedHashMap;
     }

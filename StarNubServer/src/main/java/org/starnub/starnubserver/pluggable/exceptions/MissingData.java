@@ -16,32 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.plugins.resources;
+package org.starnub.starnubserver.pluggable.exceptions;
 
-import org.starnub.starnubserver.resources.StarNubYamlWrapper;
-import org.starnub.starnubserver.resources.StarNubYamlWrapper;
+public class MissingData extends Exception {
 
-import java.io.InputStream;
+    public MissingData() {}
 
-/**
- * Represents StarNubs Configuration instance extending YAMLWrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0 Beta
- */
-public class PluginConfiguration extends StarNubYamlWrapper {
-
-    public PluginConfiguration(String pluginName, InputStream defaultPath) {
-        super(
-                pluginName,
-                pluginName.toLowerCase() + "_configuration.yml",
-                defaultPath,
-                "StarNub/Plugins/" + pluginName,
-                false,
-                true,
-                true,
-                true,
-                true
-        );
+    public MissingData(String message){
+        super(message);
     }
 }

@@ -68,14 +68,19 @@ public class ResourceManager extends StarNubYamlWrapper{
                 "StarNub",
 //                "Resources",
                 "Plugins",
+                "Plugins/Information",
                 "Commands",
+                "Commands/Information",
+                "Commands/",
                 "Logs",
                 "Logs/Events_Debug",
                 "Logs/Chat",
                 "Logs/Commands",
                 "Logs/Information_Warning",
                 "Logs/Error",
-                "Databases"
+                "Databases",
+                "Cache",
+                "Cache/Python"
         );
         for (Map.Entry<String, Boolean> dirEntry : linkedHashMap.entrySet()){
             String dir = dirEntry.getKey();

@@ -29,7 +29,7 @@ Base Features:
 		- Configuration self heals data types
 		- Most configuration items can be modified while the starbounddata.packets.starbounddata.packets.starnubserver is running
    - Starbound Configuration:
-		- Auto generate configuration if it does not exist in directory
+		- Auto generate configuration if it does not exist in DIRECTORY
 		*- Auto write configuration variables when changed in StarNub configuration
    - Highly configurable logging to screen and utilities.file
 		- Log rotation every new day and if specified utilities.file size of your choice is met a new utilities.file will be created
@@ -37,7 +37,7 @@ Base Features:
    - SQLite or MySQL with support for other databases (Player data storage)
 		- Data tracked:
 			- Player Sessions (Characters, start and end time, attached account)
-			- Characters (Cleaned NAME & uuid)
+			- Characters (Cleaned OWNER & uuid)
 			- Characters and the IPs seen for each one
 			- Accounts, account settings, starbounddata.packets.chat rooms, achievements are just some
 			- Groups, group ladders and group permissions
@@ -61,8 +61,8 @@ Base Features:
 			*- Block repeat starnubdata.messages or starnubdata.messages that are almost the same
 			*- Word filter
 			- Spam reply message
-		- Server NAME and starbounddata.packets.chat - color options
-		- Global NAME and starbounddata.packets.chat - color option
+		- Server OWNER and starbounddata.packets.chat - color options
+		- Global OWNER and starbounddata.packets.chat - color option
 		*- Player prefix and suffix selectable by the player based on groups and achievements they have
 		- Customizable tage start and end example..."[", "]".
 		- Chat Rooms: 
@@ -76,7 +76,7 @@ Base Features:
 		*- Tokens for information an colors instead of ^blue; or ^#0000CC; you could use {bl} for online {online}
 		- Illegal names and nick names are automatically changed when a player joins and sent to the starbounddata.packets.starbounddata.packets.starnubserver
 		- PVP starnubdata.messages are no longer starbounddata.packets.global but local
-		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character NAME colored or not, nick NAME, ip, uuid
+		- Players can be whispered by any identifier, Starbound id(Changed per login), StarnubID, character OWNER colored or not, nick OWNER, ip, uuid
 			- Example /w 2 hey = Starbound id, /w 2s hey statnubd up, /w underbalanced hey, /w 127.0.0.1 hey who is this?
 		
    - Commands: 
@@ -92,7 +92,7 @@ Base Features:
 			- Checks if everyone can use the command or if the player has permissions
 		- Commands are used by /{commandname or alias} {command}
 			- Example /starnubserver online or /sn online - would return whos online
-			- Commands can be mapped to shortcuts using the shortcut.yml in StarNub directory
+			- Commands can be mapped to shortcuts using the shortcut.yml in StarNub DIRECTORY
 				- Example: Config utilities.file would be starnubserver: ['online', 'who'], starboundmanager: ['ban', 'kick']
 					- ^-this would map /starnubserver online or /starnubserver who to /online or /who and /starboundmanager ban and /starboundmanager kick to /ban and /kick
 			- Only one unique command can be mapped, so if both starnubserver and starboundmanager both have 'ban' only one can be shortcut's
@@ -101,8 +101,8 @@ Base Features:
 	- Whitelisted starbounddata.packets.starbounddata.packets.starnubserver option (uuid, ip or starnubserver id)
 	
 	- Restrictions: 
-		- Offline banning by uuid, ip, character NAME, starnubserver id
-		- Online banning by uuid, ip, character NAME, starboundmanager id*preferd, starnubserver id* prefered
+		- Offline banning by uuid, ip, character OWNER, starnubserver id
+		- Online banning by uuid, ip, character OWNER, starboundmanager id*preferd, starnubserver id* prefered
 		- Can ban session uuid, ip or ban all ips ever seen with character and every uuid seen with an ip
 		- Players can be permanently muted, command blocked or banned
 		- Players can also be temporarily muted command blocked or banned, these are automatically removed after the time expired

@@ -16,9 +16,8 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.plugins.resources;
+package org.starnub.starnubserver.pluggable.resources;
 
-import org.starnub.starnubserver.resources.StarNubYamlWrapper;
 import org.starnub.starnubserver.resources.StarNubYamlWrapper;
 
 public class PluginYAMLWrapper extends StarNubYamlWrapper {

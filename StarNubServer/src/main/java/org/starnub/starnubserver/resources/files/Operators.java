@@ -20,7 +20,7 @@ package org.starnub.starnubserver.resources.files;
 
 import org.starnub.starnubserver.resources.ResourceManager;
 import org.starnub.starnubserver.resources.StarNubYamlWrapper;
-import org.starnub.utilities.exceptions.CollectionDoesNotExistException;
+import org.starnub.utilities.cache.exceptions.CollectionDoesNotExistException;
 
 import java.io.IOException;
 import java.util.UUID;
