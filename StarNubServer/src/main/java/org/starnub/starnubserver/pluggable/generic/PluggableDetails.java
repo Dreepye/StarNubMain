@@ -18,12 +18,14 @@
 
 package org.starnub.starnubserver.pluggable.generic;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PluggableDetails {
 
+    private final String OWNER;
     private final String NAME;
     private final String CLASS;
     private final double VERSION;
@@ -39,8 +41,10 @@ public class PluggableDetails {
      * @param AUTHOR                 String the authors name
      * @param URL                    String the url for the plugins page, download, help, etc
      * @param DESCRIPTION            String a short description of the pluggableOLD
+     * @param DEPENDENCIES
      */
-    public PluggableDetails(String NAME, String CLASS, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, ArrayList<String> DEPENDENCIES) {
+    public PluggableDetails(String OWNER, String NAME, String CLASS, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, List<String> DEPENDENCIES) {
+        this.OWNER = OWNER;
         this.NAME = NAME;
         this.CLASS = CLASS;
         this.VERSION = VERSION;
@@ -50,10 +54,14 @@ public class PluggableDetails {
         this.DESCRIPTION = DESCRIPTION;
         if (DEPENDENCIES != null) {
             this.DEPENDENCIES = new HashSet<>();
-            this.DEPENDENCIES.addAll(DEPENDENCIES);
+            this.DEPENDENCIES.addAll(DEPENDENCIES.stream().collect(Collectors.toList()));
         } else {
-            this.DEPENDENCIES = null;
+            this.DEPENDENCIES = null; /* Commands currently do not have dependencies, this will save space */
         }
+    }
+
+    public String getOWNER() {
+        return OWNER;
     }
 
     public String getNAME() {
@@ -88,8 +96,9 @@ public class PluggableDetails {
         return DEPENDENCIES;
     }
 
-    public LinkedHashMap<String, Object> getPluginDetailsMap(){
+    public LinkedHashMap<String, Object> getDetailsMap(){
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("Owner", OWNER);
         linkedHashMap.put("Name", NAME);
         linkedHashMap.put("Class", CLASS);
         linkedHashMap.put("Version", VERSION);
@@ -97,14 +106,20 @@ public class PluggableDetails {
         linkedHashMap.put("Author", AUTHOR);
         linkedHashMap.put("URL", URL);
         linkedHashMap.put("Description", DESCRIPTION);
-        linkedHashMap.put("Dependencies", DEPENDENCIES);
+        String dependenciesString = "";
+        if(DEPENDENCIES == null){
+            dependenciesString = "None";
+        } else {
+            dependenciesString = DEPENDENCIES.toString();
+        }
+        linkedHashMap.put("Dependencies", dependenciesString);
         return linkedHashMap;
     }
 
     @Override
     public String toString() {
         return "PluggableDetails{" +
-                "NAME='" + NAME + '\'' +
+                "OWNER='" + OWNER + '\'' +
                 ", CLASS='" + CLASS + '\'' +
                 ", VERSION=" + VERSION +
                 ", SIZE_KBS=" + SIZE_KBS +

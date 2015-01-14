@@ -103,6 +103,7 @@ public final class StarNub {
 
 //        PluginManager.getInstance().loadAllPlugins(false, true);
         PluggableManager.getInstance().loadAllCommands();
+        PluggableManager.getInstance().loadAllPlugins(true);
 
         setUptimeTask();
 

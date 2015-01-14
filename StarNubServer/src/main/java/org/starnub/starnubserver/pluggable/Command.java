@@ -21,7 +21,6 @@ package org.starnub.starnubserver.pluggable;
 import org.starnub.starnubdata.generic.CanUse;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.utilities.file.yaml.YAMLWrapper;
-import org.starnub.utilities.file.yaml.YamlUtilities;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,6 +32,9 @@ public abstract class Command extends Pluggable {
     private HashSet<String> permissions;
     private HashMap<String, Integer> customSplit;
     private CanUse canUse;
+
+    public Command() {
+    }
 
     public String getCommand() {
         return command;
@@ -56,17 +58,18 @@ public abstract class Command extends Pluggable {
 
     @Override
     public void loadData(YAMLWrapper pluggableInfo){
+        type = PluggableType.COMMAND;
         this.command = (String) pluggableInfo.getValue("command");
         this.mainArgs = new HashSet<>();
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
         this.mainArgs.addAll(mainArgsList);
         this.permissions = new HashSet<>();
         if (mainArgs.size() == 0){
-            String permission = pluggableDetails.getNAME() + "." + command;
+            String permission = details.getOWNER() + "." + command;
             permissions.add(permission.toLowerCase());
         } else {
             for (String mainArg : mainArgs) {
-                String permission = pluggableDetails.getNAME() + "." + command + "." + mainArg;
+                String permission = details.getOWNER() + "." + command + "." + mainArg;
                 permissions.add(permission.toLowerCase());
             }
         }
@@ -79,13 +82,8 @@ public abstract class Command extends Pluggable {
 
     @Override
     public void dumpDetails() throws IOException {
-        LinkedHashMap pluginDetailDump = new LinkedHashMap();
-        LinkedHashMap<String, Object> pluggableDetailsMap = pluggableDetails.getPluginDetailsMap();
-        LinkedHashMap<String, Object> commandDetailsMap = getCommandDetailsMap();
-        pluginDetailDump.put("Pluggable Details", pluggableDetailsMap);
-        pluginDetailDump.put("Command Details", commandDetailsMap);
         String commandDirectory = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING();
-        YamlUtilities.toFileYamlDump(pluginDetailDump, commandDirectory + "Information", pluggableDetails.getNAME()+"_Details.yml");
+        dumpPluggableDetails(getCommandDetailsMap(), commandDirectory + "Information");
     }
 
     public LinkedHashMap<String,Object> getCommandDetailsMap() {

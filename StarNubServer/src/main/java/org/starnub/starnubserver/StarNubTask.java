@@ -37,7 +37,7 @@ public class StarNubTask extends ScheduledTask {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will automatically schedule a one time task and it can be canceled by calling removeTask()
+     * Uses: This will automatically schedule a one time task and it can be canceled by calling unregisterTask()
      *
      * @param OWNER String representing the owner of this task. HIGHLY RECOMMENDED: Please use your exact pluggableOLD name from your pluggableOLD.yml
      * @param NAME String representing some name that you want to use that can be used when searching for specific task
@@ -52,7 +52,7 @@ public class StarNubTask extends ScheduledTask {
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will automatically schedule a repeating with or without a fixed delay task and it can be canceled by calling removeTask()
+     * Uses: This will automatically schedule a repeating with or without a fixed delay task and it can be canceled by calling unregisterTask()
      *
      * @param OWNER String representing the owner of this task. HIGHLY RECOMMENDED: Please use your exact pluggableOLD name from your pluggableOLD.yml
      * @param NAME String representing some name that you want to use that can be used when searching for specific task

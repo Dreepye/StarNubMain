@@ -18,10 +18,7 @@
 
 package org.starnub.starnubserver.pluggable;
 
-import org.starnub.starnubserver.StarNub;
-import org.starnub.starnubserver.StarNubTaskManager;
-import org.starnub.starnubserver.events.packet.PacketEventRouter;
-import org.starnub.starnubserver.events.starnub.StarNubEventRouter;
+import org.python.core.PyObject;
 import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
 import org.starnub.starnubserver.pluggable.resources.PluginYAMLWrapper;
@@ -33,8 +30,8 @@ import org.starnub.utilities.file.yaml.YamlUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLClassLoader;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -46,38 +43,58 @@ public abstract class Plugin extends Pluggable {
     protected HashSet<String> additionalPermissions;
     private boolean enabled;
 
+    public Plugin() {
+    }
+
+    public PluginConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public YAMLFiles getFiles() {
+        return files;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
 
     @Override
     public void loadData(YAMLWrapper pluggableInfo) throws IOException, PluginDirectoryCreationFailed {
-        additionalPermissions = new HashSet<>();
+        type = PluggableType.PLUGIN;
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
-        additionalPermissionList.addAll(additionalPermissionList);
+        if (additionalPermissionList.size() > 0) {
+            additionalPermissions = new HashSet<>();
+            additionalPermissions.addAll(additionalPermissionList.stream().collect(Collectors.toList()));
+        }
         boolean hasConfiguration = (boolean) pluggableInfo.getValue("has_configuration");
         if (hasConfiguration) {
-            if(pluggableFileType == PluggableFileType.JAVA) {
-                try (InputStream defaultPluginConfiguration = StarNub.class.getClassLoader().getResourceAsStream("default_configuration.yml")) {
-                    configuration = new PluginConfiguration(pluggableDetails.getNAME(), defaultPluginConfiguration);
+            if(fileType == PluggableFileType.JAVA) {
+                try (InputStream defaultPluginConfiguration = this.getClass().getClassLoader().getResourceAsStream("default_configuration.yml")) {
+                    configuration = new PluginConfiguration(details.getNAME(), defaultPluginConfiguration);
                 }
-            } else if (pluggableFileType == PluggableFileType.PYTHON){
-                PythonInterpreter pythonInterpreter = PythonInterpreter.getInstance();
-                pythonInterpreter.loadPythonScript(pluggableFile);
-                pythonInterpreter.getPyObject("default_configuration", false);
+            } else if (fileType == PluggableFileType.PYTHON){
+                PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
+                pluggablePythonInterpreter.loadPythonScript(file);
+                PyObject defaultConfiguration = pluggablePythonInterpreter.getPyObject("default_configuration", false);
+                Map<String, Object> defaultConfigurationMap = (Map<String, Object>) defaultConfiguration.__tojava__(ConcurrentMap.class);
+                configuration = new PluginConfiguration(details.getNAME(), defaultConfigurationMap);
             }
         }
-        if(pluggableFileType == PluggableFileType.JAVA){
+        if(fileType == PluggableFileType.JAVA){
             String pluginDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
-            String absolutePath = pluggableFile.getAbsolutePath();
+            String absolutePath = file.getAbsolutePath();
             JarFromDisk jarFromDisk = new JarFromDisk(absolutePath);
             List<JarEntry> otherJarFiles = jarFromDisk.getJarEntries("other_files/", null);
             List<JarEntry> yamlJarEntries = jarFromDisk.getJarEntries("yaml_files/", null);
             ArrayList<String> directories = new ArrayList<>();
             directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
             directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
-            createDirectories(pluginDir, pluggableDetails.getNAME(), directories);
+            createDirectories(pluginDir, details.getNAME(), directories);
             otherFilesExtractor(pluginDir, jarFromDisk, otherJarFiles);
+            YAMLFiles yamlFiles = yamlFiles(details.getNAME(), pluginDir, this.getClass().getClassLoader(), yamlJarEntries, jarFromDisk);
+            if (yamlFiles.getFiles().size() > 0){
+                files = yamlFiles;
+            }
         }
     }
 
@@ -89,7 +106,7 @@ public abstract class Plugin extends Pluggable {
         }
     }
 
-    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, URLClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, PluginDirectoryCreationFailed {
+    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, ClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, PluginDirectoryCreationFailed {
         HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet = new HashSet<>();
         for (JarEntry jarEntry :yamlJarEntries) {
             if (!jarEntry.isDirectory()) {
@@ -110,10 +127,6 @@ public abstract class Plugin extends Pluggable {
 
     public void disable(){
         onPluginDisable();
-        String name = pluggableDetails.getNAME();
-        StarNubTaskManager.getInstance().purgeByOwnerName(name);
-        PacketEventRouter.getInstance().removeEventSubscription(name);
-        StarNubEventRouter.getInstance().removeEventSubscription(name);
         this.enabled = false;
     }
 
@@ -133,17 +146,19 @@ public abstract class Plugin extends Pluggable {
 
     @Override
     public void dumpDetails() throws IOException {
-        LinkedHashMap pluginDetailDump = new LinkedHashMap();
-        LinkedHashMap<String, Object> pluggableDetailsMap = pluggableDetails.getPluginDetailsMap();
-        LinkedHashMap<String, Object> pluginDetailsMap = getPluginDetailsMap();
-        pluginDetailDump.put("Pluggable Details", pluggableDetailsMap);
-        pluginDetailDump.put("Plugin Details", pluginDetailsMap);
-        YamlUtilities.toFileYamlDump(pluginDetailDump, "StarNub/Plugins/" + pluggableDetails.getNAME() + "/Information/", "Plugin_Details.yml");
+        String getPluginDirectory = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
+        YamlUtilities.toFileYamlDump(getPluginDetailsMap(), getPluginDirectory + details.getOWNER() + "/Information/");
     }
 
     public LinkedHashMap<String, Object> getPluginDetailsMap(){
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("Additional Permissions", additionalPermissions);
+        String additionalPermissionsString = "";
+        if(additionalPermissions == null){
+            additionalPermissionsString = "None";
+        } else {
+            additionalPermissionsString = additionalPermissions.toString();
+        }
+        linkedHashMap.put("Additional Permissions", additionalPermissionsString);
         return linkedHashMap;
     }
 

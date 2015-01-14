@@ -15,7 +15,7 @@ Current Data Types
 ========
 - Colors:
 	- GameColors - All the colors in the game with look up methods
-	- Color - Holds details about a color by NAME, hex and shortcut
+	- Color - Holds details about a color by OWNER, hex and shortcut
 
 - Tiles:
 	- TileDamage - Contains damage type, amount and harvest level

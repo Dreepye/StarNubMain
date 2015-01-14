@@ -23,8 +23,8 @@ import org.starnub.starnubdata.generic.DisconnectReason;
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.events.events.DisconnectEvent;
-import org.starnub.starnubserver.events.starnub.StarNubEventRouter;
 import org.starnub.starnubserver.events.events.StarNubEvent;
+import org.starnub.starnubserver.events.starnub.StarNubEventRouter;
 import org.starnub.utilities.connectivity.connection.ProxyConnection;
 
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class StarNubProxyConnection extends ProxyConnection {
     /**
      * Recommended: For connections use with StarNub.
      * <p>
-     * Uses: This will automatically schedule a one time task and it can be canceled by calling removeTask()
+     * Uses: This will automatically schedule a one time task and it can be canceled by calling unregisterTask()
      */
     @Override
     public void removeConnection() {

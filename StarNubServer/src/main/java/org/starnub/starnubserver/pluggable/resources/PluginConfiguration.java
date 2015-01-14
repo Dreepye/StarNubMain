@@ -21,6 +21,7 @@ package org.starnub.starnubserver.pluggable.resources;
 import org.starnub.starnubserver.resources.StarNubYamlWrapper;
 
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Represents StarNubs Configuration instance extending YAMLWrapper
@@ -30,11 +31,37 @@ import java.io.InputStream;
  */
 public class PluginConfiguration extends StarNubYamlWrapper {
 
+    /**
+     * For Java Plugins
+     *
+     * @param pluginName
+     * @param defaultPath
+     */
     public PluginConfiguration(String pluginName, InputStream defaultPath) {
         super(
                 pluginName,
                 pluginName.toLowerCase() + "_configuration.yml",
                 defaultPath,
+                "StarNub/Plugins/" + pluginName,
+                false,
+                true,
+                true,
+                true,
+                true
+        );
+    }
+
+    /**
+     * For Python Plugins
+     *
+     * @param pluginName
+     * @param configurationMap
+     */
+    public PluginConfiguration(String pluginName, Map configurationMap) {
+        super(
+                pluginName,
+                pluginName.toLowerCase() + "_configuration.yml",
+                configurationMap,
                 "StarNub/Plugins/" + pluginName,
                 false,
                 true,

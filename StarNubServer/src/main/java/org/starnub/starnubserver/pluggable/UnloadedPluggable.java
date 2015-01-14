@@ -21,6 +21,7 @@ package org.starnub.starnubserver.pluggable;
 import org.python.core.PyObject;
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
+import org.starnub.starnubserver.pluggable.exceptions.NotAPluggable;
 import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.utilities.file.utility.FileSizeMeasure;
@@ -32,7 +33,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 public class UnloadedPluggable {
@@ -41,10 +42,9 @@ public class UnloadedPluggable {
     private File pluggableFile;
     private PluggableFileType pluggableFileType;
     private YAMLWrapper yamlWrapper;
-    private ArrayList<String> loadFirst;
     private boolean updating;
 
-    public UnloadedPluggable(File pluggableFile) throws PluginDirectoryCreationFailed, MissingData, IOException {
+    public UnloadedPluggable(File pluggableFile) throws PluginDirectoryCreationFailed, MissingData, IOException, NotAPluggable {
         this.pluggableFile = pluggableFile;
         load();
     }
@@ -64,9 +64,9 @@ public class UnloadedPluggable {
                 newClass = pluggableClass.newInstance();
             }
         } else if (pluggableFileType == PluggableFileType.PYTHON){
-            PythonInterpreter pythonInterpreter = PythonInterpreter.getInstance();
-            pythonInterpreter.loadPythonScript(pluggableFile);
-            PyObject pyObject = pythonInterpreter.getPyObject(classString, false);
+            PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
+            pluggablePythonInterpreter.loadPythonScript(pluggableFile);
+            PyObject pyObject = pluggablePythonInterpreter.getPyObject(classString, false);
             PyObject pluggableObject = pyObject.__call__();
             if (type == PluggableType.PLUGIN){
                 newClass = (Pluggable) pluggableObject.__tojava__(Plugin.class);
@@ -96,10 +96,6 @@ public class UnloadedPluggable {
         return yamlWrapper;
     }
 
-    public ArrayList<String> getLoadFirst() {
-        return loadFirst;
-    }
-
     public boolean isUpdating() {
         return updating;
     }
@@ -108,7 +104,7 @@ public class UnloadedPluggable {
         this.updating = true;
     }
 
-    public void load() throws MissingData, IOException, PluginDirectoryCreationFailed {
+    public void load() throws MissingData, IOException, PluginDirectoryCreationFailed, NotAPluggable {
         String absolutePath = pluggableFile.getAbsolutePath();
         if (absolutePath.endsWith(".py")){
             pluggableFileType = PluggableFileType.PYTHON;
@@ -116,7 +112,11 @@ public class UnloadedPluggable {
             pluggableFileType = PluggableFileType.JAVA;
         }
         Object pluggableInfoObject = findPluggableInfo();
+        if (pluggableInfoObject == null){
+            return;
+        }
         yamlWrapper = new YAMLWrapper(null, "StarNub", "StarNub - Plugin Loader", pluggableInfoObject, "");
+        String pluggableOwner = (String) yamlWrapper.getValue("owner");
         String pluggableName = (String) yamlWrapper.getValue("name");
         String classPath = (String) yamlWrapper.getValue("class");
         double version = (double) yamlWrapper.getNestedValue("version");
@@ -124,27 +124,26 @@ public class UnloadedPluggable {
         String author = (String) yamlWrapper.getNestedValue("author");
         String url = (String) yamlWrapper.getNestedValue("url");
         String description = (String) yamlWrapper.getNestedValue("description");
-        ArrayList<String> dependenciesList = null;
+        List<String> dependenciesList = null;
         if (yamlWrapper.hasKey("dependencies")){
-            dependenciesList = (ArrayList<String>) yamlWrapper.getValue("dependencies");
+            dependenciesList = (List<String>) yamlWrapper.getValue("dependencies");
         }
-        if (yamlWrapper.hasKey("load_first")) {
-            loadFirst = (ArrayList<String>) yamlWrapper.getValue("load_first");
-        }
-        pluggableDetails = new PluggableDetails(pluggableName, classPath, version, fileSize, author, url, description, dependenciesList);
+        pluggableDetails = new PluggableDetails(pluggableOwner, pluggableName, classPath, version, fileSize, author, url, description, dependenciesList);
     }
 
     private Object findPluggableInfo() throws MissingData, MalformedURLException {
         if (pluggableFileType == PluggableFileType.JAVA){
-
             URL pluginUrl = pluggableFile.toURI().toURL();
             URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
             return classLoader.getResourceAsStream("pluggable_info.yml");
         } else if (pluggableFileType == PluggableFileType.PYTHON) {
-            PythonInterpreter interpreter = PythonInterpreter.getInstance();
+            PluggablePythonInterpreter interpreter = PluggablePythonInterpreter.getInstance();
             interpreter.loadPythonScript(pluggableFile);
-            PyObject pluggable_info = interpreter.getPyObject("pluggable_info", false);
-            return (ConcurrentMap<String, Object>) pluggable_info.__tojava__(ConcurrentMap.class);
+            PyObject pluggableInfo = interpreter.getPyObject("pluggable_info", false);
+            if (pluggableInfo == null){
+                return null;
+            }
+            return (ConcurrentMap<String, Object>) pluggableInfo.__tojava__(ConcurrentMap.class);
         } else {
             throw new MissingData("Unknown error loading pluggable info.");
         }
@@ -153,9 +152,9 @@ public class UnloadedPluggable {
     @Override
     public String toString() {
         return "UnloadedPluggable{" +
-                "pluggableDetails=" + pluggableDetails +
-                ", pluggableFile=" + pluggableFile +
-                ", pluggableFileType=" + pluggableFileType +
+                "details=" + pluggableDetails +
+                ", file=" + pluggableFile +
+                ", fileType=" + pluggableFileType +
                 '}';
     }
 }

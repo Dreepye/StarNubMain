@@ -19,34 +19,37 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
+import org.python.util.PythonInterpreter;
 import org.starnub.utilities.concurrent.thread.ThreadSleep;
 
 import java.io.File;
 
-public class PythonInterpreter {
+public class PluggablePythonInterpreter {
 
     /**
      * Represents the only instance of this class - Singleton Pattern
      */
-    private static final PythonInterpreter instance = new PythonInterpreter();
+    private static final PluggablePythonInterpreter instance = new PluggablePythonInterpreter();
 
-    private static org.python.util.PythonInterpreter interpreter = new org.python.util.PythonInterpreter();
-    private static String currentFile;
+    private static PythonInterpreter interpreter;
+    private static String currentFile = "";
     private static boolean inUse;
 
     /**
      * This constructor is private - Singleton Pattern
      */
-    private PythonInterpreter() {}
+    private PluggablePythonInterpreter() {
+        interpreter = new PythonInterpreter();
+    }
 
     /**
      * This returns this Singleton - Singleton Pattern
      */
-    public static PythonInterpreter getInstance() {
+    public static PluggablePythonInterpreter getInstance() {
         return instance;
     }
 
-    public org.python.util.PythonInterpreter getInterpreter() {
+    public PythonInterpreter getInterpreter() {
         return interpreter;
     }
 
@@ -59,11 +62,11 @@ public class PythonInterpreter {
     }
 
     public void setInUse() {
-        PythonInterpreter.inUse = true;
+        PluggablePythonInterpreter.inUse = true;
     }
 
     public void setNotInUse() {
-        PythonInterpreter.inUse = false;
+        PluggablePythonInterpreter.inUse = false;
     }
 
     public void loadPythonScript(String file){
@@ -82,11 +85,11 @@ public class PythonInterpreter {
     }
 
     public PyObject getPyObject(String objectName, boolean keepUsing){
-        PyObject pyObject = interpreter.eval(objectName);
+        PyObject b = interpreter.getLocals().__finditem__(objectName);
         if(!keepUsing){
             inUse = false;
         }
-        return pyObject;
+        return b;
     }
 }
 

@@ -21,6 +21,7 @@ package org.starnub.starnubserver.pluggable;
 import org.apache.commons.io.FileUtils;
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
+import org.starnub.starnubserver.pluggable.exceptions.NotAPluggable;
 import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 
@@ -76,18 +77,18 @@ public class PluggableManager<T extends Pluggable> {
         return COMMANDS;
     }
 
-    public void pluginScan(boolean updating) {
-        LinkedHashMap<String, UnloadedPluggable> orderUnloadedPlugholes = new LinkedHashMap<>();
-        HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(PLUGIN_DIRECTORY_STRING, ".jar", ".py");
+    public LinkedHashMap<String, UnloadedPluggable> pluginScan(boolean updating) {
+        LinkedHashMap<String, UnloadedPluggable> orderUnloadedPluggoles = new LinkedHashMap<>();
+        HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(PLUGIN_DIRECTORY_STRING, "jar", "py");
         /* Remove plugins that are already loaded */
-        for (Plugin plugin : PLUGINS.values()) {
-            PluggableDetails details = plugin.getPluggableDetails();
-            String loadedName = details.getNAME();
+         for (Plugin plugin : PLUGINS.values()) {
+            PluggableDetails details = plugin.getDetails();
+            String loadedName = details.getOWNER();
             double loadedVersion = details.getVERSION();
             UnloadedPluggable unloadedPluggable = unloadedPluggables.get(loadedName);
             if (unloadedPluggable != null) {
                 PluggableDetails unloadedDetails = unloadedPluggable.getPluggableDetails();
-                String unloadedName = unloadedDetails.getNAME();
+                String unloadedName = unloadedDetails.getOWNER();
                 double unloadedVersion = unloadedDetails.getVERSION();
                 /* Is loaded */
                 if (loadedName.equals(unloadedName)) {
@@ -108,55 +109,51 @@ public class PluggableManager<T extends Pluggable> {
                 Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry = iterator.next();
                 String key = unloadedPluggableEntry.getKey();
                 UnloadedPluggable value = unloadedPluggableEntry.getValue();
-                ArrayList<String> loadFirst = value.getLoadFirst();
                 HashSet<String> dependencies = value.getPluggableDetails().getDEPENDENCIES();
                 boolean canLoad = true;
-                if (loadFirst != null) {
-                    for (String toLoad : loadFirst) {
-                        if (!unloadedPluggables.containsKey(toLoad) && !PLUGINS.containsKey(toLoad)) {
-                            iterator.remove();
-                        } else if (!orderUnloadedPlugholes.containsKey(toLoad)) {
-                            canLoad = false;
-                        }
-                    }
-                }
                 if (dependencies != null) {
                     for (String dependency : dependencies) {
-                        if (!unloadedPluggables.containsKey(dependency) && !PLUGINS.containsKey(dependency)) {
-                            iterator.remove();
-                        } else if (!orderUnloadedPlugholes.containsKey(dependency)) {
-                            canLoad = false;
+                        if (!dependency.isEmpty()) {
+                            if (!unloadedPluggables.containsKey(dependency) && !PLUGINS.containsKey(dependency) || !orderUnloadedPluggoles.containsKey(dependency)) {
+                                iterator.remove();
+                                canLoad = false;
+                            }
                         }
                     }
                 }
                 if (canLoad) {
-                    orderUnloadedPlugholes.put(key, value);
+                    orderUnloadedPluggoles.put(key, value);
+                    iterator.remove();
                 }
             }
         }
+        return orderUnloadedPluggoles;
     }
 
     public HashMap<String, UnloadedPluggable> commandScan(boolean updating) {
         HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(COMMAND_DIRECTORY_STRING, "jar", "py");
         for (Command command : COMMANDS.values()){
-            PluggableDetails details = command.getPluggableDetails();
-            String loadedName = details.getNAME();
+            PluggableDetails details = command.getDetails();
+            String loadedName = details.getOWNER();
             double loadedVersion = details.getVERSION();
             String loadedcommandName = command.getCommand();
             UnloadedPluggable unloadedPluggable = unloadedPluggables.get(loadedName);
             if (unloadedPluggable != null) {
                 PluggableDetails unloadedDetails = unloadedPluggable.getPluggableDetails();
-                String unloadedName = unloadedDetails.getNAME();
+                String unloadedName = unloadedDetails.getOWNER();
                 double unloadedVersion = unloadedDetails.getVERSION();
                 String unloadedCommandName = (String) unloadedPluggable.getYamlWrapper().getValue("command");
+                //INSERT - STARNUB EVENT UPDATE
                 /* Is loaded */
                 if (unloadedCommandName.equals(unloadedCommandName)) {
                     if (unloadedVersion > loadedVersion && updating) {
                         unloadedPluggable.setUpdating();
+                        //INSERT - STARNUB EVENT UPDATE
                     } else {
                         String removeFileRecommend = unloadedPluggable.getPluggableFile().toString();
                         unloadedPluggables.remove(loadedName);
                         StarNub.getLogger().cErrPrint("StarNub", "This command " + loadedName + " is already loaded, File: " + removeFileRecommend + ".");
+                        //INSERT - STARNUB EVENT UPDATE
                     }
                 }
             }
@@ -171,16 +168,18 @@ public class PluggableManager<T extends Pluggable> {
         for (File file : files) {
             try {
                 UnloadedPluggable unloadedPluggable = new UnloadedPluggable(file);
-                String name = unloadedPluggable.getPluggableDetails().getNAME();
-                tempPluggables.put(name, unloadedPluggable);
-            } catch (PluginDirectoryCreationFailed | MissingData | IOException pluginDirectoryCreationFailed) {
+                if (unloadedPluggable.getPluggableDetails() != null){
+                    String name = unloadedPluggable.getPluggableDetails().getOWNER();
+                    tempPluggables.put(name, unloadedPluggable);
+                }
+            } catch (PluginDirectoryCreationFailed | MissingData | IOException | NotAPluggable pluginDirectoryCreationFailed) {
                 pluginDirectoryCreationFailed.printStackTrace();
             }
         }
         return tempPluggables;
     }
 
-    public HashMap<String, String> loadAllCommands() {
+    public HashMap<String, String> loadAllCommands() {//FIX UPDATING COMMANDS
         HashMap<String, UnloadedPluggable> unloadedPluggableHashMap = commandScan(true);
         HashMap<String, String> commandSuccess = new HashMap<>();
         for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
@@ -189,45 +188,66 @@ public class PluggableManager<T extends Pluggable> {
             try {
                 Command pluggable = (Command) unloadedPluggable.instantiatePluggable(PluggableType.COMMAND);
                 commandSuccess.put(unloadedCommandName, "Success");
+                if (unloadedPluggable.isUpdating()){
+                    COMMANDS.remove(unloadedCommandName);
+                   //INSERT - STARNUB EVENT UPDATE
+                }
                 COMMANDS.put(unloadedCommandName, pluggable);
+                pluggable.register();
+                //INSERT - STARNUB EVENT UPDATE
             } catch (IOException | PluginDirectoryCreationFailed | MissingData | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
                 commandSuccess.put(unloadedCommandName, e.getMessage());
+                //INSERT - STARNUB EVENT UPDATE
             }
         }
         return commandSuccess;
     }
-//
-//    public HashMap<String, String> loadAllPlugins(boolean upgrade, boolean enable) {
-//        HashMap<String, String> pluginSuccess = new HashMap<>();
-//        for (Map.Entry<String, UnloadedPlugin> entrySet : UNLOADED_PLUGINS.entrySet()) {
-//            String unloadedPluginName = entrySet.getKey();
-//            UnloadedPlugin unloadedPlugin = entrySet.getValue();
-//            YAMLWrapper plugin_yml = unloadedPlugin.getPLUGIN_PLUGIN_YML();
-//            List<String> loadFirst = (List<String>) plugin_yml.getNestedValue("details", "load_first");
-//            for (String string : loadFirst) {
-//                if (UNLOADED_PLUGINS.containsKey(string)) {
-//                    String specificPlugin = null;
-//                    try {
-//                        specificPlugin = loadSpecificPlugin(string, false, enable);
-//                    } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | PluginAlreadyLoaded | InvocationTargetException | ClassNotFoundException | IOException | PluginDependencyLoadFailed | PluginDirectoryCreationFailed | PluginDependencyNotFound | CommandYamlLoadFailed | CommandClassLoadFail e) {
-//                        e.printStackTrace();
-//                        pluginSuccess.put(unloadedPluginName, e.getMessage());
-//                    }
-//                    pluginSuccess.put(unloadedPluginName, specificPlugin);
-//                }
-//            }
-//            String specificPlugin = null;
-//            try {
-//                specificPlugin = loadSpecificPlugin(unloadedPluginName, upgrade, enable);
-//            } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | PluginAlreadyLoaded | InvocationTargetException | ClassNotFoundException | IOException | PluginDependencyLoadFailed | PluginDirectoryCreationFailed | PluginDependencyNotFound | CommandYamlLoadFailed | CommandClassLoadFail e) {
-//                e.printStackTrace();
-//                pluginSuccess.put(unloadedPluginName, e.getMessage());
-//            }
-//            pluginSuccess.put(unloadedPluginName, specificPlugin);
-//        }
-//        return pluginSuccess;
-//    }
+
+    public HashMap<String, String> loadAllPlugins(boolean enable) {
+        HashMap<String, UnloadedPluggable> unloadedPluggableHashMap = pluginScan(true);
+        HashMap<String, String> pluginSuccess = new HashMap<>();
+        for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
+            String unloadedPluginName = entrySet.getKey();
+            UnloadedPluggable unloadedPluggable = entrySet.getValue();
+            HashSet<String> dependencies = unloadedPluggable.getPluggableDetails().getDEPENDENCIES();
+            boolean dependenciesLoaded = true;
+            if (dependencies != null) {
+                for (String dependency : dependencies) {
+                    boolean containsKey = PLUGINS.containsKey(dependency);
+                    if (!containsKey) {
+                        dependenciesLoaded = false;
+                    }
+                }
+            }
+            if (!dependenciesLoaded){
+                pluginSuccess.put(unloadedPluginName, "Could not load dependency");
+                //INSERT - STARNUB EVENT UPDATE
+            } else {
+                try {
+                    Plugin pluggable = (Plugin) unloadedPluggable.instantiatePluggable(PluggableType.PLUGIN);
+                    pluginSuccess.put(unloadedPluginName, "Success");
+                    if (unloadedPluggable.isUpdating()) {
+                        PLUGINS.remove(unloadedPluginName);
+                        //INSERT - STARNUB EVENT UPDATE
+                    }
+                    PLUGINS.put(unloadedPluginName, pluggable);
+                    if (enable) {
+                        pluggable.enable();
+                        pluggable.register();
+                    }
+                    //INSERT - STARNUB EVENT UPDATE
+                } catch (PluginDirectoryCreationFailed | MissingData | ClassNotFoundException | IOException | InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    pluginSuccess.put(unloadedPluginName, e.getMessage());
+                }
+            }
+        }
+        return pluginSuccess;//EMABLE
+    }
+
+
+
 //
 //    public String loadSpecificPlugin(String pluginName, boolean upgrade, boolean enable) throws NoSuchMethodException, IllegalAccessException, InstantiationException, PluginAlreadyLoaded, InvocationTargetException, ClassNotFoundException, IOException, PluginDependencyLoadFailed, PluginDirectoryCreationFailed, PluginDependencyNotFound, CommandClassLoadFail, CommandYamlLoadFailed {
 //        UnloadedPlugin unloadedPlugin = UNLOADED_PLUGINS.remove(pluginName);
@@ -242,12 +262,28 @@ public class PluggableManager<T extends Pluggable> {
 //        } else if (enable) {
 //            javaPlugin.enable();
 //        }
-//        LOADED_PLUGINS.put(javaPlugin.getNAME(), javaPlugin);
+//        LOADED_PLUGINS.put(javaPlugin.getOWNER(), javaPlugin);
 //        double version = javaPlugin.getDETAILS().getVERSION();
 //        StarNub.getLogger().cInfoPrint("StarNub", pluginName + " (" + version + ") " + "was successfully loaded.");
 //        new StarNubEvent("StarNub_Plugin_Loaded", javaPlugin);
 //        return pluginName + " was successfully loaded.";
 //    }
+
+    public void unloadAllCommands(){
+        COMMANDS.values().forEach(org.starnub.starnubserver.pluggable.Command::unregisterTask);
+        COMMANDS.values().forEach(org.starnub.starnubserver.pluggable.Command::unregisterSubscriptions);
+        COMMANDS.clear();
+    }
+
+    public void unloadAllPlugins(){
+        PLUGINS.values().forEach(org.starnub.starnubserver.pluggable.Plugin::unregisterTask);
+        PLUGINS.values().forEach(org.starnub.starnubserver.pluggable.Plugin::unregisterSubscriptions);
+        PLUGINS.values().forEach(org.starnub.starnubserver.pluggable.Plugin::disable);
+        PLUGINS.clear();
+    }
+
+
+
 //
 //    public String unloadAllPlugins() {
 //        LOADED_PLUGINS.values().forEach(Plugin::disable);
