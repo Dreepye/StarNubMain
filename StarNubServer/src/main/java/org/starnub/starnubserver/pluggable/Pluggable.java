@@ -19,14 +19,20 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.starnub.starbounddata.packets.Packet;
+import org.starnub.starbounddata.types.color.Colors;
+import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.StarNubTask;
+import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.events.packet.PacketEventHandler;
 import org.starnub.starnubserver.events.packet.PacketEventSubscription;
 import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
 import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
+import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
-import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
+import org.starnub.starnubserver.resources.StringTokens;
+import org.starnub.starnubserver.resources.tokens.StringToken;
+import org.starnub.starnubserver.resources.tokens.TokenHandler;
 import org.starnub.utilities.events.Priority;
 import org.starnub.utilities.file.yaml.YAMLWrapper;
 import org.starnub.utilities.file.yaml.YamlUtilities;
@@ -43,19 +49,36 @@ public abstract class Pluggable {
     protected PluggableFileType fileType;
     protected File file;
     protected PluggableDetails details;
+
+    private final Object S_E_S_LOCK = new Object();
+    private final Object P_E_S_LOCK = new Object();
+    private final Object S_TA_LOCK = new Object();
+    private final Object S_TO_LOCK = new Object();
     private final HashSet<StarNubEventSubscription> STARNUB_EVENT_SUBSCRIPTIONS = new HashSet<>();
     private final HashSet<PacketEventSubscription> PACKET_EVENT_SUBSCRIPTIONS = new HashSet<>();
     private final HashSet<StarNubTask> STARNUB_TASK = new HashSet<>();
+    private final HashSet<StringToken> STRING_TOKENS = new HashSet<>();
 
     public Pluggable() {
     }
 
-    public void setPluggable(UnloadedPluggable unloadedPluggable) throws PluginDirectoryCreationFailed, MissingData, IOException {
-        details = unloadedPluggable.getPluggableDetails();
-        file = unloadedPluggable.getPluggableFile();
-        fileType = unloadedPluggable.getPluggableFileType();
+    public void setPluggable(UnloadedPluggable unloadedPluggable) throws DirectoryCreationFailed, MissingData, IOException {
+        details = unloadedPluggable.getDetails();
+        file = unloadedPluggable.getFile();
+        fileType = unloadedPluggable.getFileType();
         YAMLWrapper yamlWrapper = unloadedPluggable.getYamlWrapper();
         loadData(yamlWrapper);
+        newStarNubTask("StarNub - Internal Pluggable Clean Up", true, 2, 2, TimeUnit.MINUTES, this::cleanStarNubTask);
+        new StarNubEvent("Pluggable_Loaded", this);
+        StarNub.getLogger().cInfoPrint("StarNub", "Pluggable " + details.getNameVersion() + " successfully loaded.");
+        try {
+            dumpDetails();
+        } catch (IOException e) {
+            StarNub.getLogger().cErrPrint("StarNub", "StarNub was unable to dump " + details.getNameVersion() + " information to disk.  ");
+            new StarNubEvent("Plugin_Information_Dump_Error", unloadedPluggable);
+            e.printStackTrace();
+        }
+        register();
     }
 
     public PluggableDetails getDetails() {
@@ -89,19 +112,25 @@ public abstract class Pluggable {
 
     public StarNubEventSubscription newStarNubEventSubscription(Priority priority, String eventKey, StarNubEventHandler starNubEventHandler){
         StarNubEventSubscription starNubEventSubscription = new StarNubEventSubscription(getRegistrationName(), priority, eventKey, starNubEventHandler);
-        this.STARNUB_EVENT_SUBSCRIPTIONS.add(starNubEventSubscription);
+        synchronized (S_E_S_LOCK) {
+            this.STARNUB_EVENT_SUBSCRIPTIONS.add(starNubEventSubscription);
+        }
         return starNubEventSubscription;
     }
 
     public PacketEventSubscription newPacketEventSubscription(Priority priority, Class<? extends Packet> eventKey, PacketEventHandler packetEventHandler){
         PacketEventSubscription packetEventSubscription = new PacketEventSubscription(getRegistrationName(), priority, eventKey, packetEventHandler);
-        this.PACKET_EVENT_SUBSCRIPTIONS.add(packetEventSubscription);
+        synchronized (P_E_S_LOCK) {
+            this.PACKET_EVENT_SUBSCRIPTIONS.add(packetEventSubscription);
+        }
         return packetEventSubscription;
     }
 
     public StarNubTask newStarNubTask(String taskName, long timeDelay, TimeUnit timeUnit, Runnable runnable){
         StarNubTask starNubTask = new StarNubTask(getRegistrationName(), taskName, timeDelay, timeUnit, runnable);
-        this.STARNUB_TASK.add(starNubTask);
+        synchronized (S_TA_LOCK) {
+            this.STARNUB_TASK.add(starNubTask);
+        }
         return starNubTask;
     }
 
@@ -111,20 +140,83 @@ public abstract class Pluggable {
         return starNubTask;
     }
 
-    public void unregisterSubscriptions(){
-        STARNUB_EVENT_SUBSCRIPTIONS.forEach(org.starnub.starnubserver.events.starnub.StarNubEventSubscription::removeRegistration);
-        PACKET_EVENT_SUBSCRIPTIONS.forEach(org.starnub.starnubserver.events.packet.PacketEventSubscription::removeRegistration);
+    public StringToken newStringToken(String tokenName, String token, String description, TokenHandler tokenHandler){
+        StringToken stringToken = new StringToken(getRegistrationName(), tokenName, token, description, tokenHandler);
+        synchronized (S_TO_LOCK) {
+            this.STRING_TOKENS.add(stringToken);
+        }
+        return stringToken;
+    }
+
+    public void unregister(){
+        unregisterTask();
+        unregisterStarNubEventSubscriptions();
+        unregisterPacketEventSubscriptions();
+        unregisterStringTokens();
+    }
+
+    public void unregisterStarNubEventSubscriptions(){
+        synchronized (S_E_S_LOCK) {
+            STARNUB_EVENT_SUBSCRIPTIONS.forEach(StarNubEventSubscription::unregister);
+            new StarNubEvent("Pluggable_StarNubEvents_Unregistered", this);
+        }
+    }
+
+    public void unregisterPacketEventSubscriptions(){
+        synchronized (P_E_S_LOCK) {
+            PACKET_EVENT_SUBSCRIPTIONS.forEach(PacketEventSubscription::unregister);
+            new StarNubEvent("Pluggable_PacketEvents_Unregistered", this);
+        }
     }
 
     public void unregisterTask(){
-        STARNUB_TASK.forEach(org.starnub.starnubserver.StarNubTask::removeTask);
+        synchronized (S_TA_LOCK) {
+            STARNUB_TASK.forEach(StarNubTask::unregister);
+            new StarNubEvent("Pluggable_StarNubTask_Unregistered", this);
+        }
     }
 
-    public abstract void loadData(YAMLWrapper pluggableInfo) throws IOException, PluginDirectoryCreationFailed;
-    public abstract void register();
+    public void unregisterStringTokens(){
+        synchronized (S_TO_LOCK) {
+            STRING_TOKENS.forEach(StringToken::unregister);
+            new StarNubEvent("Pluggable_StringTokens_Unregistered", this);
+        }
+    }
+
+    private void cleanStarNubTask(){
+        synchronized (S_TA_LOCK){
+            STARNUB_TASK.stream().filter(starNubTask -> starNubTask.getScheduledFuture().isDone()).forEach(STARNUB_TASK::remove);
+            new StarNubEvent("Pluggable_StarNubTask_Pruned", this);
+        }
+    }
+
+    public String validateColor(String string){
+        return Colors.validate(string);
+    }
+
+    public String replaceColors(String string){
+        return Colors.shortcutReplacement(string);
+    }
+
+    public String replaceTokens(String string){
+        return StringTokens.replaceTokens(string);
+    }
+
+    public String replaceColorAndTokens(String string){
+        string = Colors.shortcutReplacement(string);
+        return StringTokens.replaceTokens(string);
+    }
+
+    protected void register(){
+        onRegister();
+        new StarNubEvent("Pluggable_Registerables_Complete", this);
+    }
+
+    public abstract void loadData(YAMLWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;
+    public abstract void onRegister();
     public abstract void dumpDetails() throws IOException;
 
-    public void dumpPluggableDetails(LinkedHashMap<String, Object> specificDetails, String path) throws IOException {
+    protected void dumpPluggableDetails(LinkedHashMap<String, Object> specificDetails, String path) throws IOException {
         LinkedHashMap pluginDetailDump = new LinkedHashMap();
         pluginDetailDump.put("Type", type);
         pluginDetailDump.put("File Type", fileType);

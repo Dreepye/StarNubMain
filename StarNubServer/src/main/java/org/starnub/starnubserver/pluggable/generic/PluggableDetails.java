@@ -36,12 +36,15 @@ public class PluggableDetails {
     private final HashSet<String> DEPENDENCIES;
 
     /**
+     * @param OWNER                 String representing the owner of this pluggable
+     * @param NAME                  String name of this pluggable
+     * @param CLASS                 String representing the main class, Python = ClassName (StarNub), Java = package.Name (org.starnub.StarNub)
      * @param VERSION                double the pluggableOLD version
      * @param SIZE_KBS               double size of the pluggableOLD
      * @param AUTHOR                 String the authors name
      * @param URL                    String the url for the plugins page, download, help, etc
      * @param DESCRIPTION            String a short description of the pluggableOLD
-     * @param DEPENDENCIES
+     * @param DEPENDENCIES           HashSet representing string name of dependencies
      */
     public PluggableDetails(String OWNER, String NAME, String CLASS, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, List<String> DEPENDENCIES) {
         this.OWNER = OWNER;
@@ -54,7 +57,7 @@ public class PluggableDetails {
         this.DESCRIPTION = DESCRIPTION;
         if (DEPENDENCIES != null) {
             this.DEPENDENCIES = new HashSet<>();
-            this.DEPENDENCIES.addAll(DEPENDENCIES.stream().collect(Collectors.toList()));
+            this.DEPENDENCIES.addAll(DEPENDENCIES.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()));
         } else {
             this.DEPENDENCIES = null; /* Commands currently do not have dependencies, this will save space */
         }
@@ -94,6 +97,10 @@ public class PluggableDetails {
 
     public HashSet<String> getDEPENDENCIES() {
         return DEPENDENCIES;
+    }
+
+    public String getNameVersion(){
+        return NAME + " (v" + VERSION + ")";
     }
 
     public LinkedHashMap<String, Object> getDetailsMap(){

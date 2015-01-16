@@ -16,19 +16,9 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.pluggable.exceptions;
+package org.starnub.starnubserver.resources.tokens;
 
-/**
- * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class PluginDirectoryCreationFailed extends Exception {
+public abstract class TokenHandler {
 
-    public PluginDirectoryCreationFailed() {}
-
-    public PluginDirectoryCreationFailed(String message){
-        super(message);
-    }
+    public abstract Object getResults();
 }

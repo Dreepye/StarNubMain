@@ -80,11 +80,11 @@ public enum Packets {
     ENTITYCREATE("EntityCreatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG Data Issues // BROKEN BECAUSE SOME ARE NOT BYTE ARRAYS
     ENTITYUPDATE("EntityUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), // DEBUG Delta and direction
     ENTITYDESTROY("EntityDestroyPacket.class", Packet.Direction.BIDIRECTIONAL),
-    HITREQUEST("HitRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //DEBUG - Data Issues PROBABLE DOUBLE
+    HITREQUEST("HitRequestPacket.class", Packet.Direction.BIDIRECTIONAL),
+    DAMAGEREQUEST("DamageRequestPacket.class", Packet.Direction.NOT_USED), //BI DIRECTIONAL  -DEBUG - Data Issues PROBABLE DOUBLE
     DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Data Issues PROBABLE DOUBLE
     CALLSCRIPTEDENTITY("CallScriptedEntityPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
-    UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED),
+    UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED), //BIDIRECTIONAL
     HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL);
 
     private static HashMap<Packets, Class> packetClasses = setPrePacketCache();

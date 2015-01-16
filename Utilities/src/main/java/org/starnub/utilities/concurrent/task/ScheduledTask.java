@@ -105,7 +105,7 @@ public class ScheduledTask {
         } while (true);
     }
 
-    public void removeTask(){
+    public void unregister(){
         ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
         ConcurrentHashMap<String, ScheduledTask> ownerTaskMap = taskList.get(OWNER);
         for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : ownerTaskMap.entrySet()){

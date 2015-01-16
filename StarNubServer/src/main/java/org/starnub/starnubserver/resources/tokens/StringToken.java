@@ -18,21 +18,28 @@
 
 package org.starnub.starnubserver.resources.tokens;
 
-import org.starnub.starnubserver.resources.StringTokens;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.resources.StringTokens;
 
-public abstract class StringToken {
+public class StringToken {
 
+    private final String OWNER;
     private final String NAME;
     private final String TOKEN;
     private final String DESCRIPTION;
+    private final TokenHandler TOKEN_HANDLER;
 
-    public StringToken(String NAME, String TOKEN, String DESCRIPTION){
+    public StringToken(String OWNER, String NAME, String TOKEN, String DESCRIPTION, TokenHandler TOKEN_HANDLER){
+        this.OWNER = OWNER;
         this.NAME = NAME;
         this.TOKEN = tokenFormat(TOKEN);
         this.DESCRIPTION = DESCRIPTION;
-        registerToken();
+        this.TOKEN_HANDLER = TOKEN_HANDLER;
+        register();
+    }
+
+    public String getOWNER() {
+        return OWNER;
     }
 
     public String getNAME() {
@@ -47,12 +54,16 @@ public abstract class StringToken {
         return DESCRIPTION;
     }
 
-    public void registerToken(){
+    public TokenHandler getTOKEN_HANDLER() {
+        return TOKEN_HANDLER;
+    }
+
+    public void register(){
         StringTokens.getInstance().put(TOKEN, this);
         new StarNubEvent("String_Token_Registered", this);
     }
 
-    public void unregisterToken(){
+    public void unregister(){
         StringTokens.getInstance().remove(TOKEN);
         new StarNubEvent("String_Token_Unregistered", this);
     }
@@ -66,8 +77,6 @@ public abstract class StringToken {
         }
         return string.toLowerCase();
     }
-
-    public abstract Object getResults();
 
     @Override
     public String toString() {

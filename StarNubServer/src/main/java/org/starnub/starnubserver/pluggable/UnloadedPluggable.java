@@ -20,9 +20,9 @@ package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
 import org.starnub.starnubserver.StarNub;
+import org.starnub.starnubserver.events.events.StarNubEvent;
+import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
-import org.starnub.starnubserver.pluggable.exceptions.NotAPluggable;
-import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.utilities.file.utility.FileSizeMeasure;
 import org.starnub.utilities.file.utility.GetFileSize;
@@ -38,22 +38,23 @@ import java.util.concurrent.ConcurrentMap;
 
 public class UnloadedPluggable {
 
-    private PluggableDetails pluggableDetails;
-    private File pluggableFile;
-    private PluggableFileType pluggableFileType;
+    private PluggableDetails details;
+    private File file;
+    private PluggableFileType fileType;
     private YAMLWrapper yamlWrapper;
     private boolean updating;
 
-    public UnloadedPluggable(File pluggableFile) throws PluginDirectoryCreationFailed, MissingData, IOException, NotAPluggable {
-        this.pluggableFile = pluggableFile;
+    public UnloadedPluggable(File file) throws DirectoryCreationFailed, MissingData, IOException {
+        this.file = file;
         load();
+        new StarNubEvent("Unloaded_Pluggable_Loaded", this);
     }
 
-    public Pluggable instantiatePluggable(PluggableType type) throws PluginDirectoryCreationFailed, MissingData, IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        String classString = pluggableDetails.getCLASS();
+    public Pluggable instantiatePluggable(PluggableType type) throws DirectoryCreationFailed, MissingData, IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        String classString = details.getCLASS();
         Pluggable newClass = null;
-        if (pluggableFileType == PluggableFileType.JAVA){
-            URL pluginUrl = pluggableFile.toURI().toURL();
+        if (fileType == PluggableFileType.JAVA){
+            URL pluginUrl = file.toURI().toURL();
             URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
             Class<?> clazz = classLoader.loadClass(classString);
             if (type == PluggableType.PLUGIN){
@@ -63,9 +64,9 @@ public class UnloadedPluggable {
                 Class<? extends Pluggable> pluggableClass = clazz.asSubclass(Command.class);
                 newClass = pluggableClass.newInstance();
             }
-        } else if (pluggableFileType == PluggableFileType.PYTHON){
+        } else if (fileType == PluggableFileType.PYTHON){
             PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
-            pluggablePythonInterpreter.loadPythonScript(pluggableFile);
+            pluggablePythonInterpreter.loadPythonScript(file);
             PyObject pyObject = pluggablePythonInterpreter.getPyObject(classString, false);
             PyObject pluggableObject = pyObject.__call__();
             if (type == PluggableType.PLUGIN){
@@ -80,16 +81,16 @@ public class UnloadedPluggable {
         return newClass;
     }
 
-    public PluggableDetails getPluggableDetails() {
-        return pluggableDetails;
+    public PluggableDetails getDetails() {
+        return details;
     }
 
-    public File getPluggableFile() {
-        return pluggableFile;
+    public File getFile() {
+        return file;
     }
 
-    public PluggableFileType getPluggableFileType() {
-        return pluggableFileType;
+    public PluggableFileType getFileType() {
+        return fileType;
     }
 
     public YAMLWrapper getYamlWrapper() {
@@ -104,12 +105,12 @@ public class UnloadedPluggable {
         this.updating = true;
     }
 
-    public void load() throws MissingData, IOException, PluginDirectoryCreationFailed, NotAPluggable {
-        String absolutePath = pluggableFile.getAbsolutePath();
+    public void load() throws MissingData, IOException, DirectoryCreationFailed {
+        String absolutePath = file.getAbsolutePath();
         if (absolutePath.endsWith(".py")){
-            pluggableFileType = PluggableFileType.PYTHON;
+            fileType = PluggableFileType.PYTHON;
         } else if (absolutePath.endsWith(".jar")){
-            pluggableFileType = PluggableFileType.JAVA;
+            fileType = PluggableFileType.JAVA;
         }
         Object pluggableInfoObject = findPluggableInfo();
         if (pluggableInfoObject == null){
@@ -120,7 +121,7 @@ public class UnloadedPluggable {
         String pluggableName = (String) yamlWrapper.getValue("name");
         String classPath = (String) yamlWrapper.getValue("class");
         double version = (double) yamlWrapper.getNestedValue("version");
-        double fileSize = GetFileSize.getFileSize(pluggableFile, FileSizeMeasure.KILOBYTES);
+        double fileSize = GetFileSize.getFileSize(file, FileSizeMeasure.KILOBYTES);
         String author = (String) yamlWrapper.getNestedValue("author");
         String url = (String) yamlWrapper.getNestedValue("url");
         String description = (String) yamlWrapper.getNestedValue("description");
@@ -128,17 +129,17 @@ public class UnloadedPluggable {
         if (yamlWrapper.hasKey("dependencies")){
             dependenciesList = (List<String>) yamlWrapper.getValue("dependencies");
         }
-        pluggableDetails = new PluggableDetails(pluggableOwner, pluggableName, classPath, version, fileSize, author, url, description, dependenciesList);
+        details = new PluggableDetails(pluggableOwner, pluggableName, classPath, version, fileSize, author, url, description, dependenciesList);
     }
 
     private Object findPluggableInfo() throws MissingData, MalformedURLException {
-        if (pluggableFileType == PluggableFileType.JAVA){
-            URL pluginUrl = pluggableFile.toURI().toURL();
+        if (fileType == PluggableFileType.JAVA){
+            URL pluginUrl = file.toURI().toURL();
             URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
             return classLoader.getResourceAsStream("pluggable_info.yml");
-        } else if (pluggableFileType == PluggableFileType.PYTHON) {
+        } else if (fileType == PluggableFileType.PYTHON) {
             PluggablePythonInterpreter interpreter = PluggablePythonInterpreter.getInstance();
-            interpreter.loadPythonScript(pluggableFile);
+            interpreter.loadPythonScript(file);
             PyObject pluggableInfo = interpreter.getPyObject("pluggable_info", false);
             if (pluggableInfo == null){
                 return null;
@@ -152,9 +153,9 @@ public class UnloadedPluggable {
     @Override
     public String toString() {
         return "UnloadedPluggable{" +
-                "details=" + pluggableDetails +
-                ", file=" + pluggableFile +
-                ", fileType=" + pluggableFileType +
+                "details=" + details +
+                ", file=" + file +
+                ", fileType=" + fileType +
                 '}';
     }
 }

@@ -16,19 +16,23 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.pluggable.exceptions;
+package org.starnub.starnubserver.pluggable.generic;
 
-/**
- * Represents a CollectionDoesNotExistException, this is used in the YAML Wrapper
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public class PluginAlreadyLoaded extends Exception {
+public class LoadSuccess {
 
-    public PluginAlreadyLoaded() {}
+    private final boolean SUCCESS;
+    private final String REASON;
 
-    public PluginAlreadyLoaded(String message){
-        super(message);
+    public LoadSuccess(boolean SUCCESS, String REASON) {
+        this.SUCCESS = SUCCESS;
+        this.REASON = REASON;
+    }
+
+    public boolean isSUCCESS() {
+        return SUCCESS;
+    }
+
+    public String getREASON() {
+        return REASON;
     }
 }

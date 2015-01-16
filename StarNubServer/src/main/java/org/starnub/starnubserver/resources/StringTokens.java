@@ -67,9 +67,9 @@ public class StringTokens extends ConcurrentHashMap<String, StringToken>{
             StringToken stringToken = StringTokens.getInstance().get(shortcut);
             Object results;
             if (stringToken == null){
-                results =  "**TOKEN ERROR**";
+                results =  "**TOKEN MISSING**";
             } else {
-                results = stringToken.getResults();
+                results = stringToken.getTOKEN_HANDLER().getResults();
             }
             m.appendReplacement(sb, results.toString());
         }

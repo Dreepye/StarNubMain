@@ -41,13 +41,14 @@ Features:
 	- Optimized memory management
 	- Cached Objects
 
-###Plugin API 
-	- Command API (Multiple Commands and Arguments, Auto permissions generator,
-	- Default configuration generation and verification, Multiple resource extractor and loader
-	- Room for Lua or Python plugins (Would needed coding but is very possible)
+###Pluggable API
+    - Supports Java and Python
+    - Commands and Plugins
+    - Plugins have default configuration methods for generation and verification, Multiple resource extractor and loader
+	- See Java and Python (Uptime Command and Motd Plugin) http://pastebin.com/mqzsjLJb
 
 ###Database API - Out of box support 
- 	- Commons Connector (Plugins) or Plugins can make their own either or both	
+	- Commons Connector (Plugins) or Plugins can make their own either or both
 	- SQLite
 	- MySQL
 

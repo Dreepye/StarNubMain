@@ -50,13 +50,13 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
                 ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
-        submitRegistration();
+        register();
     }
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
-     * Uses: This will set up an events subscription and register it if you supplied a true boolean for the value register else you must getResults .submitRegistration();
+     * Uses: This will set up an events subscription and register it if you supplied a true boolean for the value register else you must getResults .register();
      *
      * @param SUBSCRIBER_NAME String representing the subscribers name
      * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
@@ -69,7 +69,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
                 EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         if (register) {
-            submitRegistration();
+            register();
         }
     }
 
@@ -79,7 +79,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      * Uses: This will register this Event Subscription with the {@link PacketEventRouter} - If you used auto register DO NOT USE this
      */
     @Override
-    public void submitRegistration() {
+    public void register() {
         boolean decoding = (boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "packet_decoding");
         String packetClassString = EVENT_KEY.toString();
         String subString = packetClassString.substring(packetClassString.lastIndexOf(".") + 1) + ".class";
@@ -97,7 +97,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      * Uses: This will remove this Event Subscription from the {@link PacketEventRouter}
      */
     @Override
-    public void removeRegistration() {
+    public void unregister() {
         PacketEventRouter.getInstance().removeEventSubscription(this);
         new StarNubEvent("StarNub_Packet_Subscription_Registration_Removed", this);
     }

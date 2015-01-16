@@ -18,18 +18,14 @@
 
 package org.starnub.starnubserver.resources.tokens.player;
 
-import org.starnub.starnubserver.resources.tokens.StringToken;
 import org.starnub.starnubserver.Connections;
-import org.starnub.starnubserver.resources.tokens.StringToken;
+import org.starnub.starnubserver.resources.tokens.TokenHandler;
 
-public class PlayerCount extends StringToken {
-
-    public PlayerCount() {
-        super("Player Count", "{player-count}", "Gets the current player count.");
-    }
+public class PlayerCount extends TokenHandler {
 
     @Override
     public Object getResults() {
         return Connections.getInstance().getCONNECTED_PLAYERS().size();
     }
 }
+//"Player Count", "{player-count}", "Gets the current player count."

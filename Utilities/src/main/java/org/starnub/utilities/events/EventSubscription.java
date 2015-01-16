@@ -34,12 +34,12 @@ public abstract class EventSubscription<T>{
     /**
      * You must implement this method as each {@link EventRouter} may be different
      */
-    public abstract void submitRegistration();
+    public abstract void register();
 
     /**
      * You must implement this method as each {@link EventRouter} may be different
      */
-    public abstract void removeRegistration();
+    public abstract void unregister();
 
     @Override
     public String toString() {

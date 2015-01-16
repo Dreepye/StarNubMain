@@ -19,7 +19,8 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
-import org.starnub.starnubserver.pluggable.exceptions.PluginDirectoryCreationFailed;
+import org.starnub.starnubserver.events.events.StarNubEvent;
+import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
 import org.starnub.starnubserver.pluggable.resources.PluginYAMLWrapper;
 import org.starnub.starnubserver.pluggable.resources.YAMLFiles;
@@ -58,8 +59,23 @@ public abstract class Plugin extends Pluggable {
         return enabled;
     }
 
+    public void enable(){
+        onPluginEnable();
+        new StarNubEvent("Plugin_Enabled", this);
+        this.enabled = true;
+    }
+
+    public void disable(){
+        onPluginDisable();
+        new StarNubEvent("Plugin_Disabled", this);
+        this.enabled = false;
+    }
+
+
+
+
     @Override
-    public void loadData(YAMLWrapper pluggableInfo) throws IOException, PluginDirectoryCreationFailed {
+    public void loadData(YAMLWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         type = PluggableType.PLUGIN;
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         if (additionalPermissionList.size() > 0) {
@@ -98,7 +114,7 @@ public abstract class Plugin extends Pluggable {
         }
     }
 
-    private void otherFilesExtractor(String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws PluginDirectoryCreationFailed, IOException {
+    private void otherFilesExtractor(String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws DirectoryCreationFailed, IOException {
         for (JarEntry jarEntry : otherJarFiles) {
             if (!jarEntry.isDirectory()) {
                 jarFromDisk.extractEntry(jarEntry,  PLUGIN_DIR + jarEntry.toString());
@@ -106,7 +122,7 @@ public abstract class Plugin extends Pluggable {
         }
     }
 
-    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, ClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, PluginDirectoryCreationFailed {
+    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, ClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, DirectoryCreationFailed {
         HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet = new HashSet<>();
         for (JarEntry jarEntry :yamlJarEntries) {
             if (!jarEntry.isDirectory()) {
@@ -120,17 +136,7 @@ public abstract class Plugin extends Pluggable {
         return new YAMLFiles(pluginYAMLWrapperHashSet);
     }
 
-    public void enable(){
-        onPluginEnable();
-        this.enabled = true;
-    }
-
-    public void disable(){
-        onPluginDisable();
-        this.enabled = false;
-    }
-
-    protected void createDirectories(String PLUGIN_DIR, String PLUGIN_NAME, ArrayList<String> directories) throws PluginDirectoryCreationFailed {
+    protected void createDirectories(String PLUGIN_DIR, String PLUGIN_NAME, ArrayList<String> directories) throws DirectoryCreationFailed {
         LinkedHashMap<String, Boolean> linkedHashMap = DirectoryCheckCreate.dirCheck(PLUGIN_DIR, directories);
         for (Map.Entry<String, Boolean> dirEntry : linkedHashMap.entrySet()){
             String dir = dirEntry.getKey();
@@ -138,7 +144,7 @@ public abstract class Plugin extends Pluggable {
             if (success){
                 System.out.println("StarNub directory " + dir + " exist or was successfully created.");
             } else {
-                throw new PluginDirectoryCreationFailed("ERROR CREATING DIRECTORY \"" + dir + "\" FOR PLUGIN \"" + PLUGIN_NAME + "\" PLEASE CHECK FILE PERMISSIONS. " +
+                throw new DirectoryCreationFailed("ERROR CREATING DIRECTORY \"" + dir + "\" FOR PLUGIN \"" + PLUGIN_NAME + "\" PLEASE CHECK FILE PERMISSIONS. " +
                         "CONSULT THE PLUGIN DEVELOPER FOR FURTHER HELP.");
             }
         }
@@ -164,6 +170,7 @@ public abstract class Plugin extends Pluggable {
 
     public abstract void onPluginEnable();
     public abstract void onPluginDisable();
+    public abstract void onRegister();
 
     @Override
     public String toString() {

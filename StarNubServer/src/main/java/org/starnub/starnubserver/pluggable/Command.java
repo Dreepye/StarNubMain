@@ -105,6 +105,7 @@ public abstract class Command extends Pluggable {
     }
 
     public abstract void onCommand(PlayerSession playerSession, String command, int argsCount, String[] args);
+    public abstract void onRegister();
 
     @Override
     public String toString() {

@@ -37,7 +37,7 @@
 //    /**
 //     * Recommended: For Plugin Developers & Anyone else.
 //     * <p>
-//     * Uses: This will set up an events subscription but it will not be registered, you must invoke submitRegistration
+//     * Uses: This will set up an events subscription but it will not be registered, you must invoke register
 //     *
 //     * @param SUBSCRIBER_NAME String representing the subscribers name
 //     * @param EVENT_KEY Class extending Packet which represents the Packet Event Key
@@ -62,7 +62,7 @@
 //        super(SUBSCRIBER_NAME, EVENT_HANDLER);
 //        this.EVENT_KEY = EVENT_KEY;
 //        if (register) {
-//            submitRegistration();
+//            register();
 //        }
 //    }
 //
@@ -72,7 +72,7 @@
 //     * Uses: This will register this Event Subscription with the {@link starnubserver.starnubdata.events.starnub.StarNubEventRouter} - If you used auto register DO NOT USE this
 //     */
 //    @Override
-//    public void submitRegistration() {
+//    public void register() {
 //        StarNub.getStarNubEventRouter().registerEventSubscription(EVENT_KEY, this);
 //    }
 //
@@ -82,7 +82,7 @@
 //     * Uses: This will remove this Event Subscription from the {@link starnubserver.starnubdata.events.starnub.StarNubEventRouter}
 //     */
 //    @Override
-//    public void removeRegistration() {
+//    public void unregister() {
 //        StarNub.getStarNubEventRouter().removeEventSubscription(this);
 //    }
 //}

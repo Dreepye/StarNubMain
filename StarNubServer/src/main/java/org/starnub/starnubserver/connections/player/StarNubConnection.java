@@ -82,7 +82,7 @@ public class StarNubConnection extends Connection {
     /**
      * Recommended: For connections use with StarNub.
      * <p>
-     * Uses: This will automatically schedule a one time task and it can be canceled by calling unregisterTask()
+     * Uses: This will automatically schedule a one time task and it can be canceled by calling unregister()
      */
     @Override
     public void removeConnection() {

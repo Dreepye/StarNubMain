@@ -24,11 +24,11 @@ package org.starnub.starnubserver.pluggable.exceptions;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public class PluginDependencyNotFound extends Exception {
+public class DirectoryCreationFailed extends Exception {
 
-    public PluginDependencyNotFound() {}
+    public DirectoryCreationFailed() {}
 
-    public PluginDependencyNotFound(String message){
+    public DirectoryCreationFailed(String message){
         super(message);
     }
 }
