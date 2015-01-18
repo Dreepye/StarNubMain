@@ -78,92 +78,19 @@ public class PluggableManager<T extends Pluggable> {
         return COMMANDS;
     }
 
+    @SuppressWarnings("unchecked")
     public LinkedHashMap<String, UnloadedPluggable> pluginScan(boolean updating) {
-        LinkedHashMap<String, UnloadedPluggable> orderUnloadedPluggoles = new LinkedHashMap<>();
-        HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(PLUGIN_DIRECTORY_STRING, "jar", "py");
-        /* Remove plugins that are already loaded */
-         for (Plugin plugin : PLUGINS.values()) {
-            PluggableDetails details = plugin.getDetails();
-            String loadedName = details.getOWNER();
-            double loadedVersion = details.getVERSION();
-            UnloadedPluggable unloadedPluggable = unloadedPluggables.get(loadedName);
-            if (unloadedPluggable != null) {
-                PluggableDetails unloadedDetails = unloadedPluggable.getDetails();
-                String unloadedName = unloadedDetails.getOWNER();
-                double unloadedVersion = unloadedDetails.getVERSION();
-                /* Is loaded */
-                if (loadedName.equals(unloadedName)) {
-                    if (unloadedVersion > loadedVersion && updating) {
-                        unloadedPluggable.setUpdating();
-                    } else {
-                        String removeFileRecommend = unloadedPluggable.getFile().toString();
-                        unloadedPluggables.remove(loadedName);
-                        StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + loadedName + " plugins, some are older, we recommend you remove the older file named " + removeFileRecommend + ".");
-                    }
-                }
-            }
-        }
-        /* Order the UnloadedPluggables */
-        while (unloadedPluggables.size() > 0) {
-            Iterator<Map.Entry<String, UnloadedPluggable>> iterator = unloadedPluggables.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry = iterator.next();
-                String key = unloadedPluggableEntry.getKey();
-                UnloadedPluggable value = unloadedPluggableEntry.getValue();
-                HashSet<String> dependencies = value.getDetails().getDEPENDENCIES();
-                boolean canLoad = true;
-                if (dependencies != null) {
-                    for (String dependency : dependencies) {
-                        if (!dependency.isEmpty()) {
-                            if (!unloadedPluggables.containsKey(dependency) && !PLUGINS.containsKey(dependency) || !orderUnloadedPluggoles.containsKey(dependency)) {
-                                iterator.remove();
-                                canLoad = false;
-                            }
-                        }
-                    }
-                }
-                if (canLoad) {
-                    orderUnloadedPluggoles.put(key, value);
-                    iterator.remove();
-                }
-            }
-        }
-        return orderUnloadedPluggoles;
+        ConcurrentHashMap<String, Pluggable> pluggablePluggins = new ConcurrentHashMap<>((Map)PLUGINS);
+        return pluggableScan(PLUGIN_DIRECTORY_STRING, pluggablePluggins, updating);
     }
 
-
-    public HashMap<String, UnloadedPluggable> commandScan(boolean updating) {
-        HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(COMMAND_DIRECTORY_STRING, "jar", "py");
-        for (Command command : COMMANDS.values()){
-            PluggableDetails details = command.getDetails();
-            String loadedName = details.getOWNER();
-            double loadedVersion = details.getVERSION();
-            String loadedcommandName = command.getCommand();
-            UnloadedPluggable unloadedPluggable = unloadedPluggables.get(loadedName);
-            if (unloadedPluggable != null) {
-                PluggableDetails unloadedDetails = unloadedPluggable.getDetails();
-                String unloadedName = unloadedDetails.getOWNER();
-                double unloadedVersion = unloadedDetails.getVERSION();
-                String unloadedCommandName = (String) unloadedPluggable.getYamlWrapper().getValue("command");
-                //INSERT - STARNUB EVENT UPDATE
-                /* Is loaded */
-                if (unloadedCommandName.equals(unloadedCommandName)) {
-                    if (unloadedVersion > loadedVersion && updating) {
-                        unloadedPluggable.setUpdating();
-                        //INSERT - STARNUB EVENT UPDATE
-                    } else {
-                        String removeFileRecommend = unloadedPluggable.getFile().toString();
-                        unloadedPluggables.remove(loadedName);
-                        StarNub.getLogger().cErrPrint("StarNub", "This command " + loadedName + " is already loaded, File: " + removeFileRecommend + ".");
-                        //INSERT - STARNUB EVENT UPDATE
-                    }
-                }
-            }
-        }
-        return unloadedPluggables;
+    @SuppressWarnings("unchecked")
+    public LinkedHashMap<String, UnloadedPluggable> commandScan(boolean updating) {
+        ConcurrentHashMap<String, Pluggable> pluggableCommands = new ConcurrentHashMap<>((Map)COMMANDS);
+        return pluggableScan(COMMAND_DIRECTORY_STRING, pluggableCommands, updating);
     }
 
-    public HashMap<String, UnloadedPluggable> pluggableScan(String directory, ConcurrentHashMap<String, Pluggable> loadedPluggables, boolean updating){
+    public LinkedHashMap<String, UnloadedPluggable> pluggableScan(String directory, ConcurrentHashMap<String, Pluggable> loadedPluggables, boolean updating){
         LinkedHashMap<String, UnloadedPluggable> orderedPluggables = new LinkedHashMap<>();
         HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(directory, "jar", "py");
         /* Remove plugins that are already loaded from this list */
@@ -171,19 +98,11 @@ public class PluggableManager<T extends Pluggable> {
             PluggableDetails loadedDetails = pluggable.getDetails();
             String loadedName = loadedDetails.getNAME();
             double loadedVersion = loadedDetails.getVERSION();
-            boolean isCommand = pluggable instanceof Command;
-            if(isCommand){
-                Command command = (Command) pluggable;
-                loadedName = command.getCommand();
-            }
             UnloadedPluggable unloadedPluggable = unloadedPluggables.get(loadedName);
             if (unloadedPluggable != null) {
                 PluggableDetails unloadedDetails = unloadedPluggable.getDetails();
                 String unloadedName = unloadedDetails.getNAME();
                 double unloadedVersion = unloadedDetails.getVERSION();
-                if(isCommand){
-                    unloadedName = (String) unloadedPluggable.getYamlWrapper().getValue("command");
-                }
                 boolean canUpdate = canUpdate(unloadedPluggable, updating, loadedName, loadedVersion, unloadedName, unloadedVersion);
                 if (!canUpdate){
                     unloadedPluggables.remove(unloadedName);
@@ -191,31 +110,31 @@ public class PluggableManager<T extends Pluggable> {
             }
         }
         /* Order the Unloaded Pluggables by dependency */
-
-
-        //Load all non dependancy plugins first
-
-
-
-
-        while (unloadedPluggables.size() > 0) {
-            Iterator<Map.Entry<String, UnloadedPluggable>> iterator = unloadedPluggables.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry = iterator.next();
-                String unloadedPluggableName = unloadedPluggableEntry.getKey();
-                UnloadedPluggable unloadedPluggable = unloadedPluggableEntry.getValue();
-                HashSet<String> dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
-                boolean canLoad = canLoad(dependencies, unloadedPluggables, loadedPluggables, orderedPluggables);
-                if (canLoad) {
-                    orderedPluggables.put(unloadedPluggableName, unloadedPluggable);
-                } else {
-                    StarNub.getLogger().cErrPrint("StarNub", "Could not load dependencies for " + unloadedPluggableName + " .");
-                    new StarNubEvent("Pluggable_Cannot_Load_Dependency", unloadedPluggable);
-                }
-
+        /* If not dependancies load first */
+        Iterator<Map.Entry<String, UnloadedPluggable>> iterator = unloadedPluggables.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry = iterator.next();
+            String unloadedPluggableString = unloadedPluggableEntry.getKey();
+            UnloadedPluggable unloadedPluggable = unloadedPluggableEntry.getValue();
+            HashSet<String> dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
+            if (dependencies == null || dependencies.size() == 0) {
+                orderedPluggables.put(unloadedPluggableString, unloadedPluggable);
+                iterator.remove();
             }
         }
-        return unloadedPluggables;
+        for (Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry : unloadedPluggables.entrySet()) {
+            String unloadedPluggableName = unloadedPluggableEntry.getKey();
+            UnloadedPluggable unloadedPluggable = unloadedPluggableEntry.getValue();
+            HashSet<String> dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
+            boolean canLoad = canLoad(dependencies, unloadedPluggables, PLUGINS, orderedPluggables);
+            if (canLoad) {
+                orderedPluggables.put(unloadedPluggableName, unloadedPluggable);
+            } else {
+                StarNub.getLogger().cErrPrint("StarNub", "Could not load dependencies for " + unloadedPluggableName + " .");
+                new StarNubEvent("Pluggable_Cannot_Load_Dependency", unloadedPluggable);
+            }
+        }
+        return orderedPluggables;
     }
 
     private boolean canUpdate(UnloadedPluggable unloadedPluggable, boolean updating, String loadedName, double loadedVersion, String unloadedName, double unloadedVersion){
@@ -234,12 +153,19 @@ public class PluggableManager<T extends Pluggable> {
         }
     }
 
-    private boolean canLoad(HashSet<String> dependencies, HashMap<String, UnloadedPluggable> unloadedPluggables, ConcurrentHashMap<String, Pluggable> loadedPluggables, LinkedHashMap<String, UnloadedPluggable> orderedPluggables){
+    private boolean canLoad(HashSet<String> dependencies, HashMap<String, UnloadedPluggable> unloadedPluggables, ConcurrentHashMap<String, Plugin> loadedPluggables, LinkedHashMap<String, UnloadedPluggable> orderedPluggables){
         if (dependencies != null) {
             for (String dependency : dependencies) {
                 if (!dependency.isEmpty()) {
-                    if (!unloadedPluggables.containsKey(dependency) && !loadedPluggables.containsKey(dependency) || !orderedPluggables.containsKey(dependency)) {
-                        return false;
+                    if (!loadedPluggables.containsKey(dependency) || !orderedPluggables.containsKey(dependency)) {
+                        if (unloadedPluggables.containsKey(dependency)) {
+                            UnloadedPluggable unloadedPluggable = unloadedPluggables.remove(dependency);
+                            String unloadedPluggableString = unloadedPluggable.getDetails().getNAME();
+                            orderedPluggables.put(unloadedPluggableString, unloadedPluggable);
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 }
             }
@@ -249,36 +175,46 @@ public class PluggableManager<T extends Pluggable> {
 
     private HashMap<String, UnloadedPluggable> getFiles(String directoryString, String... extensions) {
         File directoryFile = new File(directoryString);
-        File[] files = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(directoryFile, extensions, false));
+        Collection<File> fileCollection = FileUtils.listFiles(directoryFile, extensions, false);
+        ArrayList<File> files = new ArrayList<>(fileCollection);
+        if (directoryString.contains("Plugin")){
+            for (Plugin plugin : PLUGINS.values()){
+                files.remove(plugin.getFile());
+            }
+        } else if (directoryString.contains("Command")) {
+            for (Command command : COMMANDS.values()){
+                files.remove(command.getFile());
+            }
+        }
         HashMap<String, UnloadedPluggable> tempPluggables = new HashMap<>();
         for (File file : files) {
             try {
                 UnloadedPluggable unloadedPluggable = new UnloadedPluggable(file);
                 if (unloadedPluggable.getDetails() != null){
-                    String name = unloadedPluggable.getDetails().getOWNER();
+                    String name = unloadedPluggable.getDetails().getNAME();
                     tempPluggables.put(name, unloadedPluggable);
                 }
-            } catch (DirectoryCreationFailed | MissingData | IOException directoryCreationFailed) {
-                directoryCreationFailed.printStackTrace();
+            } catch (DirectoryCreationFailed | MissingData | IOException e) {
+                e.printStackTrace();
             }
         }
         return tempPluggables;
     }
 
     public HashMap<String, LoadSuccess> loadAllCommands() {
-        HashMap<String, UnloadedPluggable> unloadedPluggableHashMap = commandScan(true);
+        LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = commandScan(true);
         HashMap<String, LoadSuccess> commandSuccess = new HashMap<>();
         for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
             String unloadedCommandName = entrySet.getKey();
             UnloadedPluggable unloadedPluggable = entrySet.getValue();
             LoadSuccess loadSuccess = loadCommand(unloadedCommandName, unloadedPluggable);
-            commandSuccess.put(unloadedCommandName, loadSuccess);
+            commandSuccess.put(unloadedCommandName.toLowerCase(), loadSuccess);
         }
         return commandSuccess;
     }
 
     public HashMap<String, LoadSuccess> loadAllPlugins(boolean enable) {
-        HashMap<String, UnloadedPluggable> unloadedPluggableHashMap = pluginScan(true);
+        LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = pluginScan(true);
         HashMap<String, LoadSuccess> pluginSuccess = new HashMap<>();
         for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
             String unloadedPluginName = entrySet.getKey();
@@ -307,11 +243,10 @@ public class PluggableManager<T extends Pluggable> {
         } catch (IllegalAccessException e) {
             return illegalAccessError(type, e, unloadedPluggable);
         }
-        /* Currently no dependancies for commands */
-//        boolean dependenciesLoaded = dependenciesLoaded(unloadedPluggable);
-//        if (!dependenciesLoaded){
-//            return dependencyError(type, unloadedPluggable);
-//        }
+        boolean dependenciesLoaded = dependenciesLoaded(unloadedPluggable);
+        if (!dependenciesLoaded){
+            return dependencyError(type, unloadedPluggable);
+        }
         LoadSuccess loadSuccess;
         if (unloadedPluggable.isUpdating()) {
             COMMANDS.remove(unloadedPluggableName);

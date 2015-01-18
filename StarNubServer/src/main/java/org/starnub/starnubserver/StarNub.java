@@ -102,8 +102,9 @@ public final class StarNub {
         GroupsManagement.getInstance().groupSetup();
 
 //        PluginManager.getInstance().loadAllPlugins(false, true);
-        PluggableManager.getInstance().loadAllCommands();
         PluggableManager.getInstance().loadAllPlugins(true);
+        PluggableManager.getInstance().loadAllCommands();
+
 
         setUptimeTask();
 

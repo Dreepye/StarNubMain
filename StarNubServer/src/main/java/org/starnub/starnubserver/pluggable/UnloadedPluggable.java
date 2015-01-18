@@ -26,7 +26,7 @@ import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.utilities.file.utility.FileSizeMeasure;
 import org.starnub.utilities.file.utility.GetFileSize;
-import org.starnub.utilities.file.yaml.YAMLWrapper;
+import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class UnloadedPluggable {
     private PluggableDetails details;
     private File file;
     private PluggableFileType fileType;
-    private YAMLWrapper yamlWrapper;
+    private YamlWrapper yamlWrapper;
     private boolean updating;
 
     public UnloadedPluggable(File file) throws DirectoryCreationFailed, MissingData, IOException {
@@ -93,7 +93,7 @@ public class UnloadedPluggable {
         return fileType;
     }
 
-    public YAMLWrapper getYamlWrapper() {
+    public YamlWrapper getYamlWrapper() {
         return yamlWrapper;
     }
 
@@ -105,6 +105,7 @@ public class UnloadedPluggable {
         this.updating = true;
     }
 
+    @SuppressWarnings("unchecked")
     public void load() throws MissingData, IOException, DirectoryCreationFailed {
         String absolutePath = file.getAbsolutePath();
         if (absolutePath.endsWith(".py")){
@@ -116,7 +117,7 @@ public class UnloadedPluggable {
         if (pluggableInfoObject == null){
             return;
         }
-        yamlWrapper = new YAMLWrapper(null, "StarNub", "StarNub - Plugin Loader", pluggableInfoObject, "");
+        yamlWrapper = new YamlWrapper(null, "StarNub", "StarNub - Plugin Loader", pluggableInfoObject, "");
         String pluggableOwner = (String) yamlWrapper.getValue("owner");
         String pluggableName = (String) yamlWrapper.getValue("name");
         String classPath = (String) yamlWrapper.getValue("class");
@@ -125,10 +126,7 @@ public class UnloadedPluggable {
         String author = (String) yamlWrapper.getNestedValue("author");
         String url = (String) yamlWrapper.getNestedValue("url");
         String description = (String) yamlWrapper.getNestedValue("description");
-        List<String> dependenciesList = null;
-        if (yamlWrapper.hasKey("dependencies")){
-            dependenciesList = (List<String>) yamlWrapper.getValue("dependencies");
-        }
+        List<String> dependenciesList = (List<String>) yamlWrapper.getValue("dependencies");
         details = new PluggableDetails(pluggableOwner, pluggableName, classPath, version, fileSize, author, url, description, dependenciesList);
     }
 
@@ -144,7 +142,7 @@ public class UnloadedPluggable {
             if (pluggableInfo == null){
                 return null;
             }
-            return (ConcurrentMap<String, Object>) pluggableInfo.__tojava__(ConcurrentMap.class);
+            return pluggableInfo.__tojava__(ConcurrentMap.class);
         } else {
             throw new MissingData("Unknown error loading pluggable info.");
         }

@@ -23,18 +23,18 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class YAMLFiles {
+public class YamlFiles {
 
-    private final ConcurrentHashMap<String, PluginYAMLWrapper> YAML_FILES = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, PluginYamlWrapper> YAML_FILES = new ConcurrentHashMap<>();
 
-    public YAMLFiles() {
+    public YamlFiles() {
     }
 
-    public YAMLFiles(HashSet<PluginYAMLWrapper> yamlWrapperHashSet) {
+    public YamlFiles(HashSet<PluginYamlWrapper> yamlWrapperHashSet) {
         addPluginYamlWrappersBulk(yamlWrapperHashSet);
     }
 
-    public ConcurrentHashMap<String, PluginYAMLWrapper> getYAML_FILES() {
+    public ConcurrentHashMap<String, PluginYamlWrapper> getYAML_FILES() {
         return YAML_FILES;
     }
 
@@ -43,10 +43,10 @@ public class YAMLFiles {
     }
 
     public HashSet<File> getFiles(){
-        return YAML_FILES.values().stream().map(PluginYAMLWrapper::getDISK_FILE).collect(Collectors.toCollection(HashSet::new));
+        return YAML_FILES.values().stream().map(PluginYamlWrapper::getDISK_FILE).collect(Collectors.toCollection(HashSet::new));
     }
 
-    public PluginYAMLWrapper getPluginYamlWrapper(String filename){
+    public PluginYamlWrapper getPluginYamlWrapper(String filename){
         return YAML_FILES.get(filename);
     }
 
@@ -54,12 +54,12 @@ public class YAMLFiles {
         return YAML_FILES.get(filename.toLowerCase()).getDISK_FILE();
     }
 
-    public void addPluginYamlWrapper(PluginYAMLWrapper pluginYAMLWrapper){
+    public void addPluginYamlWrapper(PluginYamlWrapper pluginYAMLWrapper){
         YAML_FILES.put(pluginYAMLWrapper.getFILE_NAME(), pluginYAMLWrapper);
     }
 
-    public void addPluginYamlWrappersBulk(HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet){
-        for (PluginYAMLWrapper pluginYAMLWrapper : pluginYAMLWrapperHashSet){
+    public void addPluginYamlWrappersBulk(HashSet<PluginYamlWrapper> pluginYAMLWrapperHashSet){
+        for (PluginYamlWrapper pluginYAMLWrapper : pluginYAMLWrapperHashSet){
             YAML_FILES.put(pluginYAMLWrapper.getFILE_NAME().toLowerCase(), pluginYAMLWrapper);
         }
     }

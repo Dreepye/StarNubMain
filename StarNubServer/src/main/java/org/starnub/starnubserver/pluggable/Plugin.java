@@ -22,12 +22,11 @@ import org.python.core.PyObject;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
-import org.starnub.starnubserver.pluggable.resources.PluginYAMLWrapper;
-import org.starnub.starnubserver.pluggable.resources.YAMLFiles;
+import org.starnub.starnubserver.pluggable.resources.PluginYamlWrapper;
+import org.starnub.starnubserver.pluggable.resources.YamlFiles;
 import org.starnub.utilities.dircectories.DirectoryCheckCreate;
 import org.starnub.utilities.file.utility.JarFromDisk;
-import org.starnub.utilities.file.yaml.YAMLWrapper;
-import org.starnub.utilities.file.yaml.YamlUtilities;
+import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,7 @@ import java.util.zip.ZipEntry;
 public abstract class Plugin extends Pluggable {
 
     protected PluginConfiguration configuration;
-    protected YAMLFiles files;
+    protected YamlFiles files;
     protected HashSet<String> additionalPermissions;
     private boolean enabled;
 
@@ -51,8 +50,12 @@ public abstract class Plugin extends Pluggable {
         return configuration;
     }
 
-    public YAMLFiles getFiles() {
+    public YamlFiles getFiles() {
         return files;
+    }
+
+    public HashSet<String> getAdditionalPermissions() {
+        return additionalPermissions;
     }
 
     public boolean isEnabled() {
@@ -71,11 +74,8 @@ public abstract class Plugin extends Pluggable {
         this.enabled = false;
     }
 
-
-
-
     @Override
-    public void loadData(YAMLWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
+    public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         type = PluggableType.PLUGIN;
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         if (additionalPermissionList.size() > 0) {
@@ -107,7 +107,7 @@ public abstract class Plugin extends Pluggable {
             directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
             createDirectories(pluginDir, details.getNAME(), directories);
             otherFilesExtractor(pluginDir, jarFromDisk, otherJarFiles);
-            YAMLFiles yamlFiles = yamlFiles(details.getNAME(), pluginDir, this.getClass().getClassLoader(), yamlJarEntries, jarFromDisk);
+            YamlFiles yamlFiles = yamlFiles(details.getNAME(), pluginDir, this.getClass().getClassLoader(), yamlJarEntries, jarFromDisk);
             if (yamlFiles.getFiles().size() > 0){
                 files = yamlFiles;
             }
@@ -122,18 +122,18 @@ public abstract class Plugin extends Pluggable {
         }
     }
 
-    private YAMLFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, ClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, DirectoryCreationFailed {
-        HashSet<PluginYAMLWrapper> pluginYAMLWrapperHashSet = new HashSet<>();
+    private YamlFiles yamlFiles(String PLUGIN_NAME, String PLUGIN_DIR, ClassLoader CLASS_LOADER, List<JarEntry> yamlJarEntries, JarFromDisk jarFromDisk) throws IOException, DirectoryCreationFailed {
+        HashSet<PluginYamlWrapper> pluginYAMLWrapperHashSet = new HashSet<>();
         for (JarEntry jarEntry :yamlJarEntries) {
             if (!jarEntry.isDirectory()) {
                 String fileName = jarFromDisk.getJarEntryFileName(jarEntry);
                 try (InputStream resourceAsStream = CLASS_LOADER.getResourceAsStream(jarEntry.toString())) {
-                    final PluginYAMLWrapper pluginYAMLWrapper = new PluginYAMLWrapper(PLUGIN_NAME, fileName, resourceAsStream, PLUGIN_DIR + jarEntry.toString());
+                    final PluginYamlWrapper pluginYAMLWrapper = new PluginYamlWrapper(PLUGIN_NAME, fileName, resourceAsStream, PLUGIN_DIR + jarEntry.toString());
                     pluginYAMLWrapperHashSet.add(pluginYAMLWrapper);
                 }
             }
         }
-        return new YAMLFiles(pluginYAMLWrapperHashSet);
+        return new YamlFiles(pluginYAMLWrapperHashSet);
     }
 
     protected void createDirectories(String PLUGIN_DIR, String PLUGIN_NAME, ArrayList<String> directories) throws DirectoryCreationFailed {
@@ -151,14 +151,9 @@ public abstract class Plugin extends Pluggable {
     }
 
     @Override
-    public void dumpDetails() throws IOException {
-        String getPluginDirectory = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
-        YamlUtilities.toFileYamlDump(getPluginDetailsMap(), getPluginDirectory + details.getOWNER() + "/Information/");
-    }
-
-    public LinkedHashMap<String, Object> getPluginDetailsMap(){
+    public LinkedHashMap<String, Object> getDetailsMap() throws IOException {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        String additionalPermissionsString = "";
+        String additionalPermissionsString;
         if(additionalPermissions == null){
             additionalPermissionsString = "None";
         } else {

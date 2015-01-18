@@ -47,7 +47,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      */
     public PacketEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, Class<? extends Packet> EVENT_KEY, PacketEventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
-                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.contains("StarNub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         register();
@@ -65,7 +65,7 @@ public class PacketEventSubscription extends EventSubscription<Packet> {
      */
     public PacketEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, Class<? extends Packet> EVENT_KEY, boolean register, PacketEventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
-                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.contains("StarNub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         if (register) {

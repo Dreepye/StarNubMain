@@ -19,9 +19,9 @@
 package org.starnub.starnubserver.resources;
 
 import org.starnub.starnubserver.events.starnub.StarNubEventRouter;
-import org.starnub.utilities.file.yaml.YAMLWrapper;
+import org.starnub.utilities.file.yaml.YamlWrapper;
 
-public class StarNubYamlWrapper extends YAMLWrapper {
+public class StarNubYamlWrapper extends YamlWrapper {
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
      * <p>

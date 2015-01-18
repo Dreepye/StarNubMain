@@ -20,7 +20,7 @@ package org.starnub.starnubserver.pluggable.resources;
 
 import org.starnub.starnubserver.resources.StarNubYamlWrapper;
 
-public class PluginYAMLWrapper extends StarNubYamlWrapper {
+public class PluginYamlWrapper extends StarNubYamlWrapper {
 
     /**
      * This will construct a YAML file, YAML dumper, YAML auto dumper
@@ -33,7 +33,7 @@ public class PluginYAMLWrapper extends StarNubYamlWrapper {
      * @param DEFAULT_FILE_PATH      Object default path to the file
      * @param DISK_FILE_PATH         String default path to file on the disk
      */
-    public PluginYAMLWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH) {
+    public PluginYamlWrapper(String OWNER, String FILE_NAME, Object DEFAULT_FILE_PATH, String DISK_FILE_PATH) {
         super(OWNER,
               FILE_NAME,
               DEFAULT_FILE_PATH,

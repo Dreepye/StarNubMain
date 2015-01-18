@@ -33,7 +33,7 @@ public class PluggableDetails {
     private final String AUTHOR;
     private final String URL;
     private final String DESCRIPTION;
-    private final HashSet<String> DEPENDENCIES;
+    private final HashSet<String> DEPENDENCIES = new HashSet<>();
 
     /**
      * @param OWNER                 String representing the owner of this pluggable
@@ -56,10 +56,7 @@ public class PluggableDetails {
         this.URL = URL;
         this.DESCRIPTION = DESCRIPTION;
         if (DEPENDENCIES != null) {
-            this.DEPENDENCIES = new HashSet<>();
             this.DEPENDENCIES.addAll(DEPENDENCIES.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()));
-        } else {
-            this.DEPENDENCIES = null; /* Commands currently do not have dependencies, this will save space */
         }
     }
 

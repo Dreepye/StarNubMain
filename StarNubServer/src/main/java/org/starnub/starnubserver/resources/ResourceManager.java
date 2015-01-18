@@ -66,12 +66,9 @@ public class ResourceManager extends StarNubYamlWrapper{
     protected void directoryCheck() {
         LinkedHashMap<String, Boolean> linkedHashMap = DirectoryCheckCreate.dirCheck(
                 "StarNub",
-//                "Resources",
                 "Plugins",
-                "Plugins/Information",
                 "Commands",
-                "Commands/Information",
-                "Commands/",
+                "Commands/Commands_Information",
                 "Logs",
                 "Logs/Events_Debug",
                 "Logs/Chat",

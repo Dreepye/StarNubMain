@@ -48,7 +48,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     @SuppressWarnings("unchecked")
     public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, EventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
-                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.contains("StarNub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         register();
@@ -67,7 +67,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
     @SuppressWarnings("unchecked")
     public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, EventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
-                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.equalsIgnoreCase("starnub")) ?  Priority.MEDIUM : PRIORITY,
+                ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.contains("StarNub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
         this.EVENT_KEY = EVENT_KEY;
         if (register) {

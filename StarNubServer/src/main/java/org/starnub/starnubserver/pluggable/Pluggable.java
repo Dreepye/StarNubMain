@@ -34,8 +34,8 @@ import org.starnub.starnubserver.resources.StringTokens;
 import org.starnub.starnubserver.resources.tokens.StringToken;
 import org.starnub.starnubserver.resources.tokens.TokenHandler;
 import org.starnub.utilities.events.Priority;
-import org.starnub.utilities.file.yaml.YAMLWrapper;
 import org.starnub.utilities.file.yaml.YamlUtilities;
+import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,13 +66,13 @@ public abstract class Pluggable {
         details = unloadedPluggable.getDetails();
         file = unloadedPluggable.getFile();
         fileType = unloadedPluggable.getFileType();
-        YAMLWrapper yamlWrapper = unloadedPluggable.getYamlWrapper();
+        YamlWrapper yamlWrapper = unloadedPluggable.getYamlWrapper();
         loadData(yamlWrapper);
         newStarNubTask("StarNub - Internal Pluggable Clean Up", true, 2, 2, TimeUnit.MINUTES, this::cleanStarNubTask);
         new StarNubEvent("Pluggable_Loaded", this);
         StarNub.getLogger().cInfoPrint("StarNub", "Pluggable " + details.getNameVersion() + " successfully loaded.");
         try {
-            dumpDetails();
+            dumpPluggableDetails();
         } catch (IOException e) {
             StarNub.getLogger().cErrPrint("StarNub", "StarNub was unable to dump " + details.getNameVersion() + " information to disk.  ");
             new StarNubEvent("Plugin_Information_Dump_Error", unloadedPluggable);
@@ -212,19 +212,36 @@ public abstract class Pluggable {
         new StarNubEvent("Pluggable_Registerables_Complete", this);
     }
 
-    public abstract void loadData(YAMLWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;
+    public abstract void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;
     public abstract void onRegister();
-    public abstract void dumpDetails() throws IOException;
+    public abstract LinkedHashMap<String, Object> getDetailsMap() throws IOException;
 
-    protected void dumpPluggableDetails(LinkedHashMap<String, Object> specificDetails, String path) throws IOException {
+    @SuppressWarnings("unchecked")
+    private void dumpPluggableDetails() throws IOException {
+        LinkedHashMap<String, Object> specificDetails  = getDetailsMap();
         LinkedHashMap pluginDetailDump = new LinkedHashMap();
-        pluginDetailDump.put("Type", type);
-        pluginDetailDump.put("File Type", fileType);
+        String typeString = null;
+        String fileTypeString = null;
+        String informationPath = null;
+        if(type == PluggableType.PLUGIN){
+            typeString = "Plugin";
+            informationPath = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING() + getDetails().getNAME() + "/";
+        } else if (type == PluggableType.COMMAND){
+            typeString = "Command";
+            informationPath = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING() + "Commands_Information/";
+        }
+        if(fileType == PluggableFileType.JAVA){
+            fileTypeString = "Java";
+        } else if (fileType == PluggableFileType.PYTHON){
+            fileTypeString = "Python";
+        }
+        pluginDetailDump.put("Type", typeString);
+        pluginDetailDump.put("Language", fileTypeString);
         pluginDetailDump.put("File", file.getAbsolutePath());
         LinkedHashMap<String, Object> detailsMap = getDetails().getDetailsMap();
         pluginDetailDump.put("Details", detailsMap);
-        pluginDetailDump.put("Specific Details", specificDetails);
-        YamlUtilities.toFileYamlDump(pluginDetailDump, path, details.getOWNER() + "_Details.yml");
+        pluginDetailDump.put(typeString + " Details", specificDetails);
+        YamlUtilities.toFileYamlDump(pluginDetailDump, informationPath, details.getNAME().toLowerCase() + "_details.yml");
     }
 
     @Override

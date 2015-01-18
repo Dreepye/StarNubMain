@@ -20,24 +20,22 @@ package org.starnub.starnubserver.pluggable;
 
 import org.starnub.starnubdata.generic.CanUse;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
-import org.starnub.utilities.file.yaml.YAMLWrapper;
+import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public abstract class Command extends Pluggable {
 
-    private String command;
     private HashSet<String> mainArgs;
     private HashSet<String> permissions;
-    private HashMap<String, Integer> customSplit;
+    private int customSplit;
     private CanUse canUse;
 
     public Command() {
-    }
-
-    public String getCommand() {
-        return command;
     }
 
     public HashSet<String> getMainArgs() {
@@ -48,7 +46,7 @@ public abstract class Command extends Pluggable {
         return permissions;
     }
 
-    public HashMap<String, Integer> getCustomSplit() {
+    public int getCustomSplit() {
         return customSplit;
     }
 
@@ -57,38 +55,29 @@ public abstract class Command extends Pluggable {
     }
 
     @Override
-    public void loadData(YAMLWrapper pluggableInfo){
+    public void loadData(YamlWrapper pluggableInfo){
         type = PluggableType.COMMAND;
-        this.command = (String) pluggableInfo.getValue("command");
         this.mainArgs = new HashSet<>();
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
         this.mainArgs.addAll(mainArgsList);
         this.permissions = new HashSet<>();
         if (mainArgs.size() == 0){
-            String permission = details.getOWNER() + "." + command;
+            String permission = details.getOWNER() + "." + details.getNAME();
             permissions.add(permission.toLowerCase());
         } else {
             for (String mainArg : mainArgs) {
-                String permission = details.getOWNER() + "." + command + "." + mainArg;
+                String permission = details.getOWNER() + "." + details.getNAME() + "." + mainArg;
                 permissions.add(permission.toLowerCase());
             }
         }
-        this.customSplit = new HashMap<>();
-        Map<String, Integer> customSplitMap = (Map<String, Integer>) pluggableInfo.getValue("custom_split");
-        this.customSplit.putAll(customSplitMap);
+        this.customSplit = (int) pluggableInfo.getValue("custom_split");
         Integer canUseInteger = (Integer) pluggableInfo.getValue("can_use");
         this.canUse = CanUse.values()[canUseInteger];
     }
 
     @Override
-    public void dumpDetails() throws IOException {
-        String commandDirectory = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING();
-        dumpPluggableDetails(getCommandDetailsMap(), commandDirectory + "Information");
-    }
-
-    public LinkedHashMap<String,Object> getCommandDetailsMap() {
+    public LinkedHashMap<String, Object> getDetailsMap() throws IOException { //TODO FIX
         LinkedHashMap<String, Object> linkedHashMapFinal = new LinkedHashMap<>();
-        linkedHashMapFinal.put("Commands", command);
         ArrayList<String> mainArgsList = new ArrayList<>(mainArgs);
         linkedHashMapFinal.put("Main Args", mainArgsList);
         String canUseString = "";
@@ -97,7 +86,7 @@ public abstract class Command extends Pluggable {
             case REMOTE_PLAYER: canUseString = "Remote Player"; break;
             case BOTH: canUseString = "Players and Remote Players"; break;
         }
-        linkedHashMapFinal.put("Can Use", canUse);
+        linkedHashMapFinal.put("Can Use", canUseString);
         linkedHashMapFinal.put("Custom Split", customSplit);
         ArrayList<String> permissionsList = new ArrayList<>(permissions);
         linkedHashMapFinal.put("Permissions", permissionsList);
@@ -110,7 +99,6 @@ public abstract class Command extends Pluggable {
     @Override
     public String toString() {
         return "Command{" +
-                "command='" + command + '\'' +
                 ", mainArgs=" + mainArgs +
                 ", permissions=" + permissions +
                 ", customSplit=" + customSplit +
