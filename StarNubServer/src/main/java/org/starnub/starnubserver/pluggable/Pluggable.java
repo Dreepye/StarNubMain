@@ -74,11 +74,10 @@ public abstract class Pluggable {
         try {
             dumpPluggableDetails();
         } catch (IOException e) {
-            StarNub.getLogger().cErrPrint("StarNub", "StarNub was unable to dump " + details.getNameVersion() + " information to disk.  ");
+            StarNub.getLogger().cErrPrint("StarNub", "StarNub was unable to dump " + details.getNameVersion() + " information to disk.");
             new StarNubEvent("Plugin_Information_Dump_Error", unloadedPluggable);
             e.printStackTrace();
         }
-        register();
     }
 
     public PluggableDetails getDetails() {
@@ -210,6 +209,8 @@ public abstract class Pluggable {
     protected void register(){
         onRegister();
         new StarNubEvent("Pluggable_Registerables_Complete", this);
+        String typeString = null;
+        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were registered if available.");
     }
 
     public abstract void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;

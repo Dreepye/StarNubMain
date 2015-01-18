@@ -23,15 +23,13 @@ import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Command extends Pluggable {
 
     private HashSet<String> mainArgs;
-    private HashSet<String> permissions;
+    private LinkedList<String> permissions;
     private int customSplit;
     private CanUse canUse;
 
@@ -42,7 +40,7 @@ public abstract class Command extends Pluggable {
         return mainArgs;
     }
 
-    public HashSet<String> getPermissions() {
+    public LinkedList<String> getPermissions() {
         return permissions;
     }
 
@@ -54,20 +52,25 @@ public abstract class Command extends Pluggable {
         return canUse;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void loadData(YamlWrapper pluggableInfo){
         type = PluggableType.COMMAND;
+
         this.mainArgs = new HashSet<>();
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
-        this.mainArgs.addAll(mainArgsList);
-        this.permissions = new HashSet<>();
-        if (mainArgs.size() == 0){
-            String permission = details.getOWNER() + "." + details.getNAME();
-            permissions.add(permission.toLowerCase());
-        } else {
+        mainArgs.addAll(mainArgsList.stream().map(String::toLowerCase).collect(Collectors.toList()));
+        this.permissions = new LinkedList<>();
+        String lowerCaseOwner = details.getOWNER().toLowerCase();
+        String lowerCaseName = details.getNAME().toLowerCase();
+        permissions.add(lowerCaseOwner + ".*");
+        String permission = lowerCaseOwner + "." + lowerCaseName;
+        permissions.add(permission);
+        if (mainArgs != null && mainArgs.size() > 0){
+            permissions.add(permission + ".*");
             for (String mainArg : mainArgs) {
-                String permission = details.getOWNER() + "." + details.getNAME() + "." + mainArg;
-                permissions.add(permission.toLowerCase());
+                String permissionFull = lowerCaseOwner + "." + lowerCaseName + "." + mainArg;
+                permissions.add(permissionFull);
             }
         }
         this.customSplit = (int) pluggableInfo.getValue("custom_split");

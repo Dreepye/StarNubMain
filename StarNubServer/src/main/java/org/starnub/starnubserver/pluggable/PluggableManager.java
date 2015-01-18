@@ -205,10 +205,10 @@ public class PluggableManager<T extends Pluggable> {
         LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = commandScan(true);
         HashMap<String, LoadSuccess> commandSuccess = new HashMap<>();
         for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
-            String unloadedCommandName = entrySet.getKey();
+            String unloadedCommandName = entrySet.getKey().toLowerCase();
             UnloadedPluggable unloadedPluggable = entrySet.getValue();
             LoadSuccess loadSuccess = loadCommand(unloadedCommandName, unloadedPluggable);
-            commandSuccess.put(unloadedCommandName.toLowerCase(), loadSuccess);
+            commandSuccess.put(unloadedCommandName, loadSuccess);
         }
         return commandSuccess;
     }
@@ -254,6 +254,7 @@ public class PluggableManager<T extends Pluggable> {
         } else {
             loadSuccess = pluggableLoaded(type, pluggable);
         }
+        pluggable.register();
         COMMANDS.put(unloadedPluggableName, pluggable);
         return loadSuccess;
     }
@@ -289,6 +290,7 @@ public class PluggableManager<T extends Pluggable> {
         }
         PLUGINS.put(unloadedPluggableName, pluggable);
         if (enable) {
+            pluggable.register();
             pluggable.enable();
         }
         return loadSuccess;
@@ -364,7 +366,7 @@ public class PluggableManager<T extends Pluggable> {
 
     private LoadSuccess pluggableLoaded(String type, Pluggable pluggable){
         String nameVersion = pluggable.getDetails().getNameVersion();
-        String successString = type + " " + nameVersion + " loaded.";
+        String successString = nameVersion + " was successfully loaded as a " + type;
         StarNub.getLogger().cInfoPrint("StarNub", successString);
         new StarNubEvent(type + "_Loaded", pluggable);
         return new LoadSuccess(true, successString);

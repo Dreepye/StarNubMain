@@ -106,7 +106,7 @@ public class PluggableDetails {
         linkedHashMap.put("Name", NAME);
         linkedHashMap.put("Class", CLASS);
         linkedHashMap.put("Version", VERSION);
-        linkedHashMap.put("Size KBs", SIZE_KBS);
+        linkedHashMap.put("Size KBs", (double)Math.round(SIZE_KBS * 100) / 100);
         linkedHashMap.put("Author", AUTHOR);
         linkedHashMap.put("URL", URL);
         linkedHashMap.put("Description", DESCRIPTION);

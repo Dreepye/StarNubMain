@@ -19,6 +19,7 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
+import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
@@ -33,14 +34,12 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarEntry;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
 
 public abstract class Plugin extends Pluggable {
 
     protected PluginConfiguration configuration;
     protected YamlFiles files;
-    protected HashSet<String> additionalPermissions;
+    protected String[] additionalPermissions = new String[0];
     private boolean enabled;
 
     public Plugin() {
@@ -54,7 +53,7 @@ public abstract class Plugin extends Pluggable {
         return files;
     }
 
-    public HashSet<String> getAdditionalPermissions() {
+    public String[] getAdditionalPermissions() {
         return additionalPermissions;
     }
 
@@ -65,22 +64,29 @@ public abstract class Plugin extends Pluggable {
     public void enable(){
         onPluginEnable();
         new StarNubEvent("Plugin_Enabled", this);
+        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " enabled.");
         this.enabled = true;
     }
 
     public void disable(){
         onPluginDisable();
         new StarNubEvent("Plugin_Disabled", this);
+        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " disabled.");
         this.enabled = false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         type = PluggableType.PLUGIN;
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
-        if (additionalPermissionList.size() > 0) {
-            additionalPermissions = new HashSet<>();
-            additionalPermissions.addAll(additionalPermissionList.stream().collect(Collectors.toList()));
+        if (additionalPermissionList != null && additionalPermissionList.size() > 0) {
+                additionalPermissions = new String[additionalPermissionList.size()];
+                int index = 0;
+                for (String permission : additionalPermissionList) {
+                    additionalPermissions[index] = permission;
+                    index++;
+                }
         }
         boolean hasConfiguration = (boolean) pluggableInfo.getValue("has_configuration");
         if (hasConfiguration) {
@@ -103,10 +109,10 @@ public abstract class Plugin extends Pluggable {
             List<JarEntry> otherJarFiles = jarFromDisk.getJarEntries("other_files/", null);
             List<JarEntry> yamlJarEntries = jarFromDisk.getJarEntries("yaml_files/", null);
             ArrayList<String> directories = new ArrayList<>();
-            directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
-            directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
-            createDirectories(pluginDir, details.getNAME(), directories);
-            otherFilesExtractor(pluginDir, jarFromDisk, otherJarFiles);
+//            directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+//            directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
+            createDirectories(details.getNAME(), pluginDir, directories);
+            otherFilesExtractor(details.getNAME(), pluginDir, jarFromDisk, otherJarFiles);
             YamlFiles yamlFiles = yamlFiles(details.getNAME(), pluginDir, this.getClass().getClassLoader(), yamlJarEntries, jarFromDisk);
             if (yamlFiles.getFiles().size() > 0){
                 files = yamlFiles;
@@ -114,10 +120,10 @@ public abstract class Plugin extends Pluggable {
         }
     }
 
-    private void otherFilesExtractor(String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws DirectoryCreationFailed, IOException {
+    private void otherFilesExtractor(String PLUGIN_NAME, String PLUGIN_DIR, JarFromDisk jarFromDisk, List<JarEntry> otherJarFiles) throws DirectoryCreationFailed, IOException {
         for (JarEntry jarEntry : otherJarFiles) {
             if (!jarEntry.isDirectory()) {
-                jarFromDisk.extractEntry(jarEntry,  PLUGIN_DIR + jarEntry.toString());
+                jarFromDisk.extractEntry(jarEntry,  PLUGIN_DIR + PLUGIN_NAME);
             }
         }
     }
@@ -128,7 +134,7 @@ public abstract class Plugin extends Pluggable {
             if (!jarEntry.isDirectory()) {
                 String fileName = jarFromDisk.getJarEntryFileName(jarEntry);
                 try (InputStream resourceAsStream = CLASS_LOADER.getResourceAsStream(jarEntry.toString())) {
-                    final PluginYamlWrapper pluginYAMLWrapper = new PluginYamlWrapper(PLUGIN_NAME, fileName, resourceAsStream, PLUGIN_DIR + jarEntry.toString());
+                    final PluginYamlWrapper pluginYAMLWrapper = new PluginYamlWrapper(PLUGIN_NAME, fileName, resourceAsStream, PLUGIN_DIR + PLUGIN_NAME);
                     pluginYAMLWrapperHashSet.add(pluginYAMLWrapper);
                 }
             }
@@ -136,13 +142,13 @@ public abstract class Plugin extends Pluggable {
         return new YamlFiles(pluginYAMLWrapperHashSet);
     }
 
-    protected void createDirectories(String PLUGIN_DIR, String PLUGIN_NAME, ArrayList<String> directories) throws DirectoryCreationFailed {
-        LinkedHashMap<String, Boolean> linkedHashMap = DirectoryCheckCreate.dirCheck(PLUGIN_DIR, directories);
+    protected void createDirectories(String PLUGIN_NAME, String PLUGIN_DIR, ArrayList<String> directories) throws DirectoryCreationFailed {
+        LinkedHashMap<String, Boolean> linkedHashMap = DirectoryCheckCreate.dirCheck(PLUGIN_DIR + PLUGIN_NAME, directories);
         for (Map.Entry<String, Boolean> dirEntry : linkedHashMap.entrySet()){
             String dir = dirEntry.getKey();
             boolean success = dirEntry.getValue();
             if (success){
-                System.out.println("StarNub directory " + dir + " exist or was successfully created.");
+                StarNub.getLogger().cInfoPrint("StarNub", "StarNub directory " + dir + " exist or was successfully created.");
             } else {
                 throw new DirectoryCreationFailed("ERROR CREATING DIRECTORY \"" + dir + "\" FOR PLUGIN \"" + PLUGIN_NAME + "\" PLEASE CHECK FILE PERMISSIONS. " +
                         "CONSULT THE PLUGIN DEVELOPER FOR FURTHER HELP.");
@@ -153,13 +159,7 @@ public abstract class Plugin extends Pluggable {
     @Override
     public LinkedHashMap<String, Object> getDetailsMap() throws IOException {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        String additionalPermissionsString;
-        if(additionalPermissions == null){
-            additionalPermissionsString = "None";
-        } else {
-            additionalPermissionsString = additionalPermissions.toString();
-        }
-        linkedHashMap.put("Additional Permissions", additionalPermissionsString);
+        linkedHashMap.put("Additional Permissions", additionalPermissions);
         return linkedHashMap;
     }
 
