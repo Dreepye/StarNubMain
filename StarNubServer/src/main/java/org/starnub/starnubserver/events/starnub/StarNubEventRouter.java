@@ -6,7 +6,7 @@ import org.starnub.utilities.events.EventRouter;
 import org.starnub.utilities.events.EventSubscription;
 import org.starnub.utilities.events.types.ObjectEvent;
 
-import java.util.HashSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents StarNubs StarNubEventRouter to be used with {@link StarNubEventSubscription} and
@@ -15,7 +15,7 @@ import java.util.HashSet;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class StarNubEventRouter extends EventRouter<String, ObjectEvent, Boolean> {
+public class StarNubEventRouter extends EventRouter<String, ObjectEvent> {
 
     /**
      * This is instantiated to build out the Packet Event Router
@@ -47,7 +47,7 @@ public class StarNubEventRouter extends EventRouter<String, ObjectEvent, Boolean
     @SuppressWarnings("unchecked")
     public void handleEvent(ObjectEvent event) {
             Object eventKey = event.getEVENT_KEY();
-            HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
+            CopyOnWriteArrayList<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
             if (eventSubscriptions != null) {
                 for (EventSubscription eventSubscription : eventSubscriptions) {
                     if (!event.isRecycle()) {

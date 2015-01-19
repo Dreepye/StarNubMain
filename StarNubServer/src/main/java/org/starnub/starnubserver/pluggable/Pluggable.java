@@ -45,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Pluggable {
 
-    protected PluggableType type;
     protected PluggableFileType fileType;
     protected File file;
     protected PluggableDetails details;
@@ -101,9 +100,9 @@ public abstract class Pluggable {
             classString = classString.substring(lastIndexOf + 1);
         }
         String typeString = "";
-        if (type == PluggableType.PLUGIN){
+        if (details.getTYPE() == PluggableType.PLUGIN){
             typeString = "Plugin";
-        } else if (type == PluggableType.COMMAND){
+        } else if (details.getTYPE() == PluggableType.COMMAND){
             typeString = "Command";
         }
         return ownerString + " - " + nameString + " - " + classString + " - " + typeString;
@@ -223,10 +222,10 @@ public abstract class Pluggable {
         String typeString = null;
         String fileTypeString = null;
         String informationPath = null;
-        if(type == PluggableType.PLUGIN){
+        if(details.getTYPE() == PluggableType.PLUGIN){
             typeString = "Plugin";
             informationPath = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING() + getDetails().getNAME() + "/";
-        } else if (type == PluggableType.COMMAND){
+        } else if (details.getTYPE() == PluggableType.COMMAND){
             typeString = "Command";
             informationPath = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING() + "Commands_Information/";
         }

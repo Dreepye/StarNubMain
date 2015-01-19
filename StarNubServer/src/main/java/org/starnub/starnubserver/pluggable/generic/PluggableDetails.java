@@ -18,22 +18,25 @@
 
 package org.starnub.starnubserver.pluggable.generic;
 
-import java.util.HashSet;
+import org.starnub.starnubserver.pluggable.PluggableType;
+import org.starnub.utilities.arrays.ArrayUtilities;
+
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PluggableDetails {
 
     private final String OWNER;
     private final String NAME;
     private final String CLASS;
+    private final PluggableType TYPE;
     private final double VERSION;
     private final double SIZE_KBS;
     private final String AUTHOR;
     private final String URL;
     private final String DESCRIPTION;
-    private final HashSet<String> DEPENDENCIES = new HashSet<>();
+    private final String[] DEPENDENCIES;
+    private final boolean UNLOADABLE;
 
     /**
      * @param OWNER                 String representing the owner of this pluggable
@@ -46,18 +49,18 @@ public class PluggableDetails {
      * @param DESCRIPTION            String a short description of the pluggableOLD
      * @param DEPENDENCIES           HashSet representing string name of dependencies
      */
-    public PluggableDetails(String OWNER, String NAME, String CLASS, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, List<String> DEPENDENCIES) {
+    public PluggableDetails(String OWNER, String NAME, String CLASS, PluggableType TYPE, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, List<String> DEPENDENCIES, boolean UNLOADABLE) {
         this.OWNER = OWNER;
         this.NAME = NAME;
         this.CLASS = CLASS;
+        this.TYPE = TYPE;
         this.VERSION = VERSION;
         this.SIZE_KBS = SIZE_KBS;
         this.AUTHOR = AUTHOR;
         this.URL = URL;
         this.DESCRIPTION = DESCRIPTION;
-        if (DEPENDENCIES != null) {
-            this.DEPENDENCIES.addAll(DEPENDENCIES.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()));
-        }
+        this.DEPENDENCIES = ArrayUtilities.arrayBuilder(DEPENDENCIES);
+        this.UNLOADABLE = UNLOADABLE;
     }
 
     public String getOWNER() {
@@ -70,6 +73,10 @@ public class PluggableDetails {
 
     public String getCLASS() {
         return CLASS;
+    }
+
+    public PluggableType getTYPE() {
+        return TYPE;
     }
 
     public double getVERSION() {
@@ -92,8 +99,12 @@ public class PluggableDetails {
         return DESCRIPTION;
     }
 
-    public HashSet<String> getDEPENDENCIES() {
+    public String[] getDEPENDENCIES() {
         return DEPENDENCIES;
+    }
+
+    public boolean isUNLOADABLE() {
+        return UNLOADABLE;
     }
 
     public String getNameVersion(){

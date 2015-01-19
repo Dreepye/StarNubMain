@@ -5,12 +5,10 @@ import org.starnub.starbounddata.types.chat.ChatSendMode;
 import org.starnub.starbounddata.types.chat.Mode;
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.StarNubTask;
-import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
+import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
 import org.starnub.starnubserver.resources.NameBuilder;
-import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.utilities.events.Priority;
-import org.starnub.utilities.events.types.ObjectEvent;
 import org.starnub.utilities.strings.StringUtilities;
 import org.starnub.utilities.time.DateAndTimes;
 
@@ -167,204 +165,180 @@ public class MultiOutputLogger {
     }
 
     public void eventListenerRegistration() {
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Event", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logEvent) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.err.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Event", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logEvent) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.err.println(logString);
+                    break;
+                }
+                case 2: {
+                    EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.out.println(logString);
+                    EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Debug", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logDebug) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.err.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.err.println(logString);
-                        EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Debug", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logDebug) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.err.println(logString);
+                    break;
+                }
+                case 2: {
+                    EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.err.println(logString);
+                    EVENT_DEBUG_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Chat", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logChat) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.out.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        CHAT_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        CHAT_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Chat", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logChat) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.out.println(logString);
+                    break;
+                }
+                case 2: {
+                    CHAT_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.out.println(logString);
+                    CHAT_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Command", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logCommand) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.out.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        COMMAND_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        COMMAND_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Command", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logCommand) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.out.println(logString);
+                    break;
+                }
+                case 2: {
+                    COMMAND_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.out.println(logString);
+                    COMMAND_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Information", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logInformation) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.out.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Information", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logInformation) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.out.println(logString);
+                    break;
+                }
+                case 2: {
+                    INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.out.println(logString);
+                    INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Warning", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logWarning) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.out.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Warning", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logWarning) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.out.println(logString);
+                    break;
+                }
+                case 2: {
+                    INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.out.println(logString);
+                    INFORMATION_WARNING_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Error", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logError) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.out.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
-                        ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Error", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logError) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.err.println(logString);
+                    break;
+                }
+                case 2: {
+                    ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.err.println(logString);
+                    ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                    ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
+                    break;
                 }
             }
         });
 
-        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Fatal", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                String logString = (String) eventData.getEVENT_DATA();
-                switch (logFatal) {
-                    case 0: { /* Not Logging */
-                        break;
-                    }
-                    case 1: {
-                        System.out.println(logString);
-                        break;
-                    }
-                    case 2: {
-                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
-                        break;
-                    }
-                    case 3: {
-                        System.out.println(logString);
-                        ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
-                        ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
-                        break;
-                    }
+        new StarNubEventSubscription("StarNub", Priority.CRITICAL, "StarNub_Log_Fatal", eventData -> {
+            String logString = (String) eventData.getEVENT_DATA();
+            switch (logFatal) {
+                case 0: { /* Not Logging */
+                    break;
+                }
+                case 1: {
+                    System.err.println(logString);
+                    break;
+                }
+                case 2: {
+                    ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                    break;
+                }
+                case 3: {
+                    System.err.println(logString);
+                    ERROR_FATAL_LOGGER.getFileWriter().writeToBuffer(logString);
+                    ERROR_FATAL_LOGGER.getFileWriter().flushLogs();
+                    break;
                 }
             }
         });

@@ -45,9 +45,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.starnub.utilities.compression.Zlib.decompress;
 
@@ -145,7 +145,7 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
             }
             case READ_PAYLOAD: {
                 if (packet != null) {
-                    HashSet<EventSubscription> hashSet = PACKET_EVENT_ROUTER.getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
+                    CopyOnWriteArrayList<EventSubscription> hashSet = PACKET_EVENT_ROUTER.getEVENT_SUBSCRIPTION_MAP().get(packet.getClass());
                     /* Handle Packet if there is an events handler for it, else do not create objects */
                     if (hashSet != null) {
                         in.skipBytes(1 + vlqLength);

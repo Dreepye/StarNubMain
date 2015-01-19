@@ -1,9 +1,8 @@
 package org.starnub.utilities.events;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents an EventRouter to be used with {@link EventSubscription} and {@link EventHandler}
@@ -13,18 +12,15 @@ import java.util.stream.Collectors;
  *
  * @param <T1> Representing the events key
  * @param <T2> Representing the events data
- * @param <T3> Representing the return type of the eventNotify() method
  */
-public abstract class EventRouter<T1, T2, T3> {
+public abstract class EventRouter<T1, T2> {
 
-    private final Object HASHSET_LOCK_OBJECT_1 = new Object();
-
-    private final ConcurrentHashMap<T1, HashSet<EventSubscription>> EVENT_SUBSCRIPTION_MAP = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<T1, CopyOnWriteArrayList<EventSubscription>> EVENT_SUBSCRIPTION_MAP = new ConcurrentHashMap<>();
 
     public EventRouter() {
     }
 
-    public ConcurrentHashMap<T1, HashSet<EventSubscription>> getEVENT_SUBSCRIPTION_MAP() {
+    public ConcurrentHashMap<T1, CopyOnWriteArrayList<EventSubscription>> getEVENT_SUBSCRIPTION_MAP() {
         return EVENT_SUBSCRIPTION_MAP;
     }
 
@@ -37,16 +33,11 @@ public abstract class EventRouter<T1, T2, T3> {
     @SuppressWarnings("unchecked")
     public void registerEventSubscription(T1 eventKey, EventSubscription eventSubscription){
         if (!EVENT_SUBSCRIPTION_MAP.containsKey(eventKey)){
-            EVENT_SUBSCRIPTION_MAP.put(eventKey, new HashSet<>());
+            EVENT_SUBSCRIPTION_MAP.put(eventKey, new CopyOnWriteArrayList<>());
         }
-        synchronized (HASHSET_LOCK_OBJECT_1) {
-            HashSet<EventSubscription> eventSubscriptionHashSet = EVENT_SUBSCRIPTION_MAP.get(eventKey);
-            eventSubscriptionHashSet.add(eventSubscription);
-            eventSubscriptionHashSet = eventSubscriptionHashSet.stream()
-                                            .sorted((es1, es2) -> es1.getPRIORITY().compareTo(es2.getPRIORITY()))
-                                            .collect(Collectors.toCollection(LinkedHashSet::new));
-            EVENT_SUBSCRIPTION_MAP.put(eventKey, eventSubscriptionHashSet);
-        }
+        CopyOnWriteArrayList<EventSubscription> eventSubscriptions = EVENT_SUBSCRIPTION_MAP.get(eventKey);
+        eventSubscriptions.add(eventSubscription);
+        eventSubscriptions.sort(Comparator.comparing(EventSubscription::getPRIORITY));
     }
 
     /**
@@ -56,12 +47,10 @@ public abstract class EventRouter<T1, T2, T3> {
      */
     public void removeEventSubscription(String subscriberName) {
         for (T1 eventKey : EVENT_SUBSCRIPTION_MAP.keySet()) {
-            HashSet<EventSubscription> EVENT_SUBSCRIPTION_SET = EVENT_SUBSCRIPTION_MAP.get(eventKey);
-            synchronized (HASHSET_LOCK_OBJECT_1) {
-                EVENT_SUBSCRIPTION_SET.stream().filter(eventSubscription -> eventSubscription.getSUBSCRIBER_NAME().equalsIgnoreCase(subscriberName)).forEach(EVENT_SUBSCRIPTION_SET::remove);
-            }
+            CopyOnWriteArrayList<EventSubscription> EVENT_SUBSCRIPTION_SET = EVENT_SUBSCRIPTION_MAP.get(eventKey);
+            EVENT_SUBSCRIPTION_SET.stream().filter(eventSubscription -> eventSubscription.getSUBSCRIBER_NAME().equalsIgnoreCase(subscriberName)).forEach(EVENT_SUBSCRIPTION_SET::remove);
             if (EVENT_SUBSCRIPTION_SET.isEmpty()) {
-                    EVENT_SUBSCRIPTION_MAP.remove(eventKey);
+                EVENT_SUBSCRIPTION_MAP.remove(eventKey);
             }
         }
     }
@@ -73,10 +62,8 @@ public abstract class EventRouter<T1, T2, T3> {
      */
     public void removeEventSubscription(EventSubscription eventSubscription){
         for (T1 eventKey : EVENT_SUBSCRIPTION_MAP.keySet()) {
-            HashSet<EventSubscription> EVENT_SUBSCRIPTION_SET = EVENT_SUBSCRIPTION_MAP.get(eventKey);
-            synchronized (HASHSET_LOCK_OBJECT_1) {
-                EVENT_SUBSCRIPTION_SET.stream().filter(eventSubscription::equals).forEach(EVENT_SUBSCRIPTION_SET::remove);
-            }
+            CopyOnWriteArrayList<EventSubscription> EVENT_SUBSCRIPTION_SET = EVENT_SUBSCRIPTION_MAP.get(eventKey);
+            EVENT_SUBSCRIPTION_SET.stream().filter(eventSubscription::equals).forEach(EVENT_SUBSCRIPTION_SET::remove);
             if (EVENT_SUBSCRIPTION_SET.isEmpty()) {
                 EVENT_SUBSCRIPTION_MAP.remove(eventKey);
             }
@@ -106,7 +93,6 @@ public abstract class EventRouter<T1, T2, T3> {
 
     public String printString() {
         return "EventRouter{" +
-                "HASHSET_LOCK_OBJECT_1=" + HASHSET_LOCK_OBJECT_1 +
                 ", EVENT_SUBSCRIPTION_MAP=" + EVENT_SUBSCRIPTION_MAP +
                 '}';
     }

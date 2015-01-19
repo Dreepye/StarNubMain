@@ -57,7 +57,6 @@ public abstract class Command extends Pluggable {
     @SuppressWarnings("unchecked")
     @Override
     public void loadData(YamlWrapper pluggableInfo){
-        type = PluggableType.COMMAND;
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
         mainArgs = ArrayUtilities.arrayBuilder(mainArgsList);
         String lowerCaseOwner = details.getOWNER().toLowerCase();
@@ -95,8 +94,8 @@ public abstract class Command extends Pluggable {
         return linkedHashMapFinal;
     }
 
-    public abstract void onCommand(PlayerSession playerSession, String command, int argsCount, String[] args);
     public abstract void onRegister();
+    public abstract void onCommand(PlayerSession playerSession, String command, int argsCount, String[] args);
 
     @Override
     public String toString() {

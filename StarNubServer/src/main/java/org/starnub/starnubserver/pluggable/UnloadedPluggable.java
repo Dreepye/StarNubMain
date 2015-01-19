@@ -50,7 +50,7 @@ public class UnloadedPluggable {
         new StarNubEvent("Unloaded_Pluggable_Loaded", this);
     }
 
-    public Pluggable instantiatePluggable(PluggableType type) throws DirectoryCreationFailed, MissingData, IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public Pluggable instantiatePluggable(PluggableType type) throws DirectoryCreationFailed, MissingData, IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, ClassCastException {
         String classString = details.getCLASS();
         Pluggable newClass = null;
         if (fileType == PluggableFileType.JAVA){
@@ -118,16 +118,46 @@ public class UnloadedPluggable {
             return;
         }
         yamlWrapper = new YamlWrapper(null, "StarNub", "StarNub - Plugin Loader", pluggableInfoObject, "");
-        String pluggableOwner = (String) yamlWrapper.getValue("owner");
-        String pluggableName = (String) yamlWrapper.getValue("name");
-        String classPath = (String) yamlWrapper.getValue("class");
-        double version = (double) yamlWrapper.getNestedValue("version");
+        String pluggableName;
+        PluggableType type;
+        if (yamlWrapper.hasKey("name")){
+            pluggableName = (String) yamlWrapper.getValue("name");
+            type = PluggableType.PLUGIN;
+            yamlWrapperCheck(pluggableName, new String[]{"additional_permissions", "has_configuration"});
+        } else if (yamlWrapper.hasKey("command")){
+            pluggableName = (String) yamlWrapper.getValue("command");
+            type = PluggableType.COMMAND;
+            yamlWrapperCheck(pluggableName, new String[]{"main_args", "custom_split", "can_use"});
+        } else {
+            throw new MissingData("Cannot find 'name' or 'command' key for Pluggable: " + file);
+        }
+        String ownerString = "owner";
+        String classString = "class";
+        String versionString = "version";
+        String authorString = "author";
+        String urlString = "url";
+        String descriptionString = "description";
+        String dependencies = "dependencies";
+        String unloadableString = "unloadable";
+        yamlWrapperCheck(pluggableName, new String[]{ownerString, classString, versionString, authorString, urlString, descriptionString, dependencies, unloadableString});
+        String pluggableOwner = (String) yamlWrapper.getValue(ownerString);
+        String classPath = (String) yamlWrapper.getValue(classString);
+        double version = (double) yamlWrapper.getNestedValue(versionString);
         double fileSize = GetFileSize.getFileSize(file, FileSizeMeasure.KILOBYTES);
-        String author = (String) yamlWrapper.getNestedValue("author");
-        String url = (String) yamlWrapper.getNestedValue("url");
-        String description = (String) yamlWrapper.getNestedValue("description");
-        List<String> dependenciesList = (List<String>) yamlWrapper.getValue("dependencies");
-        details = new PluggableDetails(pluggableOwner, pluggableName, classPath, version, fileSize, author, url, description, dependenciesList);
+        String author = (String) yamlWrapper.getNestedValue(authorString);
+        String url = (String) yamlWrapper.getNestedValue(urlString);
+        String description = (String) yamlWrapper.getNestedValue(descriptionString);
+        List<String> dependenciesList = (List<String>) yamlWrapper.getValue(dependencies);
+        boolean unloadable = (boolean) yamlWrapper.getValue(unloadableString);
+        details = new PluggableDetails(pluggableOwner, pluggableName, classPath, type, version, fileSize, author, url, description, dependenciesList, unloadable);
+    }
+
+    private void yamlWrapperCheck(String pluggableName, String[] keys) throws MissingData {
+        for(String key : keys){
+            if(!yamlWrapper.hasKey(key)){
+                throw new MissingData("Pluggable: \"" + pluggableName + "\" Manifest Error. Missing Key: \"" + key+"\".");
+            }
+        }
     }
 
     private Object findPluggableInfo() throws MissingData, MalformedURLException {

@@ -11,7 +11,7 @@ import org.starnub.utilities.events.EventRouter;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Packet, Packet> {
+public class PacketEventRouter extends EventRouter<Class<? extends Packet>, Packet> {
 
     /**
      * This is instantiated to build out the Packet Event Router

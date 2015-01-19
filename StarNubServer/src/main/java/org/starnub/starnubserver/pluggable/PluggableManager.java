@@ -21,6 +21,7 @@ package org.starnub.starnubserver.pluggable;
 import org.apache.commons.io.FileUtils;
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.events.events.StarNubEvent;
+import org.starnub.starnubserver.pluggable.exceptions.DependencyError;
 import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.generic.LoadSuccess;
@@ -109,32 +110,41 @@ public class PluggableManager<T extends Pluggable> {
                 }
             }
         }
-        /* Order the Unloaded Pluggables by dependency */
-        /* If not dependancies load first */
+        /* Non dependency ordered first */
         Iterator<Map.Entry<String, UnloadedPluggable>> iterator = unloadedPluggables.entrySet().iterator();
         while(iterator.hasNext()){
             Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry = iterator.next();
             String unloadedPluggableString = unloadedPluggableEntry.getKey();
             UnloadedPluggable unloadedPluggable = unloadedPluggableEntry.getValue();
-            HashSet<String> dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
-            if (dependencies == null || dependencies.size() == 0) {
+            String[] dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
+            if(dependencies == null || dependencies.length == 0 || dependencies[0].isEmpty()){
                 orderedPluggables.put(unloadedPluggableString, unloadedPluggable);
                 iterator.remove();
             }
         }
-        for (Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry : unloadedPluggables.entrySet()) {
-            String unloadedPluggableName = unloadedPluggableEntry.getKey();
+        /* Load the rest */
+        for(Map.Entry<String, UnloadedPluggable> unloadedPluggableEntry : unloadedPluggables.entrySet()) {
+            String unloadedPluggableString = unloadedPluggableEntry.getKey();
             UnloadedPluggable unloadedPluggable = unloadedPluggableEntry.getValue();
-            HashSet<String> dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
-            boolean canLoad = canLoad(dependencies, unloadedPluggables, PLUGINS, orderedPluggables);
-            if (canLoad) {
-                orderedPluggables.put(unloadedPluggableName, unloadedPluggable);
-            } else {
-                StarNub.getLogger().cErrPrint("StarNub", "Could not load dependencies for " + unloadedPluggableName + " .");
-                new StarNubEvent("Pluggable_Cannot_Load_Dependency", unloadedPluggable);
-            }
+            dependenciesLoader(unloadedPluggableString, unloadedPluggable, orderedPluggables, unloadedPluggables);
         }
         return orderedPluggables;
+    }
+
+    private void dependenciesLoader(String unloadedPluggableString, UnloadedPluggable unloadedPluggable, LinkedHashMap<String, UnloadedPluggable> orderedPluggables, HashMap<String, UnloadedPluggable> unloadedPluggables) {
+        String[] dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
+        if (!orderedPluggables.containsKey(unloadedPluggableString)){
+            for (String dependency : dependencies) {
+                if (!orderedPluggables.containsKey(dependency)) {
+                    UnloadedPluggable unloadedPluggableDep = unloadedPluggables.get(dependency);
+                    if (unloadedPluggableDep != null) {
+                        String unloadedPluggableDepString = unloadedPluggableDep.getDetails().getNAME();
+                        dependenciesLoader(unloadedPluggableDepString, unloadedPluggableDep, orderedPluggables, unloadedPluggables);
+                    }
+                }
+            }
+            orderedPluggables.put(unloadedPluggableString, unloadedPluggable);
+        }
     }
 
     private boolean canUpdate(UnloadedPluggable unloadedPluggable, boolean updating, String loadedName, double loadedVersion, String unloadedName, double unloadedVersion){
@@ -151,26 +161,6 @@ public class PluggableManager<T extends Pluggable> {
         } else {
             return true;
         }
-    }
-
-    private boolean canLoad(HashSet<String> dependencies, HashMap<String, UnloadedPluggable> unloadedPluggables, ConcurrentHashMap<String, Plugin> loadedPluggables, LinkedHashMap<String, UnloadedPluggable> orderedPluggables){
-        if (dependencies != null) {
-            for (String dependency : dependencies) {
-                if (!dependency.isEmpty()) {
-                    if (!loadedPluggables.containsKey(dependency) || !orderedPluggables.containsKey(dependency)) {
-                        if (unloadedPluggables.containsKey(dependency)) {
-                            UnloadedPluggable unloadedPluggable = unloadedPluggables.remove(dependency);
-                            String unloadedPluggableString = unloadedPluggable.getDetails().getNAME();
-                            orderedPluggables.put(unloadedPluggableString, unloadedPluggable);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     private HashMap<String, UnloadedPluggable> getFiles(String directoryString, String... extensions) {
@@ -208,7 +198,7 @@ public class PluggableManager<T extends Pluggable> {
             String unloadedCommandName = entrySet.getKey().toLowerCase();
             UnloadedPluggable unloadedPluggable = entrySet.getValue();
             LoadSuccess loadSuccess = loadCommand(unloadedCommandName, unloadedPluggable);
-            commandSuccess.put(unloadedCommandName, loadSuccess);
+            commandSuccess.put(unloadedPluggable.getDetails().getNameVersion(), loadSuccess);
         }
         return commandSuccess;
     }
@@ -220,7 +210,7 @@ public class PluggableManager<T extends Pluggable> {
             String unloadedPluginName = entrySet.getKey();
             UnloadedPluggable unloadedPluggable = entrySet.getValue();
             LoadSuccess loadSuccess = loadPlugin(unloadedPluginName, unloadedPluggable, enable);
-            pluginSuccess.put(unloadedPluginName, loadSuccess);
+            pluginSuccess.put(unloadedPluggable.getDetails().getNameVersion(), loadSuccess);
         }
         return pluginSuccess;
     }
@@ -230,6 +220,9 @@ public class PluggableManager<T extends Pluggable> {
         String type = "Command";
         try {
             pluggable = (Command) unloadedPluggable.instantiatePluggable(PluggableType.COMMAND);
+            dependenciesLoadedCheck(unloadedPluggable);
+        } catch (ClassCastException e){ //TODO Plugin <-> Commands in the wrong DIR - Handling
+            return classCastFailure(type, e, unloadedPluggable);
         } catch (IOException e) {
             return pluggableIOError(type, e, unloadedPluggable);
         } catch (ClassNotFoundException e) {
@@ -242,10 +235,8 @@ public class PluggableManager<T extends Pluggable> {
             return missingDataError(type, e, unloadedPluggable);
         } catch (IllegalAccessException e) {
             return illegalAccessError(type, e, unloadedPluggable);
-        }
-        boolean dependenciesLoaded = dependenciesLoaded(unloadedPluggable);
-        if (!dependenciesLoaded){
-            return dependencyError(type, unloadedPluggable);
+        } catch (DependencyError e) {
+            return dependencyError(type, e, unloadedPluggable);
         }
         try {
             pluggable.register();
@@ -269,6 +260,9 @@ public class PluggableManager<T extends Pluggable> {
         String type = "Plugin";
         try {
             pluggable = (Plugin) unloadedPluggable.instantiatePluggable(PluggableType.PLUGIN);
+            dependenciesLoadedCheck(unloadedPluggable);
+        } catch (ClassCastException e){ //TODO Plugin <-> Commands in the wrong DIR - Handling
+            return classCastFailure(type, e, unloadedPluggable);
         } catch (IOException e) {
             return pluggableIOError(type, e, unloadedPluggable);
         } catch (ClassNotFoundException e) {
@@ -281,10 +275,8 @@ public class PluggableManager<T extends Pluggable> {
             return missingDataError(type, e, unloadedPluggable);
         } catch (IllegalAccessException e) {
             return illegalAccessError(type, e, unloadedPluggable);
-        }
-        boolean dependenciesLoaded = dependenciesLoaded(unloadedPluggable);
-        if (!dependenciesLoaded){
-            return dependencyError(type, unloadedPluggable);
+        } catch (DependencyError e) {
+            return dependencyError(type, e, unloadedPluggable);
         }
         if (enable) {
             try {
@@ -302,7 +294,8 @@ public class PluggableManager<T extends Pluggable> {
         }
         LoadSuccess loadSuccess;
         if (unloadedPluggable.isUpdating()) {
-            PLUGINS.remove(unloadedPluggableName);
+            Plugin remove = PLUGINS.remove(unloadedPluggableName);
+            remove.disable();
             loadSuccess = pluggableUpdated(type, pluggable);
         } else {
             loadSuccess = pluggableLoaded(type, pluggable);
@@ -311,56 +304,63 @@ public class PluggableManager<T extends Pluggable> {
         return loadSuccess;
     }
 
-    private boolean dependenciesLoaded(UnloadedPluggable unloadedPluggable){
-        HashSet<String> dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
+    private boolean dependenciesLoadedCheck(UnloadedPluggable unloadedPluggable) throws DependencyError {
+        String[] dependencies = unloadedPluggable.getDetails().getDEPENDENCIES();
         if (dependencies != null) {
             for (String dependency : dependencies) {
                 boolean containsKey = PLUGINS.containsKey(dependency);
                 if (!containsKey) {
-                    return false;
+                    throw new DependencyError("Pluggable: \"" + unloadedPluggable.getDetails().getNAME() + "\" Missing Dependency: \"" + dependency +"\".");
                 }
             }
         }
         return true;
     }
 
+    private LoadSuccess classCastFailure(String type, ClassCastException e, UnloadedPluggable unloadedPluggable) {
+        return failureMethod(e, type, unloadedPluggable, "_Class_Cast_Exception", "Class Cast Failure " + type);
+    }
+
     private LoadSuccess pluggableIOError(String type, IOException e, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_IO_Error", "IO Error");
+        return failureMethod(e, type, unloadedPluggable, "_IO_Error", "IO Error");
     }
 
     private LoadSuccess classNotFoundError(String type, ClassNotFoundException e, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_Class_Not_Found", "Class Not Found");
+        return failureMethod(e, type, unloadedPluggable, "_Class_Not_Found", "Class Not Found");
     }
 
     private LoadSuccess directoryCreationError(String type, DirectoryCreationFailed e, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_Directory_Creation_Failure", "Directory Creation Error");
+        return failureMethod(e, type, unloadedPluggable, "_Directory_Creation_Failure", "Directory Creation Error");
     }
 
     private LoadSuccess instantiateError(String type, InstantiationException e, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_Instantiation_Failure", "Instantiation Failure");
+        return failureMethod(e, type, unloadedPluggable, "_Instantiation_Failure", "Instantiation Failure");
     }
 
     private LoadSuccess missingDataError(String type, MissingData e, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_Manifest_Missing_Data", "Manifest Missing Data");
+        return failureMethod(e, type, unloadedPluggable, "_Manifest_Missing_Data", e.getMessage());
     }
 
     private LoadSuccess illegalAccessError(String type, IllegalAccessException e, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_Class_Access_Error", "Class Access Error");
+        return failureMethod(e, type, unloadedPluggable, "_Class_Access_Error", "Class Access Error");
     }
 
-    private LoadSuccess dependencyError(String type, UnloadedPluggable unloadedPluggable) {
-        return failureMethod(type, unloadedPluggable, "_Missing_Dependancies", "Missing Dependencies");
+    private LoadSuccess dependencyError(String type, DependencyError e, UnloadedPluggable unloadedPluggable) {
+        return failureMethod(null, type, unloadedPluggable, "_Missing_Dependancies", e.getMessage());
     }
 
     private LoadSuccess pluggableRegisterError(String type, UnloadedPluggable unloadedPluggable){
-        return failureMethod(type, unloadedPluggable, "_Register_Method_Exception", "Register Method Exception");
+        return failureMethod(null, type, unloadedPluggable, "_Register_Method_Exception", "Register Method Exception");
     }
 
     private LoadSuccess pluginEnableError(String type, UnloadedPluggable unloadedPluggable){
-        return failureMethod(type, unloadedPluggable, "_Enable_Method_Exception", "Enable Method Exception");
+        return failureMethod(null, type, unloadedPluggable, "_Enable_Method_Exception", "Enable Method Exception");
     }
 
-    private LoadSuccess failureMethod(String type, UnloadedPluggable unloadedPluggable, String error, String event){
+    private LoadSuccess failureMethod(Exception e, String type, UnloadedPluggable unloadedPluggable, String error, String event){
+        if(e != null){
+            e.printStackTrace();
+        }
         String nameVersion = unloadedPluggable.getDetails().getNameVersion();
         String failedString = nameVersion + " could not successfully load. Reason: " + error + ".";
         StarNub.getLogger().cErrPrint("StarNub", failedString);
@@ -386,13 +386,38 @@ public class PluggableManager<T extends Pluggable> {
         return new LoadSuccess(true, success);
     }
 
+    public void enableAllPlugins(){
+        PLUGINS.values().stream().forEach(p -> {
+            p.register();
+            p.enable();
+        });
+    }
+
+    public void disableAllPlugins(){
+        PLUGINS.values().stream().forEach(p -> {
+            if(p.getDetails().isUNLOADABLE()) {
+                p.unregister();
+                p.disable();
+            }
+        });
+    }
+
     public void unloadAllCommands(){
-        COMMANDS.values().forEach(Pluggable::unregister);
-        COMMANDS.clear();
+        COMMANDS.values().forEach(c ->{
+            if(c.getDetails().isUNLOADABLE()){
+                c.unregister();
+                COMMANDS.remove(c.getDetails().getNAME());
+            }
+        });
     }
 
     public void unloadAllPlugins(){
-        PLUGINS.values().forEach(Pluggable::unregister);
-        PLUGINS.clear();
+        PLUGINS.values().forEach(p -> {
+            if(p.getDetails().isUNLOADABLE()){
+                p.disable();
+                p.unregister();
+                PLUGINS.remove(p.getDetails().getNAME());
+            }
+        });
     }
 }

@@ -79,7 +79,6 @@ public abstract class Plugin extends Pluggable {
     @SuppressWarnings("unchecked")
     @Override
     public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
-        type = PluggableType.PLUGIN;
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         additionalPermissions = ArrayUtilities.arrayBuilder(additionalPermissionList);
         boolean hasConfiguration = (boolean) pluggableInfo.getValue("has_configuration");

@@ -1,10 +1,5 @@
 Change Log:
 
-    Networking:
-        - Removed unneeded starnubdata.network callbacks, this should removed 1 Object of memory per packet. (That's a big deal)
-        - Modified the decoder by adding the Variant Length Quantity equation in the method, vice making it a object (Means its not stored in the memory heap)
-        - Changed all socket settings, increasing the buffer allocation and write amount, per right
-
 //dependacy versions
 EDEN SPACE FAST USASE
 //planet who
@@ -14,13 +9,7 @@ EDEN SPACE FAST USASE
 //Payer session permination time update
 
 //http://community.playstarbound.com/index.php?resources/wavediver-luthier-instrument-pack.2153/
-//plugin sql db connector
 //Warp packets delay to starbound
-// Remove exception throws as much as possble bad! - Resource usage
-
-//Ban and disable db methods
-                //TODO Management System - Player List, Banning, Kicking Plugin
-// If modified then cmposite else direct
 
 So here are my plans – this will be my last update of StarNub for a while 
     •	First I will fix the PVP not working
@@ -29,10 +18,7 @@ So here are my plans – this will be my last update of StarNub for a while
 
 After the above I am going to get to work to finishing StarNub and preparing it for 1.0, these are not in order.
     •	Networking
-        -	I will be studying low level programming. My goal is to program the starnubdata.network from scratch over a library, which enables me to troubleshoot and have more control over the process and removing the library overhead. The Netty.IO library is great but not for Starbound. Unless I can configure it differently.
-        -	Server Query to keep the starbounddata.packets.starbounddata.packets.starnubserver up needs to be kept on its own
         -	Server Query’s from external websites need to be handled better
-        - Connection clean up disconnects, epoll
 
     •	StarNub Launcher Jar
 
