@@ -29,7 +29,7 @@ import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.events.packet.PacketEventHandler;
 
-public class ConnectionResponseHandler extends PacketEventHandler {
+public class ConnectionResponseHandler implements PacketEventHandler {
 
     private final Connections CONNECTIONS;
 

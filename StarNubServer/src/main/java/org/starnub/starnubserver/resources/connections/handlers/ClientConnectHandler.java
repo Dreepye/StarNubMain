@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class ClientConnectHandler extends PacketEventHandler {
+public class ClientConnectHandler implements PacketEventHandler {
 
     private final Connections CONNECTIONS;
 

@@ -7,7 +7,8 @@ package org.starnub.utilities.events;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0
  */
-public abstract class EventHandler<T> {
+@FunctionalInterface
+public interface EventHandler<T> {
 
     public abstract void onEvent(T eventData);
 }

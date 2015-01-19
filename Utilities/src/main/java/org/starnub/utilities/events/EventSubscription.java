@@ -25,7 +25,7 @@ public abstract class EventSubscription<T>{
         return EVENT_HANDLER;
     }
 
-    public EventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, EventHandler<T> EVENT_HANDLER) {
+    public EventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, EventHandler EVENT_HANDLER) {
         this.PRIORITY = PRIORITY;
         this.SUBSCRIBER_NAME = SUBSCRIBER_NAME;
         this.EVENT_HANDLER = EVENT_HANDLER;

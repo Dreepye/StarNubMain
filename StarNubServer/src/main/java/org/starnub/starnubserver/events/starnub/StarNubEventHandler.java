@@ -10,7 +10,7 @@ import org.starnub.utilities.events.types.ObjectEvent;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public abstract class StarNubEventHandler extends EventHandler<ObjectEvent> {
+public interface StarNubEventHandler extends EventHandler<ObjectEvent> {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.
@@ -28,5 +28,4 @@ public abstract class StarNubEventHandler extends EventHandler<ObjectEvent> {
      */
     @Override
     public abstract void onEvent(ObjectEvent eventData);
-
 }

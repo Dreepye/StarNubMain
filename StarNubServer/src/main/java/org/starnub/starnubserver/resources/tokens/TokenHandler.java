@@ -18,7 +18,8 @@
 
 package org.starnub.starnubserver.resources.tokens;
 
-public abstract class TokenHandler {
+@FunctionalInterface
+public interface TokenHandler {
 
     public abstract Object getResults();
 }

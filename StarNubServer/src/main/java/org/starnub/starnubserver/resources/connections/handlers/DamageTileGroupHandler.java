@@ -26,7 +26,7 @@ import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.events.packet.PacketEventHandler;
 import org.starnub.utilities.cache.objects.BooleanCache;
 
-public class DamageTileGroupHandler extends PacketEventHandler {
+public class DamageTileGroupHandler implements PacketEventHandler {
 
     private final PermissionCacheWrapper CTX_CACHE = new PermissionCacheWrapper("StarNub", "starnub.tile.break");
 

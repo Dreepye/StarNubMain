@@ -18,14 +18,14 @@
 
 package org.starnub.starnubserver.resources.connections.handlers;
 
-import org.starnub.starnubdata.generic.DisconnectReason;
 import org.starnub.starbounddata.packets.Packet;
 import org.starnub.starbounddata.packets.connection.ServerDisconnectPacket;
+import org.starnub.starnubdata.generic.DisconnectReason;
 import org.starnub.starnubserver.Connections;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.events.packet.PacketEventHandler;
 
-public class ServerDisconnectHandler extends PacketEventHandler {
+public class ServerDisconnectHandler implements PacketEventHandler {
 
     private final Connections CONNECTIONS;
 

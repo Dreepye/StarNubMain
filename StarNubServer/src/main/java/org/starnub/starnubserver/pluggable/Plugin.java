@@ -63,14 +63,14 @@ public abstract class Plugin extends Pluggable {
     }
 
     public void enable(){
-        onPluginEnable();
+        onEnable();
         new StarNubEvent("Plugin_Enabled", this);
         StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " enabled.");
         this.enabled = true;
     }
 
     public void disable(){
-        onPluginDisable();
+        onDisable();
         new StarNubEvent("Plugin_Disabled", this);
         StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " disabled.");
         this.enabled = false;
@@ -157,14 +157,14 @@ public abstract class Plugin extends Pluggable {
         return linkedHashMap;
     }
 
-    public abstract void onPluginEnable();
-    public abstract void onPluginDisable();
+    public abstract void onEnable();
+    public abstract void onDisable();
     public abstract void onRegister();
 
     @Override
     public String toString() {
         return "Plugin{" +
-                ", additionalPermissions=" + additionalPermissions +
+                ", additionalPermissions=" + Arrays.toString(additionalPermissions) +
                 ", enabled=" + enabled +
                 "} " + super.toString();
     }

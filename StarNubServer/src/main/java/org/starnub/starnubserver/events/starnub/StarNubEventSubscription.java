@@ -19,7 +19,6 @@
 package org.starnub.starnubserver.events.starnub;
 
 import org.starnub.starnubserver.events.events.StarNubEvent;
-import org.starnub.utilities.events.EventHandler;
 import org.starnub.utilities.events.EventSubscription;
 import org.starnub.utilities.events.Priority;
 import org.starnub.utilities.events.types.Event;
@@ -33,7 +32,6 @@ import org.starnub.utilities.events.types.Event;
  */
 public class StarNubEventSubscription extends EventSubscription<Event<String>> {
 
-
     private final String EVENT_KEY;
 
     /**
@@ -46,7 +44,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
      */
     @SuppressWarnings("unchecked")
-    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, EventHandler EVENT_HANDLER) {
+    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, StarNubEventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
                 ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.contains("StarNub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);
@@ -65,7 +63,7 @@ public class StarNubEventSubscription extends EventSubscription<Event<String>> {
      * @param EVENT_HANDLER EventHandler representing the events handler that will do some logic you choose to write
      */
     @SuppressWarnings("unchecked")
-    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, EventHandler EVENT_HANDLER) {
+    public StarNubEventSubscription(String SUBSCRIBER_NAME, Priority PRIORITY, String EVENT_KEY, boolean register, StarNubEventHandler EVENT_HANDLER) {
         super(SUBSCRIBER_NAME,
                 ((PRIORITY.ordinal() == 0 || PRIORITY.ordinal() == 1) && !SUBSCRIBER_NAME.contains("StarNub")) ?  Priority.MEDIUM : PRIORITY,
                 EVENT_HANDLER);

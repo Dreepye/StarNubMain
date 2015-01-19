@@ -247,6 +247,12 @@ public class PluggableManager<T extends Pluggable> {
         if (!dependenciesLoaded){
             return dependencyError(type, unloadedPluggable);
         }
+        try {
+            pluggable.register();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return pluggableRegisterError(type, unloadedPluggable);
+        }
         LoadSuccess loadSuccess;
         if (unloadedPluggable.isUpdating()) {
             COMMANDS.remove(unloadedPluggableName);
@@ -254,7 +260,6 @@ public class PluggableManager<T extends Pluggable> {
         } else {
             loadSuccess = pluggableLoaded(type, pluggable);
         }
-        pluggable.register();
         COMMANDS.put(unloadedPluggableName, pluggable);
         return loadSuccess;
     }
@@ -281,6 +286,20 @@ public class PluggableManager<T extends Pluggable> {
         if (!dependenciesLoaded){
             return dependencyError(type, unloadedPluggable);
         }
+        if (enable) {
+            try {
+                pluggable.register();
+            } catch (Exception e){
+                e.printStackTrace();
+                return pluggableRegisterError(type, unloadedPluggable);
+            }
+            try {
+                pluggable.enable();
+            } catch (Exception e){
+                e.printStackTrace();
+                return pluginEnableError(type, unloadedPluggable);
+            }
+        }
         LoadSuccess loadSuccess;
         if (unloadedPluggable.isUpdating()) {
             PLUGINS.remove(unloadedPluggableName);
@@ -289,10 +308,6 @@ public class PluggableManager<T extends Pluggable> {
             loadSuccess = pluggableLoaded(type, pluggable);
         }
         PLUGINS.put(unloadedPluggableName, pluggable);
-        if (enable) {
-            pluggable.register();
-            pluggable.enable();
-        }
         return loadSuccess;
     }
 
@@ -310,74 +325,65 @@ public class PluggableManager<T extends Pluggable> {
     }
 
     private LoadSuccess pluggableIOError(String type, IOException e, UnloadedPluggable unloadedPluggable) {
-        String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "A Pluggable could not load due to an IO Error, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_IO_Error", unloadedPluggable);
-        e.printStackTrace();
-        return new LoadSuccess(false, "IO Error for Pluggable: " + nameVersion + ".");
+        return failureMethod(type, unloadedPluggable, "_IO_Error", "IO Error");
     }
 
     private LoadSuccess classNotFoundError(String type, ClassNotFoundException e, UnloadedPluggable unloadedPluggable) {
-        String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "A Pluggable could not load due to an IO Error, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_Class_Not_Found", unloadedPluggable);
-        e.printStackTrace();
-        return new LoadSuccess(false, "Class not found for Pluggable: " + nameVersion + ".");
+        return failureMethod(type, unloadedPluggable, "_Class_Not_Found", "Class Not Found");
     }
 
     private LoadSuccess directoryCreationError(String type, DirectoryCreationFailed e, UnloadedPluggable unloadedPluggable) {
-        String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "A Pluggable directory could not be created, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_Directory_Creation_Failed", unloadedPluggable);
-        e.printStackTrace();
-        return new LoadSuccess(false, "Could not create directory for Pluggable: " + nameVersion + ".");
+        return failureMethod(type, unloadedPluggable, "_Directory_Creation_Failure", "Directory Creation Error");
     }
 
     private LoadSuccess instantiateError(String type, InstantiationException e, UnloadedPluggable unloadedPluggable) {
-        String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "Could not instantiate, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_Instantiation_Error", unloadedPluggable);
-        e.printStackTrace();
-        return new LoadSuccess(false, "Could not instantiate Pluggable: " + nameVersion + ".");
+        return failureMethod(type, unloadedPluggable, "_Instantiation_Failure", "Instantiation Failure");
     }
 
     private LoadSuccess missingDataError(String type, MissingData e, UnloadedPluggable unloadedPluggable) {
-        String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "Could not find all of the manifest data, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_Manifest_Missing_Data", unloadedPluggable);
-        e.printStackTrace();
-        return new LoadSuccess(false, "Missing manifest data, Pluggable: " + nameVersion + ".");
+        return failureMethod(type, unloadedPluggable, "_Manifest_Missing_Data", "Manifest Missing Data");
     }
 
     private LoadSuccess illegalAccessError(String type, IllegalAccessException e, UnloadedPluggable unloadedPluggable) {
-        String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "Illegal access exception for, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_Class_Access_Error", unloadedPluggable);
-        e.printStackTrace();
-        return new LoadSuccess(false, "Illegal access exception, Pluggable: " + nameVersion + ".");
+        return failureMethod(type, unloadedPluggable, "_Class_Access_Error", "Class Access Error");
     }
 
     private LoadSuccess dependencyError(String type, UnloadedPluggable unloadedPluggable) {
+        return failureMethod(type, unloadedPluggable, "_Missing_Dependancies", "Missing Dependencies");
+    }
+
+    private LoadSuccess pluggableRegisterError(String type, UnloadedPluggable unloadedPluggable){
+        return failureMethod(type, unloadedPluggable, "_Register_Method_Exception", "Register Method Exception");
+    }
+
+    private LoadSuccess pluginEnableError(String type, UnloadedPluggable unloadedPluggable){
+        return failureMethod(type, unloadedPluggable, "_Enable_Method_Exception", "Enable Method Exception");
+    }
+
+    private LoadSuccess failureMethod(String type, UnloadedPluggable unloadedPluggable, String error, String event){
         String nameVersion = unloadedPluggable.getDetails().getNameVersion();
-        StarNub.getLogger().cErrPrint("StarNub", "Missing dependancies for, Pluggable: " + nameVersion + ".");
-        new StarNubEvent(type + "_Missing_Dependancies", unloadedPluggable);
-        return new LoadSuccess(false, "Missing dependancies, Pluggable: " + nameVersion + ".");
+        String failedString = nameVersion + " could not successfully load. Reason: " + error + ".";
+        StarNub.getLogger().cErrPrint("StarNub", failedString);
+        new StarNubEvent(type + event, unloadedPluggable);
+        return new LoadSuccess(false, failedString);
     }
 
     private LoadSuccess pluggableLoaded(String type, Pluggable pluggable){
         String nameVersion = pluggable.getDetails().getNameVersion();
-        String successString = nameVersion + " was successfully loaded as a " + type;
-        StarNub.getLogger().cInfoPrint("StarNub", successString);
-        new StarNubEvent(type + "_Loaded", pluggable);
-        return new LoadSuccess(true, successString);
+        String success = nameVersion + " was successfully loaded as a " + type;
+        return successMethod(type, pluggable, success, "_Loaded");
     }
 
     private LoadSuccess pluggableUpdated(String type, Pluggable pluggable){
         String nameVersion = pluggable.getDetails().getNameVersion();
-        String successString = type + " " + nameVersion + " updated.";
-        StarNub.getLogger().cInfoPrint("StarNub", successString);
-        new StarNubEvent(type + "_Updated", pluggable);
-        return new LoadSuccess(true, successString);
+        String success = type + " " + nameVersion + " updated.";
+        return successMethod(type, pluggable, success, "_Updated");
+    }
+
+    private LoadSuccess successMethod(String type, Pluggable pluggable, String success, String event){
+        StarNub.getLogger().cInfoPrint("StarNub", success);
+        new StarNubEvent(type + event, pluggable);
+        return new LoadSuccess(true, success);
     }
 
     public void unloadAllCommands(){

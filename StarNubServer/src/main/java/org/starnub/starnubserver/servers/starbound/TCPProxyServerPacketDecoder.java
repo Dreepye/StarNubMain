@@ -158,7 +158,11 @@ class TCPProxyServerPacketDecoder extends ReplayingDecoder<TCPProxyServerPacketD
                             if (packet.isRecycle()) {
                                 break;
                             }
-                            packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
+                            try {
+                                packetEventSubscription.getEVENT_HANDLER().onEvent(packet);
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                         /* Write packet out, if not recycling */
                         if (!packet.isRecycle()) {

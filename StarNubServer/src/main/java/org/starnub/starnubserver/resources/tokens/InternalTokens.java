@@ -25,13 +25,6 @@ public class InternalTokens {
     private final String OWNER = "StarNub";
 
     public void registerTokens(){
-        new StringToken(OWNER, "Player Count", "{player-count}", "Gets the current player count.", new PlayerCount());
-    }
-
-    public class PlayerCount extends TokenHandler {
-        @Override
-        public Object getResults() {
-            return Connections.getInstance().getCONNECTED_PLAYERS().size();
-        }
+        new StringToken(OWNER, "Player Count", "{player-count}", "Gets the current player count.", () -> Connections.getInstance().getCONNECTED_PLAYERS().size());
     }
 }

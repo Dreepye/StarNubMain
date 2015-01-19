@@ -777,7 +777,6 @@ public class PlayerSession {
             }
         }
         permissions.forEach(this::addPermissionToMap);
-        System.out.println(PERMISSIONS);
     }
 
     public String addPermission(String permission){

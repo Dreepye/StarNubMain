@@ -21,13 +21,12 @@ package org.starnub.starnubserver.cache.wrappers;
 import io.netty.channel.ChannelHandlerContext;
 import org.starnub.starnubserver.StarNubTask;
 import org.starnub.starnubserver.cache.objects.StarNubTaskCache;
-import org.starnub.starnubserver.events.events.DisconnectData;
-import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
-import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
+import org.starnub.starnubserver.events.events.DisconnectData;
+import org.starnub.starnubserver.events.events.StarNubEvent;
+import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
 import org.starnub.utilities.cache.objects.TimeCache;
 import org.starnub.utilities.events.Priority;
-import org.starnub.utilities.events.types.ObjectEvent;
 
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
@@ -95,22 +94,20 @@ public class PlayerAutoCancelTask extends PlayerCtxCacheWrapper {
      */
     @Override
     public void registerEvents() {
-        new StarNubEventSubscription("StarNub", Priority.HIGH, "Player_Disconnected", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
-                PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
-                ChannelHandlerContext channelHandlerContext = playerSession.getCONNECTION().getCLIENT_CTX();
-                TimeCache timeCache = removeCache(channelHandlerContext);
-                if(timeCache != null){
-                    StarNubTaskCache starNubTaskCache = (StarNubTaskCache) timeCache;
-                    StarNubTask starNubTask = starNubTaskCache.getSTARNUB_TASK();
-                    ScheduledFuture<?> scheduledFuture = starNubTask.getScheduledFuture();
-                    if (!scheduledFuture.isDone()) {
-                        scheduledFuture.cancel(true);
-                        PLAYER_CTX_CACHE.addCache(channelHandlerContext, new TimeCache());
-                    }
+        new StarNubEventSubscription("StarNub", Priority.HIGH, "Player_Disconnected", eventData -> {
+            DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
+            PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
+            ChannelHandlerContext channelHandlerContext = playerSession.getCONNECTION().getCLIENT_CTX();
+            TimeCache timeCache = removeCache(channelHandlerContext);
+            if(timeCache != null){
+                StarNubTaskCache starNubTaskCache = (StarNubTaskCache) timeCache;
+                StarNubTask starNubTask = starNubTaskCache.getSTARNUB_TASK();
+                ScheduledFuture<?> scheduledFuture = starNubTask.getScheduledFuture();
+                if (!scheduledFuture.isDone()) {
+                    scheduledFuture.cancel(true);
+                    PLAYER_CTX_CACHE.addCache(channelHandlerContext, new TimeCache());
                 }
+                new StarNubEvent("StarNub_Task_Cancelled_Player_Disconnect", this);
             }
         });
     }

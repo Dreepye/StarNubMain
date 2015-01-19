@@ -10,7 +10,7 @@ import org.starnub.utilities.events.EventHandler;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public abstract class PacketEventHandler extends EventHandler<Packet> {
+public interface PacketEventHandler extends EventHandler<Packet> {
 
     /**
      * Recommended: For Plugin Developers & Anyone else.

@@ -4,7 +4,7 @@
 
 {
 starnub_version: {
-    file: ['starnub_version.yml', 'Starnub/'],
+    file: ['starnub_version.yml', 'StarNub/'],
     map: {phase: beta,
          version: 1.5,
          author: Underbalanced (Daniel),
