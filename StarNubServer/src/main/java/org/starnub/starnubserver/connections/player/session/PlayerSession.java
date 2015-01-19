@@ -480,9 +480,9 @@ public class PlayerSession {
     private static void broadcastToClients(Object sender, String message, Mode mode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
         String senderName = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
         String sendListFinal = getSentenceNameList(sendList);
-        StarNub.getLogger().cChatPrint(sender, sendListFinal, mode, message);
         ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
         sendPacketToGroupNoFlush(chatReceivePacket, sendList, ignoredList);
+        StarNub.getLogger().cChatPrint(sender, sendListFinal, mode, message);
     }
 
     public void sendBroadcastMessageToServer(Object sender, String message){
@@ -564,9 +564,9 @@ public class PlayerSession {
     private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
         String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
         String sendListFinal = getSentenceNameList(sendList);
-        StarNub.getLogger().cChatPrint(sendListFinal, "Server (Sender: " + senderString + ")", chatSendMode, message);
         ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
         sendPacketToGroupNoFlush(chatSendPacket, sendList, ignoredList);
+        StarNub.getLogger().cChatPrint(sendListFinal, "Server (Sender: " + senderString + ")", chatSendMode, message);
     }
 
     public void sendPacketToPlayer(Packet packet){
@@ -672,15 +672,18 @@ public class PlayerSession {
 
     private static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, boolean flush){
         ByteBuf byteBufPacket = packet.packetToMessageEncoder();
-        int refCnt = 0;
+        int refCnt;
         int ignoreListSize = 0;
         if (ignoredList != null) {
             sendList.removeAll(ignoredList);
+            ignoreListSize = ignoredList.size(); /* Subtract this count */
         }
-        int sendListSize = sendList.size() - 1; /* Keep message this count */
-        ignoreListSize = ignoredList.size(); /* Subtract this count */
+        int sendListSize = sendList.size();
         refCnt = sendListSize - ignoreListSize; /* Message ref count */
-        byteBufPacket.retain(refCnt);
+        if (sendListSize > 1){
+            refCnt = refCnt - 1; /* This subtracts the one ref count of Netty.io */
+            byteBufPacket.retain(refCnt);
+        }
         if (!sendList.isEmpty()) {
             for (PlayerSession playerSession : sendList) {
                 ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
@@ -695,7 +698,6 @@ public class PlayerSession {
                     sendRemote(playerSession, packet);
                 }
             }
-            System.out.println(byteBufPacket.refCnt()); // URGENT-FIX Verify Fix
         }
     }
 

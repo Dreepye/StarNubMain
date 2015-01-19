@@ -54,7 +54,7 @@ public class PermissionCacheWrapper extends PlayerCtxCacheWrapper {
      */
     public PermissionCacheWrapper(String CACHE_OWNER, String PERMISSION) {
         super(CACHE_OWNER, CACHE_OWNER + " - Permission Cache -  Permission: " + PERMISSION, true, 1, TimeUnit.SECONDS, 0, 0);
-        this.PERMISSION = PERMISSION;
+        this.PERMISSION = PERMISSION;// IS NULL DUE TO NOT FULLL INSTANTIATION FIX_URGENT
     }
 
     /**

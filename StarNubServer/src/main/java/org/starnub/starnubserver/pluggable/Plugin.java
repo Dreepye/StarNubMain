@@ -25,6 +25,7 @@ import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
 import org.starnub.starnubserver.pluggable.resources.PluginYamlWrapper;
 import org.starnub.starnubserver.pluggable.resources.YamlFiles;
+import org.starnub.utilities.arrays.ArrayUtilities;
 import org.starnub.utilities.dircectories.DirectoryCheckCreate;
 import org.starnub.utilities.file.utility.JarFromDisk;
 import org.starnub.utilities.file.yaml.YamlWrapper;
@@ -39,7 +40,7 @@ public abstract class Plugin extends Pluggable {
 
     protected PluginConfiguration configuration;
     protected YamlFiles files;
-    protected String[] additionalPermissions = new String[0];
+    protected String[] additionalPermissions;
     private boolean enabled;
 
     public Plugin() {
@@ -80,14 +81,7 @@ public abstract class Plugin extends Pluggable {
     public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         type = PluggableType.PLUGIN;
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
-        if (additionalPermissionList != null && additionalPermissionList.size() > 0) {
-                additionalPermissions = new String[additionalPermissionList.size()];
-                int index = 0;
-                for (String permission : additionalPermissionList) {
-                    additionalPermissions[index] = permission;
-                    index++;
-                }
-        }
+        additionalPermissions = ArrayUtilities.arrayBuilder(additionalPermissionList);
         boolean hasConfiguration = (boolean) pluggableInfo.getValue("has_configuration");
         if (hasConfiguration) {
             if(fileType == PluggableFileType.JAVA) {

@@ -10,11 +10,9 @@
     <version>1.0</version>
     <modules>
         <module>StarNubServer</module>
-        <module>Launcher</module>
         <module>StarboundData</module>
         <module>Utilities</module>
         <module>CentralServer</module>
-        <module>Proxy</module>
         <module>StarboundManager</module>
         <module>StarNubData</module>
     </modules>

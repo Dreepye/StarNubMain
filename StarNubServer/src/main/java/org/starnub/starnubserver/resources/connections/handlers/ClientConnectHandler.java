@@ -66,7 +66,7 @@ public class ClientConnectHandler extends PacketEventHandler {
             @Override
             public void onEvent(ObjectEvent eventData) {
                 PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
-                TimeCache timeCache = null;
+                TimeCache timeCache;
                 timeCache = RESERVED_KICKED.removeCache(playerSession.getPlayerCharacter().getUuid());
                 if (timeCache != null) {
                     playerSession.sendBroadcastMessageToClient("StarNub", "You were disconnected to make room for a player" +

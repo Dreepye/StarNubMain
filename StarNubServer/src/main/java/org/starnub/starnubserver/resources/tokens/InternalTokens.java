@@ -16,16 +16,22 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.resources.tokens.player;
+package org.starnub.starnubserver.resources.tokens;
 
 import org.starnub.starnubserver.Connections;
-import org.starnub.starnubserver.resources.tokens.TokenHandler;
 
-public class PlayerCount extends TokenHandler {
+public class InternalTokens {
 
-    @Override
-    public Object getResults() {
-        return Connections.getInstance().getCONNECTED_PLAYERS().size();
+    private final String OWNER = "StarNub";
+
+    public void registerTokens(){
+        new StringToken(OWNER, "Player Count", "{player-count}", "Gets the current player count.", new PlayerCount());
+    }
+
+    public class PlayerCount extends TokenHandler {
+        @Override
+        public Object getResults() {
+            return Connections.getInstance().getCONNECTED_PLAYERS().size();
+        }
     }
 }
-//"Player Count", "{player-count}", "Gets the current player count."

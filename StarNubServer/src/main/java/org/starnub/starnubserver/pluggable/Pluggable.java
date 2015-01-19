@@ -185,7 +185,6 @@ public abstract class Pluggable {
     private void cleanStarNubTask(){
         synchronized (S_TA_LOCK){
             STARNUB_TASK.stream().filter(starNubTask -> starNubTask.getScheduledFuture().isDone()).forEach(STARNUB_TASK::remove);
-            new StarNubEvent("Pluggable_StarNubTask_Pruned", this);
         }
     }
 

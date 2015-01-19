@@ -139,8 +139,8 @@ public final class StarNub {
     }
 
     private static void setUptimeTask(){
-        new StarNubTask("StarNub", "StarNub - Uptime", true, 30, 30, TimeUnit.SECONDS, () -> new StarNubEvent("StarNub_Uptime",  DateTime.now().getMillis() - STARNUB_START_TIME));
-        new StarNubTask("StarNub", "Starbound - Uptime", true, 30, 30, TimeUnit.SECONDS, () -> new StarNubEvent("Starbound_Uptime", StarboundServer.getInstance().getUptime()));
+        new StarNubTask("StarNub", "StarNub - Uptime", true, 15, 15, TimeUnit.SECONDS, () -> new StarNubEvent("StarNub_Uptime",  DateTime.now().getMillis() - STARNUB_START_TIME));
+        new StarNubTask("StarNub", "Starbound - Uptime", true, 15, 15, TimeUnit.SECONDS, () -> new StarNubEvent("Starbound_Uptime", StarboundServer.getInstance().getUptime()));
     }
 }
 

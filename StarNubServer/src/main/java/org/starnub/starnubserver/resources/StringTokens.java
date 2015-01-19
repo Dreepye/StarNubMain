@@ -18,8 +18,8 @@
 
 package org.starnub.starnubserver.resources;
 
+import org.starnub.starnubserver.resources.tokens.InternalTokens;
 import org.starnub.starnubserver.resources.tokens.StringToken;
-import org.starnub.starnubserver.resources.tokens.player.PlayerCount;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -39,7 +39,7 @@ public class StringTokens extends ConcurrentHashMap<String, StringToken>{
     }
 
     public void registerInternalTokens(){
-        new PlayerCount();
+        new InternalTokens().registerTokens();
     }
 
     /**

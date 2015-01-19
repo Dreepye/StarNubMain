@@ -46,10 +46,11 @@ public class StarNubEventRouter extends EventRouter<String, ObjectEvent, Boolean
     @Override
     @SuppressWarnings("unchecked")
     public void handleEvent(ObjectEvent event) {
+        try {
             Object eventKey = event.getEVENT_KEY();
             HashSet<EventSubscription> eventSubscriptions = getEVENT_SUBSCRIPTION_MAP().get(eventKey);
-            if (eventSubscriptions != null){
-                for (EventSubscription eventSubscription : eventSubscriptions){
+            if (eventSubscriptions != null) {
+                for (EventSubscription eventSubscription : eventSubscriptions) {
                     if (!event.isRecycle()) {
                         eventSubscription.getEVENT_HANDLER().onEvent(event);
                     } else {
@@ -61,5 +62,8 @@ public class StarNubEventRouter extends EventRouter<String, ObjectEvent, Boolean
             if (!eventKey.equals("StarNub_Log_Event") && StarNub.getLogger().isLogEvent()) {
                 StarNub.getLogger().cEvePrint("StarNub", "Key: " + eventKey + ". Event Data Type: " + event.getClass().getSimpleName() + ".class. Event Data: " + event.getEVENT_DATA());
             }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

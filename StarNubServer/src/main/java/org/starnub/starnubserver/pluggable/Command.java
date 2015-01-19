@@ -20,27 +20,29 @@ package org.starnub.starnubserver.pluggable;
 
 import org.starnub.starnubdata.generic.CanUse;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
+import org.starnub.utilities.arrays.ArrayUtilities;
 import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public abstract class Command extends Pluggable {
 
-    private HashSet<String> mainArgs;
-    private LinkedList<String> permissions;
+    private String[] mainArgs;
+    private String[] permissions;
     private int customSplit;
     private CanUse canUse;
 
     public Command() {
     }
 
-    public HashSet<String> getMainArgs() {
+    public String[] getMainArgs() {
         return mainArgs;
     }
 
-    public LinkedList<String> getPermissions() {
+    public String[] getPermissions() {
         return permissions;
     }
 
@@ -56,23 +58,22 @@ public abstract class Command extends Pluggable {
     @Override
     public void loadData(YamlWrapper pluggableInfo){
         type = PluggableType.COMMAND;
-
-        this.mainArgs = new HashSet<>();
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
-        mainArgs.addAll(mainArgsList.stream().map(String::toLowerCase).collect(Collectors.toList()));
-        this.permissions = new LinkedList<>();
+        mainArgs = ArrayUtilities.arrayBuilder(mainArgsList);
         String lowerCaseOwner = details.getOWNER().toLowerCase();
         String lowerCaseName = details.getNAME().toLowerCase();
-        permissions.add(lowerCaseOwner + ".*");
+        ArrayList<String> linkedList = new ArrayList<>();
+        linkedList.add(lowerCaseOwner + ".*");
         String permission = lowerCaseOwner + "." + lowerCaseName;
-        permissions.add(permission);
-        if (mainArgs != null && mainArgs.size() > 0){
-            permissions.add(permission + ".*");
+        linkedList.add(permission);
+        if (mainArgs != null && mainArgs.length > 0){
+            linkedList.add(permission + ".*");
             for (String mainArg : mainArgs) {
                 String permissionFull = lowerCaseOwner + "." + lowerCaseName + "." + mainArg;
-                permissions.add(permissionFull);
+                linkedList.add(permissionFull);
             }
         }
+        permissions = ArrayUtilities.arrayBuilder(linkedList);
         this.customSplit = (int) pluggableInfo.getValue("custom_split");
         Integer canUseInteger = (Integer) pluggableInfo.getValue("can_use");
         this.canUse = CanUse.values()[canUseInteger];
@@ -81,8 +82,7 @@ public abstract class Command extends Pluggable {
     @Override
     public LinkedHashMap<String, Object> getDetailsMap() throws IOException { //TODO FIX
         LinkedHashMap<String, Object> linkedHashMapFinal = new LinkedHashMap<>();
-        ArrayList<String> mainArgsList = new ArrayList<>(mainArgs);
-        linkedHashMapFinal.put("Main Args", mainArgsList);
+        linkedHashMapFinal.put("Main Args", mainArgs);
         String canUseString = "";
         switch (canUse){
             case PLAYER: canUseString = "Players"; break;
@@ -91,8 +91,7 @@ public abstract class Command extends Pluggable {
         }
         linkedHashMapFinal.put("Can Use", canUseString);
         linkedHashMapFinal.put("Custom Split", customSplit);
-        ArrayList<String> permissionsList = new ArrayList<>(permissions);
-        linkedHashMapFinal.put("Permissions", permissionsList);
+        linkedHashMapFinal.put("Permissions", permissions);
         return linkedHashMapFinal;
     }
 
