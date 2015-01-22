@@ -18,11 +18,9 @@
 
 package org.starnub.starnubserver.pluggable;
 
-import org.python.core.PyObject;
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
-import org.starnub.starnubserver.pluggable.resources.PluginConfiguration;
 import org.starnub.starnubserver.pluggable.resources.PluginYamlWrapper;
 import org.starnub.starnubserver.pluggable.resources.YamlFiles;
 import org.starnub.utilities.arrays.ArrayUtilities;
@@ -33,21 +31,15 @@ import org.starnub.utilities.file.yaml.YamlWrapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarEntry;
 
 public abstract class Plugin extends Pluggable {
 
-    protected PluginConfiguration configuration;
     protected YamlFiles files;
     protected String[] additionalPermissions;
     private boolean enabled;
 
     public Plugin() {
-    }
-
-    public PluginConfiguration getConfiguration() {
-        return configuration;
     }
 
     public YamlFiles getFiles() {
@@ -81,20 +73,6 @@ public abstract class Plugin extends Pluggable {
     public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         additionalPermissions = ArrayUtilities.arrayBuilder(additionalPermissionList);
-        boolean hasConfiguration = (boolean) pluggableInfo.getValue("has_configuration");
-        if (hasConfiguration) {
-            if(fileType == PluggableFileType.JAVA) {
-                try (InputStream defaultPluginConfiguration = this.getClass().getClassLoader().getResourceAsStream("default_configuration.yml")) {
-                    configuration = new PluginConfiguration(details.getNAME(), defaultPluginConfiguration);
-                }
-            } else if (fileType == PluggableFileType.PYTHON){
-                PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
-                pluggablePythonInterpreter.loadPythonScript(file);
-                PyObject defaultConfiguration = pluggablePythonInterpreter.getPyObject("default_configuration", false);
-                Map<String, Object> defaultConfigurationMap = (Map<String, Object>) defaultConfiguration.__tojava__(ConcurrentMap.class);
-                configuration = new PluginConfiguration(details.getNAME(), defaultConfigurationMap);
-            }
-        }
         if(fileType == PluggableFileType.JAVA){
             String pluginDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
             String absolutePath = file.getAbsolutePath();

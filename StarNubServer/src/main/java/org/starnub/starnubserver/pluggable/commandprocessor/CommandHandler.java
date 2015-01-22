@@ -18,6 +18,8 @@
 
 package org.starnub.starnubserver.pluggable.commandprocessor;
 
+import org.starnub.starnubserver.connections.player.session.PlayerSession;
+
 @FunctionalInterface
 public interface CommandHandler {
 
@@ -27,6 +29,6 @@ public interface CommandHandler {
      * @param argsCount int the number of arguments to expect
      * @param args String[] representing the args that were provided by the command parser
      */
-    public abstract void handle(int argsCount, String[] args);
+    public abstract void handle(PlayerSession playerSession, int argsCount, String[] args);
 }
 

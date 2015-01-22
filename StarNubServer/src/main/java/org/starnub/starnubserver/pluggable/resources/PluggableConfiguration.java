@@ -29,20 +29,20 @@ import java.util.Map;
  * @author Daniel (Underbalanced) (www.StarNub.org)
  * @since 1.0 Beta
  */
-public class PluginConfiguration extends StarNubYamlWrapper {
+public class PluggableConfiguration extends StarNubYamlWrapper {
 
     /**
      * For Java Plugins
      *
-     * @param pluginName
+     * @param pluggableName
      * @param defaultPath
      */
-    public PluginConfiguration(String pluginName, InputStream defaultPath) {
+    public PluggableConfiguration(String baseDir, String pluggableName, InputStream defaultPath) {
         super(
-                pluginName,
-                pluginName.toLowerCase() + "_configuration.yml",
+                pluggableName,
+                pluggableName.toLowerCase() + "_configuration.yml",
                 defaultPath,
-                "StarNub/Plugins/" + pluginName,
+                baseDir + pluggableName,
                 false,
                 true,
                 true,
@@ -57,12 +57,12 @@ public class PluginConfiguration extends StarNubYamlWrapper {
      * @param pluginName
      * @param configurationMap
      */
-    public PluginConfiguration(String pluginName, Map configurationMap) {
+    public PluggableConfiguration(String baseDir, String pluginName, Map configurationMap) {
         super(
                 pluginName,
                 pluginName.toLowerCase() + "_configuration.yml",
                 configurationMap,
-                "StarNub/Plugins/" + pluginName,
+                baseDir + pluginName,
                 false,
                 true,
                 true,

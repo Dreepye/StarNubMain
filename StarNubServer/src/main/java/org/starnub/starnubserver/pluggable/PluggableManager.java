@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 * @author Daniel (Underbalanced) (www.StarNub.org)
 * @since 1.0
 */
-public class PluggableManager<T extends Pluggable> {
+public class PluggableManager {
 
     /**
      * Represents the only instance of this class - Singleton Pattern
@@ -92,8 +92,8 @@ public class PluggableManager<T extends Pluggable> {
     }
 
     public LinkedHashMap<String, UnloadedPluggable> pluggableScan(String directory, ConcurrentHashMap<String, Pluggable> loadedPluggables, boolean updating){
-        LinkedHashMap<String, UnloadedPluggable> orderedPluggables = new LinkedHashMap<>();
         HashMap<String, UnloadedPluggable> unloadedPluggables = getFiles(directory, "jar", "py");
+        LinkedHashMap<String, UnloadedPluggable> orderedPluggables = new LinkedHashMap<>();
         /* Remove plugins that are already loaded from this list */
         for (Pluggable pluggable : loadedPluggables.values()) {
             PluggableDetails loadedDetails = pluggable.getDetails();
@@ -104,7 +104,7 @@ public class PluggableManager<T extends Pluggable> {
                 PluggableDetails unloadedDetails = unloadedPluggable.getDetails();
                 String unloadedName = unloadedDetails.getNAME();
                 double unloadedVersion = unloadedDetails.getVERSION();
-                boolean canUpdate = canUpdate(unloadedPluggable, updating, loadedName, loadedVersion, unloadedName, unloadedVersion);
+                boolean canUpdate = canUpdate(unloadedPluggable, updating, loadedVersion, unloadedVersion);
                 if (!canUpdate){
                     unloadedPluggables.remove(unloadedName);
                 }
@@ -147,46 +147,41 @@ public class PluggableManager<T extends Pluggable> {
         }
     }
 
-    private boolean canUpdate(UnloadedPluggable unloadedPluggable, boolean updating, String loadedName, double loadedVersion, String unloadedName, double unloadedVersion){
-        if (loadedName.equals(unloadedName)) {
-            if (unloadedVersion > loadedVersion && updating) {
-                unloadedPluggable.setUpdating();
-                return true;
-            } else {
-                String removeFileRecommend = unloadedPluggable.getFile().toString();
-                StarNub.getLogger().cErrPrint("StarNub", "You have multiple " + loadedName + " plugins, some are older, we recommend you remove the older file named " + removeFileRecommend + ".");
-                new StarNubEvent("Pluggable_Extra_File", removeFileRecommend);
-                return false;
-            }
-        } else {
+    private boolean canUpdate(UnloadedPluggable unloadedPluggable, boolean updating, double loadedVersion, double unloadedVersion){
+        if (unloadedVersion > loadedVersion && updating) {
+            unloadedPluggable.setUpdating();
             return true;
         }
+        return false;
     }
 
     private HashMap<String, UnloadedPluggable> getFiles(String directoryString, String... extensions) {
         File directoryFile = new File(directoryString);
         Collection<File> fileCollection = FileUtils.listFiles(directoryFile, extensions, false);
         ArrayList<File> files = new ArrayList<>(fileCollection);
-        if (directoryString.contains("Plugin")){
-            for (Plugin plugin : PLUGINS.values()){
-                files.remove(plugin.getFile());
-            }
-        } else if (directoryString.contains("Command")) {
-            for (Command command : COMMANDS.values()){
-                files.remove(command.getFile());
-            }
-        }
         HashMap<String, UnloadedPluggable> tempPluggables = new HashMap<>();
         for (File file : files) {
             try {
                 UnloadedPluggable unloadedPluggable = new UnloadedPluggable(file);
                 if (unloadedPluggable.getDetails() != null){
                     String name = unloadedPluggable.getDetails().getNAME();
-                    tempPluggables.put(name, unloadedPluggable);
+                    double version = unloadedPluggable.getDetails().getVERSION();
+                    UnloadedPluggable unloadedPluggableTest = tempPluggables.get(name);
+                    if (unloadedPluggableTest == null){
+                        tempPluggables.put(name, unloadedPluggable);
+                    } else {
+                        double versionTest = unloadedPluggableTest.getDetails().getVERSION();
+                        if (version > versionTest){
+                            tempPluggables.replace(name, unloadedPluggable);
+                        }
+                    }
                 }
             } catch (DirectoryCreationFailed | MissingData | IOException e) {
                 e.printStackTrace();
             }
+        }
+        for(UnloadedPluggable unloadedPluggable : tempPluggables.values()){
+            new StarNubEvent("Unloaded_Pluggable_File_Loaded", unloadedPluggable);
         }
         return tempPluggables;
     }
@@ -296,6 +291,7 @@ public class PluggableManager<T extends Pluggable> {
         if (unloadedPluggable.isUpdating()) {
             Plugin remove = PLUGINS.remove(unloadedPluggableName);
             remove.disable();
+            remove.unregister();
             loadSuccess = pluggableUpdated(type, pluggable);
         } else {
             loadSuccess = pluggableLoaded(type, pluggable);
@@ -420,4 +416,14 @@ public class PluggableManager<T extends Pluggable> {
             }
         });
     }
+
+    public void getSpecificLoadedPlugin(){
+
+    }
+
+    public void getSpecificLoadedCommand(){
+
+    }
+
+    //get or return close
 }

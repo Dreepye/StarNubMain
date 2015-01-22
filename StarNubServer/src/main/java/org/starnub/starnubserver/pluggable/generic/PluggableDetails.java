@@ -21,6 +21,7 @@ package org.starnub.starnubserver.pluggable.generic;
 import org.starnub.starnubserver.pluggable.PluggableType;
 import org.starnub.utilities.arrays.ArrayUtilities;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -125,7 +126,7 @@ public class PluggableDetails {
         if(DEPENDENCIES == null){
             dependenciesString = "None";
         } else {
-            dependenciesString = DEPENDENCIES.toString();
+            dependenciesString = Arrays.toString(DEPENDENCIES);
         }
         linkedHashMap.put("Dependencies", dependenciesString);
         return linkedHashMap;

@@ -35,4 +35,19 @@ public class ArrayUtilities {
             return new String[0];
         }
     }
+
+    public static Object[] joinArrays(Object[] a, Object[] b) {
+        if (a == null){
+            return b;
+        } else if (b == null){
+            return a;
+        } else {
+            int aLen = a.length;
+            int bLen = b.length;
+            Object[] c = new Object[aLen + bLen];
+            System.arraycopy(a, 0, c, 0, aLen);
+            System.arraycopy(b, 0, c, aLen, bLen);
+            return c;
+        }
+    }
 }

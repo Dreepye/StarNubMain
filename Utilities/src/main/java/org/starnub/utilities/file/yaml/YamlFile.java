@@ -229,8 +229,10 @@ public class YamlFile {
      * @return boolean returns true if the HashMap containing the file data is empty
      */
     public boolean dumpToFile(Map map) throws IOException {
-        try (Writer writer = new FileWriter(DISK_FILE_PATH)) {
-            new Yaml(YAML_DUMPER.getDUMPER_OPTIONS()).dump(map, writer);
+        if (map != null && !map.isEmpty()) {
+            try (Writer writer = new FileWriter(DISK_FILE_PATH)) {
+                new Yaml(YAML_DUMPER.getDUMPER_OPTIONS()).dump(map, writer);
+            }
         }
         return DISK_FILE.exists();
     }

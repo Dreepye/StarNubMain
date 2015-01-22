@@ -30,6 +30,7 @@ import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
 import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
+import org.starnub.starnubserver.pluggable.resources.PluggableConfiguration;
 import org.starnub.starnubserver.resources.StringTokens;
 import org.starnub.starnubserver.resources.tokens.StringToken;
 import org.starnub.starnubserver.resources.tokens.TokenHandler;
@@ -48,6 +49,7 @@ public abstract class Pluggable {
     protected PluggableFileType fileType;
     protected File file;
     protected PluggableDetails details;
+    protected PluggableConfiguration configuration;
 
     private final Object S_E_S_LOCK = new Object();
     private final Object P_E_S_LOCK = new Object();
@@ -62,9 +64,10 @@ public abstract class Pluggable {
     }
 
     public void setPluggable(UnloadedPluggable unloadedPluggable) throws DirectoryCreationFailed, MissingData, IOException {
-        details = unloadedPluggable.getDetails();
         file = unloadedPluggable.getFile();
         fileType = unloadedPluggable.getFileType();
+        details = unloadedPluggable.getDetails();
+        configuration = unloadedPluggable.getConfiguration();
         YamlWrapper yamlWrapper = unloadedPluggable.getYamlWrapper();
         loadData(yamlWrapper);
         newStarNubTask("StarNub - Internal Pluggable Clean Up", true, 2, 2, TimeUnit.MINUTES, this::cleanStarNubTask);
@@ -79,16 +82,20 @@ public abstract class Pluggable {
         }
     }
 
-    public PluggableDetails getDetails() {
-        return details;
+    public PluggableFileType getFileType() {
+        return fileType;
     }
 
     public File getFile() {
         return file;
     }
 
-    public PluggableFileType getFileType() {
-        return fileType;
+    public PluggableDetails getDetails() {
+        return details;
+    }
+
+    public PluggableConfiguration getConfiguration() {
+        return configuration;
     }
 
     public String getRegistrationName(){
@@ -227,7 +234,7 @@ public abstract class Pluggable {
             informationPath = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING() + getDetails().getNAME() + "/";
         } else if (details.getTYPE() == PluggableType.COMMAND){
             typeString = "Command";
-            informationPath = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING() + "Commands_Information/";
+            informationPath = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING() + getDetails().getNAME() + "/";
         }
         if(fileType == PluggableFileType.JAVA){
             fileTypeString = "Java";

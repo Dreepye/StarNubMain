@@ -71,6 +71,8 @@ public class PluggablePythonInterpreter {
 
     public void loadPythonScript(String file){
         if (!currentFile.equals(file)) {
+            /* Temporary fix for now - Original Interpreter holds old values*/
+            interpreter = new PythonInterpreter();
             while (isInUse()) {
                 ThreadSleep.timerSeconds(1);
             }

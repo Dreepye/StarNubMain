@@ -85,7 +85,7 @@ public class RootNode {
         if (!(node instanceof SubNode)){
             CommandHandler commandHandler = node.getCOMMAND_HANDLER();
             if (commandHandler != null) {
-                commandHandler.handle(argsCount, args);
+                commandHandler.handle(playerSession, argsCount, args);
                 return true;
             } else {
                 throwCommandProcessError(playerSession, "EndNode Missing Command Handler");
@@ -93,7 +93,7 @@ public class RootNode {
         } else if (argsCount == argIndex) {
             CommandHandler commandHandler = node.getCOMMAND_HANDLER();
             if (commandHandler != null) {
-                commandHandler.handle(argsCount, args);
+                commandHandler.handle(playerSession, argsCount, args);
                 return true;
             } else {
                 HashMap<String, EndNode> nodes = ((SubNode) node).getNODES();
