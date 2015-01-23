@@ -56,6 +56,13 @@ public class UnloadedPluggable {
     public Pluggable instantiatePluggable(PluggableType type) throws DirectoryCreationFailed, MissingData, IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, ClassCastException {
         String classString = details.getCLASS();
         Pluggable newClass = null;
+        String baseDir = null;
+        if (type == PluggableType.PLUGIN) {
+            baseDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
+        } else if (type == PluggableType.COMMAND) {
+            baseDir = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING();
+        }
+        PluggableConfiguration localConfig = null;
         if (fileType == PluggableFileType.JAVA){
             URL pluginUrl = file.toURI().toURL();
             URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
@@ -67,6 +74,11 @@ public class UnloadedPluggable {
                 Class<? extends Pluggable> pluggableClass = clazz.asSubclass(Command.class);
                 newClass = pluggableClass.newInstance();
             }
+            try (InputStream defaultPluginConfiguration = classLoader.getResourceAsStream("default_configuration.yml")) {
+                if (defaultPluginConfiguration != null) {
+                    localConfig = new PluggableConfiguration(baseDir, details.getNAME(), defaultPluginConfiguration);
+                }
+            }
         } else if (fileType == PluggableFileType.PYTHON){
             PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
             pluggablePythonInterpreter.loadPythonScript(file);
@@ -77,7 +89,19 @@ public class UnloadedPluggable {
             } else if (type == PluggableType.COMMAND){
                 newClass = (Pluggable) pluggableObject.__tojava__(Command.class);
             }
+            PyObject defaultConfiguration = pluggablePythonInterpreter.getPyObject("default_configuration", false);
+            if(defaultConfiguration != null) {
+                Map<String, Object> defaultConfigurationMap = (Map<String, Object>) defaultConfiguration.__tojava__(ConcurrentMap.class);
+                if (defaultConfigurationMap != null) {
+                    localConfig = new PluggableConfiguration(baseDir, details.getNAME(), defaultConfigurationMap);
+                }
+            }
         }
+        if(localConfig != null && !localConfig.getDATA().isEmpty()){
+            configuration = localConfig;
+        }
+
+
         if (newClass != null){
             newClass.setPluggable(this);
         }
@@ -114,14 +138,12 @@ public class UnloadedPluggable {
 
     @SuppressWarnings("unchecked")
     public void load() throws MissingData, IOException, DirectoryCreationFailed {
-        String baseDir;
         String absolutePath = file.getAbsolutePath();
         if (absolutePath.endsWith(".py")){
             fileType = PluggableFileType.PYTHON;
 
         } else if (absolutePath.endsWith(".jar")){
             fileType = PluggableFileType.JAVA;
-
         }
         Object pluggableInfoObject = findPluggableInfo();
         if (pluggableInfoObject == null){
@@ -134,12 +156,10 @@ public class UnloadedPluggable {
             pluggableName = (String) yamlWrapper.getValue("name");
             type = PluggableType.PLUGIN;
             yamlWrapperCheck(pluggableName, new String[]{"additional_permissions"});
-            baseDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
         } else if (yamlWrapper.hasKey("command")){
             pluggableName = (String) yamlWrapper.getValue("command");
             type = PluggableType.COMMAND;
             yamlWrapperCheck(pluggableName, new String[]{"main_args", "custom_split", "can_use"});
-            baseDir = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING();
         } else {
             throw new MissingData("Cannot find 'name' or 'command' key for Pluggable: " + file);
         }
@@ -151,27 +171,6 @@ public class UnloadedPluggable {
         String descriptionString = "description";
         String dependencies = "dependencies";
         String unloadableString = "unloadable";
-        PluggableConfiguration localConfig = null;
-        if(fileType == PluggableFileType.JAVA) {
-            try (InputStream defaultPluginConfiguration = this.getClass().getClassLoader().getResourceAsStream("default_configuration.yml")) {
-                if (defaultPluginConfiguration != null) {
-                    localConfig = new PluggableConfiguration(baseDir, pluggableName, defaultPluginConfiguration);
-                }
-            }
-        } else if (fileType == PluggableFileType.PYTHON){
-            PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
-            pluggablePythonInterpreter.loadPythonScript(file);
-            PyObject defaultConfiguration = pluggablePythonInterpreter.getPyObject("default_configuration", false);
-            if(defaultConfiguration != null) {
-                Map<String, Object> defaultConfigurationMap = (Map<String, Object>) defaultConfiguration.__tojava__(ConcurrentMap.class);
-                if (defaultConfigurationMap != null) {
-                    localConfig = new PluggableConfiguration(baseDir, pluggableName, defaultConfigurationMap);
-                }
-            }
-        }
-        if(localConfig != null && localConfig.getDATA().isEmpty()){
-            configuration = localConfig;
-        }
         yamlWrapperCheck(pluggableName, new String[]{ownerString, classString, versionString, authorString, urlString, descriptionString, dependencies, unloadableString});
         String pluggableOwner = (String) yamlWrapper.getValue(ownerString);
         String classPath = (String) yamlWrapper.getValue(classString);

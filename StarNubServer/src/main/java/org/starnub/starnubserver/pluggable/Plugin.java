@@ -57,14 +57,14 @@ public abstract class Plugin extends Pluggable {
     public void enable(){
         onEnable();
         new StarNubEvent("Plugin_Enabled", this);
-        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " enabled.");
+        StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " enabled.");
         this.enabled = true;
     }
 
     public void disable(){
         onDisable();
         new StarNubEvent("Plugin_Disabled", this);
-        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " disabled.");
+        StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " disabled.");
         this.enabled = false;
     }
 
@@ -73,18 +73,18 @@ public abstract class Plugin extends Pluggable {
     public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         additionalPermissions = ArrayUtilities.arrayBuilder(additionalPermissionList);
-        if(fileType == PluggableFileType.JAVA){
+        if(getFileType() == PluggableFileType.JAVA){
             String pluginDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
-            String absolutePath = file.getAbsolutePath();
+            String absolutePath = getFile().getAbsolutePath();
             JarFromDisk jarFromDisk = new JarFromDisk(absolutePath);
             List<JarEntry> otherJarFiles = jarFromDisk.getJarEntries("other_files/", null);
             List<JarEntry> yamlJarEntries = jarFromDisk.getJarEntries("yaml_files/", null);
             ArrayList<String> directories = new ArrayList<>();
 //            directories.addAll(otherJarFiles.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
 //            directories.addAll(yamlJarEntries.stream().filter(ZipEntry::isDirectory).map(JarEntry::toString).collect(Collectors.toList()));
-            createDirectories(details.getNAME(), pluginDir, directories);
-            otherFilesExtractor(details.getNAME(), pluginDir, jarFromDisk, otherJarFiles);
-            YamlFiles yamlFiles = yamlFiles(details.getNAME(), pluginDir, this.getClass().getClassLoader(), yamlJarEntries, jarFromDisk);
+            createDirectories(getDetails().getNAME(), pluginDir, directories);
+            otherFilesExtractor(getDetails().getNAME(), pluginDir, jarFromDisk, otherJarFiles);
+            YamlFiles yamlFiles = yamlFiles(getDetails().getNAME(), pluginDir, this.getClass().getClassLoader(), yamlJarEntries, jarFromDisk);
             if (yamlFiles.getFiles().size() > 0){
                 files = yamlFiles;
             }

@@ -25,6 +25,7 @@ import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -59,8 +60,8 @@ public abstract class Command extends Pluggable {
     public void loadData(YamlWrapper pluggableInfo){
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
         mainArgs = ArrayUtilities.arrayBuilder(mainArgsList);
-        String lowerCaseOwner = details.getOWNER().toLowerCase();
-        String lowerCaseName = details.getNAME().toLowerCase();
+        String lowerCaseOwner = getDetails().getOWNER().toLowerCase();
+        String lowerCaseName = getDetails().getNAME().toLowerCase();
         ArrayList<String> linkedList = new ArrayList<>();
         linkedList.add(lowerCaseOwner + ".*");
         String permission = lowerCaseOwner + "." + lowerCaseName;
@@ -100,8 +101,8 @@ public abstract class Command extends Pluggable {
     @Override
     public String toString() {
         return "Command{" +
-                ", mainArgs=" + mainArgs +
-                ", permissions=" + permissions +
+                ", mainArgs=" + Arrays.toString(mainArgs) +
+                ", permissions=" + Arrays.toString(permissions) +
                 ", customSplit=" + customSplit +
                 ", canUse=" + canUse +
                 "} " + super.toString();

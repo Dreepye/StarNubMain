@@ -46,10 +46,10 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Pluggable {
 
-    protected PluggableFileType fileType;
-    protected File file;
-    protected PluggableDetails details;
-    protected PluggableConfiguration configuration;
+    private PluggableFileType fileType;
+    private File file;
+    private PluggableDetails details;
+    private PluggableConfiguration configuration;
 
     private final Object S_E_S_LOCK = new Object();
     private final Object P_E_S_LOCK = new Object();

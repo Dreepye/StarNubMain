@@ -18,12 +18,25 @@
 
 package org.starnub.starnubserver.pluggable.generic;
 
+import org.starnub.starnubserver.pluggable.Pluggable;
+import org.starnub.starnubserver.pluggable.Plugin;
+import org.starnub.starnubserver.pluggable.UnloadedPluggable;
+
 public class LoadSuccess {
 
+    private UnloadedPluggable UNLOADED_PLUGGABLE;
+    private Pluggable PLUGGABLE;
     private final boolean SUCCESS;
     private final String REASON;
 
-    public LoadSuccess(boolean SUCCESS, String REASON) {
+    public LoadSuccess(UnloadedPluggable UNLOADED_PLUGGABLE, boolean SUCCESS, String REASON) {
+        this.UNLOADED_PLUGGABLE = UNLOADED_PLUGGABLE;
+        this.SUCCESS = SUCCESS;
+        this.REASON = REASON;
+    }
+
+    public LoadSuccess(Pluggable PLUGGABLE, boolean SUCCESS, String REASON) {
+        this.PLUGGABLE = PLUGGABLE;
         this.SUCCESS = SUCCESS;
         this.REASON = REASON;
     }
@@ -34,5 +47,22 @@ public class LoadSuccess {
 
     public String getREASON() {
         return REASON;
+    }
+
+    public String getNameVersion(){
+        if(PLUGGABLE != null){
+            return PLUGGABLE.getDetails().getNameVersion();
+        } else {
+            return UNLOADED_PLUGGABLE.getDetails().getNameVersion();
+        }
+    }
+
+    /**
+     * For Plugins only
+     *
+     * @return
+     */
+    public boolean isEnabled(){
+        return ((Plugin)PLUGGABLE).isEnabled();
     }
 }

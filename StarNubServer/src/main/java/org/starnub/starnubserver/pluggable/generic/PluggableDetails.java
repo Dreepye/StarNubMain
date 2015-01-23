@@ -142,7 +142,7 @@ public class PluggableDetails {
                 ", AUTHOR='" + AUTHOR + '\'' +
                 ", URL='" + URL + '\'' +
                 ", DESCRIPTION='" + DESCRIPTION + '\'' +
-                ", DEPENDENCIES=" + DEPENDENCIES +
+                ", DEPENDENCIES=" + Arrays.toString(DEPENDENCIES) +
                 '}';
     }
 }
