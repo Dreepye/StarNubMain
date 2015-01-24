@@ -35,9 +35,9 @@ public class EndNode {
         this.COMMAND_HANDLER = COMMAND_HANDLER;
         this.ARGUMENT_TYPE = ARGUMENT_TYPE;
         if (ARGUMENT_TYPE == ArgumentType.VARIABLE) {
-            this.NODE_ARGUMENT = correctArgs(NODE_ARGUMENT);
+            this.NODE_ARGUMENT = correctArgs(NODE_ARGUMENT.toLowerCase());
         } else {
-            this.NODE_ARGUMENT = NODE_ARGUMENT;
+            this.NODE_ARGUMENT = NODE_ARGUMENT.toLowerCase();
         }
 
     }

@@ -56,7 +56,7 @@ public class RootNode {
         if (handledNode){
             return;
         }
-        int argsIndex = 1;
+        int argIndex = 1;
         EndNode workingNode = BASE_NODE;
         for (String arg : args) {
             boolean containsKey = ((SubNode) workingNode).getNODES().containsKey(arg);
@@ -67,8 +67,13 @@ public class RootNode {
                 if (containsKey1) {
                     workingNode = ((SubNode) workingNode).getNODES().get("{default-variable-arguments}");
                 } else {
-                    HashMap<String, EndNode> nodes = ((SubNode) workingNode).getNODES();
-                    Object[] possibleArgs = possibleArgsBuilder(playerSession, BASE_NODE.getNODE_ARGUMENT() ,nodes);
+                    Object[] possibleArgs;
+                    if(argIndex == 1) {
+                        possibleArgs = possibleArgsBuilder(playerSession, BASE_NODE.getNODE_ARGUMENT());
+                    } else {
+                        HashMap<String, EndNode> nodes = ((SubNode) workingNode).getNODES();
+                        possibleArgs = possibleArgsBuilder(nodes);
+                    }
                     playerSession.sendBroadcastMessageToClient(
                             "ServerName",
                             "You did not supply the correct arguments for the command \"" + commandNode + "\"." +
@@ -78,11 +83,11 @@ public class RootNode {
                 }
             }
             builtForReply = builtForReply + " " + arg;
-            handledNode = handleNode(playerSession, arg, argsCount, args, workingNode, argsIndex, builtForReply);
+            handledNode = handleNode(playerSession, arg, argsCount, args, workingNode, argIndex, builtForReply);
             if (handledNode){
                 break;
             }
-            argsIndex++;
+            argIndex++;
         }
     }
 
@@ -101,8 +106,13 @@ public class RootNode {
                 commandHandler.handle(playerSession, argsCount, args);
                 return true;
             } else {
-                HashMap<String, EndNode> nodes = ((SubNode) node).getNODES();
-                Object[] possibleArgs = possibleArgsBuilder(playerSession, BASE_NODE.getNODE_ARGUMENT() ,nodes);
+                Object[] possibleArgs;
+                if(argIndex == 0) {
+                    possibleArgs = possibleArgsBuilder(playerSession, BASE_NODE.getNODE_ARGUMENT());
+                } else {
+                    HashMap<String, EndNode> nodes = ((SubNode) node).getNODES();
+                    possibleArgs = possibleArgsBuilder(nodes);
+                }
                 playerSession.sendBroadcastMessageToClient(
                         "ServerName",
                         "You did not supply enough arguments for the command \"" + commandNode + "\"." +
@@ -122,7 +132,18 @@ public class RootNode {
             throw new CommandProcessorError(message);
     }
 
-    private static Object[] possibleArgsBuilder(PlayerSession playerSession, String commandName, HashMap<String, EndNode> nodes){
+    private static String[] possibleArgsBuilder(HashMap<String, EndNode> nodes){
+        String[] possibleArgs = new String[nodes.size()];
+        int index = 0;
+        for(EndNode endNode : nodes.values()){
+            String nodeArgument = endNode.getNODE_ARGUMENT();
+            possibleArgs[index] = nodeArgument;
+            index++;
+        }
+        return possibleArgs;
+    }
+
+    private static Object[] possibleArgsBuilder(PlayerSession playerSession, String commandName){
         Command command = PluggableManager.getInstance().getCOMMANDS().get(commandName.toLowerCase());
         String orgString = command.getDetails().getORGANIZATION().toLowerCase();
         String nameString = command.getDetails().getNAME().toLowerCase();

@@ -25,20 +25,6 @@ public class SubNode extends EndNode {
     private final HashMap<String, EndNode> NODES = new HashMap<>();
 
     /**
-     * This constructor is used for a SubNode which has a default command handler so that if the command is used, with this argument it will
-     * still return, such as /plugin load. This would execute your method. In Addition, the processor can traverse the nodes further. This argument
-     * must be a static argument.
-     *
-     * @param NODE_ARGUMENT The argument that will be handled by this command handler
-     * @param COMMAND_HANDLER CommandHandler command handler used to handle the end of the linked command & args
-     * @param NODES EndNode[] representing the nodes you will have branching from this sub node
-     */
-    public SubNode(String NODE_ARGUMENT, CommandHandler COMMAND_HANDLER, EndNode... NODES) {
-        super(NODE_ARGUMENT, ArgumentType.STATIC, COMMAND_HANDLER);
-        processCommandNodes(NODES);
-    }
-
-    /**
      * This constructor is used for a SubNode which has does not have a default command handler so that if the command is used, without the proper
      * arguments, such as /plugin load, the command user will receive a message of the possible arguments for /plugin load, such as /plugin load all or /plugin load {plugin-name}
      *
