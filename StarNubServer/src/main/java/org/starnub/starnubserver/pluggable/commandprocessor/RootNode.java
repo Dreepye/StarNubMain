@@ -19,9 +19,14 @@
 package org.starnub.starnubserver.pluggable.commandprocessor;
 
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
+import org.starnub.starnubserver.pluggable.Command;
+import org.starnub.starnubserver.pluggable.PluggableManager;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RootNode {
 
@@ -63,7 +68,7 @@ public class RootNode {
                     workingNode = ((SubNode) workingNode).getNODES().get("{default-variable-arguments}");
                 } else {
                     HashMap<String, EndNode> nodes = ((SubNode) workingNode).getNODES();
-                    String[] possibleArgs = possibleArgsBuilder(nodes);
+                    Object[] possibleArgs = possibleArgsBuilder(playerSession, BASE_NODE.getNODE_ARGUMENT() ,nodes);
                     playerSession.sendBroadcastMessageToClient(
                             "ServerName",
                             "You did not supply the correct arguments for the command \"" + commandNode + "\"." +
@@ -97,8 +102,7 @@ public class RootNode {
                 return true;
             } else {
                 HashMap<String, EndNode> nodes = ((SubNode) node).getNODES();
-
-                String[] possibleArgs = possibleArgsBuilder(nodes);
+                Object[] possibleArgs = possibleArgsBuilder(playerSession, BASE_NODE.getNODE_ARGUMENT() ,nodes);
                 playerSession.sendBroadcastMessageToClient(
                         "ServerName",
                         "You did not supply enough arguments for the command \"" + commandNode + "\"." +
@@ -118,15 +122,15 @@ public class RootNode {
             throw new CommandProcessorError(message);
     }
 
-    private static String[] possibleArgsBuilder(HashMap<String, EndNode> nodes){
-        String[] possibleArgs = new String[nodes.size()];
-        int index = 0;
-        for(EndNode endNode : nodes.values()){
-            String nodeArgument = endNode.getNODE_ARGUMENT();
-            possibleArgs[index] = nodeArgument;
-            index++;
-        }
-        return possibleArgs;
+    private static Object[] possibleArgsBuilder(PlayerSession playerSession, String commandName, HashMap<String, EndNode> nodes){
+        Command command = PluggableManager.getInstance().getCOMMANDS().get(commandName.toLowerCase());
+        String orgString = command.getDetails().getORGANIZATION().toLowerCase();
+        String nameString = command.getDetails().getNAME().toLowerCase();
+        HashSet<String> availableArgs =
+                Stream.of(command.getMainArgs())
+                .sorted(String::compareTo)
+                .filter(arg -> playerSession.hasPermission(orgString, nameString, arg, true) || (arg.startsWith("{") && arg.endsWith("}"))).collect(Collectors.toCollection(HashSet::new));
+        return availableArgs.toArray();
     }
 
     @Override
@@ -136,3 +140,5 @@ public class RootNode {
                 '}';
     }
 }
+
+

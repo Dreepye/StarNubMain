@@ -27,7 +27,7 @@ import java.util.List;
 
 public class PluggableDetails {
 
-    private final String OWNER;
+    private final String ORGANIZATION;
     private final String NAME;
     private final String CLASS;
     private final PluggableType TYPE;
@@ -40,7 +40,7 @@ public class PluggableDetails {
     private final boolean UNLOADABLE;
 
     /**
-     * @param OWNER                 String representing the owner of this pluggable
+     * @param ORGANIZATION           String representing the organization this pluggable belongs to
      * @param NAME                  String name of this pluggable
      * @param CLASS                 String representing the main class, Python = ClassName (StarNub), Java = package.Name (org.starnub.StarNub)
      * @param VERSION                double the pluggableOLD version
@@ -50,8 +50,8 @@ public class PluggableDetails {
      * @param DESCRIPTION            String a short description of the pluggableOLD
      * @param DEPENDENCIES           HashSet representing string name of dependencies
      */
-    public PluggableDetails(String OWNER, String NAME, String CLASS, PluggableType TYPE, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, List<String> DEPENDENCIES, boolean UNLOADABLE) {
-        this.OWNER = OWNER;
+    public PluggableDetails(String ORGANIZATION, String NAME, String CLASS, PluggableType TYPE, double VERSION, double SIZE_KBS, String AUTHOR, String URL, String DESCRIPTION, List<String> DEPENDENCIES, boolean UNLOADABLE) {
+        this.ORGANIZATION = ORGANIZATION;
         this.NAME = NAME;
         this.CLASS = CLASS;
         this.TYPE = TYPE;
@@ -64,8 +64,8 @@ public class PluggableDetails {
         this.UNLOADABLE = UNLOADABLE;
     }
 
-    public String getOWNER() {
-        return OWNER;
+    public String getORGANIZATION() {
+        return ORGANIZATION;
     }
 
     public String getNAME() {
@@ -114,7 +114,7 @@ public class PluggableDetails {
 
     public LinkedHashMap<String, Object> getDetailsMap(){
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("Owner", OWNER);
+        linkedHashMap.put("Organization", ORGANIZATION);
         linkedHashMap.put("Name", NAME);
         linkedHashMap.put("Class", CLASS);
         linkedHashMap.put("Version", VERSION);
@@ -135,7 +135,7 @@ public class PluggableDetails {
     @Override
     public String toString() {
         return "PluggableDetails{" +
-                "OWNER='" + OWNER + '\'' +
+                "ORGANIZATION='" + ORGANIZATION + '\'' +
                 ", CLASS='" + CLASS + '\'' +
                 ", VERSION=" + VERSION +
                 ", SIZE_KBS=" + SIZE_KBS +

@@ -26,6 +26,7 @@ import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.generic.LoadSuccess;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
+import org.starnub.starnubserver.pluggable.generic.PluggableReturn;
 import org.starnub.utilities.strings.StringUtilities;
 
 import java.io.File;
@@ -398,13 +399,13 @@ public class PluggableManager {
         return null;
     }
 
-    public LoadSuccess loadSpecificCommand(String commandName, boolean enable, boolean updating){
+    public LoadSuccess loadSpecificCommand(String commandName, boolean updating){
         LinkedHashMap<String, UnloadedPluggable> commandScan = commandScan(updating);
         for (Map.Entry<String, UnloadedPluggable> entrySet : commandScan.entrySet()){
             String name = entrySet.getKey();
             if(name.equalsIgnoreCase(commandName)) {
                 UnloadedPluggable unloadedPluggable = entrySet.getValue();
-                return loadPlugin(name, unloadedPluggable, enable);
+                return loadCommand(name, unloadedPluggable);
             }
         }
         return null;
@@ -453,39 +454,41 @@ public class PluggableManager {
         return COMMANDS.get(pluginName);
     }
 
-    public HashSet<Plugin> getSpecificLoadedPluginOrNearMatchs(String pluginName){
+    public PluggableReturn<Plugin> getSpecificLoadedPluginOrNearMatchs(String pluginName){
         Plugin specificLoadedPlugin = getSpecificLoadedPlugin(pluginName);
-        HashSet<Plugin> similiarPlugins = new HashSet<>();
+        PluggableReturn<Plugin> similarPlugins = new PluggableReturn<>();
         if (specificLoadedPlugin == null){
             for(Map.Entry<String, Plugin> entrySet : PLUGINS.entrySet()){
                 String name = entrySet.getKey();
                 Plugin plugin = entrySet.getValue();
-                double distance = StringUtilities.similarityCalculation(pluginName.toLowerCase(), name);
-                if (distance > 85){
-                    similiarPlugins.add(plugin);
+                double distance = StringUtilities.similarityCalculationCaseInsensitive(name, pluginName);
+                if (distance > 90){
+                    similarPlugins.add(plugin);
                 }
             }
         } else {
-            similiarPlugins.add(specificLoadedPlugin);
+            similarPlugins.setExactMatch();
+            similarPlugins.add(specificLoadedPlugin);
         }
-        return similiarPlugins;
+        return similarPlugins;
     }
 
-    public HashSet<Command> getSpecificLoadedCommandOrNearMatchs(String commandName){
+    public PluggableReturn<Command> getSpecificLoadedCommandOrNearMatchs(String commandName){
         Command specificLoadedCommand = getSpecificLoadedCommand(commandName);
-        HashSet<Command> similiarPlugins = new HashSet<>();
+        PluggableReturn<Command> similarCommand = new PluggableReturn<>();
         if (specificLoadedCommand == null){
             for(Map.Entry<String, Command> entrySet : COMMANDS.entrySet()){
                 String name = entrySet.getKey();
                 Command command = entrySet.getValue();
-                double distance = StringUtilities.similarityCalculation(commandName.toLowerCase(), name);
-                if (distance > 85){
-                    similiarPlugins.add(command);
+                double distance = StringUtilities.similarityCalculationCaseInsensitive(name, commandName);
+                if (distance > 90){
+                    similarCommand.add(command);
                 }
             }
         } else {
-            similiarPlugins.add(specificLoadedCommand);
+            similarCommand.isExactMatch();
+            similarCommand.add(specificLoadedCommand);
         }
-        return similiarPlugins;
+        return similarCommand;
     }
 }

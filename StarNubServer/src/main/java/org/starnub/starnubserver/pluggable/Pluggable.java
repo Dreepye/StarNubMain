@@ -100,7 +100,7 @@ public abstract class Pluggable {
 
     public String getRegistrationName(){
         String nameString = details.getNAME();
-        String ownerString = details.getOWNER();
+        String ownerString = details.getORGANIZATION();
         String classString = details.getCLASS();
         if(fileType == PluggableFileType.JAVA && classString.contains(".")){
             int lastIndexOf = classString.lastIndexOf(".");
@@ -211,16 +211,15 @@ public abstract class Pluggable {
         return StringTokens.replaceTokens(string);
     }
 
-    protected void register(){
+    public void register(){
         onRegister();
         new StarNubEvent("Pluggable_Registerables_Complete", this);
-        String typeString = null;
         StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were registered if available.");
     }
 
     public abstract void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;
     public abstract void onRegister();
-    public abstract LinkedHashMap<String, Object> getDetailsMap() throws IOException;
+    public abstract LinkedHashMap<String, Object> getDetailsMap() throws IOException;//FIX PARSER?
 
     @SuppressWarnings("unchecked")
     private void dumpPluggableDetails() throws IOException {

@@ -163,7 +163,7 @@ public class UnloadedPluggable {
         } else {
             throw new MissingData("Cannot find 'name' or 'command' key for Pluggable: " + file);
         }
-        String ownerString = "owner";
+        String ownerString = "organization";
         String classString = "class";
         String versionString = "version";
         String authorString = "author";

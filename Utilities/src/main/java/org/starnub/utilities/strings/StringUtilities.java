@@ -296,8 +296,26 @@ public class StringUtilities {
      * @return double the percentage of similarity
      * @throws ArithmeticException if issue calculating
      */
+    public static double similarityCalculationCaseInsensitive(String s, String s2) throws ArithmeticException {
+        s = s.toLowerCase();
+        s2 = s2.toLowerCase();
+        int levDist = StringUtils.getLevenshteinDistance(s, s2);
+        return s.length() > s2.length() ?
+            Math.round(((double) levDist / (double) s.length()) * 100) : Math.round(((double) levDist / (double) s2.length())  * 100);
+    }
+
+    /**
+     * This will compare the percentage similarity of two words
+     *
+     * @param s String string to be compared against
+     * @param s2 String string to compare
+     * @return double the percentage of similarity
+     * @throws ArithmeticException if issue calculating
+     */
     public static double similarityCalculation(String s, String s2) throws ArithmeticException {
-        return 100-((StringUtils.getLevenshteinDistance(s, s2)*100)) / ((s.length()+s2.length())/2);
+        int levDist = StringUtils.getLevenshteinDistance(s, s2);
+        return s.length() > s2.length() ?
+                Math.round(((double) levDist / (double) s.length()) * 100) : Math.round(((double) levDist / (double) s2.length())  * 100);
     }
 
     /**

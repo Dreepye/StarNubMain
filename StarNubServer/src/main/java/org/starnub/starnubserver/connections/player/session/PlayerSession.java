@@ -952,7 +952,7 @@ public class PlayerSession {
             return null;
         }
         ArrayList<String> arrayList = concurrentHashMap.get(subPermission);
-        if (arrayList.size() == 0){
+        if (arrayList == null || arrayList.size() == 0){
             return null;
         }
         return arrayList.get(0);

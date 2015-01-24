@@ -108,17 +108,19 @@ public class ScheduledTask {
     public void unregister(){
         ConcurrentHashMap<String, ConcurrentHashMap<String, ScheduledTask>> taskList = TASK_MANAGER.getTASK_LIST();
         ConcurrentHashMap<String, ScheduledTask> ownerTaskMap = taskList.get(OWNER);
-        for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : ownerTaskMap.entrySet()){
-            String key = scheduledTaskEntry.getKey();
-            ScheduledTask scheduledTask = scheduledTaskEntry.getValue();
-            if (scheduledTask.equals(this)){
-                ownerTaskMap.remove(key);
+        if (ownerTaskMap != null) {
+            for (Map.Entry<String, ScheduledTask> scheduledTaskEntry : ownerTaskMap.entrySet()) {
+                String key = scheduledTaskEntry.getKey();
+                ScheduledTask scheduledTask = scheduledTaskEntry.getValue();
+                if (scheduledTask.equals(this)) {
+                    ownerTaskMap.remove(key);
+                }
             }
+            if (ownerTaskMap.size() == 0) {
+                taskList.remove(OWNER);
+            }
+            scheduledFuture.cancel(true);
         }
-        if (ownerTaskMap.size() == 0){
-            taskList.remove(OWNER);
-        }
-        scheduledFuture.cancel(true);
     }
 
     @Override

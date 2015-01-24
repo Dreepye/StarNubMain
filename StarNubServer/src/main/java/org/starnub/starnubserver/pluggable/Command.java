@@ -60,16 +60,16 @@ public abstract class Command extends Pluggable {
     public void loadData(YamlWrapper pluggableInfo){
         List<String> mainArgsList = (List<String>) pluggableInfo.getValue("main_args");
         mainArgs = ArrayUtilities.arrayBuilder(mainArgsList);
-        String lowerCaseOwner = getDetails().getOWNER().toLowerCase();
+        String lowerCaseOrganization = getDetails().getORGANIZATION().toLowerCase();
         String lowerCaseName = getDetails().getNAME().toLowerCase();
         ArrayList<String> linkedList = new ArrayList<>();
-        linkedList.add(lowerCaseOwner + ".*");
-        String permission = lowerCaseOwner + "." + lowerCaseName;
+        linkedList.add(lowerCaseOrganization + ".*");
+        String permission = lowerCaseOrganization + "." + lowerCaseName;
         linkedList.add(permission);
         if (mainArgs != null && mainArgs.length > 0){
             linkedList.add(permission + ".*");
             for (String mainArg : mainArgs) {
-                String permissionFull = lowerCaseOwner + "." + lowerCaseName + "." + mainArg;
+                String permissionFull = lowerCaseOrganization + "." + lowerCaseName + "." + mainArg;
                 linkedList.add(permissionFull);
             }
         }
