@@ -41,13 +41,13 @@ import org.starnub.starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import org.starnub.starnubserver.connections.player.StarNubProxyConnection;
 import org.starnub.starnubserver.connections.player.character.PlayerCharacter;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
-import org.starnub.starnubserver.connections.predicates.CTXPredicates;
-import org.starnub.starnubserver.connections.predicates.PSPredicates;
 import org.starnub.starnubserver.events.packet.PacketEventSubscription;
 import org.starnub.starnubserver.resources.connections.handlers.ClientConnectHandler;
 import org.starnub.starnubserver.resources.connections.handlers.ConnectionResponseHandler;
 import org.starnub.starnubserver.resources.connections.handlers.ServerDisconnectHandler;
 import org.starnub.starnubserver.resources.files.Operators;
+import org.starnub.starnubserver.resources.predicates.CTXPredicates;
+import org.starnub.starnubserver.resources.predicates.PSPredicates;
 import org.starnub.utilities.connectivity.ConnectionType;
 import org.starnub.utilities.events.Priority;
 

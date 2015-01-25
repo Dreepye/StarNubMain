@@ -16,7 +16,7 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.connections.predicates;
+package org.starnub.starnubserver.resources.predicates;
 
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 
