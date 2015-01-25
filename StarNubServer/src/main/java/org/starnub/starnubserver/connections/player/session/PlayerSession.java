@@ -64,6 +64,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -419,21 +420,11 @@ public class PlayerSession {
 
 
     public static void sendChatBroadcastToClientsAll(Object sender, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastToClients(sender, message, Mode.BROADCAST, allPlayers, null);
+        broadcastToClients(sender, message, Mode.BROADCAST, null);
     }
 
-    public static void sendChatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
-        broadcastToClients(sender, message, Mode.BROADCAST, sendList, null);
-    }
-
-    public static void sendChatBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastToClients(sender, message, Mode.BROADCAST, allPlayers, ignoredList);
-    }
-
-    public static void sendChatBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        broadcastToClients(sender, message, Mode.BROADCAST, sendList, ignoredList);
+    public static void sendChatBroadcastToClientsGroup(Object sender, Predicate<PlayerSession> predicate, String message){
+        broadcastToClients(sender, message, Mode.BROADCAST, predicate);
     }
 
 //    public static void channelBroadcastToClientsAll(String message){}
@@ -442,47 +433,28 @@ public class PlayerSession {
 //    public static void channelBroadcastToClientsGroup(HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){}
 
     public static void sendWhisperBroadcastToClientsAll(Object sender, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastToClients(sender, message, Mode.WHISPER, allPlayers, null);
+        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.WHISPER, null);
     }
 
-    public static void sendWhisperBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
-        broadcastToClients(sender, message, Mode.WHISPER, sendList, null);
-    }
-
-    public static void sendWhisperBroadcastToClientsAll(Object sender,  HashSet<PlayerSession> ignoredList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastToClients(sender, message, Mode.WHISPER, allPlayers, ignoredList);
-    }
-
-    public static void sendWhisperBroadcastToClientsGroup(Object sender,  HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        broadcastToClients(sender, message, Mode.WHISPER, sendList, ignoredList);
+    public static void sendWhisperBroadcastToClientsGroup(Object sender, Predicate<PlayerSession> predicate, String message) {
+        broadcastToClients(sender, message, Mode.WHISPER, predicate);
     }
 
     public static void sendCommandBroadcastToClientsAll(Object sender, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastToClients(sender, message, Mode.COMMAND_RESULT, allPlayers, null);
+        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, null);
     }
 
-    public static void sendCommandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, String message){
-        broadcastToClients(sender, message, Mode.COMMAND_RESULT, sendList, null);
+    public static void sendCommandBroadcastToClientsGroup(Object sender, Predicate<PlayerSession> predicate, String message){
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, predicate);
     }
 
-    public static void sendCommandBroadcastToClientsAll(Object sender, HashSet<PlayerSession> ignoredList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastToClients(sender, message, Mode.COMMAND_RESULT, allPlayers, ignoredList);
-    }
-
-    public static void sendCommandBroadcastToClientsGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        broadcastToClients(sender, message, Mode.COMMAND_RESULT, sendList, ignoredList);
-    }
-
-    private static void broadcastToClients(Object sender, String message, Mode mode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
+    private static void broadcastToClients(Object sender, String message, Mode mode, Predicate<PlayerSession> predicate){
         String senderName = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
-        String sendListFinal = getSentenceNameList(sendList);
         ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
-        sendPacketToGroupNoFlush(chatReceivePacket, sendList, ignoredList);
-        StarNub.getLogger().cChatPrint(sender, sendListFinal, mode, message);
+        sendPacketToGroupNoFlush(chatReceivePacket, predicate);
+        StarNub.getLogger().cChatPrint(sender, "MultipleUsers *TEMP*", mode, message);
     }
 
     public void sendBroadcastMessageToServer(Object sender, String message){
@@ -507,66 +479,38 @@ public class PlayerSession {
         }
     }
 
-    public static void sendChatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, allPlayers, null);
+    public static void sendChatBroadcastToServerAll(Object sender, String message){
+        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, null);
     }
 
-    public static void sendChatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, sendList, null);
+    public static void sendChatBroadcastToServerGroup(Object sender, Predicate<PlayerSession> predicate, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, predicate);
     }
 
-    public static void sendChatBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, allPlayers, ignoredList);
+    public static void sendLocalBroadcastToServerAll(Object sender, String message){
+        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, null);
     }
 
-    public static void sendChatBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, sendList, ignoredList);
+    public static void sendLocalBroadcastToServerGroup(Object sender, Predicate<PlayerSession> predicate, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, predicate);
     }
 
-    public static void sendLocalBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, allPlayers, null);
+    public static void sendPartyBroadcastToServerAll(Object sender, String message){
+        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, null);
     }
 
-    public static void sendLocalBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, sendList, null);
+    public static void sendPartyBroadcastToServerGroup(Object sender, Predicate<PlayerSession> predicate, String message){
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, predicate);
     }
 
-    public static void sendLocalBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, allPlayers, ignoredList);
-    }
-
-    public static void sendLocalBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, sendList, ignoredList);
-    }
-
-    public static void sendPartyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastServerMessage(sender, message, ChatSendMode.PARTY, allPlayers, null);
-    }
-
-    public static void sendPartyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.PARTY, sendList, null);
-    }
-
-    public static void sendPartyBroadcastToServerAll(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
-        HashSet<PlayerSession> allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
-        broadcastServerMessage(sender, message, ChatSendMode.PARTY, allPlayers, ignoredList);
-    }
-
-    public static void sendPartyBroadcastToServerGroup(Object sender, HashSet<PlayerSession> sendList, PlayerSession receiver, HashSet<PlayerSession> ignoredList, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.PARTY, sendList, ignoredList);
-    }
-
-    private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList){
+    private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, Predicate<PlayerSession> predicate){
         String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
-        String sendListFinal = getSentenceNameList(sendList);
         ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
-        sendPacketToGroupNoFlush(chatSendPacket, sendList, ignoredList);
-        StarNub.getLogger().cChatPrint(sendListFinal, "Server (Sender: " + senderString + ")", chatSendMode, message);
+        StarNub.getLogger().cChatPrint("Multiple Users *TEMP*", "Server (Sender: " + senderString + ")", chatSendMode, message);
+        sendPacketToGroupNoFlush(chatSendPacket, predicate);
     }
 
     public void sendPacketToPlayer(Packet packet){
@@ -628,10 +572,10 @@ public class PlayerSession {
      * <p>
      * Uses: Try to use NO FLUSH as this causes extra system calls. This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
      *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
+     * @param packet      Packet representing the packet to be routed
      */
-    public static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList) {
-        sendPacketToGroup(packet, sendList, null, true);
+    public static void sendPacketToGroup(Packet packet) {
+        sendPacketToGroup(packet, null, true);
     }
 
     /**
@@ -639,22 +583,11 @@ public class PlayerSession {
      * <p>
      * Uses: Try to use NO FLUSH as this causes extra system calls. This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
      *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
+     * @param packet      Packet representing the packet to be routed
+     * @param predicate   Predicate is what filter you are using to send your message
      */
-    public static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
-        sendPacketToGroup(packet, sendList, ignoredList, true);
-    }
-
-    /**
-     * Recommended: For Plugin Developers & Anyone else.
-     * <p>
-     * Uses: This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
-     *
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     */
-    public static void sendPacketToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList) {
-        sendPacketToGroup(packet, sendList, null, false);
+    public static void sendPacketToGroup(Packet packet, Predicate<PlayerSession> predicate) {
+        sendPacketToGroup(packet, predicate, true);
     }
 
     /**
@@ -663,31 +596,31 @@ public class PlayerSession {
      * Uses: This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
      *
      * @param packet      Packet representing the packet to be routed
-     * @param sendList    HashSet of ChannelHandlerContext to this packet to
-     * @param ignoredList HashSet of ChannelHandlerContext to not send the message too
      */
-    public static void sendPacketToGroupNoFlush(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList) {
-        sendPacketToGroup(packet, sendList, ignoredList, false);
+    public static void sendPacketToGroupNoFlush(Packet packet) {
+        sendPacketToGroup(packet, null, false);
     }
 
-    private static void sendPacketToGroup(Packet packet, HashSet<PlayerSession> sendList, HashSet<PlayerSession> ignoredList, boolean flush){
+    /**
+     * Recommended: For Plugin Developers & Anyone else.
+     * <p>
+     * Uses: This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
+     *
+     * @param packet      Packet representing the packet to be routed
+     * @param predicate   Predicate is what filter you are using to send your message
+     */
+    public static void sendPacketToGroupNoFlush(Packet packet, Predicate<PlayerSession> predicate) {
+        sendPacketToGroup(packet, predicate, false);
+    }
+
+    private static void sendPacketToGroup(Packet packet, Predicate<PlayerSession> predicate, boolean flush){
         ByteBuf byteBufPacket = packet.packetToMessageEncoder();
-        int refCnt;
-        int ignoreListSize = 0;
-        if (ignoredList != null) {
-            sendList.removeAll(ignoredList);
-            ignoreListSize = ignoredList.size(); /* Subtract this count */
-        }
-        int sendListSize = sendList.size();
-        refCnt = sendListSize - ignoreListSize; /* Message ref count */
-        if (sendListSize > 1){
-            refCnt = refCnt - 1; /* This subtracts the one ref count of Netty.io */
-            byteBufPacket.retain(refCnt);
-        }
-        if (!sendList.isEmpty()) {
-            for (PlayerSession playerSession : sendList) {
-                ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
-                ConnectionType connectionType = playerSession.getCONNECTION_TYPE();
+        Players connectedPlayers = Connections.getInstance().getCONNECTED_PLAYERS();
+        int onlineCount = connectedPlayers.size();
+        byteBufPacket.retain(onlineCount);
+        connectedPlayers.values().stream().filter(predicate).forEach(ps -> {
+                ChannelHandlerContext ctx = ps.getCONNECTION().getCLIENT_CTX();
+                ConnectionType connectionType = ps.getCONNECTION_TYPE();
                 if (connectionType == ConnectionType.PROXY_IN_GAME) {
                     if (flush) {
                         ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
@@ -695,17 +628,17 @@ public class PlayerSession {
                         ctx.write(byteBufPacket, ctx.voidPromise());
                     }
                 } else if (connectionType == ConnectionType.REMOTE) {
-                    sendRemote(playerSession, packet);
+                    sendRemote(ps, packet);
                 }
-            }
-        }
+        });
+        System.out.println(byteBufPacket.release(byteBufPacket.refCnt()));
     }
 
     private static void sendRemote(PlayerSession packet, Packet ctx){
         //REQUIRES STARNUB PROTOCOL - Needs to strip colors on REMOTE clients
     }
 
-    private static String getSentenceNameList(HashSet<PlayerSession> playerSessions){
+    private static String getSentenceNameList(PlayerSession[] playerSessions){
         String sendListNames = "";
         for (PlayerSession playerSession : playerSessions){
             String cleanName = playerSession.getPlayerCharacter().getCleanName();
@@ -844,7 +777,7 @@ public class PlayerSession {
         return op || PERMISSIONS.containsKey("*") || PERMISSIONS.containsKey(basePermission);
     }
 
-    private boolean hasSubPermission(String basePermission, String subPermission, boolean checkWildCards){
+    public boolean hasSubPermission(String basePermission, String subPermission, boolean checkWildCards){
         if (PERMISSIONS.containsKey("*") && checkWildCards){
             return true;
         }
@@ -1044,6 +977,8 @@ public class PlayerSession {
     public static void retreiveSession(PlayerCharacter playerCharacter){
 
     }
+
+
 
     @Override
     public String toString() {

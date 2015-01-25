@@ -20,6 +20,7 @@ package org.starnub.starnubserver.resources.connections;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.starnub.starbounddata.packets.Packet;
 import org.starnub.starbounddata.packets.connection.ClientConnectPacket;
 import org.starnub.starbounddata.packets.connection.ConnectResponsePacket;
@@ -40,6 +41,8 @@ import org.starnub.starnubserver.cache.wrappers.PlayerCtxCacheWrapper;
 import org.starnub.starnubserver.connections.player.StarNubProxyConnection;
 import org.starnub.starnubserver.connections.player.character.PlayerCharacter;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
+import org.starnub.starnubserver.connections.predicates.CTXPredicates;
+import org.starnub.starnubserver.connections.predicates.PSPredicates;
 import org.starnub.starnubserver.events.packet.PacketEventSubscription;
 import org.starnub.starnubserver.resources.connections.handlers.ClientConnectHandler;
 import org.starnub.starnubserver.resources.connections.handlers.ConnectionResponseHandler;
@@ -262,30 +265,6 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         return OPERATORS;
     }
 
-    public HashSet<ChannelHandlerContext> getOnlinePlayersCtxs(){
-        return this.keySet().stream().collect(Collectors.toCollection(HashSet::new));
-    }
-
-    public HashSet<PlayerSession> getOnlinePlayersSessions(){
-        return this.values().stream().collect(Collectors.toCollection(HashSet::new));
-    }
-
-    public HashSet<PlayerCharacter> getOnlinePlayersCharacters(){
-        return  this.values().stream().map(PlayerSession::getPlayerCharacter).collect(Collectors.toCollection(HashSet::new));
-    }
-
-    public HashSet<UUID> getOnlinePlayersUuids(){
-        return this.values().stream().map(playerSession -> playerSession.getPlayerCharacter().getUuid()).collect(Collectors.toCollection(HashSet::new));
-    }
-
-    public void disconnectAllPlayers(DisconnectReason reason){
-        for (Entry<ChannelHandlerContext, PlayerSession> entry : this.entrySet()){
-            ChannelHandlerContext key = entry.getKey();
-            PlayerSession playerSession = entry.getValue();
-            playerSession.disconnectReason(reason);
-            this.remove(key);
-        }
-    }
 
     /**
      * Recommended: For connections use with StarNub.
@@ -341,42 +320,43 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     public PlayerSession getOnlinePlayerByAnyIdentifier(Object playerIdentifier) {
         if (playerIdentifier instanceof PlayerSession) {
             return (PlayerSession) playerIdentifier;
-        } else if (playerIdentifier instanceof Packet){
+        }
+        if (playerIdentifier instanceof Packet){
             return playerByPacket((Packet) playerIdentifier);
-        } else if (playerIdentifier instanceof String) {
+        }
+        if (playerIdentifier instanceof String) {
             String identifierString = (String) playerIdentifier;
+            if (identifierString.length() <= 4 && NumberUtils.isNumber(identifierString)){
+                return playerByStarboundClientID(Integer.parseInt(identifierString));
+            }
             if (isStarNubId(identifierString)) {
                 return playerByStarNubClientID(Integer.parseInt(identifierString.replaceAll("[sS]", "")));
-            } else if (StringUtils.countMatches(identifierString, "-") >= 4) {
+            }
+            if (StringUtils.countMatches(identifierString, "-") == 4) {
                 return playerByUUID(UUID.fromString(identifierString));
-            } else if (StringUtils.countMatches(identifierString, ".") == 3) {
+            }
+            if (StringUtils.countMatches(identifierString, ".") == 3) {
                 try {
                     return playerByIP(InetAddress.getByName(identifierString));
                 } catch (UnknownHostException e) {
                     return null;
                 }
-            } else {
-                if (identifierString.length() < 4){
-                    try {
-                        return playerByStarboundClientID(Integer.parseInt(identifierString));
-                    } catch (Exception e) {
-                        return playerByName(identifierString);
-                    }
-                } else {
-                    return playerByName(identifierString);
-                }
             }
-        } else if (playerIdentifier instanceof UUID) {
-            return playerByUUID((UUID) playerIdentifier);
-        } else if (playerIdentifier instanceof InetAddress) {
-            return playerByIP((InetAddress) playerIdentifier);
-        } else if (playerIdentifier instanceof ChannelHandlerContext) {
-            return playerByCTX((ChannelHandlerContext) playerIdentifier);
-        } else if (playerIdentifier instanceof Integer){
-            return playerByStarboundClientID((int) playerIdentifier);
-        } else {
-            return null;
+            return playerByName(identifierString);
         }
+        if (playerIdentifier instanceof ChannelHandlerContext) {
+            return playerByCTX((ChannelHandlerContext) playerIdentifier);
+        }
+        if (playerIdentifier instanceof Integer){
+            return playerByStarboundClientID((int) playerIdentifier);
+        }
+        if (playerIdentifier instanceof UUID) {
+            return playerByUUID((UUID) playerIdentifier);
+        }
+        if (playerIdentifier instanceof InetAddress) {
+            return playerByIP((InetAddress) playerIdentifier);
+        }
+        return null;
     }
 
     private PlayerSession playerByPacket(Packet packet){
@@ -398,12 +378,7 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
             return false;
         }
         s = s.replaceAll("[sS]","");
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return NumberUtils.isNumber(s);
     }
 
     /**
@@ -517,6 +492,71 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         return null;
     }
 
+    public ChannelHandlerContext[] getOnlinePlayersCtxs(){
+        return this.keySet().stream().toArray(ChannelHandlerContext[]::new);
+    }
+
+    public ChannelHandlerContext[] getOnlinePlayersCtxsFiltered(HashSet<ChannelHandlerContext> filter){
+        return this.keySet().stream().filter(CTXPredicates.isListed(filter)).toArray(ChannelHandlerContext[]::new);
+    }
+
+    public PlayerSession[] getOnlinePlayersSessions(){
+        return this.values().stream().toArray(PlayerSession[]::new);
+    }
+
+    public PlayerSession[] getOnlinePlayersSessionsFiltered(HashSet<ChannelHandlerContext> filter){
+        return this.values().stream().filter(PSPredicates.isCtxNotListed(filter)).toArray(PlayerSession[]::new);
+    }
+
+    public PlayerCharacter[] getOnlinePlayersCharacters(){
+        return  this.values().stream().map(PlayerSession::getPlayerCharacter).toArray(PlayerCharacter[]::new);
+    }
+
+    public PlayerCharacter[] getOnlinePlayersCharactersFiltered(HashSet<ChannelHandlerContext> filter){
+        return this.values().stream().filter(PSPredicates.isCtxNotListed(filter)).toArray(PlayerCharacter[]::new);
+    }
+
+    public UUID[] getOnlinePlayersUuids(){
+        return this.values().stream().map(playerSession -> playerSession.getPlayerCharacter().getUuid()).toArray(UUID[]::new);
+    }
+
+    public UUID[] getOnlinePlayersUuidFiltered(HashSet<ChannelHandlerContext> filter){
+        return this.values().stream().filter(PSPredicates.isCtxNotListed(filter)).toArray(UUID[]::new);
+    }
+
+    public InetAddress[] getOnlinePlayersIps(){
+        return this.values().stream().map(ps -> ps.getCONNECTION().getClientIP()).toArray(InetAddress[]::new);
+    }
+
+    public InetAddress[] getOnlinePlayersIpsFiltered(HashSet<ChannelHandlerContext> filter){
+        return this.values().stream().filter(PSPredicates.isCtxNotListed(filter)).toArray(InetAddress[]::new);
+    }
+
+    public PlayerSession[] getWhoHasPermission(String permission, boolean checkWildcards){
+        return this.values().stream().filter(PSPredicates.hasPermission(permission, checkWildcards)).toArray(PlayerSession[]::new);
+    }
+
+    public PlayerSession[] getWhoHasPermission(String organization, String subPermission, String endPermission, boolean checkWildcards){
+        return this.values().stream().filter(PSPredicates.hasPermission(organization, subPermission, endPermission, checkWildcards)).toArray(PlayerSession[]::new);
+    }
+
+    public PlayerSession[] getWhoDoesNotHavePermission(String permission, boolean checkWildcards){
+        return this.values().stream().filter(PSPredicates.hasPermission(permission, checkWildcards)).toArray(PlayerSession[]::new);
+    }
+
+    public PlayerSession[] getWhoDoesNotHavePermission(String organization, String subPermission, String endPermission, boolean checkWildcards){
+        return this.values().stream().filter(PSPredicates.hasPermission(organization, subPermission, endPermission, checkWildcards)).toArray(PlayerSession[]::new);
+    }
+
+    public void disconnectAllPlayers(DisconnectReason reason){
+        for (Entry<ChannelHandlerContext, PlayerSession> entry : this.entrySet()){
+            ChannelHandlerContext key = entry.getKey();
+            PlayerSession playerSession = entry.getValue();
+            playerSession.disconnectReason(reason);
+            this.remove(key);
+        }
+    }
+
     public boolean isOnline(Object sender, Object playerIdentifier) {
         PlayerSession playerSessionSession = getOnlinePlayerByAnyIdentifier(playerIdentifier);
         return playerSessionSession != null && canSeePlayer(sender, playerSessionSession);
@@ -570,11 +610,6 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
         canSeePlayer.add(isHidden);
         canSeePlayer.add(canSeeHidden);
         return canSeePlayer;
-    }
-
-    public String nameBuild(PlayerSession playerSession){
-
-        return null;
     }
 
     /**

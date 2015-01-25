@@ -37,8 +37,6 @@ public class ResourceManager extends StarNubYamlWrapper{
      */
     private static final ResourceManager instance = new ResourceManager();
 
-    //TODO Directory Manager
-
     /**
      * This constructor is private - Singleton Pattern
      */
@@ -68,7 +66,6 @@ public class ResourceManager extends StarNubYamlWrapper{
                 "StarNub",
                 "Plugins",
                 "Commands",
-                "Commands/Commands_Information",
                 "Logs",
                 "Logs/Events_Debug",
                 "Logs/Chat",

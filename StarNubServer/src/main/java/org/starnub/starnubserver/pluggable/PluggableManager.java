@@ -486,7 +486,7 @@ public class PluggableManager {
                 }
             }
         } else {
-            similarCommand.isExactMatch();
+            similarCommand.setExactMatch();
             similarCommand.add(specificLoadedCommand);
         }
         return similarCommand;
