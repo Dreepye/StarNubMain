@@ -37,7 +37,8 @@ public class ThreadSleep {
         try {
             Thread.sleep(timer * 1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            /* Normal to throw, no message needed */
+//            e.printStackTrace();
         }
     }
 
@@ -46,11 +47,12 @@ public class ThreadSleep {
      *
      * @param timer int the number of milliseconds to sleep this thread
      */
-    public static void timerMiliseconds(int timer) {
+    public static void timerMilliseconds(int timer) {
         try {
             Thread.sleep(timer);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            /* Normal to throw, no message needed */
+//            e.printStackTrace();
         }
     }
 

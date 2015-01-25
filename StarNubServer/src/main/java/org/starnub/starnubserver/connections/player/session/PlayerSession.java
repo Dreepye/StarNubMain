@@ -423,8 +423,8 @@ public class PlayerSession {
         broadcastToClients(sender, message, Mode.BROADCAST, null);
     }
 
-    public static void sendChatBroadcastToClientsGroup(Object sender, Predicate<PlayerSession> predicate, String message){
-        broadcastToClients(sender, message, Mode.BROADCAST, predicate);
+    public static void sendChatBroadcastToClientsAllFiltered(Object sender, String message, Predicate<PlayerSession> filter){
+        broadcastToClients(sender, message, Mode.BROADCAST, filter);
     }
 
 //    public static void channelBroadcastToClientsAll(String message){}
@@ -437,8 +437,8 @@ public class PlayerSession {
         broadcastToClients(sender, message, Mode.WHISPER, null);
     }
 
-    public static void sendWhisperBroadcastToClientsGroup(Object sender, Predicate<PlayerSession> predicate, String message) {
-        broadcastToClients(sender, message, Mode.WHISPER, predicate);
+    public static void sendWhisperBroadcastToClientsAllFiltered(Object sender, String message, Predicate<PlayerSession> filter) {
+        broadcastToClients(sender, message, Mode.WHISPER, filter);
     }
 
     public static void sendCommandBroadcastToClientsAll(Object sender, String message){
@@ -446,14 +446,14 @@ public class PlayerSession {
         broadcastToClients(sender, message, Mode.COMMAND_RESULT, null);
     }
 
-    public static void sendCommandBroadcastToClientsGroup(Object sender, Predicate<PlayerSession> predicate, String message){
-        broadcastToClients(sender, message, Mode.COMMAND_RESULT, predicate);
+    public static void sendCommandBroadcastToClientsAllFiltered(Object sender, String message, Predicate<PlayerSession> filter){
+        broadcastToClients(sender, message, Mode.COMMAND_RESULT, filter);
     }
 
-    private static void broadcastToClients(Object sender, String message, Mode mode, Predicate<PlayerSession> predicate){
+    private static void broadcastToClients(Object sender, String message, Mode mode, Predicate<PlayerSession> filter){
         String senderName = NAME_BUILDER.msgUnknownNameBuilder(sender, true, false);
         ChatReceivePacket chatReceivePacket = new ChatReceivePacket(mode, "Server", 1, senderName, message);
-        sendPacketToGroupNoFlush(chatReceivePacket, predicate);
+        sendPacketToAllFilteredNoFlush(chatReceivePacket, filter);
         StarNub.getLogger().cChatPrint(sender, "MultipleUsers *TEMP*", mode, message);
     }
 
@@ -480,37 +480,34 @@ public class PlayerSession {
     }
 
     public static void sendChatBroadcastToServerAll(Object sender, String message){
-        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, null);
     }
 
-    public static void sendChatBroadcastToServerGroup(Object sender, Predicate<PlayerSession> predicate, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, predicate);
+    public static void sendChatBroadcastToServerAllFiltered(Object sender, String message, Predicate<PlayerSession> filter){
+        broadcastServerMessage(sender, message, ChatSendMode.BROADCAST, filter);
     }
 
     public static void sendLocalBroadcastToServerAll(Object sender, String message){
-        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.LOCAL, null);
     }
 
-    public static void sendLocalBroadcastToServerGroup(Object sender, Predicate<PlayerSession> predicate, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, predicate);
+    public static void sendLocalBroadcastToServerAllFiltered(Object sender, String message, Predicate<PlayerSession> filter){
+        broadcastServerMessage(sender, message, ChatSendMode.LOCAL, filter);
     }
 
     public static void sendPartyBroadcastToServerAll(Object sender, String message){
-        PlayerSession[] allPlayers = Connections.getInstance().getCONNECTED_PLAYERS().getOnlinePlayersSessions();
         broadcastServerMessage(sender, message, ChatSendMode.PARTY, null);
     }
 
-    public static void sendPartyBroadcastToServerGroup(Object sender, Predicate<PlayerSession> predicate, String message){
-        broadcastServerMessage(sender, message, ChatSendMode.PARTY, predicate);
+    public static void sendPartyBroadcastToServerAllFiltered(Object sender, String message, Predicate<PlayerSession> filter){
+        broadcastServerMessage(sender, message, ChatSendMode.PARTY, filter);
     }
 
-    private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, Predicate<PlayerSession> predicate){
+    private static void broadcastServerMessage(Object sender, String message, ChatSendMode chatSendMode, Predicate<PlayerSession> filter){
         String senderString = NAME_BUILDER.cUnknownNameBuilder(sender, true, false);
         ChatSendPacket chatSendPacket = new ChatSendPacket(chatSendMode, message);
         StarNub.getLogger().cChatPrint("Multiple Users *TEMP*", "Server (Sender: " + senderString + ")", chatSendMode, message);
-        sendPacketToGroupNoFlush(chatSendPacket, predicate);
+        sendPacketToAllFilteredNoFlush(chatSendPacket, filter);
     }
 
     public void sendPacketToPlayer(Packet packet){
@@ -574,7 +571,7 @@ public class PlayerSession {
      *
      * @param packet      Packet representing the packet to be routed
      */
-    public static void sendPacketToGroup(Packet packet) {
+    public static void sendPacketToAll(Packet packet) {
         sendPacketToGroup(packet, null, true);
     }
 
@@ -584,10 +581,10 @@ public class PlayerSession {
      * Uses: Try to use NO FLUSH as this causes extra system calls. This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
      *
      * @param packet      Packet representing the packet to be routed
-     * @param predicate   Predicate is what filter you are using to send your message
+     * @param filter   Predicate is what filter you are using to send your message
      */
-    public static void sendPacketToGroup(Packet packet, Predicate<PlayerSession> predicate) {
-        sendPacketToGroup(packet, predicate, true);
+    public static void sendPacketToAllFiltered(Packet packet, Predicate<PlayerSession> filter) {
+        sendPacketToGroup(packet, filter, true);
     }
 
     /**
@@ -597,7 +594,7 @@ public class PlayerSession {
      *
      * @param packet      Packet representing the packet to be routed
      */
-    public static void sendPacketToGroupNoFlush(Packet packet) {
+    public static void sendPacketToAllNoFlush(Packet packet) {
         sendPacketToGroup(packet, null, false);
     }
 
@@ -607,34 +604,61 @@ public class PlayerSession {
      * Uses: This will send this packet to multiple people. If they are a remote connection it may be converted into StarNub protocol for that session.
      *
      * @param packet      Packet representing the packet to be routed
-     * @param predicate   Predicate is what filter you are using to send your message
+     * @param filter   Predicate is what filter you are using to send your message
      */
-    public static void sendPacketToGroupNoFlush(Packet packet, Predicate<PlayerSession> predicate) {
-        sendPacketToGroup(packet, predicate, false);
+    public static void sendPacketToAllFilteredNoFlush(Packet packet, Predicate<PlayerSession> filter) {
+        sendPacketToGroup(packet, filter, false);
     }
 
-    private static void sendPacketToGroup(Packet packet, Predicate<PlayerSession> predicate, boolean flush){
-        ByteBuf byteBufPacket = packet.packetToMessageEncoder();
+    private static void sendPacketToGroup(Packet packet, Predicate<PlayerSession> filter, boolean flush){
         Players connectedPlayers = Connections.getInstance().getCONNECTED_PLAYERS();
-        int onlineCount = connectedPlayers.size();
-        byteBufPacket.retain(onlineCount);
-        connectedPlayers.values().stream().filter(predicate).forEach(ps -> {
-                ChannelHandlerContext ctx = ps.getCONNECTION().getCLIENT_CTX();
-                ConnectionType connectionType = ps.getCONNECTION_TYPE();
-                if (connectionType == ConnectionType.PROXY_IN_GAME) {
-                    if (flush) {
-                        ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
-                    } else {
-                        ctx.write(byteBufPacket, ctx.voidPromise());
+        int onlinePlayers = connectedPlayers.size();
+        if (onlinePlayers > 0) {
+            ByteBuf byteBufPacket = packet.packetToMessageEncoder();
+            if (onlinePlayers > 1) {
+                int refCountChange = onlinePlayers - 1;
+                byteBufPacket.retain(refCountChange);
+            }
+            int remotePlayers = 0;
+            if (filter != null) {
+                for (PlayerSession playerSession : connectedPlayers.values()) {
+                    boolean notFilter = filter.test(playerSession);
+                    if (notFilter) {
+                        if (playerSession.getCONNECTION_TYPE() == ConnectionType.PROXY_IN_GAME) {
+                            ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
+                            if (flush) {
+                                ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
+                            } else {
+                                ctx.write(byteBufPacket, ctx.voidPromise());
+                            }
+                        } else {
+                            sendRemote(playerSession, packet);
+                            remotePlayers++;
+                        }
                     }
-                } else if (connectionType == ConnectionType.REMOTE) {
-                    sendRemote(ps, packet);
                 }
-        });
-        System.out.println(byteBufPacket.release(byteBufPacket.refCnt()));
+            } else {
+                for (PlayerSession playerSession : connectedPlayers.values()) {
+                    if (playerSession.getCONNECTION_TYPE() == ConnectionType.PROXY_IN_GAME) {
+                        ChannelHandlerContext ctx = playerSession.getCONNECTION().getCLIENT_CTX();
+                        if (flush) {
+                            ctx.writeAndFlush(byteBufPacket, ctx.voidPromise());
+                        } else {
+                            ctx.write(byteBufPacket, ctx.voidPromise());
+                        }
+                    } else {
+                        sendRemote(playerSession, packet);
+                        remotePlayers++;
+                    }
+                }
+            }
+            if(remotePlayers > 0) {
+                byteBufPacket.release(remotePlayers);
+            }
+        }
     }
 
-    private static void sendRemote(PlayerSession packet, Packet ctx){
+    private static void sendRemote(PlayerSession playerSession, Packet packet){
         //REQUIRES STARNUB PROTOCOL - Needs to strip colors on REMOTE clients
     }
 

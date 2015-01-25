@@ -116,7 +116,7 @@ public abstract class StarboundStatus {
     protected boolean startUpListener(String ipAddress, int port){
         STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_Starting_Up", STARBOUND_MANAGEMENT);
         int timeout = 5000;
-        ThreadSleep.timerMiliseconds(timeout);
+        ThreadSleep.timerMilliseconds(timeout);
         return query(ipAddress, port, timeout, 48);
     }
 
@@ -153,7 +153,7 @@ public abstract class StarboundStatus {
                     e.printStackTrace();
                 }
                 STARBOUND_MANAGEMENT.printOrEvent("Starbound_Status_TCP_Query_Failed_" + reason, unresponsiveCount);
-                ThreadSleep.timerMiliseconds(timeout);
+                ThreadSleep.timerMilliseconds(timeout);
                 unresponsiveCount++;
             }
         }

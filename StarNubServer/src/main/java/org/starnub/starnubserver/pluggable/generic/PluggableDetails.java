@@ -24,6 +24,7 @@ import org.starnub.utilities.arrays.ArrayUtilities;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PluggableDetails {
 
@@ -110,6 +111,18 @@ public class PluggableDetails {
 
     public String getNameVersion(){
         return NAME + " (v" + VERSION + ")";
+    }
+
+    public String getTypeString(){
+        if(TYPE == PluggableType.PLUGIN){
+            return "Plugin";
+        } else {
+            return "Command";
+        }
+    }
+
+    public boolean hasDependancy(String name){
+        return Stream.of(DEPENDENCIES).anyMatch(d -> d.equals(name));
     }
 
     public LinkedHashMap<String, Object> getDetailsMap(){

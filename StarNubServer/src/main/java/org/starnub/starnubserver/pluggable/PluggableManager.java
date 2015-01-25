@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
 * Represents the PluginManager Enum singleton
@@ -184,37 +185,18 @@ public class PluggableManager {
         return tempPluggables;
     }
 
-    public HashSet<LoadSuccess> loadAllCommands() {
-        LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = commandScan(true);
-        HashSet<LoadSuccess> commandSuccess = new HashSet<>();
-        for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
-            String unloadedCommandName = entrySet.getKey().toLowerCase();
-            UnloadedPluggable unloadedPluggable = entrySet.getValue();
-            LoadSuccess loadSuccess = loadCommand(unloadedCommandName, unloadedPluggable);
-            commandSuccess.add(loadSuccess);
-        }
-        return commandSuccess;
-    }
-
-    public HashSet<LoadSuccess> loadAllPlugins(boolean enable) {
-        LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = pluginScan(true);
-        HashSet<LoadSuccess> pluginSuccess = new HashSet<>();
-        for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
-            String unloadedPluginName = entrySet.getKey();
-            UnloadedPluggable unloadedPluggable = entrySet.getValue();
-            LoadSuccess loadSuccess = loadPlugin(unloadedPluginName, unloadedPluggable, enable);
-            pluginSuccess.add(loadSuccess);
-        }
-        return pluginSuccess;
-    }
-
-    private LoadSuccess loadCommand(String unloadedPluggableName, UnloadedPluggable unloadedPluggable){
-        Command pluggable;
-        String type = "Command";
+    private LoadSuccess loadPluggable(String unloadedPluggableName, UnloadedPluggable unloadedPluggable, boolean enable) {
+        Pluggable pluggable;
+        PluggableType pluggableType = unloadedPluggable.getDetails().getTYPE();
+        String type = unloadedPluggable.getDetails().getTypeString();
         try {
-            pluggable = (Command) unloadedPluggable.instantiatePluggable(PluggableType.COMMAND);
+            if (pluggableType == PluggableType.PLUGIN) {
+                pluggable = unloadedPluggable.instantiatePluggable(PluggableType.PLUGIN);
+            } else {
+                pluggable = unloadedPluggable.instantiatePluggable(PluggableType.COMMAND);
+            }
             dependenciesLoadedCheck(unloadedPluggable);
-        } catch (ClassCastException e){ //TODO Plugin <-> Commands in the wrong DIR - Handling
+        } catch (ClassCastException e){
             return classCastFailure(type, e, unloadedPluggable);
         } catch (IOException e) {
             return pluggableIOError(type, e, unloadedPluggable);
@@ -230,75 +212,44 @@ public class PluggableManager {
             return illegalAccessError(type, e, unloadedPluggable);
         } catch (DependencyError e) {
             return dependencyError(type, e, unloadedPluggable);
-        }
-        try {
-            pluggable.register();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return pluggableRegisterError(type, unloadedPluggable);
         }
         LoadSuccess loadSuccess;
-        if (!unloadedPluggable.isUpdating() && COMMANDS.containsKey(unloadedPluggableName.toLowerCase())) {
-            return failNewerVersion(type, unloadedPluggable);
-        } else if (unloadedPluggable.isUpdating()) {
-            COMMANDS.remove(unloadedPluggableName.toLowerCase());
-            loadSuccess = pluggableUpdated(type, pluggable);
-        } else {
-            loadSuccess = pluggableLoaded(type, pluggable);
-        }
-        COMMANDS.put(unloadedPluggableName.toLowerCase(), pluggable);
-        return loadSuccess;
-    }
-
-    private LoadSuccess loadPlugin(String unloadedPluggableName, UnloadedPluggable unloadedPluggable, boolean enable) {
-        Plugin pluggable;
-        String type = "Plugin";
-        try {
-            pluggable = (Plugin) unloadedPluggable.instantiatePluggable(PluggableType.PLUGIN);
-            dependenciesLoadedCheck(unloadedPluggable);
-        } catch (ClassCastException e){ //TODO Plugin <-> Commands in the wrong DIR - Handling
-            return classCastFailure(type, e, unloadedPluggable);
-        } catch (IOException e) {
-            return pluggableIOError(type, e, unloadedPluggable);
-        } catch (ClassNotFoundException e) {
-            return classNotFoundError(type, e, unloadedPluggable);
-        } catch (DirectoryCreationFailed e) {
-            return directoryCreationError(type, e, unloadedPluggable);
-        } catch (InstantiationException e) {
-            return instantiateError(type, e, unloadedPluggable);
-        } catch (MissingData e) {
-            return missingDataError(type, e, unloadedPluggable);
-        } catch (IllegalAccessException e) {
-            return illegalAccessError(type, e, unloadedPluggable);
-        } catch (DependencyError e) {
-            return dependencyError(type, e, unloadedPluggable);
-        }
+        String lowerCaseName = unloadedPluggableName.toLowerCase();
         if (enable) {
-            try {
-                pluggable.register();
-            } catch (Exception e){
-                e.printStackTrace();
-                return pluggableRegisterError(type, unloadedPluggable);
-            }
             try {
                 pluggable.enable();
             } catch (Exception e){
                 e.printStackTrace();
-                return pluginEnableError(type, unloadedPluggable);
+                return pluggableEnableError(type, unloadedPluggable);
             }
         }
-        LoadSuccess loadSuccess;
-        if (!unloadedPluggable.isUpdating() && PLUGINS.containsKey(unloadedPluggableName.toLowerCase())) {
+        boolean containsKey;
+        if (pluggableType == PluggableType.PLUGIN){
+            containsKey = PLUGINS.containsKey(lowerCaseName);
+        } else {
+            containsKey = COMMANDS.containsKey(lowerCaseName);
+        }
+
+        if (!unloadedPluggable.isUpdating() && containsKey) {
             return failNewerVersion(type, unloadedPluggable);
         } else if (unloadedPluggable.isUpdating()) {
-            Plugin remove = PLUGINS.remove(unloadedPluggableName.toLowerCase());
+
+            Pluggable remove;
+            if (pluggableType == PluggableType.PLUGIN){
+                remove = PLUGINS.remove(lowerCaseName);
+            } else {
+                remove = COMMANDS.remove(lowerCaseName);
+            }
             remove.disable();
-            remove.unregister();
             loadSuccess = pluggableUpdated(type, pluggable);
         } else {
             loadSuccess = pluggableLoaded(type, pluggable);
         }
-        PLUGINS.put(unloadedPluggableName.toLowerCase(), pluggable);
+        if (pluggableType == PluggableType.PLUGIN){
+            PLUGINS.put(lowerCaseName, (Plugin) pluggable);
+        } else {
+             COMMANDS.put(lowerCaseName, (Command) pluggable);
+        }
         return loadSuccess;
     }
 
@@ -308,7 +259,7 @@ public class PluggableManager {
             for (String dependency : dependencies) {
                 boolean containsKey = PLUGINS.containsKey(dependency.toLowerCase());
                 if (!containsKey) {
-                    throw new DependencyError("Pluggable: \"" + unloadedPluggable.getDetails().getNAME() + "\" Missing Dependency: \"" + dependency +"\".");
+                    throw new DependencyError("Pluggable: \"" + unloadedPluggable.getDetails().getNAME() + "\" Missing Dependency: \"" + dependency +"\"");
                 }
             }
         }
@@ -347,17 +298,14 @@ public class PluggableManager {
         return failureMethod(null, type, unloadedPluggable, "_Missing_Dependancies", e.getMessage());
     }
 
-    private LoadSuccess pluggableRegisterError(String type, UnloadedPluggable unloadedPluggable){
-        return failureMethod(null, type, unloadedPluggable, "_Register_Method_Exception", "Register Method Exception");
-    }
-
-    private LoadSuccess pluginEnableError(String type, UnloadedPluggable unloadedPluggable){
+    private LoadSuccess pluggableEnableError(String type, UnloadedPluggable unloadedPluggable){
         return failureMethod(null, type, unloadedPluggable, "_Enable_Method_Exception", "Enable Method Exception");
     }
 
     private LoadSuccess failNewerVersion(String type, UnloadedPluggable unloadedPluggable){
         return failureMethod(null, type, unloadedPluggable, "_Newer_Version_Loaded", "Newer Version Already Loaded");
     }
+
     private LoadSuccess failureMethod(Exception e, String type, UnloadedPluggable unloadedPluggable,  String event, String error){
         if(e != null){
             e.printStackTrace();
@@ -393,65 +341,125 @@ public class PluggableManager {
             String name = entrySet.getKey();
             if(name.equalsIgnoreCase(pluginName)) {
                 UnloadedPluggable unloadedPluggable = entrySet.getValue();
-                return loadPlugin(name, unloadedPluggable, enable);
+                return loadPluggable(name, unloadedPluggable, enable);
             }
         }
         return null;
     }
 
-    public LoadSuccess loadSpecificCommand(String commandName, boolean updating){
+    public LoadSuccess loadSpecificCommand(String commandName, boolean enable, boolean updating){
         LinkedHashMap<String, UnloadedPluggable> commandScan = commandScan(updating);
         for (Map.Entry<String, UnloadedPluggable> entrySet : commandScan.entrySet()){
             String name = entrySet.getKey();
             if(name.equalsIgnoreCase(commandName)) {
                 UnloadedPluggable unloadedPluggable = entrySet.getValue();
-                return loadCommand(name, unloadedPluggable);
+                return loadPluggable(name, unloadedPluggable, enable);
             }
         }
         return null;
     }
 
+    public PluggableReturn<Pluggable> unloadSpecificPlugin(String pluginName){
+        Plugin plugin = getSpecificLoadedPlugin(pluginName);
+        return disableUnloadPluggable(plugin, true);
+
+    }
+
+    public PluggableReturn<Pluggable> unloadSpecificCommand(String commandName){
+        Command command = getSpecificLoadedCommand(commandName);
+        return disableUnloadPluggable(command, true);
+    }
+
+    public HashSet<LoadSuccess> loadAllCommands(boolean enable) {
+        LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = commandScan(true);
+        HashSet<LoadSuccess> commandSuccess = new HashSet<>();
+        for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
+            String unloadedCommandName = entrySet.getKey().toLowerCase();
+            UnloadedPluggable unloadedPluggable = entrySet.getValue();
+            LoadSuccess loadSuccess = loadPluggable(unloadedCommandName, unloadedPluggable, true);
+            commandSuccess.add(loadSuccess);
+        }
+        return commandSuccess;
+    }
+
+    public HashSet<LoadSuccess> loadAllPlugins(boolean enable) {
+        LinkedHashMap<String, UnloadedPluggable> unloadedPluggableHashMap = pluginScan(true);
+        HashSet<LoadSuccess> pluginSuccess = new HashSet<>();
+        for (Map.Entry<String, UnloadedPluggable> entrySet : unloadedPluggableHashMap.entrySet()) {
+            String unloadedPluginName = entrySet.getKey();
+            UnloadedPluggable unloadedPluggable = entrySet.getValue();
+            LoadSuccess loadSuccess = loadPluggable(unloadedPluginName, unloadedPluggable, enable);
+            pluginSuccess.add(loadSuccess);
+        }
+        return pluginSuccess;
+    }
+
     public void enableAllPlugins(){
-        PLUGINS.values().stream().forEach(p -> {
-            p.register();
-            p.enable();
-        });
+        PLUGINS.values().stream().forEach(Pluggable::enable);
+    }
+
+    public void enableAllCommands(){
+        COMMANDS.values().stream().forEach(Pluggable::enable);
     }
 
     public void disableAllPlugins(){
-        PLUGINS.values().stream().forEach(p -> {
-            if(p.getDetails().isUNLOADABLE()) {
-                p.unregister();
-                p.disable();
-            }
-        });
+        PLUGINS.values().forEach(p -> disableUnloadPluggable(p, false));
+    }
+
+    public void disableAllCommands(){
+        COMMANDS.values().forEach(p -> disableUnloadPluggable(p, false));
     }
 
     public void unloadAllCommands(){
-        COMMANDS.values().forEach(c ->{
-            if(c.getDetails().isUNLOADABLE()){
-                c.unregister();
-                COMMANDS.remove(c.getDetails().getNAME());
-            }
-        });
+        COMMANDS.values().forEach(p -> disableUnloadPluggable(p, true));
     }
 
     public void unloadAllPlugins(){
-        PLUGINS.values().forEach(p -> {
-            if(p.getDetails().isUNLOADABLE()){
-                p.disable();
-                p.unregister();
-                PLUGINS.remove(p.getDetails().getNAME());
+        PLUGINS.values().forEach(p -> disableUnloadPluggable(p, true));
+    }
+
+    public PluggableReturn<Pluggable> disableUnloadPluggable(Pluggable p, boolean unload){
+        PluggableReturn<Pluggable> disabledUnloadedPluggables = new PluggableReturn<>();
+        String lowerCaseName= p.getDetails().getNAME().toLowerCase();
+        if(p.getDetails().isUNLOADABLE()){
+            for (Plugin plugin : PLUGINS.values()){
+                PluggableDetails details = plugin.getDetails();
+                String pluginName = details.getNAME();
+                if(details.hasDependancy(lowerCaseName)){
+                    PluggableReturn<Pluggable> pluggables = unloadSpecificPlugin(pluginName);
+                    disabledUnloadedPluggables.addAll(pluggables.stream().collect(Collectors.toList()));
+                }
             }
-        });
+            for (Command command : COMMANDS.values()){
+                PluggableDetails details = command.getDetails();
+                String pluginName = details.getNAME();
+                if(details.hasDependancy(lowerCaseName)){
+                    PluggableReturn<Pluggable> pluggables = unloadSpecificPlugin(pluginName);
+                    disabledUnloadedPluggables.addAll(pluggables.stream().collect(Collectors.toList()));
+                }
+            }
+            if(disabledUnloadedPluggables.size() == 0){
+                disabledUnloadedPluggables.setExactMatch();
+            }
+            p.unregister();
+            p.disable();
+            if(unload) {
+                if(p.getDetails().getTYPE() == PluggableType.PLUGIN) {
+                    PLUGINS.remove(lowerCaseName);
+                } else {
+                    COMMANDS.remove(lowerCaseName);
+                }
+            }
+        }
+        return disabledUnloadedPluggables;
     }
 
     public Plugin getSpecificLoadedPlugin(String pluginName){
-        return PLUGINS.get(pluginName);
+        return PLUGINS.get(pluginName.toLowerCase());
     }
 
     public Command getSpecificLoadedCommand(String pluginName){
-        return COMMANDS.get(pluginName);
+        return COMMANDS.get(pluginName.toLowerCase());
     }
 
     public PluggableReturn<Plugin> getSpecificLoadedPluginOrNearMatchs(String pluginName){

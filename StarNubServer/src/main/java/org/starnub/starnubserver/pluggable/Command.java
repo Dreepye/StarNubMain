@@ -95,7 +95,8 @@ public abstract class Command extends Pluggable {
         return linkedHashMapFinal;
     }
 
-    public abstract void onRegister();
+    public abstract void onEnable();
+    public abstract void onDisable();
     public abstract void onCommand(PlayerSession playerSession, String command, int argsCount, String[] args);
 
     @Override

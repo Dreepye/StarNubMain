@@ -19,10 +19,9 @@
 package org.starnub.utilities.cache.wrappers;
 
 
-
+import org.starnub.utilities.cache.objects.TimeCache;
 import org.starnub.utilities.concurrent.task.ScheduledTask;
 import org.starnub.utilities.concurrent.task.TaskManager;
-import org.starnub.utilities.cache.objects.TimeCache;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -283,7 +282,7 @@ public abstract class CacheWrapper<E1> {
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
                 TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
                 String taskName = String.format("%s - %s - StarNub Cache Wrapper - Prune Task", CACHE_OWNER, CACHE_NAME);
-                new ScheduledTask(taskManager, "Utilities", taskName, true, 5, 5, TimeUnit.MINUTES, runnable);
+                new ScheduledTask(taskManager, getCACHE_OWNER(), taskName, true, 5, 5, TimeUnit.MINUTES, runnable);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }
@@ -310,7 +309,7 @@ public abstract class CacheWrapper<E1> {
             if (SCHEDULED_THREAD_POOL_EXECUTOR instanceof TaskManager) {
                 TaskManager taskManager = (TaskManager) SCHEDULED_THREAD_POOL_EXECUTOR;
                 String taskName = String.format("%s - %s - StarNub Cache Wrapper - Purge Task", CACHE_OWNER, CACHE_NAME);
-                new ScheduledTask(taskManager, "Utilities", taskName, true, 5, 5, TimeUnit.MINUTES, runnable);
+                new ScheduledTask(taskManager, getCACHE_OWNER(), taskName, true, 5, 5, TimeUnit.MINUTES, runnable);
             } else {
                 SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(runnable, CACHE_PRUNE_TASK_TIME, CACHE_PRUNE_TASK_TIME, TIME_UNIT);
             }

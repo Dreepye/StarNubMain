@@ -50,6 +50,7 @@ public abstract class Pluggable {
     private File file;
     private PluggableDetails details;
     private PluggableConfiguration configuration;
+    private boolean enabled;
 
     private final Object S_E_S_LOCK = new Object();
     private final Object P_E_S_LOCK = new Object();
@@ -98,9 +99,13 @@ public abstract class Pluggable {
         return configuration;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public String getRegistrationName(){
         String nameString = details.getNAME();
-        String ownerString = details.getORGANIZATION();
+        String organization = details.getORGANIZATION();
         String classString = details.getCLASS();
         if(fileType == PluggableFileType.JAVA && classString.contains(".")){
             int lastIndexOf = classString.lastIndexOf(".");
@@ -112,7 +117,7 @@ public abstract class Pluggable {
         } else if (details.getTYPE() == PluggableType.COMMAND){
             typeString = "Command";
         }
-        return ownerString + " - " + nameString + " - " + classString + " - " + typeString;
+        return organization + " - " + nameString + " - " + classString + " - " + typeString;
     }
 
     public StarNubEventSubscription newStarNubEventSubscription(Priority priority, String eventKey, StarNubEventHandler starNubEventHandler){
@@ -153,6 +158,47 @@ public abstract class Pluggable {
         return stringToken;
     }
 
+    private void cleanStarNubTask(){
+        synchronized (S_TA_LOCK){
+            STARNUB_TASK.stream().filter(starNubTask -> starNubTask.getScheduledFuture().isDone()).forEach(STARNUB_TASK::remove);
+        }
+    }
+
+    public String validateColor(String string){
+        return Colors.validate(string);
+    }
+
+    public String replaceColors(String string){
+        return Colors.shortcutReplacement(string);
+    }
+
+    public String replaceTokens(String string){
+        return StringTokens.replaceTokens(string);
+    }
+
+    public String replaceColorAndTokens(String string){
+        string = Colors.shortcutReplacement(string);
+        return StringTokens.replaceTokens(string);
+    }
+    public void enable(){
+        onEnable();
+        String type = details.getTypeString();
+        new StarNubEvent(type + "_Enabled", this);
+        StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " enabled.");
+        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were registered if available.");
+        this.enabled = true;
+    }
+
+    public void disable(){
+        unregister();
+        onDisable();
+        String type = details.getTypeString();
+        new StarNubEvent(type + "_Enabled", this);
+        StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " disabled.");
+        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were unregistered if available.");
+        this.enabled = false;
+    }
+
     public void unregister(){
         unregisterTask();
         unregisterStarNubEventSubscriptions();
@@ -188,38 +234,10 @@ public abstract class Pluggable {
         }
     }
 
-    private void cleanStarNubTask(){
-        synchronized (S_TA_LOCK){
-            STARNUB_TASK.stream().filter(starNubTask -> starNubTask.getScheduledFuture().isDone()).forEach(STARNUB_TASK::remove);
-        }
-    }
-
-    public String validateColor(String string){
-        return Colors.validate(string);
-    }
-
-    public String replaceColors(String string){
-        return Colors.shortcutReplacement(string);
-    }
-
-    public String replaceTokens(String string){
-        return StringTokens.replaceTokens(string);
-    }
-
-    public String replaceColorAndTokens(String string){
-        string = Colors.shortcutReplacement(string);
-        return StringTokens.replaceTokens(string);
-    }
-
-    public void register(){
-        onRegister();
-        new StarNubEvent("Pluggable_Registerables_Complete", this);
-        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were registered if available.");
-    }
-
     public abstract void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;
-    public abstract void onRegister();
-    public abstract LinkedHashMap<String, Object> getDetailsMap() throws IOException;//FIX PARSER?
+    public abstract void onEnable();
+    public abstract void onDisable();
+    public abstract LinkedHashMap<String, Object> getDetailsMap() throws IOException;
 
     @SuppressWarnings("unchecked")
     private void dumpPluggableDetails() throws IOException {

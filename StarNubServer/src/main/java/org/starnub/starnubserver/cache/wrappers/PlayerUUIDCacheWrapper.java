@@ -20,10 +20,8 @@ package org.starnub.starnubserver.cache.wrappers;
 
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.events.events.DisconnectData;
-import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
 import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
 import org.starnub.utilities.events.Priority;
-import org.starnub.utilities.events.types.ObjectEvent;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -101,13 +99,10 @@ public class PlayerUUIDCacheWrapper extends StarNubCacheWrapper<UUID> {
     }
 
     private void playerDisconnectListener(){
-        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Disconnected", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
-                PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
-                getCACHE_MAP().remove(playerSession.getPlayerCharacter().getUuid());
-            }
+        new StarNubEventSubscription(getCACHE_OWNER(), Priority.MEDIUM, "Player_Disconnected", eventData -> {
+            DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
+            PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
+            getCACHE_MAP().remove(playerSession.getPlayerCharacter().getUuid());
         });
     }
 }

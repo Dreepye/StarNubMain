@@ -19,7 +19,6 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.starnub.starnubserver.StarNub;
-import org.starnub.starnubserver.events.events.StarNubEvent;
 import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginYamlWrapper;
 import org.starnub.starnubserver.pluggable.resources.YamlFiles;
@@ -37,7 +36,6 @@ public abstract class Plugin extends Pluggable {
 
     protected YamlFiles files;
     protected String[] additionalPermissions;
-    private boolean enabled;
 
     public Plugin() {
     }
@@ -48,24 +46,6 @@ public abstract class Plugin extends Pluggable {
 
     public String[] getAdditionalPermissions() {
         return additionalPermissions;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void enable(){
-        onEnable();
-        new StarNubEvent("Plugin_Enabled", this);
-        StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " enabled.");
-        this.enabled = true;
-    }
-
-    public void disable(){
-        onDisable();
-        new StarNubEvent("Plugin_Disabled", this);
-        StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " disabled.");
-        this.enabled = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -127,6 +107,9 @@ public abstract class Plugin extends Pluggable {
         }
     }
 
+    public abstract void onEnable();
+    public abstract void onDisable();
+
     @Override
     public LinkedHashMap<String, Object> getDetailsMap() throws IOException {
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
@@ -134,15 +117,10 @@ public abstract class Plugin extends Pluggable {
         return linkedHashMap;
     }
 
-    public abstract void onEnable();
-    public abstract void onDisable();
-    public abstract void onRegister();
-
     @Override
     public String toString() {
         return "Plugin{" +
                 ", additionalPermissions=" + Arrays.toString(additionalPermissions) +
-                ", enabled=" + enabled +
                 "} " + super.toString();
     }
 }

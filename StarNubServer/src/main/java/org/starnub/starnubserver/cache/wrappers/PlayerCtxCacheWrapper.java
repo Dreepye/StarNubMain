@@ -19,12 +19,10 @@
 package org.starnub.starnubserver.cache.wrappers;
 
         import io.netty.channel.ChannelHandlerContext;
-        import org.starnub.starnubserver.connections.player.session.PlayerSession;
-        import org.starnub.starnubserver.events.events.DisconnectData;
-        import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
-        import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
-        import org.starnub.utilities.events.Priority;
-import org.starnub.utilities.events.types.ObjectEvent;
+import org.starnub.starnubserver.connections.player.session.PlayerSession;
+import org.starnub.starnubserver.events.events.DisconnectData;
+import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
+import org.starnub.utilities.events.Priority;
 
 import java.util.concurrent.TimeUnit;
 
@@ -97,13 +95,10 @@ public class PlayerCtxCacheWrapper extends StarNubCacheWrapper<ChannelHandlerCon
      */
     @Override
     public void registerEvents() {
-        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Disconnected", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
-                PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
-                removeCacheEvent(playerSession);
-            }
+        new StarNubEventSubscription(getCACHE_OWNER(), Priority.MEDIUM, "Player_Disconnected", eventData -> {
+            DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
+            PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
+            removeCacheEvent(playerSession);
         });
     }
 

@@ -19,12 +19,35 @@
 package org.starnub.starnubserver.resources.predicates;
 
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
+import org.starnub.utilities.connectivity.ConnectionType;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class PSPredicates {
+
+    public static Predicate<PlayerSession> multiFilter(Predicate<PlayerSession>... predicates) {
+        return Stream.of(predicates).reduce(Predicate::and).orElse(x -> false);
+    }
+
+    public static Predicate<PlayerSession> filterOutSpecificPlayer(PlayerSession playerSessions) {
+        return ps -> ps.getCONNECTION().getCLIENT_CTX() != playerSessions.getCONNECTION().getCLIENT_CTX();
+    }
+
+    public static Predicate<PlayerSession> filterOutAllPlayersBut(PlayerSession playerSessions) {
+        return ps -> ps.getCONNECTION().getCLIENT_CTX() == playerSessions.getCONNECTION().getCLIENT_CTX();
+    }
+
+
+    public static Predicate<PlayerSession> inGamePlayers() {
+        return ps -> ps.getCONNECTION_TYPE() == ConnectionType.PROXY_IN_GAME;
+    }
+
+    public static Predicate<PlayerSession> remotePlayers() {
+        return ps -> ps.getCONNECTION_TYPE() == ConnectionType.REMOTE;
+    }
 
     public static Predicate<PlayerSession> hasPermissionBase(String basePermission) {
         return ps -> ps.hasBasePermission(basePermission);
@@ -42,19 +65,19 @@ public class PSPredicates {
         return ps -> ps.hasPermission(basePermission, subPermission, fullPermission, checkWildCards);
     }
 
-    public static Predicate<PlayerSession> DoesNotHavePermissionBase(String basePermission) {
+    public static Predicate<PlayerSession> doesNotHavePermissionBase(String basePermission) {
         return ps -> !ps.hasBasePermission(basePermission);
     }
 
-    public static Predicate<PlayerSession> DoesNotHavePermissionSub(String basePermission, String subPermission, boolean checkWildCards) {
+    public static Predicate<PlayerSession> doesNotHavePermissionSub(String basePermission, String subPermission, boolean checkWildCards) {
         return ps -> !ps.hasSubPermission(basePermission, subPermission, checkWildCards);
     }
 
-    public static Predicate<PlayerSession> DoesNotHavePermission(String permission, boolean checkWildCards) {
+    public static Predicate<PlayerSession> doesNotHavePermission(String permission, boolean checkWildCards) {
         return ps -> !ps.hasPermission(permission, checkWildCards);
     }
 
-    public static Predicate<PlayerSession> DoesNotHavePermission(String basePermission, String subPermission, String fullPermission, boolean checkWildCards) {
+    public static Predicate<PlayerSession> doesNotHavePermission(String basePermission, String subPermission, String fullPermission, boolean checkWildCards) {
         return ps -> !ps.hasPermission(basePermission, subPermission, fullPermission, checkWildCards);
     }
 

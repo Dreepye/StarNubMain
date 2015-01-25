@@ -94,7 +94,7 @@ public class PlayerAutoCancelTask extends PlayerCtxCacheWrapper {
      */
     @Override
     public void registerEvents() {
-        new StarNubEventSubscription("StarNub", Priority.HIGH, "Player_Disconnected", eventData -> {
+        new StarNubEventSubscription(getCACHE_OWNER(), Priority.HIGH, "Player_Disconnected", eventData -> {
             DisconnectData disconnectData = (DisconnectData) eventData.getEVENT_DATA();
             PlayerSession playerSession = disconnectData.getPLAYER_SESSION();
             ChannelHandlerContext channelHandlerContext = playerSession.getCONNECTION().getCLIENT_CTX();

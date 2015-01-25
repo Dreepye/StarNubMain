@@ -24,12 +24,10 @@ import org.starnub.starnubserver.StarNubTask;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.events.events.PermissionChange;
 import org.starnub.starnubserver.events.events.PermissionEvent;
-import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
 import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
 import org.starnub.starnubserver.resources.connections.Players;
 import org.starnub.utilities.cache.objects.BooleanCache;
 import org.starnub.utilities.events.Priority;
-import org.starnub.utilities.events.types.ObjectEvent;
 
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
@@ -69,27 +67,21 @@ public class PermissionCacheWrapper extends PlayerCtxCacheWrapper {
     }
 
     public void playerConnectListener(){
-        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Connected", new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
-                addPermissionCache(playerSession);
-            }
+        new StarNubEventSubscription("StarNub", Priority.MEDIUM, "Player_Connected", eventData -> {
+            PlayerSession playerSession = (PlayerSession) eventData.getEVENT_DATA();
+            addPermissionCache(playerSession);
         });
     }
 
     private void permissionModificationListener(){
-        new StarNubEventSubscription("StarNub", Priority.HIGH, "Permission_Modification_" + PERMISSION, new StarNubEventHandler() {
-            @Override
-            public void onEvent(ObjectEvent eventData) {
-                PermissionEvent permissionEvent = (PermissionEvent) eventData;
-                PermissionChange permissionChange = (PermissionChange) permissionEvent.getEVENT_DATA();
-                PlayerSession playerSession = permissionChange.getPLAYER_SESSION();
-                ChannelHandlerContext clientCtx = playerSession.getCONNECTION().getCLIENT_CTX();
-                boolean hasPermission = playerSession.hasPermission(PERMISSION, true);
-                BooleanCache booleanCache = (BooleanCache) getCache(clientCtx);
-                booleanCache.setBool(hasPermission);
-            }
+        new StarNubEventSubscription("StarNub", Priority.HIGH, "Permission_Modification_" + PERMISSION, eventData -> {
+            PermissionEvent permissionEvent = (PermissionEvent) eventData;
+            PermissionChange permissionChange = (PermissionChange) permissionEvent.getEVENT_DATA();
+            PlayerSession playerSession = permissionChange.getPLAYER_SESSION();
+            ChannelHandlerContext clientCtx = playerSession.getCONNECTION().getCLIENT_CTX();
+            boolean hasPermission = playerSession.hasPermission(PERMISSION, true);
+            BooleanCache booleanCache = (BooleanCache) getCache(clientCtx);
+            booleanCache.setBool(hasPermission);
         });
     }
 

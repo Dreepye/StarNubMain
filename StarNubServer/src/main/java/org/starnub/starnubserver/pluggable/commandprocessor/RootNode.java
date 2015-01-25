@@ -37,7 +37,7 @@ public class RootNode {
      *
      * @param BASE_NODE SubNod representing the next Node to handle this command
      */
-    public RootNode(SubNode BASE_NODE) {
+    public RootNode(EndNode BASE_NODE) {
         this.BASE_NODE = BASE_NODE;
     }
 
