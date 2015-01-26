@@ -81,10 +81,6 @@
                                     <shadedPattern>io.netty</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.apache.tomcat</pattern>
-                                    <shadedPattern>org.apache.tomcat</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>joda-time</pattern>
                                     <shadedPattern>joda-time</shadedPattern>
                                 </relocation>

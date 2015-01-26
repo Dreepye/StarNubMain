@@ -185,7 +185,7 @@ public abstract class Pluggable {
         String type = details.getTypeString();
         new StarNubEvent(type + "_Enabled", this);
         StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " enabled.");
-        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were registered if available.");
+
         this.enabled = true;
     }
 
@@ -193,9 +193,8 @@ public abstract class Pluggable {
         unregister();
         onDisable();
         String type = details.getTypeString();
-        new StarNubEvent(type + "_Enabled", this);
+        new StarNubEvent(type + "_Disabled", this);
         StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " disabled.");
-        StarNub.getLogger().cInfoPrint("StarNub", details.getNameVersion() + " StarNub Events, Packet Events, Task and String Tokens were unregistered if available.");
         this.enabled = false;
     }
 

@@ -65,8 +65,9 @@ public class UnloadedPluggable {
         PluggableConfiguration localConfig = null;
         if (fileType == PluggableFileType.JAVA){
             URL pluginUrl = file.toURI().toURL();
-            URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
-            Class<?> clazz = classLoader.loadClass(classString);
+            PluggableClassLoader pluggableClassLoader = PluggableManager.getInstance().getPLUGGABLE_CLASS_LOADER();
+            pluggableClassLoader.addURL(pluginUrl);
+            Class<?> clazz = pluggableClassLoader.loadClass(classString);
             if (type == PluggableType.PLUGIN){
                 Class<? extends Pluggable> pluggableClass = clazz.asSubclass(Plugin.class);
                 newClass = pluggableClass.newInstance();
@@ -74,7 +75,7 @@ public class UnloadedPluggable {
                 Class<? extends Pluggable> pluggableClass = clazz.asSubclass(Command.class);
                 newClass = pluggableClass.newInstance();
             }
-            try (InputStream defaultPluginConfiguration = classLoader.getResourceAsStream("default_configuration.yml")) {
+            try (InputStream defaultPluginConfiguration = pluggableClassLoader.getSpecificResourceAsStream(pluginUrl.toString(), "default_configuration.yml")) {
                 if (defaultPluginConfiguration != null) {
                     localConfig = new PluggableConfiguration(baseDir, details.getNAME(), defaultPluginConfiguration);
                 }

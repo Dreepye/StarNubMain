@@ -65,6 +65,7 @@ public class PluggableManager {
     private final String COMMAND_DIRECTORY_STRING = "StarNub/Commands/";
     private final ConcurrentHashMap<String, Plugin> PLUGINS = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Command> COMMANDS = new ConcurrentHashMap<>();
+    private final PluggableClassLoader PLUGGABLE_CLASS_LOADER = new PluggableClassLoader();
 
     public String getPLUGIN_DIRECTORY_STRING() {
         return PLUGIN_DIRECTORY_STRING;
@@ -80,6 +81,10 @@ public class PluggableManager {
 
     public ConcurrentHashMap<String, Command> getCOMMANDS() {
         return COMMANDS;
+    }
+
+    public PluggableClassLoader getPLUGGABLE_CLASS_LOADER() {
+        return PLUGGABLE_CLASS_LOADER;
     }
 
     @SuppressWarnings("unchecked")
