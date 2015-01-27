@@ -16,11 +16,11 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.pluggable.generic;
+package org.starnub.utilities.collections.list;
 
 import java.util.ArrayList;
 
-public class PluggableReturn<E> extends ArrayList<E> {
+public class ReturnableList<E> extends ArrayList<E> {
 
     private boolean exactMatch;
 

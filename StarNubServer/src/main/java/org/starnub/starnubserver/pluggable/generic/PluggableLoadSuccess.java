@@ -22,20 +22,20 @@ import org.starnub.starnubserver.pluggable.Pluggable;
 import org.starnub.starnubserver.pluggable.Plugin;
 import org.starnub.starnubserver.pluggable.UnloadedPluggable;
 
-public class LoadSuccess {
+public class PluggableLoadSuccess {
 
     private UnloadedPluggable UNLOADED_PLUGGABLE;
     private Pluggable PLUGGABLE;
     private final boolean SUCCESS;
     private final String REASON;
 
-    public LoadSuccess(UnloadedPluggable UNLOADED_PLUGGABLE, boolean SUCCESS, String REASON) {
+    public PluggableLoadSuccess(UnloadedPluggable UNLOADED_PLUGGABLE, boolean SUCCESS, String REASON) {
         this.UNLOADED_PLUGGABLE = UNLOADED_PLUGGABLE;
         this.SUCCESS = SUCCESS;
         this.REASON = REASON;
     }
 
-    public LoadSuccess(Pluggable PLUGGABLE, boolean SUCCESS, String REASON) {
+    public PluggableLoadSuccess(Pluggable PLUGGABLE, boolean SUCCESS, String REASON) {
         this.PLUGGABLE = PLUGGABLE;
         this.SUCCESS = SUCCESS;
         this.REASON = REASON;

@@ -19,12 +19,13 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.starnub.starnubserver.StarNub;
-import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
 import org.starnub.starnubserver.pluggable.resources.PluginYamlWrapper;
 import org.starnub.starnubserver.pluggable.resources.YamlFiles;
 import org.starnub.utilities.arrays.ArrayUtilities;
 import org.starnub.utilities.dircectories.DirectoryCheckCreate;
+import org.starnub.utilities.exceptions.DirectoryCreationFailed;
 import org.starnub.utilities.file.utility.JarFromDisk;
+import org.starnub.utilities.file.utility.ProgramLanguage;
 import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public abstract class Plugin extends Pluggable {
     public void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed {
         List<String> additionalPermissionList = (List<String>) pluggableInfo.getValue("additional_permissions");
         additionalPermissions = ArrayUtilities.arrayBuilder(additionalPermissionList);
-        if(getFileType() == PluggableFileType.JAVA){
+        if(getProgramLanguage() == ProgramLanguage.JAVA){
             String pluginDir = PluggableManager.getInstance().getPLUGIN_DIRECTORY_STRING();
             String absolutePath = getFile().getAbsolutePath();
             JarFromDisk jarFromDisk = new JarFromDisk(absolutePath);

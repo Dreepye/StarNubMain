@@ -16,13 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.pluggable.exceptions;
+package org.starnub.utilities.exceptions;
 
-public class MissingData extends Exception {
+public class DependencyError extends Exception {
 
-    public MissingData() {}
+    public DependencyError() {}
 
-    public MissingData(String message){
+    public DependencyError(String message){
         super(message);
     }
 }

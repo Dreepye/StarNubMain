@@ -1,6 +1,4 @@
-package org.starnub.starnubserver.pluggable;
-
-import org.starnub.starnubserver.StarNub;
+package org.starnub.utilities.classloaders;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,10 +6,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
 
-public class PluggableClassLoader extends URLClassLoader{
+public class CustomURLClassLoader<T> extends URLClassLoader{
 
-    public PluggableClassLoader() {
-        super(new URL[]{}, StarNub.class.getClassLoader());
+    public CustomURLClassLoader(Class<T> starNubClass) {
+        super(new URL[]{}, starNubClass.getClassLoader());
     }
 
     public void addNewUrl(URL url){

@@ -38,11 +38,11 @@ public class StarboundServerExe extends OperatingSystem {
         } else {
             switch (super.BIT_VERSION.getBIT_VERSION()) {
                 case 32: {
-                    filePath = "starbound_server";
+                    filePath = "./linux32/starbound_server";
                     break;
                 }
                 case 64: {
-                    filePath = "starbound_server";
+                    filePath = "./linux64/starbound_server";
                     break;
                 }
             }

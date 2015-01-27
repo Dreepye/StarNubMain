@@ -19,37 +19,36 @@
 package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
 import org.starnub.utilities.concurrent.thread.ThreadSleep;
 
 import java.io.File;
 
-public class PluggablePythonInterpreter {
+public class PythonInterpreter {
 
     /**
      * Represents the only instance of this class - Singleton Pattern
      */
-    private static final PluggablePythonInterpreter instance = new PluggablePythonInterpreter();
+    private static final PythonInterpreter instance = new PythonInterpreter();
 
-    private static PythonInterpreter interpreter;
+    private static org.python.util.PythonInterpreter interpreter;
     private static String currentFile = "";
     private static boolean inUse;
 
     /**
      * This constructor is private - Singleton Pattern
      */
-    private PluggablePythonInterpreter() {
-        interpreter = new PythonInterpreter();
+    private PythonInterpreter() {
+        interpreter = new org.python.util.PythonInterpreter();
     }
 
     /**
      * This returns this Singleton - Singleton Pattern
      */
-    public static PluggablePythonInterpreter getInstance() {
+    public static PythonInterpreter getInstance() {
         return instance;
     }
 
-    public PythonInterpreter getInterpreter() {
+    public org.python.util.PythonInterpreter getInterpreter() {
         return interpreter;
     }
 
@@ -62,17 +61,17 @@ public class PluggablePythonInterpreter {
     }
 
     public void setInUse() {
-        PluggablePythonInterpreter.inUse = true;
+        PythonInterpreter.inUse = true;
     }
 
     public void setNotInUse() {
-        PluggablePythonInterpreter.inUse = false;
+        PythonInterpreter.inUse = false;
     }
 
     public void loadPythonScript(String file){
         if (!currentFile.equals(file)) {
             /* Temporary fix for now - Original Interpreter holds old values*/
-            interpreter = new PythonInterpreter();
+            interpreter = new org.python.util.PythonInterpreter();
             while (isInUse()) {
                 ThreadSleep.timerSeconds(1);
             }

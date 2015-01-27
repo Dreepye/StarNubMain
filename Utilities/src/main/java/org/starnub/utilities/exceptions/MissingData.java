@@ -16,9 +16,13 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.starnubserver.pluggable;
+package org.starnub.utilities.exceptions;
 
-public enum PluggableFileType {
-    JAVA,
-    PYTHON
+public class MissingData extends Exception {
+
+    public MissingData() {}
+
+    public MissingData(String message){
+        super(message);
+    }
 }

@@ -27,14 +27,16 @@ import org.starnub.starnubserver.events.packet.PacketEventHandler;
 import org.starnub.starnubserver.events.packet.PacketEventSubscription;
 import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
 import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
-import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
-import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.starnubserver.pluggable.resources.PluggableConfiguration;
 import org.starnub.starnubserver.resources.StringTokens;
 import org.starnub.starnubserver.resources.tokens.StringToken;
 import org.starnub.starnubserver.resources.tokens.TokenHandler;
 import org.starnub.utilities.events.Priority;
+import org.starnub.utilities.exceptions.DependencyError;
+import org.starnub.utilities.exceptions.DirectoryCreationFailed;
+import org.starnub.utilities.exceptions.MissingData;
+import org.starnub.utilities.file.utility.ProgramLanguage;
 import org.starnub.utilities.file.yaml.YamlUtilities;
 import org.starnub.utilities.file.yaml.YamlWrapper;
 
@@ -46,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Pluggable {
 
-    private PluggableFileType fileType;
+    private ProgramLanguage programLanguage;
     private File file;
     private PluggableDetails details;
     private PluggableConfiguration configuration;
@@ -66,7 +68,7 @@ public abstract class Pluggable {
 
     public void setPluggable(UnloadedPluggable unloadedPluggable) throws DirectoryCreationFailed, MissingData, IOException {
         file = unloadedPluggable.getFile();
-        fileType = unloadedPluggable.getFileType();
+        programLanguage = unloadedPluggable.getProgramLanguage();
         details = unloadedPluggable.getDetails();
         configuration = unloadedPluggable.getConfiguration();
         YamlWrapper yamlWrapper = unloadedPluggable.getYamlWrapper();
@@ -83,8 +85,8 @@ public abstract class Pluggable {
         }
     }
 
-    public PluggableFileType getFileType() {
-        return fileType;
+    public ProgramLanguage getProgramLanguage() {
+        return programLanguage;
     }
 
     public File getFile() {
@@ -107,7 +109,7 @@ public abstract class Pluggable {
         String nameString = details.getNAME();
         String organization = details.getORGANIZATION();
         String classString = details.getCLASS();
-        if(fileType == PluggableFileType.JAVA && classString.contains(".")){
+        if(programLanguage == ProgramLanguage.JAVA && classString.contains(".")){
             int lastIndexOf = classString.lastIndexOf(".");
             classString = classString.substring(lastIndexOf + 1);
         }
@@ -180,13 +182,28 @@ public abstract class Pluggable {
         string = Colors.shortcutReplacement(string);
         return StringTokens.replaceTokens(string);
     }
-    public void enable(){// DEPENDANCY CHECK
+    public void enable() throws DependencyError {
+        dependenciesLoadedCheck(this);
         onEnable();
         String type = details.getTypeString();
         new StarNubEvent(type + "_Enabled", this);
         StarNub.getLogger().cInfoPrint("StarNub", getDetails().getNameVersion() + " enabled.");
-
         this.enabled = true;
+    }
+
+
+    private static boolean dependenciesLoadedCheck(Pluggable pluggable) throws DependencyError {
+        String[] dependencies = pluggable.getDetails().getDEPENDENCIES();
+        if (dependencies != null) {
+            for (String dependency : dependencies) {
+                String dependencyLowerCase = dependency.toLowerCase();
+                boolean containsKey = PluggableManager.getInstance().getPLUGINS().containsKey(dependencyLowerCase) || PluggableManager.getInstance().getCOMMANDS().containsKey(dependencyLowerCase);
+                if (!containsKey) {
+                    throw new DependencyError("Pluggable: \"" + pluggable.getDetails().getNAME() + "\" Missing Dependency: \"" + dependency +"\"");
+                }
+            }
+        }
+        return true;
     }
 
     public void disable(){
@@ -252,9 +269,9 @@ public abstract class Pluggable {
             typeString = "Command";
             informationPath = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING() + getDetails().getNAME() + "/";
         }
-        if(fileType == PluggableFileType.JAVA){
+        if(programLanguage == ProgramLanguage.JAVA){
             fileTypeString = "Java";
-        } else if (fileType == PluggableFileType.PYTHON){
+        } else if (programLanguage == ProgramLanguage.PYTHON){
             fileTypeString = "Python";
         }
         pluginDetailDump.put("Type", typeString);
@@ -270,7 +287,7 @@ public abstract class Pluggable {
     public String toString() {
         return "Pluggable{" +
                 "details=" + details +
-                ", type=" + fileType +
+                ", type=" + programLanguage +
                 "} " + super.toString();
     }
 }

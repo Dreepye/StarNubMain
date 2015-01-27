@@ -20,12 +20,14 @@ package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
 import org.starnub.starnubserver.StarNub;
-import org.starnub.starnubserver.pluggable.exceptions.DirectoryCreationFailed;
-import org.starnub.starnubserver.pluggable.exceptions.MissingData;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.starnubserver.pluggable.resources.PluggableConfiguration;
+import org.starnub.utilities.classloaders.CustomURLClassLoader;
+import org.starnub.utilities.exceptions.DirectoryCreationFailed;
+import org.starnub.utilities.exceptions.MissingData;
 import org.starnub.utilities.file.utility.FileSizeMeasure;
 import org.starnub.utilities.file.utility.GetFileSize;
+import org.starnub.utilities.file.utility.ProgramLanguage;
 import org.starnub.utilities.file.yaml.YamlWrapper;
 
 import java.io.File;
@@ -41,7 +43,7 @@ import java.util.concurrent.ConcurrentMap;
 public class UnloadedPluggable {
 
     private File file;
-    private PluggableFileType fileType;
+    private ProgramLanguage programLanguage;
     private PluggableDetails details;
     private PluggableConfiguration configuration;
 
@@ -63,11 +65,11 @@ public class UnloadedPluggable {
             baseDir = PluggableManager.getInstance().getCOMMAND_DIRECTORY_STRING();
         }
         PluggableConfiguration localConfig = null;
-        if (fileType == PluggableFileType.JAVA){
+        if (programLanguage == ProgramLanguage.JAVA){
             URL pluginUrl = file.toURI().toURL();
-            PluggableClassLoader pluggableClassLoader = PluggableManager.getInstance().getPLUGGABLE_CLASS_LOADER();
-            pluggableClassLoader.addURL(pluginUrl);
-            Class<?> clazz = pluggableClassLoader.loadClass(classString);
+            CustomURLClassLoader customURLClassLoader = PluggableManager.getInstance().getPLUGGABLE_CLASS_LOADER();
+            customURLClassLoader.addNewUrl(pluginUrl);
+            Class<?> clazz = customURLClassLoader.loadClass(classString);
             if (type == PluggableType.PLUGIN){
                 Class<? extends Pluggable> pluggableClass = clazz.asSubclass(Plugin.class);
                 newClass = pluggableClass.newInstance();
@@ -75,22 +77,22 @@ public class UnloadedPluggable {
                 Class<? extends Pluggable> pluggableClass = clazz.asSubclass(Command.class);
                 newClass = pluggableClass.newInstance();
             }
-            try (InputStream defaultPluginConfiguration = pluggableClassLoader.getSpecificResourceAsStream(pluginUrl.toString(), "default_configuration.yml")) {
+            try (InputStream defaultPluginConfiguration = customURLClassLoader.getSpecificResourceAsStream(pluginUrl.toString(), "default_configuration.yml")) {
                 if (defaultPluginConfiguration != null) {
                     localConfig = new PluggableConfiguration(baseDir, details.getNAME(), defaultPluginConfiguration);
                 }
             }
-        } else if (fileType == PluggableFileType.PYTHON){
-            PluggablePythonInterpreter pluggablePythonInterpreter = PluggablePythonInterpreter.getInstance();
-            pluggablePythonInterpreter.loadPythonScript(file);
-            PyObject pyObject = pluggablePythonInterpreter.getPyObject(classString, false);
+        } else if (programLanguage == ProgramLanguage.PYTHON){
+            PythonInterpreter pythonInterpreter = PythonInterpreter.getInstance();
+            pythonInterpreter.loadPythonScript(file);
+            PyObject pyObject = pythonInterpreter.getPyObject(classString, false);
             PyObject pluggableObject = pyObject.__call__();
             if (type == PluggableType.PLUGIN){
                 newClass = (Pluggable) pluggableObject.__tojava__(Plugin.class);
             } else if (type == PluggableType.COMMAND){
                 newClass = (Pluggable) pluggableObject.__tojava__(Command.class);
             }
-            PyObject defaultConfiguration = pluggablePythonInterpreter.getPyObject("default_configuration", false);
+            PyObject defaultConfiguration = pythonInterpreter.getPyObject("default_configuration", false);
             if(defaultConfiguration != null) {
                 Map<String, Object> defaultConfigurationMap = (Map<String, Object>) defaultConfiguration.__tojava__(ConcurrentMap.class);
                 if (defaultConfigurationMap != null) {
@@ -113,8 +115,8 @@ public class UnloadedPluggable {
         return file;
     }
 
-    public PluggableFileType getFileType() {
-        return fileType;
+    public ProgramLanguage getProgramLanguage() {
+        return programLanguage;
     }
 
     public PluggableDetails getDetails() {
@@ -141,10 +143,10 @@ public class UnloadedPluggable {
     public void load() throws MissingData, IOException, DirectoryCreationFailed {
         String absolutePath = file.getAbsolutePath();
         if (absolutePath.endsWith(".py")){
-            fileType = PluggableFileType.PYTHON;
+            programLanguage = ProgramLanguage.PYTHON;
 
         } else if (absolutePath.endsWith(".jar")){
-            fileType = PluggableFileType.JAVA;
+            programLanguage = ProgramLanguage.JAVA;
         }
         Object pluggableInfoObject = findPluggableInfo();
         if (pluggableInfoObject == null){
@@ -194,12 +196,12 @@ public class UnloadedPluggable {
     }
 
     private Object findPluggableInfo() throws MissingData, MalformedURLException {
-        if (fileType == PluggableFileType.JAVA){
+        if (programLanguage == ProgramLanguage.JAVA){
             URL pluginUrl = file.toURI().toURL();
             URLClassLoader classLoader = new URLClassLoader(new URL[]{pluginUrl}, StarNub.class.getClassLoader());
             return classLoader.getResourceAsStream("pluggable_info.yml");
-        } else if (fileType == PluggableFileType.PYTHON) {
-            PluggablePythonInterpreter interpreter = PluggablePythonInterpreter.getInstance();
+        } else if (programLanguage == ProgramLanguage.PYTHON) {
+            PythonInterpreter interpreter = PythonInterpreter.getInstance();
             interpreter.loadPythonScript(file);
             PyObject pluggableInfo = interpreter.getPyObject("pluggable_info", false);
             if (pluggableInfo == null){
@@ -216,7 +218,7 @@ public class UnloadedPluggable {
         return "UnloadedPluggable{" +
                 "details=" + details +
                 ", file=" + file +
-                ", fileType=" + fileType +
+                ", fileType=" + programLanguage +
                 '}';
     }
 }
