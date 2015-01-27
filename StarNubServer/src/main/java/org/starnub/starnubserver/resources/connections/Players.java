@@ -25,14 +25,6 @@ import org.starnub.starbounddata.packets.Packet;
 import org.starnub.starbounddata.packets.connection.ClientConnectPacket;
 import org.starnub.starbounddata.packets.connection.ConnectResponsePacket;
 import org.starnub.starbounddata.packets.connection.ServerDisconnectPacket;
-import org.starnub.starbounddata.packets.container.BurnContainerPacket;
-import org.starnub.starbounddata.packets.container.StopCraftingInContainerPacket;
-import org.starnub.starbounddata.packets.dungeon.UpdateTileProtectionPacket;
-import org.starnub.starbounddata.packets.misc.GiveItemPacket;
-import org.starnub.starbounddata.packets.ship.FlyShipPacket;
-import org.starnub.starbounddata.packets.warp.PlayerWarp;
-import org.starnub.starbounddata.packets.wires.ConnectWirePacket;
-import org.starnub.starbounddata.packets.wires.DisconnectAllWiresPacket;
 import org.starnub.starnubdata.generic.DisconnectReason;
 import org.starnub.starnubserver.Connections;
 import org.starnub.starnubserver.StarNub;
@@ -111,61 +103,61 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
     private void packetDebug() {
         //// KEEP TEMPORARY ////
 
-        /*  Misc no purpose */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, System.out::println);
-
-        /*  Misc no purpose */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, System.out::println);
-
-        /* Debugging WorldID and Data */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, PlayerWarp.class, System.out::println);
-
-        /* Debugging Data, Direction and Usage */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectWirePacket.class, System.out::println);
-
-        /* Debugging Data, Direction and Usage */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, DisconnectAllWiresPacket.class, System.out::println);
-
-        /* Debugging Data, Direction and Usage */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, BurnContainerPacket.class, System.out::println);
-
-        /* Debugging Data, Direction and Usage */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, StopCraftingInContainerPacket.class, System.out::println);
-
-        /* Debugging Data, Direction and Usage */
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, CallScriptedEntityPacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
-
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractResultPacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
-
+//        /*  Misc no purpose */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectResponsePacket.class, System.out::println);
+//
+//        /*  Misc no purpose */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ClientConnectPacket.class, System.out::println);
+//
+//        /* Debugging WorldID and Data */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, PlayerWarp.class, System.out::println);
+//
 //        /* Debugging Data, Direction and Usage */
-//        new PacketEventSubscription("StarNub", Priority.CRITICAL, TileLiquidUpdatePacket.class, new PacketEventHandler() {
-//            @Override
-//            public void onEvent(Packet eventData) {
-//                System.out.println(eventData);
-//            }
-//        });
-
-
-
-        /* Debugging Direction and Ids */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, FlyShipPacket.class, System.out::println);
-
-         /* Debugging Direction and Ids */
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, UpdateTileProtectionPacket.class, System.out::println);
-
-
-        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, System.out::println);
-
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, ConnectWirePacket.class, System.out::println);
+//
+//        /* Debugging Data, Direction and Usage */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, DisconnectAllWiresPacket.class, System.out::println);
+//
+//        /* Debugging Data, Direction and Usage */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, BurnContainerPacket.class, System.out::println);
+//
+//        /* Debugging Data, Direction and Usage */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, StopCraftingInContainerPacket.class, System.out::println);
+//
+//        /* Debugging Data, Direction and Usage */
+////        new PacketEventSubscription("StarNub", Priority.CRITICAL, CallScriptedEntityPacket.class, new PacketEventHandler() {
+////            @Override
+////            public void onEvent(Packet eventData) {
+////                System.out.println(eventData);
+////            }
+////        });
+//
+////        new PacketEventSubscription("StarNub", Priority.CRITICAL, EntityInteractResultPacket.class, new PacketEventHandler() {
+////            @Override
+////            public void onEvent(Packet eventData) {
+////                System.out.println(eventData);
+////            }
+////        });
+//
+////        /* Debugging Data, Direction and Usage */
+////        new PacketEventSubscription("StarNub", Priority.CRITICAL, TileLiquidUpdatePacket.class, new PacketEventHandler() {
+////            @Override
+////            public void onEvent(Packet eventData) {
+////                System.out.println(eventData);
+////            }
+////        });
+//
+//
+//
+//        /* Debugging Direction and Ids */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, FlyShipPacket.class, System.out::println);
+//
+//         /* Debugging Direction and Ids */
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, UpdateTileProtectionPacket.class, System.out::println);
+//
+//
+//        new PacketEventSubscription("StarNub", Priority.CRITICAL, GiveItemPacket.class, System.out::println);
+//
 
 
 //        /* Debugging Direction */

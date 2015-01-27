@@ -180,7 +180,7 @@ public abstract class Pluggable {
         string = Colors.shortcutReplacement(string);
         return StringTokens.replaceTokens(string);
     }
-    public void enable(){
+    public void enable(){// DEPENDANCY CHECK
         onEnable();
         String type = details.getTypeString();
         new StarNubEvent(type + "_Enabled", this);

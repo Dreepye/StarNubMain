@@ -364,15 +364,14 @@ public class PluggableManager {
         return null;
     }
 
-    public PluggableReturn<Pluggable> unloadSpecificPlugin(String pluginName){
+    public PluggableReturn<Pluggable> disableUnloadSpecificPlugin(String pluginName, boolean unload){
         Plugin plugin = getSpecificLoadedPlugin(pluginName);
-        return disableUnloadPluggable(plugin, true);
-
+        return disableUnloadPluggable(plugin, unload);
     }
 
-    public PluggableReturn<Pluggable> unloadSpecificCommand(String commandName){
+    public PluggableReturn<Pluggable> disableUnloadSpecificCommand(String commandName, boolean unload){
         Command command = getSpecificLoadedCommand(commandName);
-        return disableUnloadPluggable(command, true);
+        return disableUnloadPluggable(command, unload);
     }
 
     public HashSet<LoadSuccess> loadAllCommands(boolean enable) {
@@ -425,13 +424,14 @@ public class PluggableManager {
 
     public PluggableReturn<Pluggable> disableUnloadPluggable(Pluggable p, boolean unload){
         PluggableReturn<Pluggable> disabledUnloadedPluggables = new PluggableReturn<>();
+        disabledUnloadedPluggables.add(p);
         String lowerCaseName= p.getDetails().getNAME().toLowerCase();
         if(p.getDetails().isUNLOADABLE()){
             for (Plugin plugin : PLUGINS.values()){
                 PluggableDetails details = plugin.getDetails();
                 String pluginName = details.getNAME();
                 if(details.hasDependancy(lowerCaseName)){
-                    PluggableReturn<Pluggable> pluggables = unloadSpecificPlugin(pluginName);
+                    PluggableReturn<Pluggable> pluggables = disableUnloadSpecificPlugin(pluginName, false);
                     disabledUnloadedPluggables.addAll(pluggables.stream().collect(Collectors.toList()));
                 }
             }
@@ -439,7 +439,7 @@ public class PluggableManager {
                 PluggableDetails details = command.getDetails();
                 String pluginName = details.getNAME();
                 if(details.hasDependancy(lowerCaseName)){
-                    PluggableReturn<Pluggable> pluggables = unloadSpecificPlugin(pluginName);
+                    PluggableReturn<Pluggable> pluggables = disableUnloadSpecificCommand(pluginName, false);
                     disabledUnloadedPluggables.addAll(pluggables.stream().collect(Collectors.toList()));
                 }
             }

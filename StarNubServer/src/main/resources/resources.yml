@@ -68,7 +68,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
 
      "starnub_info": {
          "server_name": "StarNub",
-         "server_url": "http://www.starnubserver.org"
+         "server_url": "http://www.starnub.org"
        },
      "databases": {
          "starnub": {
@@ -87,6 +87,7 @@ file: ['starnub_configuration.yml', 'StarNub/'],
      "advanced_settings": {
        "packet_decoding": true,
        "log_original_character_name_with_nick_name": false,
+       "starbound_console_io": false,
        "log_size": 5120.0,
        "log_levels": {
            "events": 0,

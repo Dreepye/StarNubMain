@@ -32,19 +32,19 @@ import java.util.Set;
  * @since 1.0 Beta
  */
 public enum Packets {
-    PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    SERVERDISCONNECT("ServerDisconnectPacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    HANDSHAKECHALLENGE("HandshakeChallengePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    CHATRECEIVE("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
-    UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT),
+    PROTOCOLVERSION("ProtocolVersionPacket.class", Packet.Direction.TO_STARBOUND_CLIENT), /* Verified 26 Jan 15 */
+    SERVERDISCONNECT("ServerDisconnectPacket.class", Packet.Direction.TO_STARBOUND_CLIENT), /* Verified 26 Jan 15 */
+    CONNECTRESPONSE("ConnectResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), /* Verified 26 Jan 15 */
+    HANDSHAKECHALLENGE("HandshakeChallengePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), /* Verified 26 Jan 15 */
+    CHATRECEIVE("ChatReceivePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), /* Verified 26 Jan 15 */
+    UNIVERSETIMEUPDATE("UniverseTimeUpdatePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), /* Verified 26 Jan 15 */
     CELESTIALRESPONSE("CelestialResponsePacket.class", Packet.Direction.TO_STARBOUND_CLIENT), //DEBUG - ALL DATA, TWO BYE ANOMALY and UNDOCUMENTED WORLD VISITABLE PTR
     CLIENTCONNECT("ClientConnectPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLIENTDISCONNECTREQUEST("ClientDisconnectRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
-    HANDSHAKERESPONSE("HandshakeResponsePacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    HANDSHAKERESPONSE("HandshakeResponsePacket.class", Packet.Direction.TO_STARBOUND_SERVER), /* Verified 26 Jan 15 */
     PLAYERWARP("PlayerWarp.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - LocationsIds - Remaining - UNIQUE_WORLD & CELESTIAL_WORLD
     FLYSHIP("FlyShipPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Direction and test warping to planets that do not exist
-    CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
+    CHATSEND("ChatSendPacket.class", Packet.Direction.TO_STARBOUND_SERVER), /* Verified 26 Jan 15 */
     CELESTIALREQUEST("CelestialRequestPacket.class", Packet.Direction.TO_STARBOUND_SERVER),
     CLIENTCONTEXTUPDATE("ClientContextUpdatePacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - All data needs debugged
     WORLDSTART("WorldStartPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
@@ -85,7 +85,7 @@ public enum Packets {
     DAMAGENOTIFICATION("DamageNotificationPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - Data Issues PROBABLE DOUBLE
     CALLSCRIPTEDENTITY("CallScriptedEntityPacket.class", Packet.Direction.BIDIRECTIONAL), //DEBUG - ALL DATA
     UPDATEWORLDPROPERTIES("", Packet.Direction.NOT_USED), //BIDIRECTIONAL
-    HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL);
+    HEARTBEAT("HeartbeatPacket.class", Packet.Direction.BIDIRECTIONAL); /* Verified 26 Jan 15 */
 
     private static HashMap<Packets, Class> packetClasses = setPrePacketCache();
     private String classString;

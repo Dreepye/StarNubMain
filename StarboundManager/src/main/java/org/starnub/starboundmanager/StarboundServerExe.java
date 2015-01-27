@@ -33,17 +33,16 @@ public class StarboundServerExe extends OperatingSystem {
 
     public StarboundServerExe() {
         super();
-        String starting = "Starting the Starbound Server. ";
         if (OPERATING_SYSTEM.contains("Windows")) {
-            filePath = "win32/starbound_server.exe";
+            filePath = "./win32/starbound_server.exe";
         } else {
             switch (super.BIT_VERSION.getBIT_VERSION()) {
                 case 32: {
-                    filePath = "./linux32/starbound_server";
+                    filePath = "starbound_server";
                     break;
                 }
                 case 64: {
-                    filePath = "./linux64/starbound_server";
+                    filePath = "starbound_server";
                     break;
                 }
             }

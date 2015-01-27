@@ -136,7 +136,8 @@ public class StarboundServer extends StarboundManager {
         configurationGenerator();
         configureConfiguration();
         int starboundPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
-        return start("127.0.0.1", starboundPort, false, false);
+        boolean consoleIo = (boolean) StarNub.getConfiguration().getNestedValue("advanced_settings", "starbound_console_io");
+        return start("127.0.0.1", starboundPort, false, consoleIo);
     }
 
     /**
@@ -190,7 +191,8 @@ public class StarboundServer extends StarboundManager {
 
     public boolean restart(){
         int starboundPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
-        return restart("127.0.0.1", starboundPort, false, false);
+        boolean consoleIo = (boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_console_io");
+        return restart("127.0.0.1", starboundPort, false, consoleIo);
     }
 
     /**

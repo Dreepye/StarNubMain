@@ -113,6 +113,11 @@ public class PluggableDetails {
         return NAME + " (v" + VERSION + ")";
     }
 
+    public String getNameVersionType(){
+        return NAME + " ("+ getTypeStringAbbreviation() + ")(v" + VERSION + ")";
+    }
+
+
     public String getTypeString(){
         if(TYPE == PluggableType.PLUGIN){
             return "Plugin";
@@ -121,8 +126,16 @@ public class PluggableDetails {
         }
     }
 
+    public String getTypeStringAbbreviation(){
+        if(TYPE == PluggableType.PLUGIN){
+            return "P";
+        } else {
+            return "C";
+        }
+    }
+
     public boolean hasDependancy(String name){
-        return Stream.of(DEPENDENCIES).anyMatch(d -> d.equals(name));
+        return Stream.of(DEPENDENCIES).anyMatch(d -> d.equalsIgnoreCase(name));
     }
 
     public LinkedHashMap<String, Object> getDetailsMap(){

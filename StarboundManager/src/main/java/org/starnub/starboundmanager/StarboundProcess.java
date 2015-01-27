@@ -51,10 +51,14 @@ public class StarboundProcess implements Runnable {
      * @throws IOException an exception if we cannot build the process
      */
     StarboundProcess(StarboundManager STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
-        String filePath = STARBOUND_MANAGEMENT.getFilePath();
-        ProcessBuilder processBuilder = new ProcessBuilder(filePath);
+        String starboundPlate = "[Starbound][NOT LOGGED]: ";
+        String fileDir = STARBOUND_MANAGEMENT.getFilePath();
+        String workingDir = fileDir.substring(0, fileDir.lastIndexOf("/") + 1);
+        File file = new File(workingDir);
+        System.out.println(starboundPlate + "Running executable: " + fileDir + ". Setting Working Directory: " + file);
+        ProcessBuilder processBuilder = new ProcessBuilder(fileDir);
         processBuilder.redirectErrorStream(true);
-        processBuilder.directory(new File(filePath.substring(0, filePath.indexOf("/") + 1)));
+        processBuilder.directory(file);
         this.STREAM_EVENT_MESSAGE = STREAM_EVENT_MESSAGE && STARBOUND_MANAGEMENT.EVENT_ROUTER !=null;
         this.STREAM_CONSOLE_PRINT = STREAM_CONSOLE_PRINT;
         this.STARBOUND_MANAGEMENT = STARBOUND_MANAGEMENT;
@@ -91,6 +95,7 @@ public class StarboundProcess implements Runnable {
         InputStreamReader inputStreamReader = new InputStreamReader(PROCESS.getInputStream());
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         String line = null;
+        String starbound = "[Starbound][Logged->starbound_server.log]: ";
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 /* For debugging */
@@ -98,7 +103,7 @@ public class StarboundProcess implements Runnable {
                     STARBOUND_MANAGEMENT.EVENT_ROUTER.eventNotify(new StringEvent("Starbound_Output_Stream", line));
                 }
                 if (STREAM_CONSOLE_PRINT) {
-                    System.out.println(line);
+                    System.out.println(starbound + line);
                 }
             }
         } catch (IOException e) {
