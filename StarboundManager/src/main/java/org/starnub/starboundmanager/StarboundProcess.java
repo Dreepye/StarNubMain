@@ -51,11 +51,13 @@ public class StarboundProcess implements Runnable {
      * @throws IOException an exception if we cannot build the process
      */
     StarboundProcess(StarboundManager STARBOUND_MANAGEMENT, boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
+        String starboundPlate = "[Starbound][NOT LOGGED]: ";
         File sbServerExe = new File(STARBOUND_MANAGEMENT.getFilePath());
         String filePath = sbServerExe.getCanonicalPath();
         File dirFile = sbServerExe.getParentFile();
         ProcessBuilder processBuilder = new ProcessBuilder(filePath);
         processBuilder.redirectErrorStream(true);
+        System.out.println(starboundPlate + "Running executable: " + filePath + ". Setting Working Directory: " + dirFile);
         processBuilder.directory(dirFile);
         this.STREAM_EVENT_MESSAGE = STREAM_EVENT_MESSAGE && STARBOUND_MANAGEMENT.EVENT_ROUTER !=null;
         this.STREAM_CONSOLE_PRINT = STREAM_CONSOLE_PRINT;
