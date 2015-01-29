@@ -18,7 +18,10 @@
 
 package org.starnub.utilities.os;
 
-import org.starnub.utilities.os.linux.LinuxBitVersion;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Represents a OperatingSystem this will represent some OS
@@ -28,25 +31,59 @@ import org.starnub.utilities.os.linux.LinuxBitVersion;
  */
 public class OperatingSystem {
 
-    protected final String OPERATING_SYSTEM;
-    protected final BitVersion BIT_VERSION;
+    protected final OperatingSystemType OPERATING_SYSTEM;
+    protected int BIT_VERSION;
 
     public OperatingSystem() {
         String systemOS = System.getProperty("os.name");
+        ProcessBuilder processBuilder;
         if (systemOS.startsWith("Windows")){
-            this.OPERATING_SYSTEM = "Windows";
-            BIT_VERSION = null;
+            this.OPERATING_SYSTEM = OperatingSystemType.WINDOWS;
+            processBuilder = getProcessBuilder("cmd.exe", "/c", "wmic OS get OSArchitecture");
         } else {
-            this.OPERATING_SYSTEM = "Linux";
-            BIT_VERSION = new LinuxBitVersion();
+             this.OPERATING_SYSTEM = OperatingSystemType.LINUX;
+            processBuilder = getProcessBuilder("uname -m");
         }
+        BIT_VERSION = setBitVersion(processBuilder);
     }
 
-    public String getOPERATING_SYSTEM() {
+    public OperatingSystemType getOPERATING_SYSTEM() {
         return OPERATING_SYSTEM;
     }
 
-    public BitVersion getBIT_VERSION() {
+    public int getBIT_VERSION() {
         return BIT_VERSION;
+    }
+
+    private ProcessBuilder getProcessBuilder(String command){
+        return new ProcessBuilder(command);
+    }
+
+    private ProcessBuilder getProcessBuilder(String... commands){
+        return new ProcessBuilder(commands);
+    }
+
+    private static int setBitVersion(ProcessBuilder pb) {
+        InputStreamReader isr;
+        try {
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+            InputStream is = p.getInputStream();
+            isr = new InputStreamReader(is);
+            String line;
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(isr)) {
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+                line = sb.toString();
+                if ((line.contains("x86_64") || line.contains("64"))) {
+                    return 64;
+                }
+            }
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+        return 32;
     }
 }

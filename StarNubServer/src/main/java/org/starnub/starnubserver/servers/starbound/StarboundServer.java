@@ -46,17 +46,12 @@ public class StarboundServer extends StarboundManager {
     private static final StarboundServer instance = new StarboundServer();
     private TCPProxyServer tcpProxyServer;
     private UDPProxyServer udpProxyServer;
-    private boolean isLinux;
 
     /**
      * This constructor is private - Singleton Pattern
      */
     private StarboundServer() {
         super(StarNubEventRouter.getInstance(), StarNubTaskManager.getInstance());
-        String operatingSystem = this.getOPERATING_SYSTEM();
-        if (operatingSystem.equals("Linux")){
-            this.isLinux = true;
-        }
     }
 
     public static StarboundServer getInstance() {
@@ -82,7 +77,7 @@ public class StarboundServer extends StarboundManager {
     }
 
     public void startTCPServer(int starnubPort, String starboundAdress, int starboundPort){
-        this.tcpProxyServer = new TCPProxyServer(isLinux, starnubPort, starboundAdress, starboundPort);
+        this.tcpProxyServer = new TCPProxyServer(starnubPort, starboundAdress, starboundPort);
         this.tcpProxyServer.start();
     }
 
@@ -243,7 +238,8 @@ public class StarboundServer extends StarboundManager {
         configurationVariables.put("serverName", serverName);
 
         int starboundPort = (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "starbound_port");
-        configurationVariables.put("gamePort", starboundPort);
+        configurationVariables.put("gameServerPort", starboundPort);
+        configurationVariables.put("queryServerPort", starboundPort);
 
         int playerLimit =  (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit");
         int playerLimitReserved =  (int) StarNub.getConfiguration().getNestedValue("starnub_settings", "player_limit_reserved");

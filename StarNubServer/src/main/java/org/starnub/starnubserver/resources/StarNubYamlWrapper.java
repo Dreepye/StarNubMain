@@ -34,7 +34,7 @@ public class StarNubYamlWrapper extends YamlWrapper {
      * @param DISK_FILE_PATH         String default path to file on the disk
      * @param defaultPathResource    boolean is this a resource or file path
      * @param DUMP_ON_MODIFICATION   boolean are we dumping on modification
-     * @param loadOnConstruct        boolean load the file on construction of this wrapper
+     * @param loadOnConstruct        boolean loadData the file on construction of this wrapper
      * @param validateOnConstruction boolean validate the Map against the Default Map on construction
      * @param dumpToDisk             boolean representing if we are going to save the file to disk, this is usually if the file is only used internally
      */

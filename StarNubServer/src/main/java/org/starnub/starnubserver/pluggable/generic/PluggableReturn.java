@@ -20,25 +20,21 @@ package org.starnub.starnubserver.pluggable.generic;
 
 import org.starnub.starnubserver.pluggable.Pluggable;
 import org.starnub.starnubserver.pluggable.Plugin;
-import org.starnub.starnubserver.pluggable.UnloadedPluggable;
 
-public class PluggableLoadSuccess {
+public class PluggableReturn {
 
-    private UnloadedPluggable UNLOADED_PLUGGABLE;
-    private Pluggable PLUGGABLE;
+    private final IPluggable PLUGGABLE;
     private final boolean SUCCESS;
     private final String REASON;
 
-    public PluggableLoadSuccess(UnloadedPluggable UNLOADED_PLUGGABLE, boolean SUCCESS, String REASON) {
-        this.UNLOADED_PLUGGABLE = UNLOADED_PLUGGABLE;
+    public PluggableReturn(IPluggable iPluggable, boolean SUCCESS, String REASON) {
+        this.PLUGGABLE = iPluggable;
         this.SUCCESS = SUCCESS;
         this.REASON = REASON;
     }
 
-    public PluggableLoadSuccess(Pluggable PLUGGABLE, boolean SUCCESS, String REASON) {
-        this.PLUGGABLE = PLUGGABLE;
-        this.SUCCESS = SUCCESS;
-        this.REASON = REASON;
+    public IPluggable getPLUGGABLE() {
+        return PLUGGABLE;
     }
 
     public boolean isSUCCESS() {
@@ -50,19 +46,13 @@ public class PluggableLoadSuccess {
     }
 
     public String getNameVersion(){
-        if(PLUGGABLE != null){
-            return PLUGGABLE.getDetails().getNameVersion();
-        } else {
-            return UNLOADED_PLUGGABLE.getDetails().getNameVersion();
-        }
+        return PLUGGABLE.getDetails().getNameVersion();
     }
 
-    /**
-     * For Plugins only
-     *
-     * @return
-     */
     public boolean isEnabled(){
-        return ((Plugin)PLUGGABLE).isEnabled();
+        if (PLUGGABLE instanceof Pluggable) {
+            return ((Plugin) PLUGGABLE).isEnabled();
+        }
+        return false;
     }
 }

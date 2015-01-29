@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Represents the StarNubs core.
  * <p>
- * This final class will load in all important modules to managing StarNub
+ * This final class will loadData in all important modules to managing StarNub
  * and the associated Starbound related modules.
  * <p>
  * Additionally our packages are arranged in a way as to prevent access to some classes that

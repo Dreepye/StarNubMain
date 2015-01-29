@@ -70,14 +70,14 @@ public class Players extends ConcurrentHashMap<ChannelHandlerContext, PlayerSess
      *
      * @param initialCapacity  the initial capacity. The implementation
      *                         performs connections sizing to accommodate this many elements,
-     *                         given the specified load factor.
-     * @param loadFactor       the load factor (table density) for
+     *                         given the specified loadData factor.
+     * @param loadFactor       the loadData factor (table density) for
      *                         establishing the initial table size
      * @param concurrencyLevel the estimated number of concurrently
      *                         updating threads. The implementation may use this value as
      *                         a sizing hint.
      * @throws IllegalArgumentException if the initial capacity is
-     *                                            negative or the load factor or concurrencyLevel are
+     *                                            negative or the loadData factor or concurrencyLevel are
      *                                            nonpositive
      */
     public Players(Connections CONNECTIONS, int initialCapacity, float loadFactor, int concurrencyLevel) {

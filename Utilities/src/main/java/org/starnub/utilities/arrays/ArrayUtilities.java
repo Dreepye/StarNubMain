@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ArrayUtilities {
 
-    public static String[] arrayBuilder(List<String> list){
+    public static String[] arrayBuilder(List<String> list) {
         if (list != null && list.size() > 0) {
             String[] arrayList = new String[list.size()];
             int index = 0;
@@ -37,9 +37,9 @@ public class ArrayUtilities {
     }
 
     public static Object[] joinArrays(Object[] a, Object[] b) {
-        if (a == null){
+        if (a == null) {
             return b;
-        } else if (b == null){
+        } else if (b == null) {
             return a;
         } else {
             int aLen = a.length;
@@ -50,4 +50,14 @@ public class ArrayUtilities {
             return c;
         }
     }
+
+    public static boolean arrayContains(Object[] array, Object objectToCheck) {
+        for(Object object : array){
+            if (object.equals(objectToCheck)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

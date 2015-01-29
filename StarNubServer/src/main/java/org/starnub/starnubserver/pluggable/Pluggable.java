@@ -27,6 +27,8 @@ import org.starnub.starnubserver.events.packet.PacketEventHandler;
 import org.starnub.starnubserver.events.packet.PacketEventSubscription;
 import org.starnub.starnubserver.events.starnub.StarNubEventHandler;
 import org.starnub.starnubserver.events.starnub.StarNubEventSubscription;
+import org.starnub.starnubserver.pluggable.generic.DependencyComparator;
+import org.starnub.starnubserver.pluggable.generic.IPluggable;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.starnubserver.pluggable.resources.PluggableConfiguration;
 import org.starnub.starnubserver.resources.StringTokens;
@@ -46,7 +48,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
-public abstract class Pluggable {
+public abstract class Pluggable implements Comparable<Pluggable>, IPluggable {
 
     private ProgramLanguage programLanguage;
     private File file;
@@ -62,9 +64,6 @@ public abstract class Pluggable {
     private final HashSet<PacketEventSubscription> PACKET_EVENT_SUBSCRIPTIONS = new HashSet<>();
     private final HashSet<StarNubTask> STARNUB_TASK = new HashSet<>();
     private final HashSet<StringToken> STRING_TOKENS = new HashSet<>();
-
-    public Pluggable() {
-    }
 
     public void setPluggable(UnloadedPluggable unloadedPluggable) throws DirectoryCreationFailed, MissingData, IOException {
         file = unloadedPluggable.getFile();
@@ -93,6 +92,7 @@ public abstract class Pluggable {
         return file;
     }
 
+    @Override
     public PluggableDetails getDetails() {
         return details;
     }
@@ -250,7 +250,7 @@ public abstract class Pluggable {
         }
     }
 
-    public abstract void loadData(YamlWrapper pluggableInfo) throws IOException, DirectoryCreationFailed;
+    public abstract void loadData(YamlWrapper pluggableInfo) throws IOException, MissingData, DirectoryCreationFailed;
     public abstract void onEnable();
     public abstract void onDisable();
     public abstract LinkedHashMap<String, Object> getDetailsMap() throws IOException;
@@ -281,6 +281,11 @@ public abstract class Pluggable {
         pluginDetailDump.put("Details", detailsMap);
         pluginDetailDump.put(typeString + " Details", specificDetails);
         YamlUtilities.toFileYamlDump(pluginDetailDump, informationPath, details.getNAME().toLowerCase() + "_details.yml");
+    }
+
+    @Override
+    public int compareTo(Pluggable pd2) {
+        return new DependencyComparator<Pluggable>().compare(this, pd2);
     }
 
     @Override

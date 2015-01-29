@@ -16,7 +16,9 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * utilities.os.linux is the package containing linux operating system classes
- */
-package org.starnub.utilities.os.linux;
+package org.starnub.utilities.os;
+
+public enum OperatingSystemType {
+    WINDOWS,
+    LINUX
+}

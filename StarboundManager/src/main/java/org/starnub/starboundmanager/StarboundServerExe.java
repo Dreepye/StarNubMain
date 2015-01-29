@@ -33,18 +33,33 @@ public class StarboundServerExe extends OperatingSystem {
 
     public StarboundServerExe() {
         super();
-        if (OPERATING_SYSTEM.contains("Windows")) {
-            filePath = "./win32/starbound_server.exe";
-        } else {
-            switch (super.BIT_VERSION.getBIT_VERSION()) {
-                case 32: {
-                    filePath = "./linux32/starbound_server";
-                    break;
+        String file = "starbound_server";
+        switch (OPERATING_SYSTEM){
+            case WINDOWS:{
+                switch (BIT_VERSION){
+                    case 32:{
+                        filePath = "./win32/" + file + ".exe";
+                        break;
+                    }
+                    case 64:{
+                        filePath = "./win64/" + file + ".exe";
+                        break;
+                    }
                 }
-                case 64: {
-                    filePath = "./linux64/starbound_server";
-                    break;
+                break;
+            }
+            case LINUX:{
+                switch (BIT_VERSION){
+                    case 32:{
+                        filePath = "./linux32/" + file;
+                        break;
+                    }
+                    case 64:{
+                        filePath = "./linux64/" + file;
+                        break;
+                    }
                 }
+                break;
             }
         }
     }
@@ -57,7 +72,9 @@ public class StarboundServerExe extends OperatingSystem {
      *
      * @return A integer that represents the bit version.
      * <p>
-     * Windows = win32/starbound_server.exe
+     * Windows 32 = ./win32/starbound_server.exe
+     * <p>
+     * Windows 64 = ./win64/starbound_server.exe
      * <p>
      * Linux 32 = ./linux32/starbound_server
      * <p>

@@ -20,6 +20,8 @@ package org.starnub.starnubserver.pluggable;
 
 import org.python.core.PyObject;
 import org.starnub.starnubserver.StarNub;
+import org.starnub.starnubserver.pluggable.generic.DependencyComparator;
+import org.starnub.starnubserver.pluggable.generic.IPluggable;
 import org.starnub.starnubserver.pluggable.generic.PluggableDetails;
 import org.starnub.starnubserver.pluggable.resources.PluggableConfiguration;
 import org.starnub.utilities.classloaders.CustomURLClassLoader;
@@ -40,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-public class UnloadedPluggable {
+public class UnloadedPluggable implements Comparable<UnloadedPluggable>, IPluggable {
 
     private File file;
     private ProgramLanguage programLanguage;
@@ -52,7 +54,7 @@ public class UnloadedPluggable {
 
     public UnloadedPluggable(File file) throws DirectoryCreationFailed, MissingData, IOException {
         this.file = file;
-        load();
+        loadData();
     }
 
     public Pluggable instantiatePluggable(PluggableType type) throws DirectoryCreationFailed, MissingData, IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, ClassCastException {
@@ -119,6 +121,7 @@ public class UnloadedPluggable {
         return programLanguage;
     }
 
+    @Override
     public PluggableDetails getDetails() {
         return details;
     }
@@ -140,7 +143,7 @@ public class UnloadedPluggable {
     }
 
     @SuppressWarnings("unchecked")
-    public void load() throws MissingData, IOException, DirectoryCreationFailed {
+    public void loadData() throws MissingData, IOException, DirectoryCreationFailed {
         String absolutePath = file.getAbsolutePath();
         if (absolutePath.endsWith(".py")){
             programLanguage = ProgramLanguage.PYTHON;
@@ -211,6 +214,11 @@ public class UnloadedPluggable {
         } else {
             throw new MissingData("Unknown error loading pluggable info.");
         }
+    }
+
+    @Override
+    public int compareTo(UnloadedPluggable pd2) {
+        return new DependencyComparator<UnloadedPluggable>().compare(this, pd2);
     }
 
     @Override

@@ -134,7 +134,7 @@ public class PluggableDetails {
         }
     }
 
-    public boolean hasDependancy(String name){
+    public boolean hasDependency(String name){
         return Stream.of(DEPENDENCIES).anyMatch(d -> d.equalsIgnoreCase(name));
     }
 

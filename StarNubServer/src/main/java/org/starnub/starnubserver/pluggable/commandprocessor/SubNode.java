@@ -26,7 +26,7 @@ public class SubNode extends EndNode {
 
     /**
      * This constructor is used for a SubNode which has does not have a default command handler so that if the command is used, without the proper
-     * arguments, such as /plugin load, the command user will receive a message of the possible arguments for /plugin load, such as /plugin load all or /plugin load {plugin-name}
+     * arguments, such as /plugin loadData, the command user will receive a message of the possible arguments for /plugin loadData, such as /plugin loadData all or /plugin loadData {plugin-name}
      *
      * @param NODE_ARGUMENT The argument that will be handled by this command handler
      * @param NODES CommandNode[] representing the nodes you will have branching from this sub node

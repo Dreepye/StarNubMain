@@ -20,10 +20,6 @@ package org.starnub.starnubserver.resources;
 
 import org.starnub.starnubserver.StarNub;
 import org.starnub.starnubserver.StarNubTask;
-import org.starnub.starnubserver.connections.player.session.PlayerSession;
-import org.starnub.starnubserver.database.tables.Bans;
-import org.starnub.starnubserver.StarNub;
-import org.starnub.starnubserver.StarNubTask;
 import org.starnub.starnubserver.connections.player.generic.Ban;
 import org.starnub.starnubserver.connections.player.session.PlayerSession;
 import org.starnub.starnubserver.database.tables.Bans;
@@ -56,7 +52,7 @@ public class BansList extends ConcurrentHashMap<String, Ban> {
     /**
      * Recommended: For connections use with StarNub.
      * <p>
-     * Uses: This is used to load restrictions from the database into memory
+     * Uses: This is used to loadData restrictions from the database into memory
      * <p>
      */
     private void banLoad() {

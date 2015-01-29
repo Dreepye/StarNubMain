@@ -55,11 +55,11 @@ class TCPProxyServer {
     private final PooledByteBufAllocator socketBuffer = new PooledByteBufAllocator(true);
     private Channel serverChannel;
 
-    public TCPProxyServer(boolean isLinux, int starnubPort, String starboundAddress, int starboundPort) {
+    public TCPProxyServer(int starnubPort, String starboundAddress, int starboundPort) {
         this.starnubPort = starnubPort;
         this.starboundAddress = starboundAddress;
         this.starboundPort = starboundPort;
-        setNetworkThreading(isLinux);
+        setNetworkThreading();
     }
 
     public PooledByteBufAllocator getSocketBuffer() {
@@ -86,17 +86,17 @@ class TCPProxyServer {
         return connectionBossGroup;
     }
 
-    public void setNetworkThreading(boolean isLinux) {
-        boolean useEpoll = false; //(boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "use_linux_epoll");
-        if (useEpoll && isLinux){
-//            channelClass = EpollServerSocketChannel.class;
-//            connectionBossGroup = new EpollEventLoopGroup(1, (new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
-//            connectionWorkerGroup = new EpollEventLoopGroup(500, new NamedThreadFactory("StarNub - TCP Proxy : Worker Thread"));
-        } else {
+    public void setNetworkThreading() {
+//        boolean useEpoll = false; //(boolean) StarNub.getConfiguration().getNestedValue("starnub_settings", "use_linux_epoll");
+//        if (useEpoll && isLinux){
+////            channelClass = EpollServerSocketChannel.class;
+////            connectionBossGroup = new EpollEventLoopGroup(1, (new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
+////            connectionWorkerGroup = new EpollEventLoopGroup(500, new NamedThreadFactory("StarNub - TCP Proxy : Worker Thread"));
+//        } else {
             channelClass = NioServerSocketChannel.class;
             connectionBossGroup = new NioEventLoopGroup(1, (new NamedThreadFactory("StarNub - TCP Proxy : Connection Thread")));
             connectionWorkerGroup = new NioEventLoopGroup(500, new NamedThreadFactory("StarNub - TCP Proxy : Worker Thread"));
-        }
+//        }
     }//con closed
 
     public void start() {

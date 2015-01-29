@@ -16,21 +16,8 @@
  * this StarNub Software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.starnub.utilities.os;
+package org.starnub.starnubserver.pluggable.generic;
 
-/**
- * Represents a Abstract BitVersion of a OS
- *
- * @author Daniel (Underbalanced) (www.StarNub.org)
- * @since 1.0
- */
-public abstract class BitVersion {
-
-    protected int BIT_VERSION;
-
-    public BitVersion() {}
-
-    public int getBIT_VERSION() {
-        return BIT_VERSION;
-    }
+public interface IPluggable {
+    public PluggableDetails getDetails();
 }

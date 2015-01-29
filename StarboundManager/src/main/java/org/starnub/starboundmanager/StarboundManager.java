@@ -42,6 +42,8 @@ public class StarboundManager extends StarboundServerExe {
     private final StarboundStatus UNRESPONSIVE;
     private final StarboundStatus STOPPING;
 
+    private final String BASE_STORAGE = "giraffe_storage/";
+
     protected volatile StarboundStatus status;
     protected StarboundProcess starboundProcess;
     protected StarboundConfiguration starboundConfiguration;
@@ -130,6 +132,10 @@ public class StarboundManager extends StarboundServerExe {
         return UNRESPONSIVE;
     }
 
+    public String getBASE_STORAGE() {
+        return BASE_STORAGE;
+    }
+
     /**
      * Recommended: For Plugin Developers & Anyone else.
      * <p>
@@ -173,7 +179,7 @@ public class StarboundManager extends StarboundServerExe {
      * @throws IOException
      */
     protected void setStarboundProcess(boolean STREAM_EVENT_MESSAGE, boolean STREAM_CONSOLE_PRINT) throws IOException {
-        this.starboundProcess = new StarboundProcess(this,STREAM_EVENT_MESSAGE, STREAM_CONSOLE_PRINT);
+        this.starboundProcess = new StarboundProcess(this, STREAM_EVENT_MESSAGE, STREAM_CONSOLE_PRINT);
     }
 
     /**
