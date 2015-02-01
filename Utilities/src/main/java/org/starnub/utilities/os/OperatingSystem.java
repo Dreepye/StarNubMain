@@ -42,7 +42,7 @@ public class OperatingSystem {
             processBuilder = getProcessBuilder("cmd.exe", "/c", "wmic OS get OSArchitecture");
         } else {
              this.OPERATING_SYSTEM = OperatingSystemType.LINUX;
-            processBuilder = getProcessBuilder("uname -m");
+            processBuilder = getProcessBuilder("uname", "-m");
         }
         BIT_VERSION = setBitVersion(processBuilder);
     }
